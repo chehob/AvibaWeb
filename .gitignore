@@ -1,4 +1,5 @@
 refs/
+.vscode/
 *.dll
 *.pdb
 *.config
