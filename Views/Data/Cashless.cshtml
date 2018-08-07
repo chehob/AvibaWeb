@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewBag.Title = "Выданные";
+}
+<div class="row">
+    <!-- CONTENT START -->
+    <div class="box col-md-12">
+        <div class="box-inner">
+            <div class="box-header well" data-original-title="">
+                <h2>Импорт данных по безналичному расчету</h2>
+            </div>
+            <div class="box-content">
+                <p>Выберите файлы для загрузки:</p>
+                <input type="file" name="files" id="files" multiple
+                       onchange="javascript:updateUploadList()" />
+                <br />Выбранные файлы:
+                <div id="fileList"></div>
+                <input type="button" id="uploadBtn" value="Загрузить" />
+                <progress max="100" value="0" id="uploadProgress"></progress>   
+                <div id="uploadResults"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#uploadBtn").click(function () {
+            var formData = new FormData();
+            var totalFiles = document.getElementById("files").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("files").files[i];
+                formData.append("files", file);
+            }
+            $.ajax({
+                type: "POST",
+                url: '/Data/ImportCashlessData',
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $("#uploadResults").html(response);
+                },
+                error: function (error) {
+                    console.log("upload error");
+                },
+                xhr: function () {
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener("progress",
+                        function (evt) {
+                            if (evt.lengthComputable) {
+                                var progress = Math.round((evt.loaded / evt.total) * 100);
+                                $("#uploadProgress").val(progress);
+                            }
+                        },
+                        false);
+                    return xhr;
+                }
+            });
+        });
+    });
+
+    updateUploadList = function() {
+        var input = document.getElementById('files');
+        var output = document.getElementById('fileList');
+
+        output.innerHTML = '<ul>';
+        for (var i = 0; i < input.files.length; ++i) {
+            output.innerHTML += '<li>' + input.files.item(i).name + '</li>';
+        }
+        output.innerHTML += '</ul>';
+    }
+</script>

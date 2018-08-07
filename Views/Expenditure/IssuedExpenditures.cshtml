@@ -1,0 +1,63 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Common
+@model IPagedList<AvibaWeb.Models.ExpenditureViewModels.ExpenditureListViewModel>
+
+@{
+    ViewBag.Title = "Выданные";
+}
+<div class="row">
+    <!-- CONTENT START -->
+    <div class="box col-md-12">
+        <div class="box-inner">
+            <div class="box-header well" data-original-title="">
+                <h2>Оформленные расходные операции</h2>
+            </div>
+            <div class="box-content">
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="4" class="text-center">Нет операций</td></tr>
+                }
+                else
+                {
+                    foreach (var expenditure in Model)
+                    {
+                        <div class="row">
+                            <div class="col-md-2">@Html.DisplayFor(c => expenditure.IssuedDateTime)</div>
+                            <div class="col-md-3">@Html.DisplayFor(c => expenditure.Name)</div>
+                            <div class="col-md-2">@Html.DisplayFor(c => expenditure.Amount)</div>
+                            <div class="col-md-2">@Html.DisplayFor(c => expenditure.DeskGroup)</div>
+                            <div class="col-md-2">@Html.DisplayFor(c => expenditure.Type)</div>
+                            <div class="col-md-2">@Html.DisplayFor(c => expenditure.Object)</div>
+                            <div class="col-md-2">@Html.DisplayFor(c => expenditure.Status)</div>
+                            <div class="col-md-2">
+                            @if (expenditure.Status != ExpenditureOperation.EOType.Cancelled)
+                            {
+                                <form asp-controller="Expenditure" asp-action="CancelExpenditure" asp-route-id="@expenditure.ExpenditureId" data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+                                    <input id="btnCancelExpenditure" type="image" name="picture" src="~/images/del.png" width="32" height="32" />
+                                </form>
+                            }
+</div>
+                        </div>
+                        <hr>
+                    }
+                }
+
+            </div>
+            Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+
+			@Html.PagedListPager(Model, page => Url.Action("IssuedExpenditures", new { page }),
+                    new Func<PagedListRenderOptionsBase>(() =>
+                    {
+                        var options = PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+                            new AjaxOptions()
+                            {
+                                HttpMethod = "GET",
+                                UpdateTargetId = "results"
+                            });
+                        options.MaximumPageNumbersToDisplay = 5;
+                        return options;
+                    })())
+        </div>
+    </div>
+</div>

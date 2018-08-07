@@ -1,0 +1,144 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>AVIBA MANAGER SYSTEM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Charisma, a fully featured, responsive, HTML5, Bootstrap admin template.">
+    <meta name="author" content="Muhammad Usman">
+    <!-- The styles -->
+    <link href="~/lib/charisma-master/css/bootstrap-cerulean.min.css" rel="stylesheet">
+    <link href="~/lib/charisma-master/css/charisma-app.css" rel="stylesheet">
+    <link href='~/lib/charisma-master/bower_components/fullcalendar/dist/fullcalendar.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/bower_components/fullcalendar/dist/fullcalendar.print.css' rel='stylesheet' media='print'>
+    <link href='~/lib/charisma-master/bower_components/chosen/chosen.min.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/bower_components/colorbox/example3/colorbox.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/bower_components/responsive-tables/responsive-tables.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/bower_components/bootstrap-tour/build/css/bootstrap-tour.min.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/css/jquery.noty.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/css/noty_theme_default.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/css/elfinder.min.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/css/elfinder.theme.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/css/jquery.iphone.toggle.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/css/uploadify.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/css/animate.min.css' rel='stylesheet'>
+
+    <script src="~/lib/charisma-master/bower_components/jquery/jquery.min.js"></script>
+    <script src="~/lib/charisma-master/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/lib/charisma-master/bower_components/moment/min/moment.min.js"></script>
+    <script src="~/lib/charisma-master/bower_components/fullcalendar/dist/fullcalendar.min.js"></script>
+    <script src="~/lib/charisma-master/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/lib/charisma-master/bower_components/colorbox/jquery.colorbox-min.js"></script>
+    <script src="~/lib/charisma-master/bower_components/responsive-tables/responsive-tables.js"></script>
+    <script src="~/lib/charisma-master/bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.cookie.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.noty.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.raty.min.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.iphone.toggle.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.autogrow-textarea.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.uploadify-3.1.min.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.history.js"></script>
+    <script src="~/lib/charisma-master/js/charisma.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="~/css/util.css">
+    <link rel="stylesheet" type="text/css" href="~/css/multi-select.css">
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <!--<script src="~/Scripts/jquery-1.10.2.js"></script>-->
+    <script src="~/lib/jquery-ajax-unobtrusive/src/jquery.unobtrusive-ajax-file-upload.js"></script>
+    <script src="~/scripts/jquery.multi-select.js"></script>
+	<script src="~/scripts/gui_utils.js"></script>
+	<script src="~/lib/signalr/signalr.js"></script>
+    <script src="~/lib/signalr/signalr-protocol-msgpack.js"></script>
+    <script src="~/scripts/messaging.js"></script>
+</head>
+<body style="position: relative;">
+ <!-- topbar starts -->
+    <div class="navbar navbar-default" role="navigation">
+ 
+        <div class="navbar-inner">
+            <button type="button" class="navbar-toggle pull-left animated flip">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")"><img src="~/img/logo20.png" style="width:155px; height:40px; margin-top:-10px;" alt="AVIBA-MS"></img></a>
+            <!-- user dropdown starts -->
+            @Html.Partial("_LoginPartial")
+            <!-- user dropdown ends -->
+
+ 
+            <!-- theme selector ends -->
+<!--
+            <ul class="collapse navbar-collapse nav navbar-nav top-menu">
+                
+                <li class="dropdown">
+                    <a href="#" data-toggle="dropdown"><i class="glyphicon glyphicon glyphicon-th-large"></i> МЕНЮ <span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="@Url.Action("Index", "Collection")" class="main"><span class="outer"><span class="inner content">Инкассация</span></span></a></li>
+                        <li class="divider"></li>
+                        <li><a href="@Url.Action("Index", "Report")" class="main"><span class="outer"><span class="inner users">Отчеты</span></span></a></li>
+                        
+                        <li class="divider"></li>
+                        <li><a href="@Url.Action("Index", "Admin")" class="main"><span class="outer"><span class="inner users">Админка</span></span></a></li>
+                    </ul>
+                </li>
+            </ul>
+-->
+        </div>
+    </div>
+<!-- left menu starts -->
+        <div class="col-md-2">
+            <div class="sidebar-nav">
+                <div class="nav-canvas">
+
+                    <ul class="nav nav-pills nav-stacked main-menu">
+                        <li class="nav-header">Меню</li>
+						<li>
+                            
+                            <ul class="nav nav-pills nav-stacked">
+                                <li><a href="@Url.Action("Index", "Collection")" class="main"><i class="glyphicon glyphicon-share"></i> Инкассация</a></li>
+								@if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+								{
+								<li><a href="@Url.Action("Index", "Expenditure")" class="main"><i class="glyphicon glyphicon-circle-arrow-up"></i> Расходы</a></li>
+                                <li><a href="@Url.Action("Index", "Report")" class="main"><i class="glyphicon glyphicon-list-alt"></i> Отчеты</a></li>
+								<li><a asp-action="Index" asp-controller="Data" class="main"><i class="glyphicon glyphicon-list-alt"></i> Загрузка данных</a></li>
+								}
+								@if (User.IsInRole("Administrators"))
+								{
+                                <li><a href="@Url.Action("Index", "Admin")" class="main"><i class="glyphicon glyphicon-cog"></i> Админка</a></li>
+								}
+								<li><a href="@Url.Action("Index", "Directory")" class="main"><i class="glyphicon glyphicon-eye-open"></i> Справочники</a></li>
+							</ul>
+
+
+    @RenderBody()
+</div>
+
+
+<div class="mWaiting"></div>
+</body>
+
+<script>
+$body = $("body");
+
+$(document).on({
+    ajaxStart: function() { 
+		showLoader = setTimeout("$('.mWaiting').fadeIn(500);", 1000);
+	},
+    ajaxStop: function() { 
+		clearTimeout(showLoader);
+		$('.mWaiting').fadeOut(500);
+	}
+});
+</script>
+
+@if (IsSectionDefined("Scripts"))
+{
+    @RenderSection("Scripts", required: false)
+}
+
+</html>

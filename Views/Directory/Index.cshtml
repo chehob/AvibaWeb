@@ -1,0 +1,42 @@
+﻿
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<div class="ch-container">
+    <div class="row">
+	
+	
+                        </li>
+						<li class="nav-header">Раздел</li>
+        <li>
+            <a asp-action="Staff" asp-controller="Directory"
+               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+               >Сотрудники</a>
+        </li>                        
+                    </ul>	
+                    
+                </div>
+            </div>
+			<hr>
+			<div class="box-inner">
+			<div class="container-fluid">
+			<ul class="nav nav-pills nav-stacked">
+			
+			<li class="">Раздел</li>
+			    <li class="nav-header">
+			        <a asp-action="Staff" asp-controller="Directory"
+			           data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results">Сотрудники</a>
+			    </li>
+			</ul>
+			</div>
+			</div>
+        </div>
+        <!--/span-->
+        <!-- left menu ends -->
+		
+
+    <div id="results"></div>
+

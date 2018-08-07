@@ -1,0 +1,31 @@
+﻿@model IEnumerable<AvibaWeb.Models.DataViewModels.ImportCashlessDataViewModel>
+
+<div class="box col-md-4">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="">
+            <h2>Выписка</h2>
+        </div>
+        <div class="box-content">
+            @foreach (var data in Model)
+            {
+                <div class="row">
+                    <div class="col-md-6"><h5><b>Баланс</b></h5></div>
+                    <div class="col-md-6"><h5><b>@Model</b></h5></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6"><h5>Не подтверждено</h5></div>
+                    <div class="col-md-6"><h5>@Model.IncomingNotAcceptedStr</h5></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6"><h5>В ожидании</h5></div>
+                    <div class="col-md-6"><h5>@Model.IssuedNotAcceptedStr</h5></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6"><h5>Остаток</h5></div>
+                    <div class="col-md-6"><h5>@Model.TotalStr</h5></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

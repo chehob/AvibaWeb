@@ -1,0 +1,51 @@
+﻿@using AvibaWeb.Models
+@using AvibaWeb.Infrastructure
+@model IQueryable<AppUser>
+
+@{
+    
+    ViewBag.Title = "Пользователи";
+}
+
+</div>
+    <div class="box col-md-10">
+	<!--
+	<div class="row">
+	<div class="col-md-2 hidden-xs hidden-sm text-left"><strong>Логин</strong></div>
+	<div class="col-md-3 hidden-xs hidden-sm text-left"><strong>Фамилия И.О.</strong></div>
+	<div class="col-md-2 hidden-xs hidden-sm text-left"><strong>Должность</strong></div>
+	<div class="col-md-2 hidden-xs hidden-sm text-left"><strong>Телефон</strong></div>
+	<div class="col-md-1 hidden-xs hidden-sm text-left"><strong>Статус</strong></div>
+	<div class="col-md-1 hidden-xs hidden-sm text-left"><strong>Действия</strong></div>
+	</div>
+	-->
+	         @if (Model.Count() == 0)
+        {
+		<div class="row">
+            <div class="col-md-12 text-center">Нет пользователей</div>
+		</div>
+        }
+        else
+        {
+            foreach (AppUser user in Model)
+            {
+			<div class="box col-md-6">
+				<div class="box-inner">
+					<div class="box-header well" data-original-title="" style="overflow: hidden;">
+						<h2><i class="glyphicon glyphicon-user"></i> @user.Name</h2>
+					</div>
+			<div class="box-content">
+					<strong>Должность: </strong>@user.Position<br>
+					<strong>Телефон: </strong><a href="tel:@user.PhoneNumber">@user.PhoneNumber</a>
+					
+					
+	
+                </div>
+                </div></div>
+            }
+        }
+	
+    
+    </div>
+   
+

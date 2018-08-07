@@ -1,0 +1,43 @@
+﻿@model AvibaWeb.Models.CollectionViewModels.CreateCollectionModel
+@{
+    ViewBag.Title = "Создать транзакцию";
+}
+<div class="box col-md-10">
+    <div class="box-inner" style="margin-top:-10px;">
+    <div class="box-header well" data-original-title="">
+        <h2><i class="glyphicon glyphicon-random"></i> Создать транзакцию</h2>
+    </div>
+    <div class="box-content">
+<form asp-controller="Collection" asp-action="CreateCollection" data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+    
+    <div class="row">
+        @Html.LabelFor(m => m.Amount, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Amount, new { @Value = "", @class="form-control" })
+        </div>
+    </div>
+    <div class="row">
+        @Html.LabelFor(m => m.Collectors, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(m => Model.SelectedCollector, Model.Collectors, new { @class="form-control" })
+        </div>
+    </div>
+	<div class="row">
+        @Html.LabelFor(m => m.PaymentType, new { @class = "col-md-2 control-label" })
+	    <div class="col-md-10">
+	        <select asp-for="PaymentType" asp-items="Html.GetEnumSelectList(typeof (PaymentTypes))" class="form-control"></select>
+	    </div>
+    </div>
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="row">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-success" value="Создать" />
+            <a asp-action="IncomingCollections" asp-controller="Collection"
+               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+               class="btn btn-danger">Отмена</a>
+        </div>
+    </div>
+	
+</form></div></div></div>
+
+

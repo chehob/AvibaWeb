@@ -1,0 +1,27 @@
+﻿@using AvibaWeb.Infrastructure
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@if (User.Identity.IsAuthenticated)
+{
+    using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+    @Html.AntiForgeryToken()
+	<div class="btn-group pull-right">
+                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <i class="glyphicon glyphicon-user"></i><span class="hidden-sm hidden-xs"> @User.Identity.Name</span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a asp-action="Profile" asp-controller="Account">Профиль</a></li>
+                    <li class="divider"></li>
+                    <li><a href="javascript:document.getElementById('logoutForm').submit()">Выход</a></li>
+                </ul>
+            </div>
+    
+	
+    }
+}
+else
+{
+    <span>@Html.ActionLink("Вход", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</span>
+}

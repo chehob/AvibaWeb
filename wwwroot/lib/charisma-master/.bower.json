@@ -1,0 +1,13 @@
+{
+  "name": "charisma-master",
+  "homepage": "https://github.com/usmanhalalit/charisma",
+  "_release": "86b5602976",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "86b5602976b8c9b794fffc4cb0e17eda7b3c4cf9"
+  },
+  "_source": "https://github.com/usmanhalalit/charisma.git",
+  "_target": "*",
+  "_originalSource": "charisma-master"
+}

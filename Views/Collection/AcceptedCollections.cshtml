@@ -1,0 +1,56 @@
+﻿@using AvibaWeb.Infrastructure
+@using X.PagedList;
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Common
+@model IPagedList<AvibaWeb.Models.CollectionViewModels.CollectionListViewModel>
+
+@{
+    ViewBag.Title = "Принятые";
+}
+
+<div class="row">
+    <!-- CONTENT START -->
+    <div class="box col-md-12">
+        <div class="box-inner">
+            <div class="box-header well" data-original-title="">
+                <h2>Принятые инкассации</h2>
+            </div>
+            <div class="box-content">
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="4" class="text-center">Нет операций</td></tr>
+                }
+                else
+                {
+                    foreach (var collection in Model)
+                    {
+                        <div class="row">
+                            <div class="col-md-1">@Html.DisplayFor(c => collection.IssuedDateTime)</div>
+                            <div class="col-md-3">@Html.DisplayFor(c => collection.ProviderName)<br><i style="background-color: #E1F896;">@Html.DisplayFor(c => collection.Comment)</i></div>
+                            <div class="col-md-2"><b>@Html.DisplayFor(c => collection.DeskName)</b></div>
+                            <div class="col-md-2"><b>@Html.DisplayFor(c => collection.Amount)</b></div>
+                            <div class="col-md-2">@Html.DisplayFor(c => collection.PaymentType)</div>
+                            <div class="col-md-2">
+                                <form asp-controller="Collection" asp-action="CancelCollection" asp-route-id="@collection.CollectionId" data-ajax-success="updateBalance" data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+                                    <input id="btnRejectCollection" type="submit" name="picture" class="btn btn-danger btn-sm" value="Отклонить" />
+                                </form>
+</div>
+                        </div>
+                        <hr>
+                    }
+                }
+			@Html.PagedListPager(Model, page => Url.Action("AcceptedCollections", new { page }),
+                    new Func<PagedListRenderOptionsBase>(() =>
+                    {
+                        var options = PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+                            new AjaxOptions()
+                            {
+                                HttpMethod = "GET",
+                                UpdateTargetId = "results"
+                            });
+                        options.MaximumPageNumbersToDisplay = 5;
+                        return options;
+                    })())
+        </div></div>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+﻿@model AvibaWeb.Models.AdminViewModels.CreateViewModel
+@{
+    ViewBag.Title = "Создать пользователя";
+}
+    <div class="box col-md-10">
+    <div class="box-inner" style="margin-top:-10px;">
+    <div class="box-header well" data-original-title="">
+        <h2><i class="glyphicon glyphicon-user"></i> Создать пользователя</h2>
+    </div>
+    <div class="box-content">
+
+<form class="" asp-controller="Admin" asp-action="CreateUser" data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="row">
+        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="row">
+        @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="row">
+        @Html.LabelFor(m => m.Position, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Position, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="row">
+        @Html.LabelFor(m => m.PhoneNumber, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="row">
+        @Html.LabelFor(m => m.AcceptedCollectors, new { @class = "col-md-2 control-label select-toggle" })
+        <div class="col-md-10">
+            @Html.ListBoxFor(i => i.AcceptedCollectorIds, Model.AcceptedCollectors,
+                new { @class = "form-control addSelect" })
+        </div>
+    </div>
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="row">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-success" value="Создать" />
+            <a asp-action="Users" asp-controller="Admin"
+               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+               class="btn btn-danger">Отмена</a>
+        </div>
+    </div>
+</form>
+</div></div></div>

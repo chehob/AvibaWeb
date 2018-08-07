@@ -1,0 +1,84 @@
+﻿@model AvibaWeb.Models.CollectionViewModels.CollectionInfoModel
+@{
+    ViewBag.Title = "Index";
+}
+<div class="ch-container">
+    <div class="row">
+	
+	
+                        </li>
+                    
+                    </ul>	
+                    
+                </div>
+            </div>
+        </div>
+        <!--/span-->
+        <!-- left menu ends -->
+</div>
+<div class="box col-md-10">
+<div class="row" id="dvUserBalance">
+    <!-- CONTENT START -->
+        
+    @*Html.Action("Balance")*@
+
+</div>
+
+<div>
+<p class="btn-group">
+<a asp-action="IncomingCollections" asp-controller="Collection"
+data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance" class="btn btn-primary">Входящие
+		@if (Model.IncomingCollections > 0)
+        {
+            <span style="margin-top: 4px; margin-right: 6px;" class="notification yellow">@Model.IncomingCollections</span>
+        }
+        else
+        {
+            // если надо чтото сделать при нуле
+        }
+		</a></li>
+<a asp-action="AcceptedCollections" asp-controller="Collection"
+data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance" class="btn btn-primary">Принятые</a>
+<a asp-action="IssuedCollections" asp-controller="Collection"
+data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance" class="btn btn-primary">Выданные</a>
+
+</p>
+<p class="btn-group">
+<a asp-action="CreateCollection" asp-controller="Collection"
+   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
+   class="btn btn-success">Создать транзакцию</a>
+</p>
+
+</div>   
+<input id="testButton" type="button" value="тест уведомления" />
+<div id="results"></div>
+    
+
+
+<script type="text/javascript">
+	$("#testButton").click(function() {
+        const message = "Поступила новая инкассация Логвинова Елизавета Вадимовна Касса 1 105 000,00";
+        connection.invoke("SendMessage", message).catch(err => console.error(err.toString()));
+        event.preventDefault();
+    });
+	
+    if(window.attachEvent) {
+        window.attachEvent('onload', updateBalance);
+    } else {
+        if(window.onload) {
+            var curronload = window.onload;
+            var newonload = function(evt) {
+                curronload(evt);
+                updateBalance(evt);
+            };
+            window.onload = newonload;
+        } else {
+            window.onload = updateBalance;
+        }
+    }
+
+    function updateBalance(ajaxContext) {
+        $("#dvUserBalance").load('@(Url.Action("Balance","Collection",null))');
+    }
+</script>
+

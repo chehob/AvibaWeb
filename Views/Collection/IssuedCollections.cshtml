@@ -1,0 +1,66 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Common
+@model PagedList<AvibaWeb.Models.CollectionViewModels.CollectionListViewModel>
+
+@{
+    ViewBag.Title = "Выданные";
+}
+   <div class="row">
+        <!-- CONTENT START -->
+        <div class="box col-md-12">
+            <div class="box-inner">
+                <div class="box-header well" data-original-title="">
+                    <h2>Переданные инкассации</h2>
+                </div>
+                <div class="box-content">
+                    @if (!Model.Any())
+        {
+            <tr><td colspan="4" class="text-center">Нет операций</td></tr>
+        }
+        else
+        {
+            foreach (var collection in Model)
+            {
+			<div class="row">
+                        <div class="col-md-2">@Html.DisplayFor(c => collection.IssuedDateTime)<br>
+						@switch( collection.Status )
+						{
+							case CollectionOperationType.COType.New:
+								<span class="label-warning label label-default">@Html.DisplayFor(c => collection.Status)</span>
+								break;
+							case CollectionOperationType.COType.Accepted:
+								<span class="label-success label label-default">@Html.DisplayFor(c => collection.Status)</span>
+								break;
+							case CollectionOperationType.COType.Rejected:
+								<span class="label-default label label-danger">@Html.DisplayFor(c => collection.Status)</span>
+								break;
+						}
+						</div>
+						@if (User.IsInRole("Administrators"))
+						{
+							<div class="col-md-3">@Html.DisplayFor(c => collection.ProviderName)<br><b>@Html.DisplayFor(c => collection.DeskName)</b><br><i style="background-color: #E1F896;">@Html.DisplayFor(c => collection.Comment)</i></div>
+						}
+                        <div class="col-md-3">@Html.DisplayFor(c => collection.CollectorName)</div>
+						<div class="col-md-2"><b>@Html.DisplayFor(c => collection.Amount)</b></div>
+						<div class="col-md-2">@Html.DisplayFor(c => collection.PaymentType)</div>
+						
+            </div>
+			<hr>
+			}}
+                		
+				@Html.PagedListPager(Model, page => Url.Action("IssuedCollections", new { page }),
+                    new Func<PagedListRenderOptionsBase>(() =>
+                    {
+                        var options = PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+                            new AjaxOptions()
+                            {
+                                HttpMethod = "GET",
+                                UpdateTargetId = "results"
+                            });
+                        options.MaximumPageNumbersToDisplay = 5;
+                        return options;
+                    })())
+					
+            </div></div>
+        </div></div>

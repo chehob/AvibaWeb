@@ -1,0 +1,37 @@
+﻿@using AvibaWeb.Models
+@model ExpenditureType
+@{
+    ViewBag.Title = "Изменить";
+}
+   <div class="box col-md-10">
+    <div class="box-inner" style="margin-top:-10px;">
+    <div class="box-header well" data-original-title="">
+        <h2><i class="glyphicon glyphicon-user"></i> Редактор типа расходной операции</h2>
+    </div>
+    <div class="box-content">
+
+<form asp-controller="Admin" asp-action="EditExpenditureType" data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+    @Html.HiddenFor(m => m.ExpenditureTypeId)
+    <div class="form-group">
+        @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+        </div>
+    </div>
+	<div class="form-group">
+        @Html.LabelFor(m => m.IsActive, new { @class = "col-md-2 control-label" })
+        <div class="col-md-1">
+            @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-control" })
+        </div>
+    </div>
+    @Html.ValidationSummary(false)
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Сохранить" />
+            <a asp-action="ExpenditureTypes" asp-controller="Admin"
+               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+               class="btn btn-default">Отмена</a>
+        </div>
+    </div>
+</form>
+</div></div></div>
