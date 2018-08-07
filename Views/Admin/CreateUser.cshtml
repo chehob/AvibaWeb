@@ -9,9 +9,15 @@
     </div>
     <div class="box-content">
 
-<form class="" asp-controller="Admin" asp-action="CreateUser" data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+<form class="" asp-controller="Admin" asp-action="CreateUser" enctype="multipart/form-data"
+    data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
     @Html.AntiForgeryToken()
 
+    <div class="form-group">
+        <div id="photoDiv"></div>
+        <input asp-for="Photo" id="photoFile" type="file" name="Photo" style="display: none;" accept=".jpg,.jpeg,.png" />
+        <span id="fileError"></span>
+    </div>
     <div class="row">
         @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
@@ -42,13 +48,6 @@
             @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
         </div>
     </div>
-    <div class="row">
-        @Html.LabelFor(m => m.AcceptedCollectors, new { @class = "col-md-2 control-label select-toggle" })
-        <div class="col-md-10">
-            @Html.ListBoxFor(i => i.AcceptedCollectorIds, Model.AcceptedCollectors,
-                new { @class = "form-control addSelect" })
-        </div>
-    </div>
     @Html.ValidationSummary("", new { @class = "text-danger" })
     <div class="row">
         <div class="col-md-offset-2 col-md-10">
@@ -60,3 +59,15 @@
     </div>
 </form>
 </div></div></div>
+
+<script src="~/scripts/image-ui.js"></script>
+<style>
+    #photoDiv {
+        background-image: url('');
+        background-size: cover;
+        background-position: center;
+        height: 200px;
+        width: 200px;
+        border: 1px solid #000;
+    }
+</style>
