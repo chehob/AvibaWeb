@@ -31,27 +31,26 @@
             {
 			<div class="box col-md-6">
 				<div class="box-inner" style="">
-					<div class="box-header well" data-original-title="">
-					<div style="overflow: hidden">
-						<h2><i class="glyphicon glyphicon-user"></i> @user.Name</h2></div>
+					<div class="box-header well" data-original-title="" style="overflow: hidden">
+					@if( @user.IsActive )
+						{
+							<h2 class="green"><i class="glyphicon glyphicon-user"></i> @user.Name</h2>
+						}
+						else
+						{
+							<h2 class="red"><i class="glyphicon glyphicon-user"></i> @user.Name</h2>
+						}
 						<div class="text-right box-icon">
 						@if (User.IsInRole("Administrators"))
 						{
 						<a data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results" href=@Url.Action("EditUser","Admin", new{id = user.Id}) class="btn btn-setting btn-round btn-default"><i
                                 class="glyphicon glyphicon-pencil"></i></a>
 						}
-						@if( @user.IsActive )
-						{
-							<span class="label-success label label-default">Активен</span>
-						}
-						else
-						{
-							<span class="label-default label label-danger">Не активен</span>
-						}
-						</div>
-					</div>
+						
+						</div></div>
+					
 			<div class="box-content">
-
+				
                     @if (User.IsInRole("Administrators"))
 					{				
 					<strong>Логин: </strong><span style="overflow: hidden; text-overflow: ellipsis;">@user.UserName</span>
