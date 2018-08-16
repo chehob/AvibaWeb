@@ -7,24 +7,68 @@
             <h2>Выписка</h2>
         </div>
         <div class="box-content">
-            @foreach (var data in Model)
+            @foreach (var org in Model)
             {
-                <div class="row">
-                    <div class="col-md-6"><h5><b>Баланс</b></h5></div>
-                    <div class="col-md-6"><h5><b>@Model</b></h5></div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6"><h5>Не подтверждено</h5></div>
-                    <div class="col-md-6"><h5>@Model.IncomingNotAcceptedStr</h5></div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6"><h5>В ожидании</h5></div>
-                    <div class="col-md-6"><h5>@Model.IssuedNotAcceptedStr</h5></div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6"><h5>Остаток</h5></div>
-                    <div class="col-md-6"><h5>@Model.TotalStr</h5></div>
-                </div>
+            <div class="row">
+                <div class="col-md-6"><h5><b>Номер счета</b></h5></div>
+                <div class="col-md-6"><h5><b>@org.CashlessDestination.AccountNumber</b></h5></div>
+                <div class="col-md-6"><h5><b>Начальная дата</b></h5></div>
+                <div class="col-md-6"><h5><b>@org.CashlessDestination.FromDate</b></h5></div>
+                <div class="col-md-6"><h5><b>Конечная дата</b></h5></div>
+                <div class="col-md-6"><h5><b>@org.CashlessDestination.ToDate</b></h5></div>
+                <div class="col-md-6"><h5><b>Входящий остаток</b></h5></div>
+                <div class="col-md-6"><h5><b>@org.CashlessDestination.OpeningBalance</b></h5></div>
+                <div class="col-md-6"><h5><b>Исходящий остаток</b></h5></div>
+                <div class="col-md-6"><h5><b>@org.CashlessDestination.ClosingBalance</b></h5></div>
+                <div class="col-md-6"><h5><b>Обороты по дебету</b></h5></div>
+                <div class="col-md-6"><h5><b>@org.CashlessDestination.DebitTurnover</b></h5></div>
+                <div class="col-md-6"><h5><b>Обороты по кредиту</b></h5></div>
+                <div class="col-md-6"><h5><b>@org.CashlessDestination.CreditTurnover</b></h5></div>
+                
+                @foreach (var dataRecord in org.CashlessRecords)
+                {
+                    // здесь списком отображаются операции, поля данных:
+
+                    // Тип
+                    // @dataRecord.Type
+
+                    // Дата операции
+                    // @dataRecord.Date
+
+                    // Номер
+                    // @dataRecord.Number
+
+                    // Вид операции
+                    // @dataRecord.OperationType
+
+                    // Сумма
+                    // @dataRecord.Amount
+
+                    // Валюта
+                    // @dataRecord.Currency
+
+                    // Основание платежа
+                    // @dataRecord.PaymentDescription
+
+                    // БИК Банка получателя
+                    // @dataRecord.PayeeBankBIC
+
+                    // Счет получателя
+                    // @dataRecord.PayeeAccount
+
+                    // Наименование получателя
+                    // @dataRecord.PayeeName
+
+                    // Наименование банка получателя
+                    // @dataRecord.PayeeBankName
+
+                    // ИНН получателя
+                    // @dataRecord.PayeeITN
+
+                    // Флаг на наличие записи контрагента в БД
+                    // @dataRecord.IsKnownCounterparty
+                }
+            </div>
             }
         </div>
     </div>

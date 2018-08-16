@@ -15,7 +15,7 @@
                        onchange="javascript:updateUploadList()" />
                 <br />Выбранные файлы:
                 <div id="fileList"></div>
-                <input type="button" id="uploadBtn" value="Загрузить" />
+                <input type="button" id="uploadBtn" value="Загрузить" data-ajax-update="uploadResults" />
                 <progress max="100" value="0" id="uploadProgress"></progress>   
                 <div id="uploadResults"></div>
             </div>
@@ -36,11 +36,10 @@
                 type: "POST",
                 url: '/Data/ImportCashlessData',
                 data: formData,
-                dataType: 'json',
                 contentType: false,
                 processData: false,
-                success: function (response) {
-                    $("#uploadResults").html(response);
+                success: function (partialViewResult) {
+                    $("#uploadResults").html(partialViewResult);
                 },
                 error: function (error) {
                     console.log("upload error");
