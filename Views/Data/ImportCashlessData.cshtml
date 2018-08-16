@@ -24,53 +24,47 @@
                 <div class="col-md-6"><h5><b>@org.CashlessDestination.DebitTurnover</b></h5></div>
                 <div class="col-md-6"><h5><b>Обороты по кредиту</b></h5></div>
                 <div class="col-md-6"><h5><b>@org.CashlessDestination.CreditTurnover</b></h5></div>
-                
-                @foreach (var dataRecord in org.CashlessRecords)
-                {
-                    // здесь списком отображаются операции, поля данных:
-
-                    // Тип
-                    // @dataRecord.Type
-
-                    // Дата операции
-                    // @dataRecord.Date
-
-                    // Номер
-                    // @dataRecord.Number
-
-                    // Вид операции
-                    // @dataRecord.OperationType
-
-                    // Сумма
-                    // @dataRecord.Amount
-
-                    // Валюта
-                    // @dataRecord.Currency
-
-                    // Основание платежа
-                    // @dataRecord.PaymentDescription
-
-                    // БИК Банка получателя
-                    // @dataRecord.PayeeBankBIC
-
-                    // Счет получателя
-                    // @dataRecord.PayeeAccount
-
-                    // Наименование получателя
-                    // @dataRecord.PayeeName
-
-                    // Наименование банка получателя
-                    // @dataRecord.PayeeBankName
-
-                    // ИНН получателя
-                    // @dataRecord.PayeeITN
-
-                    // Флаг на наличие записи контрагента в БД
-                    // @dataRecord.IsKnownCounterparty
-                }
-            </div>
             }
+        </div></div></div></div>        
+                
+    <div class="row">
+    <div class="box col-md-12">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="">
+            <h2>Выписка</h2>
         </div>
-    </div>
-</div>
+    <div class="box-content">
+    <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+        
+    <thead>
+    <tr>
+        <th>Username</th>
+        <th>Date registered</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+     @foreach (var dataRecord in org.CashlessRecords)
+                {   
+    <tr>
+        <td>@dataRecord.Type</td>
+        <td class="center">@dataRecord.Date</td>
+        <td class="center">@dataRecord.Number</td>
+        <td class="center">@dataRecord.OperationType</td>
+        <td class="center">@dataRecord.Amount</td>
+        <td class="center">@dataRecord.Currency</td>
+        <td class="center">@dataRecord.PaymentDescription</td>
+        <td class="center">@dataRecord.PayeeBankBIC</td>
+        <td class="center">@dataRecord.PayeeAccount</td>
+        <td class="center">@dataRecord.PayeeBankBIC</td>
+        <td class="center">@dataRecord.PayeeName</td>
+        <td class="center">@dataRecord.PayeeBankName</td>
+        <td class="center">@dataRecord.PayeeITN</td>
+        <td class="center">@dataRecord.IsKnownCounterparty</td>
+    </tr>
+                }
+    </tbody>
+    </table></div></div></div></div>
 
