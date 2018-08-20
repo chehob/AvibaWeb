@@ -1,0 +1,67 @@
+﻿@using AvibaWeb.DomainModels
+@using AvibaWeb.Models
+@using AvibaWeb.Infrastructure
+@model IQueryable<CounterpartyType>
+
+<div class="box col-md-10">
+    <div class="box-inner" style="margin-top:-10px;">
+        <div class="box-header well" data-original-title="">
+            <h2><i class="glyphicon glyphicon-user"></i> Типы контрагентов</h2>
+        </div>
+        <div class="box-content">
+            <div class="alert" style="text-align:right;">
+                <a asp-action="CreateCounterpartyType" class="btn btn-success"
+                   data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results">
+                    <i class="glyphicon glyphicon-plus icon-white"></i>
+                    Создать
+                </a>
+            </div>
+
+            <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+                <thead>
+                    <tr>
+                        <th>Типы контрагентов</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="3" class="text-center">Нет типов контрагентов</td></tr>
+                    }
+                    else
+                    {
+                        foreach (var type in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @type.Description
+                                @if (type.IsActive)
+                                {
+                                    <span class="label-success label label-default">Активен</span>
+                                }
+                                else
+                                {
+                                    <span class="label-default label label-danger">Не активен</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="EditCounterpartyType" asp-route-id="@type.CounterpartyTypeId" class="btn btn-info"
+                                   data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results">
+                                    <i class="glyphicon glyphicon-edit icon-white"></i>
+                                    Изменить
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</div>
+
+

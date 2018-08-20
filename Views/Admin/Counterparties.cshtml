@@ -1,0 +1,42 @@
+﻿@using System.Linq
+@using AvibaWeb.DomainModels
+@model IQueryable<Counterparty>
+
+    @{
+
+    ViewBag.Title = "Контрагенты";
+    }
+
+    </div>
+    <div class="box col-md-10">
+        @if (!Model.Any())
+    {
+        <div class="row">
+            <div class="col-md-12 text-center">Нет пультов</div>
+        </div>
+    }
+    else
+    {
+        foreach (var counterparty in Model)
+        {
+        <div class="box col-md-6">
+            <div class="box-inner" style="">
+                <div class="box-header well" data-original-title="">
+                    <h2><i class="glyphicon glyphicon-user"></i> @counterparty.Name</h2>
+                    <div class="text-right box-icon">
+                        <a asp-action="EditCounterparty" asp-controller="Admin" asp-route-id="@counterparty.ITN"
+                           data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
+                           class="btn btn-setting btn-round btn-default">
+                            <i class="glyphicon glyphicon-pencil"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+    }
+
+
+    </div>
+
+
