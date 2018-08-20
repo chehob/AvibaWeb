@@ -30,8 +30,12 @@
                                data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" class="btn btn-primary">Подразделения</a>
 	<a asp-action="ExpenditureObjects" asp-controller="Admin"
                                data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" class="btn btn-primary">Статьи расхода</a>
-	<a asp-action="ExpenditureTypes" asp-controller="Admin"
-                               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" class="btn btn-primary">Типы операций</a>
+    <a asp-action="ExpenditureTypes" asp-controller="Admin"
+	       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" class="btn btn-primary">Типы операций</a>
+	<a asp-action="Counterparties" asp-controller="Admin"
+	       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" class="btn btn-primary">Контрагенты</a>
+	<a asp-action="CounterpartyTypes" asp-controller="Admin"
+	       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" class="btn btn-primary">Типы контрагентов</a>
 	</p>
 	</div>
     <div id="results"></div>
