@@ -15,7 +15,7 @@
                        onchange="javascript:updateUploadList()" />
                 <br />Выбранные файлы:
                 <div id="fileList"></div>
-                <input type="button" id="uploadBtn" value="Загрузить" data-ajax-update="uploadResults" />
+                <input disabled type="button" id="uploadBtn" value="Загрузить" data-ajax-update="uploadResults" />
                 <progress max="100" value="0" id="uploadProgress"></progress>   
                 <div id="uploadResults"></div>
             </div>
@@ -69,5 +69,11 @@
             output.innerHTML += '<li>' + input.files.item(i).name + '</li>';
         }
         output.innerHTML += '</ul>';
+
+        if (input.files.length === 0) {
+            document.getElementById("uploadBtn").disabled = true;
+        } else {
+            document.getElementById("uploadBtn").disabled = false;
+        }
     }
 </script>

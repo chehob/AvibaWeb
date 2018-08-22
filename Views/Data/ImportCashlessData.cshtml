@@ -1,70 +1,85 @@
 ﻿@using AvibaWeb.ViewModels.DataViewModels
-@model IEnumerable<AvibaWeb.ViewModels.DataViewModels.ImportCashlessDataViewModel>
+@model ImportCashlessDataViewModel
+@foreach (var dataRecord in Model.ImportCashlessDataRecords)
+{
+    <div class="box col-md-4">
+        <div class="box-inner">
+            <div class="box-header well" data-original-title="">
+                <h2>Выписка</h2>
+            </div>
+            <div class="box-content">
 
-<div class="box col-md-4">
-    <div class="box-inner">
-        <div class="box-header well" data-original-title="">
-            <h2>Выписка</h2>
+                <div class="row">
+                    <div class="col-md-6"><h5><b>Номер счета</b></h5></div>
+                    <div class="col-md-6"><h5><b>@dataRecord.CashlessDestination.AccountNumber</b></h5></div>
+                    <div class="col-md-6"><h5><b>Начальная дата</b></h5></div>
+                    <div class="col-md-6"><h5><b>@dataRecord.CashlessDestination.FromDate</b></h5></div>
+                    <div class="col-md-6"><h5><b>Конечная дата</b></h5></div>
+                    <div class="col-md-6"><h5><b>@dataRecord.CashlessDestination.ToDate</b></h5></div>
+                    <div class="col-md-6"><h5><b>Входящий остаток</b></h5></div>
+                    <div class="col-md-6"><h5><b>@dataRecord.CashlessDestination.OpeningBalance</b></h5></div>
+                    <div class="col-md-6"><h5><b>Исходящий остаток</b></h5></div>
+                    <div class="col-md-6"><h5><b>@dataRecord.CashlessDestination.ClosingBalance</b></h5></div>
+                    <div class="col-md-6"><h5><b>Обороты по дебету</b></h5></div>
+                    <div class="col-md-6"><h5><b>@dataRecord.CashlessDestination.DebitTurnover</b></h5></div>
+                    <div class="col-md-6"><h5><b>Обороты по кредиту</b></h5></div>
+                    <div class="col-md-6"><h5><b>@dataRecord.CashlessDestination.CreditTurnover</b></h5></div>
+
+                </div>
+            </div>
         </div>
-        <div class="box-content">
-            @foreach (var org in Model)
-            {
-            <div class="row">
-                <div class="col-md-6"><h5><b>Номер счета</b></h5></div>
-                <div class="col-md-6"><h5><b>@org.CashlessDestination.AccountNumber</b></h5></div>
-                <div class="col-md-6"><h5><b>Начальная дата</b></h5></div>
-                <div class="col-md-6"><h5><b>@org.CashlessDestination.FromDate</b></h5></div>
-                <div class="col-md-6"><h5><b>Конечная дата</b></h5></div>
-                <div class="col-md-6"><h5><b>@org.CashlessDestination.ToDate</b></h5></div>
-                <div class="col-md-6"><h5><b>Входящий остаток</b></h5></div>
-                <div class="col-md-6"><h5><b>@org.CashlessDestination.OpeningBalance</b></h5></div>
-                <div class="col-md-6"><h5><b>Исходящий остаток</b></h5></div>
-                <div class="col-md-6"><h5><b>@org.CashlessDestination.ClosingBalance</b></h5></div>
-                <div class="col-md-6"><h5><b>Обороты по дебету</b></h5></div>
-                <div class="col-md-6"><h5><b>@org.CashlessDestination.DebitTurnover</b></h5></div>
-                <div class="col-md-6"><h5><b>Обороты по кредиту</b></h5></div>
-                <div class="col-md-6"><h5><b>@org.CashlessDestination.CreditTurnover</b></h5></div>
-            }
-        </div></div></div></div>        
-                
-    <div class="row">
+    </div>
+
     <div class="box col-md-12">
-    <div class="box-inner">
-        <div class="box-header well" data-original-title="">
-            <h2>Выписка</h2>
-        </div>
-    <div class="box-content">
-    <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+        <div class="box-inner">
+            <div class="box-header well" data-original-title="">
+                <h2>Выписка</h2>
+            </div>
+            <div class="box-content">
+                <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
         
-    <thead>
-    <tr>
-        <th>Username</th>
-        <th>Date registered</th>
-        <th>Role</th>
-        <th>Status</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-     @foreach (var dataRecord in org.CashlessRecords)
-                {   
-    <tr>
-        <td>@dataRecord.Type</td>
-        <td class="center">@dataRecord.Date</td>
-        <td class="center">@dataRecord.Number</td>
-        <td class="center">@dataRecord.OperationType</td>
-        <td class="center">@dataRecord.Amount</td>
-        <td class="center">@dataRecord.Currency</td>
-        <td class="center">@dataRecord.PaymentDescription</td>
-        <td class="center">@dataRecord.PayeeBankBIC</td>
-        <td class="center">@dataRecord.PayeeAccount</td>
-        <td class="center">@dataRecord.PayeeBankBIC</td>
-        <td class="center">@dataRecord.PayeeName</td>
-        <td class="center">@dataRecord.PayeeBankName</td>
-        <td class="center">@dataRecord.PayeeITN</td>
-        <td class="center">@dataRecord.IsKnownCounterparty</td>
-    </tr>
-                }
-    </tbody>
-    </table></div></div></div></div>
+                    <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Date registered</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var record in dataRecord.CashlessRecords)
+                    {   
+                        <tr>
+                            <td>@record.Type</td>
+                            <td class="center">@record.Date</td>
+                            <td class="center">@record.Number</td>
+                            <td class="center">@record.OperationType</td>
+                            <td class="center">@record.Amount</td>
+                            <td class="center">@record.Currency</td>
+                            <td class="center">@record.PaymentDescription</td>
+                            <td class="center">@record.PayeeBankBIC</td>
+                            <td class="center">@record.PayeeAccount</td>
+                            <td class="center">@record.PayeeBankBIC</td>
+                            <td class="center">@record.PayeeName</td>
+                            <td class="center">@record.PayeeBankName</td>
+                            <td class="center">@record.PayeeITN</td>
+                            <td class="center">@record.IsKnownCounterparty</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table></div></div></div>
+}
 
+<div class="row">
+    <div class="box col-md-12">
+        <div class="box-inner">
+            <div class="box-header well" data-original-title="">
+                <h2>Отсутствующие контрагенты</h2>
+            </div>
+            <div class="box-content">
+                <partial name="MissingCounterparties" model="@Model.MissingCounterpartiesModel" />
+            </div>
+        </div>
+    </div>
+</div>

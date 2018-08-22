@@ -13,7 +13,7 @@
                 <div class="row">
                     @Html.LabelFor(m => m.Item.ITN, new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
-                        <span>@Model.Item.ITN</span>
+                        <input asp-for="@Model.Item.ITN" readonly />
                     </div>
                 </div>
                 <div class="row">
