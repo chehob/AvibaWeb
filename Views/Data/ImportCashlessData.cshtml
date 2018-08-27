@@ -40,7 +40,7 @@
         
                     <thead>
                     <tr>
-                        <th>Username</th>
+                        <th>Дата</th>
                         <th>Date registered</th>
                         <th>Role</th>
                         <th>Status</th>
@@ -51,9 +51,9 @@
                     @foreach (var record in dataRecord.CashlessRecords)
                     {   
                         <tr>
-                            <td>@record.Type</td>
+                            //<td>@record.Type</td>
                             <td class="center">@record.Date</td>
-                            <td class="center">@record.Number</td>
+                            //<td class="center">@record.Number</td>
                             <td class="center">@record.OperationType</td>
                             <td class="center">@record.Amount</td>
                             <td class="center">@record.Currency</td>
