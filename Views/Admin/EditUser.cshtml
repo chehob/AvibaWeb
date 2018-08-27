@@ -10,61 +10,67 @@
     </div>
     <div class="box-content">
 
-<form asp-controller="Admin" asp-action="EditUser" enctype="multipart/form-data"
-    data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
-    @Html.HiddenFor(m => m.Id)
+        <form asp-controller="Admin" asp-action="EditUser" enctype="multipart/form-data"
+              data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+            @Html.HiddenFor(m => m.Id)
 
-    <div class="form-group">
-        <div id="photoDiv"></div>
-        <input asp-for="Photo" id="photoFile" type="file" name="Photo" style="display: none;" accept=".jpg,.jpeg,.png" />
-        <span id="fileError"></span>
-    </div>
-    <div class="row">
-        @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="row">
-        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="row">
-        @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="row">
-        @Html.LabelFor(m => m.Position, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Position, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="row">
-        @Html.LabelFor(m => m.PhoneNumber, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
-        </div>
-    </div>
-	<div class="row">
-        @Html.LabelFor(m => m.IsActive, new { @class = "col-md-2 control-label" })
-        <div class="col-md-1">
-            @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-control" })
-        </div>
-    </div>
-    @Html.ValidationSummary(false)
-    <div class="row">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Сохранить" />
-            <a asp-action="Users" asp-controller="Admin"
-               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-               class="btn btn-default">Отмена</a>
-        </div>
-    </div>
-</form>
+            <div class="form-group">
+                <div id="photoDiv"></div>
+                <input asp-for="Photo" id="photoFile" type="file" name="Photo" style="display: none;" accept=".jpg,.jpeg,.png" />
+                <span id="fileError"></span>
+            </div>
+            <div class="row">
+                @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row">
+                @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row">
+                @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row">
+                @Html.LabelFor(m => m.Position, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Position, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row">
+                @Html.LabelFor(m => m.PhoneNumber, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row">
+                @Html.LabelFor(m => m.ITN, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.ITN, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row">
+                @Html.LabelFor(m => m.IsActive, new { @class = "col-md-2 control-label" })
+                <div class="col-md-1">
+                    @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-control" })
+                </div>
+            </div>
+            @Html.ValidationSummary(false)
+            <div class="row">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" class="btn btn-default" value="Сохранить" />
+                    <a asp-action="Users" asp-controller="Admin"
+                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+                       class="btn btn-default">Отмена</a>
+                </div>
+            </div>
+        </form>
 </div></div></div>
 
 <script src="~/scripts/image-ui.js"></script>
