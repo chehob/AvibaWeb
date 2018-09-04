@@ -1,85 +1,180 @@
-﻿@using AvibaWeb.ViewModels.DataViewModels
-@model ImportCashlessDataViewModel
-@foreach (var dataRecord in Model.ImportCashlessDataRecords)
+﻿@using AvibaWeb.DomainModels
+@using AvibaWeb.ViewModels.DataViewModels
+@model CashlessImportViewModel
+@foreach (var importData in Model.FinancialAccountImportData)
 {
-    <div class="box col-md-4">
-        <div class="box-inner">
-            <div class="box-header well" data-original-title="">
-                <h2>Выписка</h2>
-            </div>
-            <div class="box-content">
+         <div class="box col-md-4">
+             <div class="box-inner">
+                 <div class="box-header well" data-original-title="">
+                     <h2>Выписка</h2>
+                 </div>
+                 <div class="box-content">
 
-                <div class="row">
-                    <div class="col-md-6"><h5><b>Номер счета</b></h5></div>
-                    <div class="col-md-6"><h5><b>@dataRecord.CashlessDestination.AccountNumber</b></h5></div>
-                    <div class="col-md-6"><h5><b>Начальная дата</b></h5></div>
-                    <div class="col-md-6"><h5><b>@dataRecord.CashlessDestination.FromDate</b></h5></div>
-                    <div class="col-md-6"><h5><b>Конечная дата</b></h5></div>
-                    <div class="col-md-6"><h5><b>@dataRecord.CashlessDestination.ToDate</b></h5></div>
-                    <div class="col-md-6"><h5><b>Входящий остаток</b></h5></div>
-                    <div class="col-md-6"><h5><b>@dataRecord.CashlessDestination.OpeningBalance</b></h5></div>
-                    <div class="col-md-6"><h5><b>Исходящий остаток</b></h5></div>
-                    <div class="col-md-6"><h5><b>@dataRecord.CashlessDestination.ClosingBalance</b></h5></div>
-                    <div class="col-md-6"><h5><b>Обороты по дебету</b></h5></div>
-                    <div class="col-md-6"><h5><b>@dataRecord.CashlessDestination.DebitTurnover</b></h5></div>
-                    <div class="col-md-6"><h5><b>Обороты по кредиту</b></h5></div>
-                    <div class="col-md-6"><h5><b>@dataRecord.CashlessDestination.CreditTurnover</b></h5></div>
+                     <div id="importDestination" class="row">
+                         <div class="col-md-6"><h5><b>Номер счета</b></h5></div>
+                         <div class="col-md-6"><h5><b>@importData.Destination.AccountNumber</b></h5></div>
+                         <div class="col-md-6"><h5><b>Начальная дата</b></h5></div>
+                         <div class="col-md-6"><h5><b>@importData.Destination.FromDate</b></h5></div>
+                         <div class="col-md-6"><h5><b>Конечная дата</b></h5></div>
+                         <div class="col-md-6"><h5><b>@importData.Destination.ToDate</b></h5></div>
+                         <div class="col-md-6"><h5><b>Входящий остаток</b></h5></div>
+                         <div class="col-md-6"><h5><b>@importData.Destination.OpeningBalance</b></h5></div>
+                         <div class="col-md-6"><h5><b>Исходящий остаток</b></h5></div>
+                         <div class="col-md-6"><h5><b>@importData.Destination.ClosingBalance</b></h5></div>
+                         <div class="col-md-6"><h5><b>Обороты по дебету</b></h5></div>
+                         <div class="col-md-6"><h5><b>@importData.Destination.DebitTurnover</b></h5></div>
+                         <div class="col-md-6"><h5><b>Обороты по кредиту</b></h5></div>
+                         <div class="col-md-6"><h5><b>@importData.Destination.CreditTurnover</b></h5></div>
 
-                </div>
-            </div>
-        </div>
-    </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
 
-    <div class="box col-md-12">
-        <div class="box-inner">
-            <div class="box-header well" data-original-title="">
-                <h2>Выписка</h2>
-            </div>
-            <div class="box-content">
-                <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
-        
-                    <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Date registered</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var record in dataRecord.CashlessRecords)
-                    {   
-                        <tr>
-                            <td>@record.Type</td>
-                            <td class="center">@record.Date</td>
-                            <td class="center">@record.Number</td>
-                            <td class="center">@record.OperationType</td>
-                            <td class="center">@record.Amount</td>
-                            <td class="center">@record.Currency</td>
-                            <td class="center">@record.PaymentDescription</td>
-                            <td class="center">@record.PayeeBankBIC</td>
-                            <td class="center">@record.PayeeAccount</td>
-                            <td class="center">@record.PayeeBankBIC</td>
-                            <td class="center">@record.PayeeName</td>
-                            <td class="center">@record.PayeeBankName</td>
-                            <td class="center">@record.PayeeITN</td>
-                            <td class="center">@record.IsKnownCounterparty</td>
-                        </tr>
-                    }
-                    </tbody>
-                </table></div></div></div>
+         <div class="box col-md-12">
+             <div class="box-inner">
+                 <div class="box-header well" data-original-title="">
+                     <h2>Выписка</h2>
+                 </div>
+                 <div id="importTable" class="box-content">
+                         @foreach (var counterpartyGroup in importData.CounterpartyGroups)
+                         {
+                             <div>
+                                 <input type="hidden" value="@counterpartyGroup.ITN" />
+                                 <input type="hidden" value="@counterpartyGroup.IsUserITN.ToString()" />
+
+                                 <div class="box-inner">
+                                     <div class="box-header well hdr-minimize" style="cursor: pointer;">
+                                         <h2>
+                                             @counterpartyGroup.Name
+                                         </h2>
+                                     </div>
+                                     <div class="box-content">
+                                         @if (!counterpartyGroup.IsKnownCounterparty)
+                                         {
+                                             <div id="@counterpartyGroup.MissingCounterparty.ITN">
+                                                 <div class="MissingCounterpartyFlag"></div>
+                                                 <form asp-action="AddMissingCounterparty" enctype="multipart/form-data"
+                                                       data-ajax="true" data-ajax-method="POST"
+                                                       data-ajax-update="#@counterpartyGroup.MissingCounterparty.ITN" data-ajax-mode="replace">
+                                                     <!-- данные по отсутствующему контрагенту для добавления в БД -->
+                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.ITN" type="hidden"/>
+                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.Name" type="hidden"/>
+                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.CorrespondentAccount" type="hidden"/>
+                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.KPP" type="hidden"/>
+                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.BIK" type="hidden"/>
+                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.OGRN" type="hidden"/>
+                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.Phone" type="hidden"/>
+                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.Address" type="hidden"/>
+                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.Email" type="hidden"/>
+                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.BankName" type="hidden"/>
+                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.BankAccount" type="hidden"/>
+                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.ManagementName" type="hidden"/>
+                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.ManagementPosition" type="hidden"/>
+
+                                                     <label asp-for="@counterpartyGroup.MissingCounterparty.TypeId"></label>
+                                                     <select asp-for="@counterpartyGroup.MissingCounterparty.TypeId" asp-items="@Model.CounterpartyTypes" class="form-control"></select>
+                                                     <input type="submit" value="Добавить"/>
+                                                 </form>
+                                             </div>
+                                         }
+                                         <table class="table table-striped">
+                                             <thead>
+                                             <tr>
+                                                 <th>Дата операции</th>
+                                                 <th>Сумма</th>
+                                                 <th>Причина</th>
+                                             </tr>
+                                             </thead>
+                                             <tbody>
+                                             @foreach (var record in counterpartyGroup.Records)
+                                             {
+                                                 <tr>
+                                                     <td>
+                                                         <input type="hidden" value="@record.Date.ToString("O")" />
+                                                         <input type="hidden" value="@record.PayeeITN" />
+                                                         @record.Date.ToString("d")
+                                                     </td>
+                                                     <td>@record.Amount</td>
+                                                     <td>@record.PaymentDescription</td>
+                                                 </tr>
+                                             }
+                                             </tbody>
+                                         </table>
+                                         <div>
+                                             <a href="/" id="saveOperations" class="btn">Сохранить</a>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                         }
+                 </div></div></div>
 }
 
-<div class="row">
-    <div class="box col-md-12">
-        <div class="box-inner">
-            <div class="box-header well" data-original-title="">
-                <h2>Отсутствующие контрагенты</h2>
-            </div>
-            <div class="box-content">
-                <partial name="MissingCounterparties" model="@Model.MissingCounterpartiesModel" />
-            </div>
-        </div>
-    </div>
-</div>
+<style type="text/css">
+
+    .label-input {
+        background: rgba(0,0,0,0);
+        border: 1px solid rgba(0,0,0,0);
+    }
+
+</style>
+
+<script type="text/javascript">
+    var counterpartyGroups = new Array();
+    $("#importTable > div").each(function () {
+        const ITN = $(this).children().first();
+
+        var records = new Array();
+
+        $(this).find("tbody tr").each(function() {
+            const firstInput = $(this).find("input");
+            const firstTd = $(this).find("td");
+            const record = {
+                Date: new Date(firstInput.val()),
+                Amount: firstTd.next().html(),
+                PaymentDescription: firstTd.next().next().html(),
+                PayeeITN: firstInput.next().val()
+            };
+            records.push(record);
+        });
+
+        const counterparty = {
+            Records: records,
+            ITN: ITN.val(),
+            IsUserITN: ITN.next().val()
+        };
+        counterpartyGroups.push(counterparty);
+    });
+
+    var sendJsonData = { 
+        CounterpartyGroups: counterpartyGroups,
+        Destination: {
+            AccountNumber: $("#importDestination > div").first().next().find("b").html()
+        }
+    };
+
+    console.log(JSON.stringify(sendJsonData));
+
+    $("#saveOperations").click(function (e) {
+        e.preventDefault();
+        if ($(".MissingCounterpartyFlag").length === 0) {
+            $.ajax({
+                url: "/Data/AddFinancialAccountOperations",
+                type: "POST",
+                cache: false,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(sendJsonData),
+                success: function (result) {
+                    $("#importTable").html(result.message);
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        } else {
+            console.log($(".MissingCounterpartyFlag").length);
+        }
+    });
+</script>

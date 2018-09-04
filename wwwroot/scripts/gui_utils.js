@@ -81,10 +81,18 @@ $(function () {
 });
 
 // fix for charisma scripts on ajax reload
-$(document).on('click', '.btn-minimize', function(e){
-	e.preventDefault();
-	var $target = $(this).parent().parent().next('.box-content');
-	if ($target.is(':visible')) $('i', $(this)).removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
-	else                       $('i', $(this)).removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
-	$target.slideToggle();
+$(document).on('click', '.btn-minimize', function (e) {
+    e.preventDefault();
+    var $target = $(this).parent().parent().next('.box-content');
+    if ($target.is(':visible')) $('i', $(this)).removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+    else $('i', $(this)).removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+    $target.slideToggle();
+});
+
+$(document).on('click', '.hdr-minimize', function (e) {
+    e.preventDefault();
+    var $target = $(this).next('.box-content');
+    if ($target.is(':visible')) $('i', $(this)).removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+    else $('i', $(this)).removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+    $target.slideToggle();
 });
