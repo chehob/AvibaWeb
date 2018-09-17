@@ -3,28 +3,24 @@
 @model CashlessImportViewModel
 @foreach (var importData in Model.FinancialAccountImportData)
 {
-         <div class="box col-md-4">
+    
+         <div class="box col-md-12">
              <div class="box-inner">
                  <div class="box-header well" data-original-title="">
-                     <h2>Выписка</h2>
+                     <h2>Выписка <span class="green">@importData.Destination.FromDate.ToString("d") - @importData.Destination.ToDate.ToString("d")</span></h2>
                  </div>
                  <div class="box-content">
-
                      <div id="importDestination" class="row">
                          <div class="col-md-6"><h5><b>Номер счета</b></h5></div>
                          <div class="col-md-6"><h5><b>@importData.Destination.AccountNumber</b></h5></div>
-                         <div class="col-md-6"><h5><b>Начальная дата</b></h5></div>
-                         <div class="col-md-6"><h5><b>@importData.Destination.FromDate</b></h5></div>
-                         <div class="col-md-6"><h5><b>Конечная дата</b></h5></div>
-                         <div class="col-md-6"><h5><b>@importData.Destination.ToDate</b></h5></div>
-                         <div class="col-md-6"><h5><b>Входящий остаток</b></h5></div>
-                         <div class="col-md-6"><h5><b>@importData.Destination.OpeningBalance</b></h5></div>
-                         <div class="col-md-6"><h5><b>Исходящий остаток</b></h5></div>
-                         <div class="col-md-6"><h5><b>@importData.Destination.ClosingBalance</b></h5></div>
-                         <div class="col-md-6"><h5><b>Обороты по дебету</b></h5></div>
-                         <div class="col-md-6"><h5><b>@importData.Destination.DebitTurnover</b></h5></div>
-                         <div class="col-md-6"><h5><b>Обороты по кредиту</b></h5></div>
-                         <div class="col-md-6"><h5><b>@importData.Destination.CreditTurnover</b></h5></div>
+                         <div class="col-md-3"><h5><b>Входящий остаток</b></h5></div>
+                         <div class="col-md-3"><h5><b>@importData.Destination.OpeningBalance</b></h5></div>
+                         <div class="col-md-3"><h5><b>Исходящий остаток</b></h5></div>
+                         <div class="col-md-3"><h5><b>@importData.Destination.ClosingBalance</b></h5></div>
+                         <div class="col-md-3"><h5><b>Обороты по дебету</b></h5></div>
+                         <div class="col-md-3"><h5><b>@importData.Destination.DebitTurnover</b></h5></div>
+                         <div class="col-md-3"><h5><b>Обороты по кредиту</b></h5></div>
+                         <div class="col-md-3"><h5><b>@importData.Destination.CreditTurnover</b></h5></div>
 
                      </div>
                  </div>
@@ -100,15 +96,16 @@
                                                  </tr>
                                              }
                                              </tbody>
-                                         </table>
-                                         <div>
-                                             <a href="/" id="saveOperations" class="btn">Сохранить</a>
-                                         </div>
+                                         </table>                                         
                                      </div>
                                  </div>
                              </div>
                          }
-                 </div></div></div>
+                 </div>
+                 <div>
+                    <a href="/" id="saveOperations" class="btn">Сохранить</a>
+                </div>
+            </div></div>
 }
 
 <style type="text/css">

@@ -20,17 +20,26 @@
                         <div class="col-md-6"><h5><b>@Html.DisplayFor(c => Model.TotalBalanceStr)</b></h5></div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6"><h5>Офис</h5></div>
-                        <div class="col-md-6"><h5>@Html.DisplayFor(c => Model.OfficeBalanceStr)</h5></div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6"><h5>Кассы</h5></div>
                         <div class="col-md-6"><h5>@Html.DisplayFor(c => Model.DeskBalanceStr)</h5></div>
                     </div>
+                    <div class="box-inner">                   
+                     <div class="box-content">
+                    <div class="row">
+                        <div class="col-md-6"><h5><b>Сумма</b></h5></div>
+                        <div class="col-md-6"><h5><b>@Html.DisplayFor(c => Model.OfficeCollectorsTotalInfo)</b></h5></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6"><h5>Офис</h5></div>
+                        <div class="col-md-6"><h5>@Html.DisplayFor(c => Model.OfficeBalanceStr)</h5></div>
+                    </div>
+                    
                     <div class="row">
                         <div class="col-md-6"><h5>Инкассаторы</h5></div>
                         <div class="col-md-6"><h5>@Html.DisplayFor(c => Model.CollectorsTotalInfo)</h5></div>
                     </div>
+                    </div></div>
+                    
                     @*<div class="row">
                         <div class="col-md-6"><h5>На обмене</h5></div>
                         <div class="col-md-6"><h5>@Html.DisplayFor(c => Model.ExchangeTotalInfo)</h5></div>
