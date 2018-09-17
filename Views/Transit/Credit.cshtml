@@ -1,0 +1,43 @@
+﻿@using AvibaWeb.DomainModels
+@using AvibaWeb.ViewModels.TransitViewModels
+@model TransitAccountCreditViewModel
+
+<div class="box col-md-10">
+    <div class="box-inner" style="margin-top:-10px;">
+        <div class="box-header well" data-original-title="">
+            <h2><i class="glyphicon glyphicon-random"></i>Зачислить на группу</h2>
+        </div>
+        <div class="box-content">
+            <form asp-controller="Transit" asp-action="Credit" method="post">
+                <div class="row">
+                    @Html.LabelFor(m => m.LoanGroups, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(m => Model.SelectedGroupId, Model.LoanGroups, new { @class="form-control" })
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.Credit.AccountAmount, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        <input asp-for="@Model.Credit.AccountAmount" class="form-control" value=""/>
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.Credit.AddAmount, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        <input asp-for="@Model.Credit.AddAmount" class="form-control" value=""/>
+                    </div>
+                </div>
+                @Html.ValidationSummary("", new {@class = "text-danger"})
+                <div class="row">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" class="btn btn-success" value="ОК"/>
+                        <a asp-action="Index" asp-controller="Transit"
+                           class="btn btn-danger">Отмена</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
