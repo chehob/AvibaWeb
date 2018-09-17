@@ -1,0 +1,27 @@
+﻿@using AvibaWeb.DomainModels
+@model TransitAccountDebit
+
+<div class="box col-md-10">
+    <div class="box-inner" style="margin-top:-10px;">
+        <div class="box-header well" data-original-title="">
+            <h2><i class="glyphicon glyphicon-random"></i>Зачислить на счет</h2>
+        </div>
+        <div class="box-content">
+            <form asp-controller="Transit" asp-action="Debit" method="post">
+                <div class="row">
+                    @Html.LabelFor(m => m.Amount, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        <input asp-for="Amount" class="form-control" value="" />
+                    </div>
+                </div>
+                @Html.ValidationSummary("", new { @class = "text-danger" })
+                <div class="row">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" class="btn btn-success" value="ОК" />
+                        <a asp-action="Index" asp-controller="Transit"
+                           class="btn btn-danger">Отмена</a>
+                    </div>
+                </div>
+            </form></div></div></div>
+
+

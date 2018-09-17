@@ -1,0 +1,23 @@
+﻿@using AvibaWeb.ViewModels.TransitViewModels
+@model TransitAccountViewModel
+
+<div class="ch-container">
+    <div class="row">
+
+        </ul>
+
+    </div>
+</div>
+</div>
+<!--/span-->
+<!-- left menu ends -->
+</div>
+<div class="box col-md-10">
+
+    <a asp-action="Debit" asp-controller="Transit"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-default">Зачислить на счет</a>
+    <a asp-action="Credit" asp-controller="Transit"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-default">Списать со счета</a>
+    <div id="results"></div>

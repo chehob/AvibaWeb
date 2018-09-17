@@ -1,0 +1,78 @@
+﻿@using AvibaWeb.DomainModels
+@using AvibaWeb.Models
+@using AvibaWeb.Infrastructure
+@model IQueryable<AvibaWeb.DomainModels.LoanGroup>
+
+<div class="box col-md-10">
+    <div class="box-inner" style="margin-top:-10px;">
+        <div class="box-header well" data-original-title="">
+            <h2><i class="glyphicon glyphicon-user"></i> Группы</h2>
+        </div>
+        <div class="box-content">
+            <div class="alert" style="text-align:right;">
+                <a class="btn btn-success" data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results" href=@Url.Action("CreateLoanGroup","Admin")>
+                    <i class="glyphicon glyphicon-plus icon-white"></i>
+                    Создать
+                </a>
+            </div>
+
+            <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+                <thead>
+                    <tr>
+                        <th>Группа</th>
+                        <th>Контрагенты</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="3" class="text-center">Нет подразделений</td></tr>
+                    }
+                    else
+                    {
+                        foreach (var group in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @group.Description
+                                @if (group.IsActive)
+                                {
+                                    <span class="label-success label label-default">Активно</span>
+                                }
+                                else
+                                {
+                                    <span class="label-default label label-danger">Не активно</span>
+                                }
+                            </td>
+                            <td>
+                                @if (group.Counterparties == null || group.Counterparties.Count == 0)
+                                {
+                                    @: Нет контрагентов
+                                }
+                                else
+                                {
+                                    <p>
+                                        @string.Join(", ", group.Counterparties.Select(с => с.Name))
+                                    </p>
+                                }
+                            </td>
+                            <td>
+                                <a class="btn btn-info" data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results" href=@Url.Action("EditLoanGroup","Admin", new{id = group.LoanGroupId})>
+                                    <i class="glyphicon glyphicon-edit icon-white"></i>
+                                    Изменить
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</div>
+
+
