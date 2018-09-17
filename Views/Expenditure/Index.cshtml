@@ -25,4 +25,7 @@
     <a asp-action="CreateExpenditure" asp-controller="Expenditure"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-default">Создать операцию</a>     
+    <a asp-action="Debit" asp-controller="Transit"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-default">Перечислить на транзитный счет</a>
 <div id="results"></div>
