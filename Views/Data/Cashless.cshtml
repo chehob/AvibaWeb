@@ -7,16 +7,16 @@
     <div class="box col-md-12">
         <div class="box-inner">
             <div class="box-header well" data-original-title="">
-                <h2>Импорт данных по безналичному расчету</h2>
+                <h2>Импорт данных из банка</h2>
             </div>
             <div class="box-content">
                 <p>Выберите файлы для загрузки:</p>
-                <input type="file" name="files" id="files" multiple
+                <input class = "btn btn-primary" type="file" name="files" id="files" multiple
                        onchange="javascript:updateUploadList()" />
                 <br />Выбранные файлы:
                 <div id="fileList"></div>
-                <input disabled type="button" id="uploadBtn" value="Загрузить" data-ajax-update="uploadResults" />
-                <progress max="100" value="0" id="uploadProgress"></progress>   
+                <input class = "btn btn-primary" disabled type="button" id="uploadBtn" value="Загрузить" data-ajax-update="uploadResults" />
+                   
                 <div id="uploadResults"></div>
             </div>
         </div>
