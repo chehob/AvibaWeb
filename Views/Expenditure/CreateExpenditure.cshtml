@@ -29,19 +29,19 @@
     <div class="form-group row">
         @Html.LabelFor(m => m.DeskGroups, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.DropDownListFor(m => Model.SelectedDeskGroupId, Model.DeskGroups)
+            @Html.DropDownListFor(m => Model.SelectedDeskGroupId, Model.DeskGroups, new { @class="form-control" })
         </div>
     </div>
 	<div class="form-group row">
         @Html.LabelFor(m => m.Types, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.DropDownListFor(m => Model.SelectedTypeId, Model.Types)
+            @Html.DropDownListFor(m => Model.SelectedTypeId, Model.Types, new { @class="form-control" })
         </div>
     </div>
 	<div class="form-group row">
         @Html.LabelFor(m => m.Objects, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.DropDownListFor(m => Model.SelectedObjectId, Model.Objects)
+            @Html.DropDownListFor(m => Model.SelectedObjectId, Model.Objects, new { @class="form-control" })
         </div>
     </div>
     @Html.ValidationSummary("", new { @class = "text-danger" })
