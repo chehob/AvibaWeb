@@ -96,3 +96,8 @@ $(document).on('click', '.hdr-minimize', function (e) {
     else $('i', $(this)).removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
     $target.slideToggle();
 });
+
+function updateBalance(ajaxContext) {
+    const $div = $("#dvUserBalance");
+    $div.load($div.data("url"));
+}

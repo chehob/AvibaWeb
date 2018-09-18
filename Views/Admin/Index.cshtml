@@ -1,56 +1,34 @@
-﻿
-
-@{
-    ViewBag.Title = "Index";
-}
-
-<div class="ch-container">
-    <div class="row">
-	
-	
-                        </li>
-							
-                    </ul>	
-                    
-                </div>
-            </div>
-        </div>
-        <!--/span-->
-        <!-- left menu ends -->
-		
-	<div>
-	<p class="btn-group">
-	<a asp-action="Users" asp-controller="Admin" 
-	   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-	   class="btn btn-primary">Пользователи</a>
-	<a asp-action="Roles" asp-controller="Admin"
-	   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-	   class="btn btn-primary">Роли</a>
+﻿<p class="btn-group">
+    <a asp-action="Users" asp-controller="Admin" 
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-primary">Пользователи</a>
+    <a asp-action="Roles" asp-controller="Admin"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-primary">Роли</a>
     <a asp-action="Desks" asp-controller="Admin"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary">Пульты</a>
-	<a asp-action="DeskGroups" asp-controller="Admin"
-	   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-	   class="btn btn-primary">Подразделения</a>
-	<a asp-action="ExpenditureObjects" asp-controller="Admin"
-	   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-	   class="btn btn-primary">Статьи расхода</a>
+    <a asp-action="DeskGroups" asp-controller="Admin"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-primary">Подразделения</a>
+    <a asp-action="ExpenditureObjects" asp-controller="Admin"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-primary">Статьи расхода</a>
     <a asp-action="ExpenditureTypes" asp-controller="Admin"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary">Типы операций</a>
-	<a asp-action="Counterparties" asp-controller="Admin"
-	   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-	   class="btn btn-primary">Контрагенты</a>
-	<a asp-action="CounterpartyTypes" asp-controller="Admin"
-	   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-	   class="btn btn-primary">Типы контрагентов</a>
-	<a asp-action="Organizations" asp-controller="Admin"
-	    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-	    class="btn btn-primary">Организации</a>
-	<a asp-action="LoanGroups" asp-controller="Admin"
-	    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-	    class="btn btn-primary">Группы</a>
-	</p>
-	</div>
-    <div id="results"></div>
+    <a asp-action="Counterparties" asp-controller="Admin"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-primary">Контрагенты</a>
+    <a asp-action="CounterpartyTypes" asp-controller="Admin"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-primary">Типы контрагентов</a>
+    <a asp-action="Organizations" asp-controller="Admin"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-primary">Организации</a>
+    <a asp-action="LoanGroups" asp-controller="Admin"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-primary">Группы</a>
+</p>
 
+<div id="results"></div>

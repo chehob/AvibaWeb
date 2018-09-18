@@ -7,7 +7,8 @@
             <h2><i class="glyphicon glyphicon-random"></i>Зачислить на счет</h2>
         </div>
         <div class="box-content">
-            <form asp-controller="Transit" asp-action="Debit" method="post">
+            <form asp-controller="Transit" asp-action="Debit"
+                data-ajax="true" data-ajax-method="post" data-ajax-mode="replace" data-ajax-update="#contentResults">
                 <div class="row">
                     @Html.LabelFor(m => m.Amount, new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
@@ -19,6 +20,7 @@
                     <div class="col-md-offset-2 col-md-10">
                         <input type="submit" class="btn btn-success" value="ОК" />
                         <a asp-action="Index" asp-controller="Transit"
+                           data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
                            class="btn btn-danger">Отмена</a>
                     </div>
                 </div>

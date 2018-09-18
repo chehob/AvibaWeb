@@ -1,26 +1,6 @@
 ﻿@using AvibaWeb.ViewModels.AccountViewModels
-@model AvibaWeb.ViewModels.AccountViewModels.ProfileViewModel
-@{
-    ViewData["Title"] = "Profile";
-}
+@model ProfileViewModel
 
-<div class="ch-container">
-    <div class="row">
-
-
-        </li>
-        <li class="nav-header hidden-md">Раздел</li>
-        <li>
-
-        </li>
-
-        </ul>
-    </div>
-</div>
-</div>
-<!--/span-->
-<!-- left menu ends -->
-</div>
 <div class="box col-md-10">
     <form asp-controller="Account" asp-action="UpdateProfile" enctype="multipart/form-data"
           data-ajax-update="#results" data-ajax="true" data-ajax-method="post">
@@ -32,8 +12,8 @@
     </form>
     <a href="https://pushall.ru/?fs=4538&key=6ffbd668aba3088393123f23df2597a4">Подписаться на PushAll</a>
     <div id="results"></div>
+</div>
 
-<script src="~/scripts/image-ui.js"></script>
 <style>
     #photoDiv {
         background-image: url('@Url.Action("UserPhoto", "Account")');

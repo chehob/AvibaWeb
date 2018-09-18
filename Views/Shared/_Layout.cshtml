@@ -48,94 +48,94 @@
     <!--<script src="~/Scripts/jquery-1.10.2.js"></script>-->
     <script src="~/lib/jquery-ajax-unobtrusive/src/jquery.unobtrusive-ajax-file-upload.js"></script>
     <script src="~/scripts/jquery.multi-select.js"></script>
-	<script src="~/scripts/gui_utils.js"></script>
-	<script src="~/lib/signalr/signalr.js"></script>
+    <script src="~/scripts/gui_utils.js"></script>
+    <script src="~/lib/signalr/signalr.js"></script>
     <script src="~/lib/signalr/signalr-protocol-msgpack.js"></script>
     <script src="~/scripts/messaging.js"></script>
+    <script src="~/scripts/image-ui.js"></script>
 </head>
 <body style="position: relative;">
- <!-- topbar starts -->
-    <div class="navbar navbar-default" role="navigation">
- 
-        <div class="navbar-inner">
-            <button type="button" class="navbar-toggle pull-left animated flip">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="@Url.Action("Index", "Home")"><img src="~/img/logo20.png" style="width:155px; height:40px; margin-top:-10px;" alt="AVIBA-MS"></img></a>
-            <!-- user dropdown starts -->
-            @Html.Partial("_LoginPartial")
-            <!-- user dropdown ends -->
+<!-- topbar starts -->
+<div class="navbar navbar-default" role="navigation">
 
- 
-            <!-- theme selector ends -->
-<!--
-            <ul class="collapse navbar-collapse nav navbar-nav top-menu">
-                
-                <li class="dropdown">
-                    <a href="#" data-toggle="dropdown"><i class="glyphicon glyphicon glyphicon-th-large"></i> МЕНЮ <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="@Url.Action("Index", "Collection")" class="main"><span class="outer"><span class="inner content">Инкассация</span></span></a></li>
-                        <li class="divider"></li>
-                        <li><a href="@Url.Action("Index", "Report")" class="main"><span class="outer"><span class="inner users">Отчеты</span></span></a></li>
-                        
-                        <li class="divider"></li>
-                        <li><a href="@Url.Action("Index", "Admin")" class="main"><span class="outer"><span class="inner users">Админка</span></span></a></li>
+    <div class="navbar-inner">
+        <button type="button" class="navbar-toggle pull-left animated flip">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="@Url.Action("Index", "Home")"><img src="~/img/logo20.png" style="width:155px; height:40px; margin-top:-10px;" alt="AVIBA-MS"></img></a>
+        <!-- user dropdown starts -->
+        @Html.Partial("_LoginPartial")
+        <!-- user dropdown ends -->
+        <!-- theme selector ends -->
+        <!--
+        <ul class="collapse navbar-collapse nav navbar-nav top-menu">
+
+            <li class="dropdown">
+                <a href="#" data-toggle="dropdown"><i class="glyphicon glyphicon glyphicon-th-large"></i> МЕНЮ <span
+                                                                                                                   class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="@Url.Action("Index", "Collection")" class="main"><span class="outer"><span class="inner content">Инкассация</span></span></a></li>
+                    <li class="divider"></li>
+                    <li><a href="@Url.Action("Index", "Report")" class="main"><span class="outer"><span class="inner users">Отчеты</span></span></a></li>
+
+                    <li class="divider"></li>
+                    <li><a href="@Url.Action("Index", "Admin")" class="main"><span class="outer"><span class="inner users">Админка</span></span></a></li>
+                </ul>
+            </li>
+        </ul>
+        -->
+    </div>
+</div>
+<!-- left menu starts -->
+<div class="col-md-2">
+    <div class="sidebar-nav">
+        <div class="nav-canvas">
+
+            <ul class="nav nav-pills nav-stacked main-menu">
+                <li class="nav-header">Меню</li>
+                <li>
+                    <ul class="nav nav-pills nav-stacked">
+                        <li><a asp-action="Index" asp-controller="Collection" 
+                               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults" data-ajax-success="updateBalance"
+                               class="main"><i class="glyphicon glyphicon-share"></i> Инкассация</a></li>
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+                        {
+                            <li><a asp-action="Index" asp-controller="Expenditure" 
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-circle-arrow-up"></i> Расходы</a></li>
+                            <li><a asp-action="Index" asp-controller="Report" 
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-list-alt"></i> Отчеты</a></li>
+                            <li><a asp-action="Index" asp-controller="Data" 
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-download"></i> Загрузка данных</a></li>
+                            <li><a asp-action="Index" asp-controller="Transit" 
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-list-alt"></i> Транзитный счет</a></li>
+                        }
+                        @if (User.IsInRole("Administrators"))
+                        {
+                            <li><a asp-action="Index" asp-controller="Admin" 
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-cog"></i> Админка</a></li>
+                        }
+                        <li><a asp-action="Index" asp-controller="Directory" 
+                               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                               class="main"><i class="glyphicon glyphicon-eye-open"></i> Справочники</a></li>
                     </ul>
                 </li>
             </ul>
--->
         </div>
     </div>
-<!-- left menu starts -->
-        <div class="col-md-2">
-            <div class="sidebar-nav">
-                <div class="nav-canvas">
-
-                    <ul class="nav nav-pills nav-stacked main-menu">
-                        <li class="nav-header">Меню</li>
-						<li>
-                            
-                            <ul class="nav nav-pills nav-stacked">
-                                <li><a href="@Url.Action("Index", "Collection")" class="main"><i class="glyphicon glyphicon-share"></i> Инкассация</a></li>
-								@if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
-								{
-								<li><a href="@Url.Action("Index", "Expenditure")" class="main"><i class="glyphicon glyphicon-circle-arrow-up"></i> Расходы</a></li>
-                                <li><a href="@Url.Action("Index", "Report")" class="main"><i class="glyphicon glyphicon-list-alt"></i> Отчеты</a></li>
-								<li><a asp-action="Index" asp-controller="Data" class="main"><i class="glyphicon glyphicon-download"></i> Загрузка данных</a></li>
-								<li><a asp-action="Index" asp-controller="Transit" class="main"><i class="glyphicon glyphicon-list-alt"></i> Транзитный счет</a></li>
-								}
-								@if (User.IsInRole("Administrators"))
-								{
-                                <li><a href="@Url.Action("Index", "Admin")" class="main"><i class="glyphicon glyphicon-cog"></i> Админка</a></li>
-								}
-								<li><a href="@Url.Action("Index", "Directory")" class="main"><i class="glyphicon glyphicon-eye-open"></i> Справочники</a></li>
-							</ul>
-
-
-    @RenderBody()
 </div>
-
+<div id="contentResults"></div>
+@RenderBody()
 
 <div class="mWaiting"></div>
 </body>
-
-<script>
-$body = $("body");
-
-$(document).on({
-    ajaxStart: function() { 
-		showLoader = setTimeout("$('.mWaiting').fadeIn(500);", 1000);
-	},
-    ajaxStop: function() { 
-		clearTimeout(showLoader);
-		$('.mWaiting').fadeOut(500);
-	}
-});
-</script>
 
 @if (IsSectionDefined("Scripts"))
 {
@@ -143,3 +143,17 @@ $(document).on({
 }
 
 </html>
+
+<script>
+    $body = $("body");
+
+    $(document).on({
+        ajaxStart: function() { 
+            showLoader = setTimeout("$('.mWaiting').fadeIn(500);", 1000);
+        },
+        ajaxStop: function() { 
+            clearTimeout(showLoader);
+            $('.mWaiting').fadeOut(500);
+        }
+    });
+</script>

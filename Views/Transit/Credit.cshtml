@@ -1,6 +1,5 @@
 ﻿@using AvibaWeb.DomainModels
-@using AvibaWeb.ViewModels.TransitViewModels
-@model TransitAccountCreditViewModel
+@model TransitAccountCredit
 
 <div class="box col-md-10">
     <div class="box-inner" style="margin-top:-10px;">
@@ -8,23 +7,20 @@
             <h2><i class="glyphicon glyphicon-random"></i>Зачислить на группу</h2>
         </div>
         <div class="box-content">
-            <form asp-controller="Transit" asp-action="Credit" method="post">
+            <form asp-controller="Transit" asp-action="Credit" 
+                data-ajax="true" data-ajax-method="post" data-ajax-mode="replace" data-ajax-update="#contentResults">
+                @Html.HiddenFor(m => m.LoanGroupId)
+
                 <div class="row">
-                    @Html.LabelFor(m => m.LoanGroups, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.AccountAmount, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        @Html.DropDownListFor(m => Model.SelectedGroupId, Model.LoanGroups, new { @class="form-control" })
+                        <input asp-for="@Model.AccountAmount" class="form-control" value=""/>
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.Credit.AccountAmount, new {@class = "col-md-2 control-label"})
+                    @Html.LabelFor(m => m.AddAmount, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        <input asp-for="@Model.Credit.AccountAmount" class="form-control" value=""/>
-                    </div>
-                </div>
-                <div class="row">
-                    @Html.LabelFor(m => m.Credit.AddAmount, new {@class = "col-md-2 control-label"})
-                    <div class="col-md-10">
-                        <input asp-for="@Model.Credit.AddAmount" class="form-control" value=""/>
+                        <input asp-for="@Model.AddAmount" class="form-control" value=""/>
                     </div>
                 </div>
                 @Html.ValidationSummary("", new {@class = "text-danger"})
@@ -32,6 +28,7 @@
                     <div class="col-md-offset-2 col-md-10">
                         <input type="submit" class="btn btn-success" value="ОК"/>
                         <a asp-action="Index" asp-controller="Transit"
+                           data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
                            class="btn btn-danger">Отмена</a>
                     </div>
                 </div>

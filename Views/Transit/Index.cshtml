@@ -1,20 +1,50 @@
 ﻿@using AvibaWeb.ViewModels.TransitViewModels
 @model TransitAccountViewModel
 
-<div class="ch-container">
-    <div class="row">
+<div class="box col-md-10">
+    <div class="box-inner" style="margin-top:-10px;">
+        <div class="box-header well" data-original-title="">
+            <h2><i class="glyphicon glyphicon-user"></i> Группы</h2>
+        </div>
+        <div class="box-content">
+            <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+                <thead>
+                <tr>
+                    <th>Группа</th>
+                    <th>Баланс</th>
+                    <th>Действия</th>
+                </tr>
+                </thead>
+                <tbody>
 
-        </ul>
-
+                @if (!Model.LoanGroups.Any())
+                {
+                    <tr><td colspan="3" class="text-center">Нет групп</td></tr>
+                }
+                else
+                {
+                    foreach (var group in Model.LoanGroups)
+                    {
+                        <tr>
+                            <td>
+                                @group.Description
+                            </td>
+                            <td>
+                                @group.Balance
+                            </td>
+                            <td>
+                                <a asp-action="Credit" asp-controller="Transit" asp-route-id="@group.LoanGroupId"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="btn btn-default">
+                                    <i class="glyphicon glyphicon-edit icon-white"></i>
+                                    Списать со счета
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
-</div>
-<!--/span-->
-<!-- left menu ends -->
-</div>
-<div class="box col-md-10">
-
-    <a asp-action="Credit" asp-controller="Transit"
-       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-default">Списать со счета</a>
-    <div id="results"></div>
