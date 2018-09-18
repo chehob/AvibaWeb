@@ -12,7 +12,8 @@
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a asp-action="Profile" asp-controller="Account">Профиль</a></li>
+                    <li><a asp-action="Profile" asp-controller="Account"
+                           data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults">Профиль</a></li>
                     <li class="divider"></li>
                     <li><a href="javascript:document.getElementById('logoutForm').submit()">Выход</a></li>
                 </ul>
