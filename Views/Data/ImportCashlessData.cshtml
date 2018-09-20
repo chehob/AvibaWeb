@@ -35,71 +35,73 @@
                  <div id="importTable" class="box-content">
                          @foreach (var counterpartyGroup in importData.CounterpartyGroups)
                          {
-                             <div>
-                                 <input type="hidden" value="@counterpartyGroup.ITN" />
-                                 <input type="hidden" value="@counterpartyGroup.IsUserITN.ToString()" />
+                     <div>
+                         <input type="hidden" value="@counterpartyGroup.ITN" />
+                         <input type="hidden" value="@counterpartyGroup.Name" />
+                         <input type="hidden" value="@counterpartyGroup.IsUserITN.ToString()" />
 
-                                 <div class="box-inner">
-                                     <div class="box-header well hdr-minimize" style="cursor: pointer;">
-                                         <h2>
-                                             @counterpartyGroup.Name
-                                         </h2>
-                                     </div>
-                                     <div class="box-content">
-                                         @if (!counterpartyGroup.IsKnownCounterparty)
-                                         {
-                                             <div id="@counterpartyGroup.MissingCounterparty.ITN">
-                                                 <div class="MissingCounterpartyFlag"></div>
-                                                 <form asp-action="AddMissingCounterparty" enctype="multipart/form-data"
-                                                       data-ajax="true" data-ajax-method="POST"
-                                                       data-ajax-update="#@counterpartyGroup.MissingCounterparty.ITN" data-ajax-mode="replace">
-                                                     <!-- данные по отсутствующему контрагенту для добавления в БД -->
-                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.ITN" type="hidden"/>
-                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.Name" type="hidden"/>
-                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.CorrespondentAccount" type="hidden"/>
-                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.KPP" type="hidden"/>
-                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.BIK" type="hidden"/>
-                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.OGRN" type="hidden"/>
-                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.Phone" type="hidden"/>
-                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.Address" type="hidden"/>
-                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.Email" type="hidden"/>
-                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.BankName" type="hidden"/>
-                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.BankAccount" type="hidden"/>
-                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.ManagementName" type="hidden"/>
-                                                     <input asp-for="@counterpartyGroup.MissingCounterparty.ManagementPosition" type="hidden"/>
-
-                                                     <label asp-for="@counterpartyGroup.MissingCounterparty.TypeId"></label>
-                                                     <select asp-for="@counterpartyGroup.MissingCounterparty.TypeId" asp-items="@Model.CounterpartyTypes" class="form-control"></select>
-                                                     <input type="submit" value="Добавить"/>
-                                                 </form>
-                                             </div>
-                                         }
-                                         <table class="table table-striped">
-                                             <thead>
-                                             <tr>
-                                                 <th>Дата операции</th>
-                                                 <th>Сумма</th>
-                                                 <th>Причина</th>
-                                             </tr>
-                                             </thead>
-                                             <tbody>
-                                             @foreach (var record in counterpartyGroup.Records)
-                                             {
-                                                 <tr>
-                                                     <td>
-                                                         <input type="hidden" value="@record.Date.ToString("O")" />
-                                                         <input type="hidden" value="@record.PayeeITN" />
-                                                         @record.Date.ToString("d")
-                                                     </td>
-                                                     <td>@record.Amount</td>
-                                                     <td>@record.PaymentDescription</td>
-                                                 </tr>
-                                             }
-                                             </tbody>
-                                         </table>                                         
-                                     </div>
-                                 </div>
+                         <div class="box-inner">
+                             <div class="box-header well hdr-minimize" style="cursor: pointer;">
+                                 <h2>
+                                     @counterpartyGroup.Name
+                                 </h2>
                              </div>
+                             <div class="box-content">
+                                 @if (!counterpartyGroup.IsKnownCounterparty)
+                                 {
+                                     <div id="@counterpartyGroup.MissingCounterparty.ITN">
+                                         <div class="MissingCounterpartyFlag"></div>
+                                         <form asp-action="AddMissingCounterparty" enctype="multipart/form-data"
+                                               data-ajax="true" data-ajax-method="POST"
+                                               data-ajax-update="#@counterpartyGroup.MissingCounterparty.ITN" data-ajax-mode="replace">
+                                             <!-- данные по отсутствующему контрагенту для добавления в БД -->
+                                             <input asp-for="@counterpartyGroup.MissingCounterparty.ITN" type="hidden" />
+                                             <input asp-for="@counterpartyGroup.MissingCounterparty.Name" type="hidden" />
+                                             <input asp-for="@counterpartyGroup.MissingCounterparty.CorrespondentAccount" type="hidden" />
+                                             <input asp-for="@counterpartyGroup.MissingCounterparty.KPP" type="hidden" />
+                                             <input asp-for="@counterpartyGroup.MissingCounterparty.BIK" type="hidden" />
+                                             <input asp-for="@counterpartyGroup.MissingCounterparty.OGRN" type="hidden" />
+                                             <input asp-for="@counterpartyGroup.MissingCounterparty.Phone" type="hidden" />
+                                             <input asp-for="@counterpartyGroup.MissingCounterparty.Address" type="hidden" />
+                                             <input asp-for="@counterpartyGroup.MissingCounterparty.Email" type="hidden" />
+                                             <input asp-for="@counterpartyGroup.MissingCounterparty.BankName" type="hidden" />
+                                             <input asp-for="@counterpartyGroup.MissingCounterparty.BankAccount" type="hidden" />
+                                             <input asp-for="@counterpartyGroup.MissingCounterparty.ManagementName" type="hidden" />
+                                             <input asp-for="@counterpartyGroup.MissingCounterparty.ManagementPosition" type="hidden" />
+
+                                             <label asp-for="@counterpartyGroup.MissingCounterparty.TypeId"></label>
+                                             <select asp-for="@counterpartyGroup.MissingCounterparty.TypeId" asp-items="@Model.CounterpartyTypes" class="form-control"></select>
+                                             <input type="submit" value="Добавить" />
+                                         </form>
+                                     </div>
+                                 }
+                                 <table class="table table-striped">
+                                     <thead>
+                                         <tr>
+                                             <th>Дата операции</th>
+                                             <th>Сумма</th>
+                                             <th>Причина</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody>
+                                         @foreach (var record in counterpartyGroup.Records)
+                                         {
+                                             <tr>
+                                                 <td>
+                                                     <input type="hidden" value="@record.Date.ToString("O")" />
+                                                     <input type="hidden" value="@record.Number" />
+                                                     <input type="hidden" value="@record.PayeeITN" />
+                                                     @record.Date.ToString("d")
+                                                 </td>
+                                                 <td>@record.Amount</td>
+                                                 <td>@record.PaymentDescription</td>
+                                             </tr>
+                                         }
+                                     </tbody>
+                                 </table>
+                             </div>
+                         </div>
+                     </div>
                          }
                  </div>
                  <div>
@@ -129,9 +131,10 @@
             const firstTd = $(this).find("td");
             const record = {
                 Date: new Date(firstInput.val()),
+                Number: firstInput.next().val(),
                 Amount: firstTd.next().html(),
                 PaymentDescription: firstTd.next().next().html(),
-                PayeeITN: firstInput.next().val()
+                PayeeITN: firstInput.next().next().val()
             };
             records.push(record);
         });
@@ -139,7 +142,8 @@
         const counterparty = {
             Records: records,
             ITN: ITN.val(),
-            IsUserITN: ITN.next().val()
+            Name: ITN.next().val(),
+            IsUserITN: ITN.next().next().val(),
         };
         counterpartyGroups.push(counterparty);
     });
@@ -150,8 +154,6 @@
             AccountNumber: $("#importDestination > div").first().next().find("b").html()
         }
     };
-
-    console.log(JSON.stringify(sendJsonData));
 
     $("#saveOperations").click(function (e) {
         e.preventDefault();
