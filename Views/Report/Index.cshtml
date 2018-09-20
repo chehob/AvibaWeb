@@ -1,7 +1,10 @@
 ﻿ <p class="btn-group">
-    <a asp-action="OnlineInfo" asp-controller="Report"
-       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary">Наличные</a>    
+     <a asp-action="OnlineInfo" asp-controller="Report"
+        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+        class="btn btn-primary">Наличные</a>
+     <a asp-action="Cashless" asp-controller="Report"
+        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+        class="btn btn-primary">Безналичный расчет</a>
  </p>
 
  <div id="results"></div>

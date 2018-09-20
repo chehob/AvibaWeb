@@ -1,0 +1,25 @@
+﻿@using AvibaWeb.ViewModels.ReportViewModels
+@model List<CashlessViewModel>
+
+<div class="box col-md-10">
+    @foreach (var counterparty in Model)
+    {
+        <div class="box col-md-6">
+            <div class="box-inner">
+                <div class="box-header well" data-original-title="" style="overflow: hidden;">
+                    <h2><i class="glyphicon glyphicon-user"></i> @counterparty.Name</h2>
+                </div>
+                <div class="box-content">
+                    @foreach (var accountBalance in counterparty.AccountBalances)
+                    {
+                        <p>@accountBalance.Account</p>
+                        <p>@accountBalance.Balance</p>
+                        <p>@accountBalance.Debit</p>
+                        <p>@accountBalance.Credit</p>
+                        <p>@accountBalance.BalanceEnd</p>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
