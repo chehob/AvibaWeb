@@ -11,6 +11,7 @@
             <form asp-controller="Admin" asp-action="EditOrganization"
                   data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
                 @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.OrganizationId)
 
                 <div class="row">
                     @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
