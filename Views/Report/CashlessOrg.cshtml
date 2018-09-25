@@ -12,8 +12,7 @@
                     <div class="box-content">
                         @foreach (var accountBalance in org.AccountBalances)
                         {
-                            <p><b>Счет: @accountBalance.Account</b></p>
-                            <p>Банк: @accountBalance.BankName</p>
+                            <p><b>Счет: @accountBalance.Account</b> @accountBalance.BankName</p>
                             <p>Баланс: @accountBalance.Balance</p>
                             <!--
         <p>Приход: @accountBalance.Debit</p>
