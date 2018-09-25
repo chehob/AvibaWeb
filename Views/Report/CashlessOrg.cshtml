@@ -1,7 +1,8 @@
 ﻿@using AvibaWeb.ViewModels.ReportViewModels
-@model List<OrganizationCashlessViewModel>
+@model OrganizationCashlessViewModel
 
     <div class="box col-md-10">
+        <p>Баланс: @Model.Balance</p>
         @foreach (var org in Model)
         {
             <div class="box col-md-6">
@@ -24,5 +25,6 @@
                     </div>
                 </div>
             </div>
-        }
-    </div>
+        </div>
+    }
+</div>
