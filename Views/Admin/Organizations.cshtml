@@ -59,7 +59,7 @@
                                         @foreach (var account in org.Accounts)
                                         {
                                             <li>
-                                                <div>@account.Description</div>
+                                                <div>@account.Description (@account.BankName)</div>
                                                 <div>@account.Balance</div>
                                                 <a asp-action="EditFinancialAccount" asp-controller="Admin" asp-route-id="@account.FinancialAccountId"
                                                    data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
