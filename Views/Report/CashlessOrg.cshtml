@@ -2,7 +2,7 @@
 @model OrganizationCashlessViewModel
 
     <div class="box col-md-10">
-        <p>Баланс: @Model.Balance</p>
+        <p><span class="white btn-lg btn-success"> <b>@Model.Balance</b></span></p>
         @foreach (var org in Model.Organizations)
         {
             <div class="box col-md-6">
@@ -15,7 +15,7 @@
                         @foreach (var accountBalance in org.AccountBalances)
                         {
                             <p><b>Счет: @accountBalance.Account</b> @accountBalance.BankName</p>
-                            <p>Баланс: @accountBalance.Balance</p>
+                            <p>Остаток: @accountBalance.Balance</p>
                             <!--
             <p>Приход: @accountBalance.Debit</p>
             <p>Расход: @accountBalance.Credit</p>
