@@ -3,7 +3,7 @@
 
     <div class="box col-md-10">
         <p>Баланс: @Model.Balance</p>
-        @foreach (var org in Model)
+        @foreach (var org in Model.Organizations)
         {
             <div class="box col-md-6">
                 <div class="box-inner">
@@ -25,6 +25,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>
