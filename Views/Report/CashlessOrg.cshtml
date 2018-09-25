@@ -2,7 +2,16 @@
 @model OrganizationCashlessViewModel
 
     <div class="box col-md-10">
-        <p><span class="white btn-lg btn-success"> <b>@Model.Balance</b></span></p>
+         <div class="row">
+        <div class="col-md-3 col-sm-3 col-xs-6">
+        <span data-toggle="tooltip" title="Всего" class="well top-block">
+            <i class="glyphicon glyphicon-globe yellow"></i>
+
+            <div></div>
+            <div class="yellow">@Model.Balance</div>
+            
+        </span>
+    </div></div>
         @foreach (var org in Model.Organizations)
         {
             <div class="box col-md-6">
