@@ -9,6 +9,7 @@
                     <div class="box-header well" data-original-title="" style="overflow: hidden;">
                         <h2><i class="glyphicon glyphicon-user"></i> @org.Name</h2>
                     </div>
+                    <p>Баланс: @org.Balance</p>
                     <div class="box-content">
                         @foreach (var accountBalance in org.AccountBalances)
                         {
@@ -16,10 +17,10 @@
                             <p>Банк: @accountBalance.BankName</p>
                             <p>Баланс: @accountBalance.Balance</p>
                             <!--
-        <p>Приход: @accountBalance.Debit</p>
-        <p>Расход: @accountBalance.Credit</p>
-        <p>Баланс (конец дня): @accountBalance.BalanceEnd</p>
-        -->
+            <p>Приход: @accountBalance.Debit</p>
+            <p>Расход: @accountBalance.Credit</p>
+            <p>Баланс (конец дня): @accountBalance.BalanceEnd</p>
+            -->
                         }
                     </div>
                 </div>
