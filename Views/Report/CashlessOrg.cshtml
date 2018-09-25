@@ -1,30 +1,29 @@
 ﻿@using AvibaWeb.ViewModels.ReportViewModels
 @model OrganizationCashlessViewModel
 
-    <div class="box col-md-10">
-        <p>Баланс: @Model.Balance</p>
-        @foreach (var org in Model.Organizations)
-        {
-            <div class="box col-md-6">
-                <div class="box-inner">
-                    <div class="box-header well" data-original-title="" style="overflow: hidden;">
-                        <h2><i class="glyphicon glyphicon-user"></i> @org.Name</h2>
-                        <div class="text-right green">@org.Balance</div>
-                    </div>
-                    <div class="box-content">
-                        @foreach (var accountBalance in org.AccountBalances)
-                        {
-                            <p><b>Счет: @accountBalance.Account</b> @accountBalance.BankName</p>
-                            <p>Баланс: @accountBalance.Balance</p>
-                            <!--
-            <p>Приход: @accountBalance.Debit</p>
-            <p>Расход: @accountBalance.Credit</p>
-            <p>Баланс (конец дня): @accountBalance.BalanceEnd</p>
-            -->
-                        }
-                    </div>
+<div class="box col-md-10">
+    <p>Баланс: @Model.Balance</p>
+    @foreach (var org in Model.Organizations)
+    {
+        <div class="box col-md-6">
+            <div class="box-inner">
+                <div class="box-header well" data-original-title="" style="overflow: hidden;">
+                    <h2><i class="glyphicon glyphicon-user"></i> @org.Name</h2>
+                    <div class="text-right green">@org.Balance</div>
+                </div>
+                <div class="box-content">
+                    @foreach (var accountBalance in org.AccountBalances)
+                    {
+                        <p><b>Счет: @accountBalance.Account</b> @accountBalance.BankName</p>
+                        <p>Баланс: @accountBalance.Balance</p>
+                        <!--
+        <p>Приход: @accountBalance.Debit</p>
+        <p>Расход: @accountBalance.Credit</p>
+        <p>Баланс (конец дня): @accountBalance.BalanceEnd</p>
+        -->
+                    }
                 </div>
             </div>
-        }
-    </div>
+        </div>
+    }
 </div>
