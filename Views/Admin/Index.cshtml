@@ -1,27 +1,27 @@
 ﻿
-<p class="btn-group">
-<a class="btn dropdown-toggle btn-primary" data-toggle="dropdown" href="#">Test <span
-class="caret"></span></a>
+<div class="btn-group">
+<button class="btn dropdown-toggle btn-primary" data-toggle="dropdown">Доступы <span
+class="caret"></span></button>
 <ul class="dropdown-menu">
-<li><a href="#"><i class="glyphicon glyphicon-star"></i> Action</a></li>
-<li><a href="#"><i class="glyphicon glyphicon-tag"></i> Another action</a></li>
-<li><a href="#"><i class="glyphicon glyphicon-download-alt"></i> Something else here</a></li>
-<li class="divider"></li>
-<li><a href="#"><i class="glyphicon glyphicon-tint"></i> Separated link</a></li>
+<li><a asp-action="Users" asp-controller="Admin" 
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class=""><i class="glyphicon glyphicon-user"></i> Пользователи</a></li>
+<li><a asp-action="Roles" asp-controller="Admin"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class=""><i class="glyphicon glyphicon-folder-open"></i> Роли</a></li>
 </ul>
-    <a asp-action="Users" asp-controller="Admin" 
+</div>
+<div class="btn-group">
+<button class="btn dropdown-toggle btn-primary" data-toggle="dropdown" href="#">Структура <span class="caret"></span></button>
+<ul class="dropdown-menu">
+<li><a asp-action="Desks" asp-controller="Admin"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary">Пользователи</a>
-    <a asp-action="Roles" asp-controller="Admin"
+       class=""><i class="glyphicon glyphicon-folder-open"> </i> Пульты</a></li>
+<li><a asp-action="DeskGroups" asp-controller="Admin"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary">Роли</a>
-    <a asp-action="Desks" asp-controller="Admin"
-       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary">Пульты</a>
-    <a asp-action="DeskGroups" asp-controller="Admin"
-       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary">Подразделения</a>
-    <a asp-action="ExpenditureObjects" asp-controller="Admin"
+       class=""><i class="glyphicon glyphicon-folder-open"> </i> Подразделения</a></li>
+</ul>    
+   <a asp-action="ExpenditureObjects" asp-controller="Admin"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary">Статьи расхода</a>
     <a asp-action="ExpenditureTypes" asp-controller="Admin"
@@ -39,6 +39,6 @@ class="caret"></span></a>
     <a asp-action="LoanGroups" asp-controller="Admin"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary">Группы</a>
-</p>
+</div>
 
 <div id="results"></div>
