@@ -98,34 +98,53 @@
                 <li class="nav-header">Меню</li>
                 <li>
                     <ul class="nav nav-pills nav-stacked">
-                        <li><a asp-action="Index" asp-controller="Collection" 
+                        <li>
+                            <a asp-action="Index" asp-controller="Collection"
                                data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults" data-ajax-success="updateBalance"
-                               class="main"><i class="glyphicon glyphicon-share"></i> Инкассация</a></li>
+                               class="main"><i class="glyphicon glyphicon-share"></i>Инкассация</a>
+                        </li>
                         @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
                         {
-                            <li><a asp-action="Index" asp-controller="Expenditure" 
+                            <li>
+                                <a asp-action="Index" asp-controller="Office"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                   class="main"><i class="glyphicon glyphicon-circle-arrow-up"></i> Расходы</a></li>
-                            <li><a asp-action="Index" asp-controller="Report" 
+                                   class="main"><i class="glyphicon glyphicon-circle-arrow-up"></i>Офис</a>
+                            </li>
+                            <li>
+                                <a asp-action="Index" asp-controller="Expenditure"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                   class="main"><i class="glyphicon glyphicon-list-alt"></i> Отчеты</a></li>
-                            <li><a asp-action="Index" asp-controller="Data" 
+                                   class="main"><i class="glyphicon glyphicon-circle-arrow-up"></i>Расходы</a>
+                            </li>
+                            <li>
+                                <a asp-action="Index" asp-controller="Report"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                   class="main"><i class="glyphicon glyphicon-download"></i> Загрузка данных</a></li>
-                            
+                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>Отчеты</a>
+                            </li>
+                            <li>
+                                <a asp-action="Index" asp-controller="Data"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-download"></i>Загрузка данных</a>
+                            </li>
+
                         }
                         @if (User.IsInRole("Administrators"))
                         {
-                            <li><a asp-action="Index" asp-controller="Transit" 
+                            <li>
+                                <a asp-action="Index" asp-controller="Transit"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                   class="main"><i class="glyphicon glyphicon-list-alt"></i> Транзитный счет</a></li>
-                            <li><a asp-action="Index" asp-controller="Admin" 
+                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>Транзитный счет</a>
+                            </li>
+                            <li>
+                                <a asp-action="Index" asp-controller="Admin"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                   class="main"><i class="glyphicon glyphicon-cog"></i> Админка</a></li>
+                                   class="main"><i class="glyphicon glyphicon-cog"></i>Админка</a>
+                            </li>
                         }
-                        <li><a asp-action="Index" asp-controller="Directory" 
+                        <li>
+                            <a asp-action="Index" asp-controller="Directory"
                                data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                               class="main"><i class="glyphicon glyphicon-eye-open"></i> Справочники</a></li>
+                               class="main"><i class="glyphicon glyphicon-eye-open"></i>Справочники</a>
+                        </li>
                     </ul>
                 </li>
             </ul>

@@ -1,0 +1,10 @@
+﻿<div class="btn-group">
+    <a asp-action="CreateDebit" asp-controller="Office"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-primary">Пополнение</a>
+    <a asp-action="IssuedDebits" asp-controller="Office"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-primary">Список операций пополнения</a>
+</div>
+
+<div id="results"></div>
