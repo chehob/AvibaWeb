@@ -16,29 +16,42 @@ class="caret"></span></button>
 <ul class="dropdown-menu">
 <li><a asp-action="Desks" asp-controller="Admin"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class=""><i class="glyphicon glyphicon-folder-open"> </i> Пульты</a></li>
+       class=""><i class="glyphicon glyphicon-list-alt"> </i> Пульты</a></li>
 <li><a asp-action="DeskGroups" asp-controller="Admin"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class=""><i class="glyphicon glyphicon-folder-open"> </i> Подразделения</a></li>
-</ul>    
-   <a asp-action="ExpenditureObjects" asp-controller="Admin"
+</ul>
+</div>
+<div class="btn-group">
+<button class="btn dropdown-toggle btn-primary" data-toggle="dropdown" href="#">Финансы <span class="caret"></span></button>
+<ul class="dropdown-menu">
+<li><a asp-action="ExpenditureObjects" asp-controller="Admin"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary">Статьи расхода</a>
-    <a asp-action="ExpenditureTypes" asp-controller="Admin"
+       class=""><i class="glyphicon glyphicon-list-alt"> </i> Статьи расхода</a></li>
+<li><a asp-action="ExpenditureTypes" asp-controller="Admin"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary">Типы операций</a>
-    <a asp-action="Counterparties" asp-controller="Admin"
+       class=""><i class="glyphicon glyphicon-list-alt"> </i> Типы операций</a></li>
+</ul>
+</div>
+<div class="btn-group">
+<button class="btn dropdown-toggle btn-primary" data-toggle="dropdown" href="#">Фирмы <span class="caret"></span></button>
+<ul class="dropdown-menu">
+<li><a asp-action="Counterparties" asp-controller="Admin"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary">Контрагенты</a>
-    <a asp-action="CounterpartyTypes" asp-controller="Admin"
+       class=""> Контрагенты</a></li>
+<li><a asp-action="CounterpartyTypes" asp-controller="Admin"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary">Типы контрагентов</a>
-    <a asp-action="Organizations" asp-controller="Admin"
+       class=""> Типы контрагентов</a></li>
+<li><a asp-action="Organizations" asp-controller="Admin"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary">Организации</a>
+       class="">Наши организации</a></li>
+</ul>
+</div>
+<div class="btn-group">    
+  
     <a asp-action="LoanGroups" asp-controller="Admin"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary">Группы</a>
+       class="btn btn-primary">Группы негодяев</a>
 </div>
 
 <div id="results"></div>
