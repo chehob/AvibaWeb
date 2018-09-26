@@ -23,9 +23,9 @@
                     <div class="box-content">
                         @foreach (var accountBalance in org.AccountBalances)
                         {
-                            <p><b>Счет: @accountBalance.Account</b> @accountBalance.BankName</p>
+                            <p><b>Счет: @accountBalance.Account</b> @accountBalance.BankName <i style="background:Moccasin;">(@accountBalance.LatestUpload)</i></p>
                             <p>Остаток: @accountBalance.Balance</p>
-                            <p>Последняя загрузка: @accountBalance.LatestUpload</p>
+
                             <!--
         <p>Приход: @accountBalance.Debit</p>
         <p>Расход: @accountBalance.Credit</p>
