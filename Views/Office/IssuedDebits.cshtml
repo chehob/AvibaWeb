@@ -1,0 +1,64 @@
+﻿@using AvibaWeb.DomainModels
+@using AvibaWeb.ViewModels.OfficeViewModels
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Common
+@model IPagedList<OfficeDebitListViewModel>
+
+    <div class="row">
+        <!-- CONTENT START -->
+        <div class="box col-md-12">
+            <div class="box-inner">
+                <div class="box-header well" data-original-title="">
+                    <h2>Оформленные операции пополнения</h2>
+                </div>
+                <div class="box-content">
+                    @if (!Model.Any())
+                    {
+                        <div>Нет операций</div>
+                    }
+                    else
+                    {
+                        foreach (var debit in Model)
+                        {
+                            <div class="row">
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(c => debit.IssuedDateTime)
+                                </div>
+                                <div class="col-md-4">
+                                    @Html.DisplayFor(c => debit.Description)
+                                </div>
+                                <div class="col-md-2"><b>@Html.DisplayFor(c => debit.Amount)</b></div>
+                                <div class="col-md-2">@Html.DisplayFor(c => debit.Status)</div>
+                                <div class="col-md-2">
+                                    @if (debit.Status != OfficeDebitOperation.ODOType.Cancelled)
+                                    {
+                                        <form asp-controller="Office" asp-action="CancelDebit" asp-route-id="@debit.DebitId"
+                                              data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+                                            <input id="btnCancelDebit" type="image" name="picture" src="~/images/del.png" width="32" height="32" />
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                            <hr>
+                        }
+                    }
+
+                </div>
+                Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+
+                @Html.PagedListPager(Model, page => Url.Action("IssuedDebits", new { page }),
+                        new Func<PagedListRenderOptionsBase>(() =>
+                        {
+                            var options = PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+                                new AjaxOptions()
+                                {
+                                    HttpMethod = "GET",
+                                    UpdateTargetId = "results"
+                                });
+                            options.MaximumPageNumbersToDisplay = 5;
+                            return options;
+                        })())
+            </div>
+        </div>
+    </div>
