@@ -2,11 +2,22 @@
 @model TransitAccountViewModel
 
 <div class="box col-md-10">
+            <div class="row">
+        <div class="col-md-3 col-sm-3 col-xs-6">
+        <span data-toggle="tooltip" title="Всего" class="well top-block">
+            <span class="yellow">На транзитном счету</span>
+
+            <div></div>
+            <div class="yellow">@Model.Balance</div>
+            
+        </span>
+    </div></div>
+    <br>
     <div class="box-inner" style="margin-top:-10px;">
         <div class="box-header well" data-original-title="">
             <h2><i class="glyphicon glyphicon-user"></i> Группы</h2>
         </div>
-        <div>Баланс транзитного счета: @Model.Balance</div>
+        
         <div class="box-content">
             <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
                 <thead>
