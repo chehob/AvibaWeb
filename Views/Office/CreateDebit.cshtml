@@ -1,0 +1,36 @@
+﻿@using AvibaWeb.DomainModels
+@model OfficeDebit
+
+<div class="box col-md-10">
+    <div class="box-inner" style="margin-top:-10px;">
+        <div class="box-header well" data-original-title="">
+            <h2><i class="glyphicon glyphicon-random"></i>Пополнить баланс</h2>
+        </div>
+        <div class="box-content">
+            <form asp-controller="Office" asp-action="CreateDebit"
+                  data-ajax="true" data-ajax-method="post" data-ajax-mode="replace" data-ajax-update="#contentResults">
+                <div class="row">
+                    <label class="col-md-2 control-label">Сумма</label>
+                    <div class="col-md-10">
+                        <input asp-for="Amount" class="form-control" value="" />
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-md-2 control-label">Комментарий</label>
+                    <div class="col-md-10">
+                        <input asp-for="Description" class="form-control" />
+                    </div>
+                </div>
+                @Html.ValidationSummary("", new { @class = "text-danger" })
+                <div class="row">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" class="btn btn-success" value="ОК" />
+                        <a asp-action="Index" asp-controller="Office"
+                           data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                           class="btn btn-danger">Отмена</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
