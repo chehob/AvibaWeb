@@ -34,11 +34,17 @@
                                 @group.Balance
                             </td>
                             <td>
-                                <a asp-action="Credit" asp-controller="Transit" asp-route-id="@group.LoanGroupId"
+                                <a asp-action="CreateCredit" asp-controller="Transit" asp-route-id="@group.LoanGroupId"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
                                    class="btn btn-default">
                                     <i class="glyphicon glyphicon-edit icon-white"></i>
                                     Списать со счета
+                                </a>
+                                <a asp-action="IssuedCredits" asp-controller="Transit" asp-route-loanGroupId="@group.LoanGroupId"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="btn btn-default">
+                                    <i class="glyphicon glyphicon-edit icon-white"></i>
+                                    Операции
                                 </a>
                             </td>
                         </tr>
