@@ -43,36 +43,36 @@
                     else
                     {
                         foreach (var group in Model.LoanGroups)
-                        {
+                        {                            
                             <tr>
                                 <td>
                                     @group.Description
                                 </td>
                                 <td>
                                     @group.Balance.ToString("#,0.00", new Func<NumberFormatInfo>(() =>
-                                    {
-                                        var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
-                                        nfi.NumberGroupSeparator = " ";
-                                        return nfi;
-                                    })())
+                                        {
+                                            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+                                            nfi.NumberGroupSeparator = " ";
+                                            return nfi;
+                                        })())
                                 </td>
                                 <td>
                                     <a asp-action="CreateCredit" asp-controller="Transit" asp-route-id="@group.LoanGroupId"
-                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                       class="btn btn-default">
-                                        <i class="glyphicon glyphicon-edit icon-white"></i>
-                                        Списать со счета
+                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                    class="btn btn-success">
+                                        <i class="glyphicon glyphicon-circle-arrow-down"></i>
+                                        Пополнить
                                     </a>
                                     <a asp-action="CreateCreditAdd" asp-controller="Transit" asp-route-id="@group.LoanGroupId"
-                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                       class="btn btn-default">
+                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                    class="btn btn-default">
                                         <i class="glyphicon glyphicon-edit icon-white"></i>
                                         Добавочная сумма
                                     </a>
                                     <a asp-action="IssuedCredits" asp-controller="Transit" asp-route-loanGroupId="@group.LoanGroupId"
-                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                       class="btn btn-default">
-                                        <i class="glyphicon glyphicon-edit icon-white"></i>
+                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                    class="btn btn-primary">
+                                        <i class="glyphicon glyphicon-list-alt"></i>
                                         Операции
                                     </a>
                                 </td>
