@@ -2,16 +2,22 @@
 @model TransitAccountViewModel
 
 <div class="box col-md-10">
-            <div class="row">
+    <div class="row">
         <div class="col-md-3 col-sm-3 col-xs-6">
-        <span data-toggle="tooltip" title="Всего" class="well top-block">
-            <span class="yellow">На транзитном счету</span>
+            <span data-toggle="tooltip" title="Всего" class="well top-block">
+                <span class="yellow">На транзитном счету</span>
 
-            <div></div>
-            <div class="yellow">@Model.Balance</div>
-            
-        </span>
-    </div></div>
+                <div></div>
+                <div class="yellow">@Model.Balance</div>
+            </span>
+            <a asp-action="CreateCredit" asp-controller="Transit"
+                data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                class="btn btn-default" data-ajax-success="installTransitValidation">
+                <i class="glyphicon glyphicon-edit icon-white"></i>
+                Перевод в офис
+            </a>
+        </div>
+    </div>
     <br>
     <div class="box-inner" style="margin-top:-10px;">
         <div class="box-header well" data-original-title="">
@@ -50,6 +56,12 @@
                                    class="btn btn-success">
                                     <i class="glyphicon glyphicon-circle-arrow-down"></i>
                                     Пополнить
+                                </a>
+                                <a asp-action="CreateCreditAdd" asp-controller="Transit" asp-route-id="@group.LoanGroupId"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="btn btn-default">
+                                    <i class="glyphicon glyphicon-edit icon-white"></i>
+                                    Добавочная сумма
                                 </a>
                                 <a asp-action="IssuedCredits" asp-controller="Transit" asp-route-loanGroupId="@group.LoanGroupId"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
