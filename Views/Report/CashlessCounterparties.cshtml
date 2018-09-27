@@ -2,24 +2,35 @@
 @model List<CashlessViewModel>
 
 <div class="box col-md-10">
-    @foreach (var counterparty in Model)
-    {
-        <div class="box col-md-6">
+
+    
+          
+        <div class="box col-md-12">
             <div class="box-inner">
                 <div class="box-header well" data-original-title="" style="overflow: hidden;">
-                    <h2><i class="glyphicon glyphicon-user"></i> @counterparty.Name</h2>
+                    <h2><i class="glyphicon glyphicon-plane"></i> Корпоративные клиенты</h2>
                 </div>
                 <div class="box-content">
+                @foreach (var counterparty in Model)
+    {     
+        <div class="row">
+                 <div class="col-md-6">@counterparty.Name</div>
                     @foreach (var accountBalance in counterparty.AccountBalances)
                     {
-                        <p>@accountBalance.Account</p>
-                        <p>@accountBalance.Balance</p>
+                        <div class="col-md-6">@accountBalance.Balance</div>
+                        <!--
+                        <p>@accountBalance.Account</p>    
+                        
                         <p>@accountBalance.Debit</p>
                         <p>@accountBalance.Credit</p>
                         <p>@accountBalance.BalanceEnd</p>
+                        -->
                     }
+                </div>    
+    }                
+                
                 </div>
             </div>
         </div>
-    }
+    
 </div>

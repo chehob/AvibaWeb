@@ -3,7 +3,7 @@
 @model IQueryable<Organization>
 
 <div class="box col-md-10">
-    <div class="box-inner" style="margin-top:-10px;">
+    <div class="box-inner" style="">
         <div class="box-header well" data-original-title="">
             <h2><i class="glyphicon glyphicon-user"></i> Организации</h2>
         </div>
@@ -35,7 +35,7 @@
                         {
                             <tr>
                                 <td>
-                                    @org.Description
+                                    <b>@org.Description</b>
                                     @if (org.IsActive)
                                     {
                                         <span class="label-success label label-default">Активна</span>
@@ -55,29 +55,36 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <ul>
+                                    
+                                    
                                         @foreach (var account in org.Accounts)
                                         {
-                                            <li>
-                                                <div>@account.Description (@account.BankName)</div>
-                                                <div>@account.Balance</div>
-                                                <a asp-action="EditFinancialAccount" asp-controller="Admin" asp-route-id="@account.FinancialAccountId"
+<div class="box-inner box-content">
+                                            <div class="row">
+                                                <div class="col-md-6">@account.Description <b>(@account.BankName)</b></div>
+                                                <div class="col-md-6 text-right"><a asp-action="EditFinancialAccount" asp-controller="Admin" asp-route-id="@account.FinancialAccountId"
                                                    data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
-                                                   class="btn btn-setting btn-round btn-default">
+                                                   class="btn btn-setting btn-info">
                                                     <i class="glyphicon glyphicon-pencil"></i>
-                                                </a>
-                                            </li>
+                                                </a></div>
+                                            </div>
+                                                
+                                                <div>@account.Balance</div>
+                                                
+                                            
+</div>
                                         }
 
-                                        <li>
-                                            <a asp-action="AddFinancialAccount" asp-controller="Admin" asp-route-id="@org.OrganizationId"
+                                        
+                                        
+                                </td>
+                                <td>
+                                    <a asp-action="AddFinancialAccount" asp-controller="Admin" asp-route-id="@org.OrganizationId"
                                                data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
-                                               class="btn btn-setting btn-round btn-default">
+                                               class="btn btn-success btn-sm">
                                                 <i class="glyphicon glyphicon-plus"></i>
                                                 Добавить счет
                                             </a>
-                                        </li>
-                                    </ul>
                                 </td>
                             </tr>
                         }
