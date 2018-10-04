@@ -1,36 +1,30 @@
 ﻿@using AvibaWeb.ViewModels.ReportViewModels
-@model List<CashlessViewModel>
+@model List<CashlessCorpViewModel>
 
 <div class="box col-md-10">
-
-    
-          
-        <div class="box col-md-12">
-            <div class="box-inner">
-                <div class="box-header well" data-original-title="" style="overflow: hidden;">
-                    <h2><i class="glyphicon glyphicon-plane"></i> Корпоративные клиенты</h2>
-                </div>
-                <div class="box-content">
+    <div class="box col-md-12">
+        <div class="box-inner">
+            <div class="box-header well" data-original-title="" style="overflow: hidden;">
+                <h2><i class="glyphicon glyphicon-plane"></i> Корпоративные клиенты</h2>
+            </div>
+            <div class="box-content">
                 @foreach (var counterparty in Model)
-    {     
-        <div class="row">
-                 <div class="col-md-6">@counterparty.Name</div>
-                    @foreach (var accountBalance in counterparty.AccountBalances)
-                    {
-                        <div class="col-md-6">@accountBalance.Balance</div>
-                        <!--
-                        <p>@accountBalance.Account</p>    
-                        
-                        <p>@accountBalance.Debit</p>
-                        <p>@accountBalance.Credit</p>
-                        <p>@accountBalance.BalanceEnd</p>
-                        -->
-                    }
-                </div>    
-    }                
-                
-                </div>
+                {
+                    <div class="row">
+                        <div class="col-md-6">@counterparty.CorpName</div>
+                        <div class="col-md-6">
+                            @if (counterparty.Balance >= 0)
+                            {
+                                <h2 class="green">@counterparty.BalanceStr</h2>
+                            }
+                            else
+                            {
+                                <h2 class="red">@counterparty.BalanceStr</h2>
+                            }
+                        </div>
+                    </div>
+                }
             </div>
         </div>
-    
+    </div>
 </div>
