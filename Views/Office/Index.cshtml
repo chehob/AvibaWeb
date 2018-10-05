@@ -1,8 +1,8 @@
 ﻿<div class="btn-group">
-    <a asp-action="CreateDebit" asp-controller="Office"
+    <a asp-action="CreateCollection" asp-controller="Collection" asp-route-isCustom="true"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary">Новое поступление</a>
-    <a asp-action="IssuedDebits" asp-controller="Office"
+    <a asp-action="IssuedCustomCollections" asp-controller="Collection"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary">Все операции</a>
 </div>

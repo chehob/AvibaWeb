@@ -1,0 +1,77 @@
+﻿@using AvibaWeb.DomainModels
+@using AvibaWeb.ViewModels.CollectionViewModels
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Common
+@model PagedList<CollectionListViewModel>
+
+<div class="row">
+    <!-- CONTENT START -->
+    <div class="box col-md-12">
+        <div class="box-inner">
+            <div class="box-header well" data-original-title="">
+                <h2>Оформленные операции пополнения</h2>
+            </div>
+            <div class="box-content">
+                @if (!Model.Any())
+                {
+                <div>Нет операций</div>
+                }
+                else
+                {
+                    foreach (var collection in Model)
+                    {
+                    <div class="row">
+                        <div class="col-md-3">@Html.DisplayFor(c => collection.IssuedDateTime)</div>
+                        <div class="col-md-3">@Html.DisplayFor(c => collection.Comment)</div>
+                        <div class="col-md-2"><b>@Html.DisplayFor(c => collection.Amount)</b></div>
+                        <div class="col-md-3">@Html.DisplayFor(c => collection.CollectorName)</div>
+                        <div class="col-md-2">
+                            <br>
+                            @switch (collection.Status)
+                            {
+                                case CollectionOperationType.COType.New:
+                                    <span class="label-warning label label-default">@Html.DisplayFor(c => collection.Status)</span>
+                                    break;
+                                case CollectionOperationType.COType.Accepted:
+                                    <span class="label-success label label-default">@Html.DisplayFor(c => collection.Status)</span>
+                                    break;
+                                case CollectionOperationType.COType.Rejected:
+                                    <span class="label-default label label-danger">@Html.DisplayFor(c => collection.Status)</span>
+                                    break;
+                                case CollectionOperationType.COType.Cancelled:
+                                    <span class="label-default label label-danger">@Html.DisplayFor(c => collection.Status)</span>
+                                    break;
+                            }
+                        </div>
+                        <div class="col-md-2">
+                            @if (collection.Status == CollectionOperationType.COType.New)
+                            {
+                                <form asp-controller="Collection" asp-action="CancelCustomCollection" asp-route-id="@collection.CollectionId"
+                                      data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+                                    <input id="btnCancelCollection" type="image" name="picture" src="~/images/del.png" width="32" height="32" />
+                                </form>
+                            }
+                        </div>
+                    </div>
+                    <hr>
+                    }
+                }
+
+                @Html.PagedListPager(Model, page => Url.Action("IssuedCustomCollections", new { page }),
+                    new Func<PagedListRenderOptionsBase>(() =>
+                    {
+                        var options = PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+                            new AjaxOptions()
+                            {
+                                HttpMethod = "GET",
+                                UpdateTargetId = "results"
+                            });
+                        options.MaximumPageNumbersToDisplay = 5;
+                        return options;
+                    })())
+
+            </div>
+        </div>
+    </div>
+</div>
