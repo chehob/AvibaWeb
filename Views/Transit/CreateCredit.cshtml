@@ -3,6 +3,22 @@
 
 
 <div class="box col-md-10">
+<div class="box col-md-3">
+
+            <span data-toggle="tooltip" title="Всего" class="well top-block">
+                <span class="yellow">На транзитном счету</span>
+
+                <div></div>
+                <div class="yellow">@Model.TransitBalance</div>
+                
+            </span>
+</div>
+<div class="row">
+        <div class="col-md-3 col-sm-3 col-xs-6">
+          
+        </div>
+    </div>
+    <br>    
     <div class="box-inner" style="">
         <div class="box-header well" data-original-title="">
             <h2><i class="glyphicon glyphicon-random"></i> Списать с транзитного счета </h2>
@@ -12,7 +28,7 @@
                 data-ajax="true" data-ajax-method="post" data-ajax-mode="replace" data-ajax-update="#contentResults">
                 @Html.HiddenFor(m => m.Credit.LoanGroupId)
 
-                @Model.TransitBalance
+                
 
                 <div class="row">
                     @Html.LabelFor(m => m.Credit.AccountAmount, new {@class = "col-md-2 control-label"})
