@@ -1,7 +1,10 @@
 ﻿<p class="btn-group">
     <a asp-action="Cashless" asp-controller="Data"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary">Банк</a>    
+       class="btn btn-primary">Банк</a>
+    <a asp-action="CreateCashlessRecord" asp-controller="Data"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-primary">Добавить безнал операцию</a>
 </p>
 
 <div class="box col-md-10">

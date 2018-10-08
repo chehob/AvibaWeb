@@ -1,5 +1,5 @@
-﻿@using AvibaWeb.DomainModels
-@model TransitAccountCredit
+﻿@using AvibaWeb.ViewModels.TransitViewModels
+@model CreateCreditViewModel
 
 <div class="box col-md-10">
     <div class="box-inner" style="">
@@ -9,12 +9,14 @@
         <div class="box-content">
             <form asp-controller="Transit" asp-action="CreateCredit" 
                 data-ajax="true" data-ajax-method="post" data-ajax-mode="replace" data-ajax-update="#contentResults">
-                @Html.HiddenFor(m => m.LoanGroupId)
+                @Html.HiddenFor(m => m.Credit.LoanGroupId)
+
+                @Model.TransitBalance
 
                 <div class="row">
-                    @Html.LabelFor(m => m.AccountAmount, new {@class = "col-md-2 control-label"})
+                    @Html.LabelFor(m => m.Credit.AccountAmount, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
-                        <input asp-for="@Model.AccountAmount" class="form-control" value=""/>
+                        <input asp-for="@Model.Credit.AccountAmount" class="form-control" value=""/>
                     </div>
                 </div>
                 @Html.ValidationSummary("", new {@class = "text-danger"})
