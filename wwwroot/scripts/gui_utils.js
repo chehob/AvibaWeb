@@ -78,6 +78,11 @@ $(function () {
     $(window).on("mouseup", function () {
         $(".addSelect").children("option").off("mouseenter"); // remove mouseenter-events
     });
+	
+	$(document).on('click', '.btn-setting', function (e) {
+        e.preventDefault();
+        $('#dialog').modal('show');
+    });
 });
 
 // fix for charisma scripts on ajax reload
