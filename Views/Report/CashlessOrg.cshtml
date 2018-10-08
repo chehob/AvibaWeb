@@ -11,7 +11,29 @@
             <div class="yellow">@Model.Balance</div>
             
         </span>
-    </div></div>
+    </div>
+    @if (User.IsInRole("Administrators"))
+                        {
+            <div class="col-md-3 col-sm-3 col-xs-6">
+        <span data-toggle="tooltip" title="Всего" class="well top-block">
+            <i class="glyphicon glyphicon-fire"></i>
+
+            <div></div>
+            <div class="">@Model.LoanGroupsBalance</div>
+            
+        </span>
+    </div>
+                <div class="col-md-3 col-sm-3 col-xs-6">
+        <span data-toggle="tooltip" title="Всего" class="well top-block">
+            <span class="green">Всего</span>
+
+            <div></div>
+            <div class="green">@Model.Total</div>
+            
+        </span>
+    </div>
+                        }
+    </div>
         @foreach (var org in Model.Organizations)
         {
             <div class="box col-md-6">

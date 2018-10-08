@@ -10,7 +10,9 @@
 
             <div></div>
             <div class="yellow">@Html.DisplayFor(c => Model.TotalBalanceStr)</div>
-            
+            <div class="row">
+            <div class="col-md-12"><h6 class="yellow">Всего</h6></div>
+            </div>
         </span>
     </div>
     <div class="col-md-3 col-sm-3 col-xs-6">
@@ -19,15 +21,27 @@
 
             <div></div>
             <div class="yellow">@Html.DisplayFor(c => Model.OfficeCollectorsTotalInfo)</div>
-            
+            <div class="row">
+            <div class="col-md-12"><h6 class="yellow">Офис + Инк.</h6></div>
+            </div>
         </span>
     </div>
     <div class="col-md-3 col-sm-3 col-xs-6">
         <span data-toggle="tooltip" title="В офисе" class="well top-block">
             <i class="glyphicon glyphicon-home blue"></i>
+            
+            
 
-            <div></div>
+           
             <div class="blue">@Html.DisplayFor(c => Model.OfficeBalanceStr)</div>
+            <div class="row">
+            <div class="col-md-4"><h6 class="green">1 120 000</h6></div>
+            
+            <div class="col-md-4"><h6 class="yellow">536 000</h6></div>
+            <div class="col-md-4"><h6 class="red">482 559</h6></div>
+
+            </div>
+            
             
         </span>
     </div>
@@ -37,7 +51,9 @@
 
             <div></div>
             <div class="blue">@Html.DisplayFor(c => Model.DeskBalanceStr)</div>
-            
+            <div class="row">
+            <div class="col-md-12"><h6 class="blue">В кассах</h6></div>
+            </div>
         </span>
     </div>
     </div>
