@@ -1,79 +1,99 @@
 ﻿@using AvibaWeb.ViewModels.CollectionViewModels
 @model AvibaWeb.ViewModels.CollectionViewModels.BalanceModel
-    <div class="row">
-        <a asp-action="IncomingCollections" asp-controller="Collection"
-               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
-               class="">
+<div class="row">
+    <a asp-action="IncomingCollections" asp-controller="Collection"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
+       class="">
         <div class="col-md-2 col-sm-2 col-xs-6">
-        <span data-toggle="tooltip" title="Всего" class="well top-block">
-            <span class="notification" style="background-color: rgba(0, 125, 215, 0); background-image:none; border:none; text-shadow:none; box-shadow:none">
+            <span data-toggle="tooltip" title="Всего" class="well top-block">
+                <span class="notification" style="background-color: rgba(0, 125, 215, 0); background-image:none; border:none; text-shadow:none; box-shadow:none">
                     @if (@Model.IncomingNotAccepted > 0)
                     {
-                      <i class="animated flash infinite yellow glyphicon glyphicon-warning-sign"></i>  
+                        <i class="animated flash infinite yellow glyphicon glyphicon-warning-sign"></i>
                     }
                     else
                     {
                         // если надо чтото сделать при нуле
                     }
-            
 
+
+                </span>
+                <span class="blue animated bounceIn">Входящих</span>
+                <div></div>
+                <div class="blue animated bounceIn">@Model.IncomingNotAcceptedStr</div>
             </span>
-            <span class="blue animated bounceIn">Входящих</span>
-            <div></div>
-            <div class="blue animated bounceIn">@Model.IncomingNotAcceptedStr</div>
-        </span>
-        </div></a>
-        <a asp-action="IssuedCollections" asp-controller="Collection"
-               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
-               class="">
+        </div>
+    </a>
+    <a asp-action="IssuedCollections" asp-controller="Collection" asp-route-isAdmin="false"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
+       class="">
         <div class="col-md-2 col-sm-2 col-xs-6">
-        <span data-toggle="tooltip" title="Всего" class="well top-block">
-                       <span class="notification" style="background-color: rgba(0, 125, 215, 0); background-image:none; border:none; text-shadow:none; box-shadow:none; z-index:10;">
+            <span data-toggle="tooltip" title="Всего" class="well top-block">
+                <span class="notification" style="background-color: rgba(0, 125, 215, 0); background-image:none; border:none; text-shadow:none; box-shadow:none; z-index:10;">
                     @if (@Model.IssuedNotAccepted > 0)
                     {
-                      <i class="animated flash infinite yellow glyphicon glyphicon-warning-sign"></i>  
+                        <i class="animated flash infinite yellow glyphicon glyphicon-warning-sign"></i>
                     }
                     else
                     {
                         // если надо чтото сделать при нуле
                     }
-            
 
+
+                </span>
+                <span class="blue animated bounceIn">Передано</span>
+                <div></div>
+                <div class="blue animated bounceIn">@Model.IssuedNotAcceptedStr</div>
             </span>
-            <span class="blue animated bounceIn">Передано</span>
-            <div></div>
-            <div class="blue animated bounceIn">@Model.IssuedNotAcceptedStr</div>
-        </span>
         </div>
+    </a>
+    <a asp-action="AcceptedCollections" asp-controller="Collection"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
+       class="">
+        <div class="col-md-2 col-sm-2 col-xs-6">
+            <span data-toggle="tooltip" title="Всего" class="well top-block">
+                <span class="green animated bounceIn">Остаток</span>
+                <div></div>
+                <div class="green animated bounceIn">@Model.TotalStr</div>
+            </span>
+        </div>
+    </a>
+    @if (User.IsInRole("Administrators"))
+    {
+        <a asp-action="IssuedCollections" asp-controller="Collection" asp-route-isAdmin="true"
+           data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
+           class="" >
+            <div class="col-md-2 col-sm-2 col-xs-6">
+                <span data-toggle="tooltip" title="Всего" class="well top-block">
+                    <span class="yellow animated bounceIn">Баланс</span>
+                    <div></div>
+                    <div class="yellow animated bounceIn">@Model.BalanceStr</div>
+                </span>
+            </div>
         </a>
-        <a asp-action="AcceptedCollections" asp-controller="Collection"
-               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
-               class="">
+    }
+    else
+    {
         <div class="col-md-2 col-sm-2 col-xs-6">
-        <span data-toggle="tooltip" title="Всего" class="well top-block">
-            <span class="green animated bounceIn">Остаток</span>
-            <div></div>
-            <div class="green animated bounceIn">@Model.TotalStr</div>
-        </span>
-        </div></a>
-        <div class="col-md-2 col-sm-2 col-xs-6">
-        <span data-toggle="tooltip" title="Всего" class="well top-block">
-            <span class="yellow animated bounceIn">Баланс</span>
-            <div></div>
-            <div class="yellow animated bounceIn">@Model.BalanceStr</div>
-        </span>
-        </div></div>
-        <div class="row">
-        <a asp-action="CreateCollection" asp-controller="Collection"
-               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
-               class="">
-        <div class="col-md-2 col-sm-2 col-xs-12">
-        <span data-toggle="tooltip" title="Всего" class="well top-block">
-            <span class="green glyphicon glyphicon-share-alt"></span>
-            <div></div>
-            <div class="green">Передать</div>
-        </span>
-        </div></a></div>
+            <span data-toggle="tooltip" title="Всего" class="well top-block">
+                <span class="yellow animated bounceIn">Баланс</span>
+                <div></div>
+                <div class="yellow animated bounceIn">@Model.BalanceStr</div>
+            </span>
+        </div>
+    }
+</div>
+<div class="row">
+<a asp-action="CreateCollection" asp-controller="Collection"
+        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
+        class="">
+<div class="col-md-2 col-sm-2 col-xs-12">
+<span data-toggle="tooltip" title="Всего" class="well top-block">
+    <span class="green glyphicon glyphicon-share-alt"></span>
+    <div></div>
+    <div class="green">Передать</div>
+</span>
+</div></a></div>
 
     
     
