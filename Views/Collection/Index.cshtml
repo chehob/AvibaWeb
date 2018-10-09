@@ -38,18 +38,24 @@
 </div> 
 
 <script type="text/javascript">
-    if(window.attachEvent) {
-        window.attachEvent('onload', updateBalance);
-    } else {
-        if(window.onload) {
-            var curronload = window.onload;
-            var newonload = function(evt) {
-                curronload(evt);
-                updateBalance(evt);
-            };
-            window.onload = newonload;
+    onload = function () {
+        if (window.attachEvent) {
+            console.log('window.attachEvent');
+            window.attachEvent('onload', updateBalance);
         } else {
-            window.onload = updateBalance;
+            if (window.onload) {
+                console.log('window.onload');
+                var curronload = window.onload;
+                var newonload = function (evt) {
+                    curronload(evt);
+                    updateBalance(evt);
+                };
+                window.onload = newonload;
+            } else {
+                window.onload = updateBalance;
+            }
         }
-    }
+    };
+
+    onload();
 </script>
