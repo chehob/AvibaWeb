@@ -1,3 +1,6 @@
-﻿<div class="col-md-4"><h6 class="green">1 120 000</h6></div>
-<div class="col-md-4"><h6 class="yellow">536 000</h6></div>
-<div class="col-md-4"><h6 class="red">482 559</h6></div>
+﻿@using AvibaWeb.ViewModels.ReportViewModels
+@model OfficeBillInfoViewModel
+
+<div class="col-md-4"><h6 class="green">@Model._5kBillSum</h6></div>
+<div class="col-md-4"><h6 class="yellow">@Model._2kBillSum</h6></div>
+<div class="col-md-4"><h6 class="red">@Model.RemainderSum</h6></div>

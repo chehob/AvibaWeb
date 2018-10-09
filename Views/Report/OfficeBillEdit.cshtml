@@ -2,7 +2,9 @@
 @model OfficeBillEditViewModel
 
 <form asp-controller="Report" asp-action="OfficeBillEdit"
-      data-ajax="true" data-ajax-method="post" data-ajax-mode="replace" data-ajax-update="#officeBillInfo">
+      data-ajax="true" data-ajax-method="post" data-ajax-mode="replace" data-ajax-update="#officeBillInfo"
+      data-ajax-success="$('#dialog').modal('toggle');">
+    @Html.HiddenFor(m => m.OfficeBalance, new { id = "OfficeBalanceBillHelper" })
     <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
         <thead>
             <tr>
@@ -13,16 +15,53 @@
         <tbody>
             <tr>
                 <td>5000</td>
-                <td></td>
+                <td>
+                    @Html.TextBoxFor(m => m._5kBillSum, new { @class = "form-control", id = "5kBillEdit" })
+                </td>
             </tr>
             <tr>
                 <td>2000</td>
-                <td></td>
+                <td>
+                    @Html.TextBoxFor(m => m._2kBillSum, new { @class = "form-control", id = "2kBillEdit" })
+                </td>
             </tr>
             <tr>
                 <td>Остаток</td>
-                <td></td>
+                <td id="reminderSumTd"></td>
             </tr>
         </tbody>
     </table>
+    <input type="submit" class="btn btn-default" value="Сохранить" />
 </form>
+
+<script>
+    updateReminderSum = function () {
+        var e = document.getElementById('OfficeBalanceBillHelper');
+        var reminderSum = parseFloat(e.value);
+        e = document.getElementById('5kBillEdit');
+        if (e.value)
+        { 
+            reminderSum -= parseInt(e.value.replace(/ /g, ''));
+        }
+        e = document.getElementById('2kBillEdit');
+        if (e.value) {
+            reminderSum -= parseInt(e.value.replace(/ /g, ''));
+        }
+        e = document.getElementById('reminderSumTd');
+        e.innerHTML = numberWithSpaces(reminderSum);
+    };
+
+    onload = function () {
+        var e = document.getElementById('5kBillEdit');
+        e.oninput = updateReminderSum;
+        e.onpropertychange = e.oninput; // for IE8
+
+        e = document.getElementById('2kBillEdit');
+        e.oninput = updateReminderSum;
+        e.onpropertychange = e.oninput; // for IE8
+
+        updateReminderSum();
+    };
+
+    onload();
+</script>
