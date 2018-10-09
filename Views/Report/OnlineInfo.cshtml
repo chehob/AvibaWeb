@@ -5,8 +5,8 @@
 <div class="box col-md-10">
     <div class="row">
         <div class="col-md-3 col-sm-3 col-xs-6">
-        <span data-toggle="tooltip" title="Всего" class="well top-block">
-            <i class="glyphicon glyphicon-globe yellow"></i>
+            <span data-toggle="tooltip" title="Всего" class="well top-block">
+                <i class="glyphicon glyphicon-globe yellow"></i>
 
             <div></div>
             <div class="yellow">@Html.DisplayFor(c => Model.TotalBalanceStr)</div>
@@ -40,26 +40,47 @@
             <div class="col-md-4"><h6 class="yellow">536 000</h6></div>
             <div class="col-md-4"><h6 class="red">82 559</h6></div>
 
-            </div>
-            
-            
-        </span>
-    </div>
-    <div class="col-md-3 col-sm-3 col-xs-6">
-        <span data-toggle="tooltip" title="В кассах" class="well top-block">
-            <i class="glyphicon glyphicon-shopping-cart blue"></i>
+                <div></div>
+                <div class="yellow">@Html.DisplayFor(c => Model.OfficeCollectorsTotalInfo)</div>
+                <div class="row">
+                    <div class="col-md-12"><h6 class="yellow">Офис + Инк.</h6></div>
+                </div>
+            </span>
+        </div>
+        <div class="col-md-3 col-sm-3 col-xs-6">
+            <span id="officeDialogBtn" data-toggle="tooltip" title="В офисе" class="well top-block btn-setting">
+                <i class="glyphicon glyphicon-home blue"></i>
 
-            <div></div>
-            <div class="blue">@Html.DisplayFor(c => Model.DeskBalanceStr)</div>
-            <div class="row">
-            <div class="col-md-12"><h6 class="blue">В кассах</h6></div>
-            </div>
-        </span>
-    </div>
+
+
+
+                <div class="blue">@Html.DisplayFor(c => Model.OfficeBalanceStr)</div>
+                <div class="row">
+                    <div class="col-md-4"><h6 class="green">1 120 000</h6></div>
+
+                    <div class="col-md-4"><h6 class="yellow">536 000</h6></div>
+                    <div class="col-md-4"><h6 class="red">482 559</h6></div>
+
+                </div>
+
+
+            </span>
+        </div>
+        <div class="col-md-3 col-sm-3 col-xs-6">
+            <span data-toggle="tooltip" title="В кассах" class="well top-block">
+                <i class="glyphicon glyphicon-shopping-cart blue"></i>
+
+                <div></div>
+                <div class="blue">@Html.DisplayFor(c => Model.DeskBalanceStr)</div>
+                <div class="row">
+                    <div class="col-md-12"><h6 class="blue">В кассах</h6></div>
+                </div>
+            </span>
+        </div>
     </div>
     <!--
     <div class="row">
-        
+
         <div class="box col-md-12">
             <div class="box-inner">
                 <div class="box-header well" data-original-title="">
@@ -74,7 +95,7 @@
                         <div class="col-md-6"><h5>Кассы</h5></div>
                         <div class="col-md-6"><h5>@Html.DisplayFor(c => Model.DeskBalanceStr)</h5></div>
                     </div>
-                    <div class="box-inner">                   
+                    <div class="box-inner">
                      <div class="box-content">
                     <div class="row">
                         <div class="col-md-6"><h5><b>Сумма</b></h5></div>
@@ -84,13 +105,13 @@
                         <div class="col-md-6"><h5>Офис</h5></div>
                         <div class="col-md-6"><h5>@Html.DisplayFor(c => Model.OfficeBalanceStr)</h5></div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-6"><h5>Инкассаторы</h5></div>
                         <div class="col-md-6"><h5>@Html.DisplayFor(c => Model.CollectorsTotalInfo)</h5></div>
                     </div>
                     </div></div>
-                    
+
                     @*<div class="row">
                         <div class="col-md-6"><h5>На обмене</h5></div>
                         <div class="col-md-6"><h5>@Html.DisplayFor(c => Model.ExchangeTotalInfo)</h5></div>
@@ -99,38 +120,38 @@
             </div>
         </div></div>
         -->
-        <!-- CONTENT START -->
-		<div class="row">
+    <!-- CONTENT START -->
+    <div class="row">
         <div class="box col-md-6">
             <div class="box-inner">
                 <div class="box-header well" data-original-title="">
                     <h2>Кассы АВИБА</h2>
                 </div>
                 <div class="box-content">
-					<div class="row">
-						<div class="col-md-6">
-							<h5><b>Всего</b></h5>
-						</div>
-						<div class="col-md-6">
-							<h5><b>@Html.DisplayFor(c => Model.AvibaTotalInfo)</b></h5>
-						</div>
-					</div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><b>Всего</b></h5>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><b>@Html.DisplayFor(c => Model.AvibaTotalInfo)</b></h5>
+                        </div>
+                    </div>
                     @foreach (var info in Model.AvibaBalanceInfo)
                     {
-					<div class="row">
-						<div class="col-md-6">
-							<h5>@Html.DisplayFor(c => info.Name)</h5>
-						</div>
-						<div class="col-md-6">
-							<h5>@Html.DisplayFor(c => info.BalanceStr)</h5>
-						</div>
-					</div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>@Html.DisplayFor(c => info.Name)</h5>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>@Html.DisplayFor(c => info.BalanceStr)</h5>
+                            </div>
+                        </div>
                     }
                 </div>
             </div>
         </div>
-		
-		
+
+
         <!-- CONTENT START -->
         <div class="box col-md-6">
             <div class="box-inner">
@@ -138,29 +159,30 @@
                     <h2>Кассы АВИА-ТУР</h2>
                 </div>
                 <div class="box-content">
-					<div class="row">
-						<div class="col-md-6">
-							<h5><b>Всего</b></h5>
-						</div>
-						<div class="col-md-6">
-							<h5><b>@Html.DisplayFor(c => Model.AviaTourTotalInfo)</b></h5>
-						</div>
-					</div>
-					@foreach (var info in Model.AviaTourBalanceInfo)
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><b>Всего</b></h5>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><b>@Html.DisplayFor(c => Model.AviaTourTotalInfo)</b></h5>
+                        </div>
+                    </div>
+                    @foreach (var info in Model.AviaTourBalanceInfo)
                     {
-					<div class="row">
-						<div class="col-md-6">
-							<h5>@Html.DisplayFor(c => info.Name)</h5>
-						</div>
-						<div class="col-md-6">
-							<h5>@Html.DisplayFor(c => info.BalanceStr)</h5>
-						</div>
-					</div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>@Html.DisplayFor(c => info.Name)</h5>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>@Html.DisplayFor(c => info.BalanceStr)</h5>
+                            </div>
+                        </div>
                     }
                 </div>
             </div>
-        </div></div>
-    
+        </div>
+    </div>
+
     <div class="row">
         <!-- CONTENT START -->
         <div class="box col-md-6">
@@ -175,14 +197,14 @@
                     </div>
                     @foreach (var info in Model.CollectorsBalanceInfo)
                     {
-					<div class="row">
-						<div class="col-md-6">
-							<h5>@Html.DisplayFor(c => info.Name)</h5>
-						</div>
-						<div class="col-md-6">
-							<h5>@Html.DisplayFor(c => info.BalanceStr)</h5>
-						</div>
-					</div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>@Html.DisplayFor(c => info.Name)</h5>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>@Html.DisplayFor(c => info.BalanceStr)</h5>
+                            </div>
+                        </div>
                     }
                 </div>
             </div>
@@ -191,29 +213,29 @@
 
         <!-- CONTENT START -->
         @*<div class="box col-md-6">
-            <div class="box-inner">
-                <div class="box-header well" data-original-title="">
-                    <h2>Обмен</h2>
-                </div>
-                <div class="box-content">
-                    <div class="row">
-                        <div class="col-md-6"><h5><b>Всего</b></h5></div>
-                        <div class="col-md-6"><h5><b>@Html.DisplayFor(c => Model.ExchangeTotalInfo)</b></h5></div>
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2>Обмен</h2>
                     </div>
-                    @foreach (var info in Model.ExchangeBalanceInfo)
-                    {
-					<div class="row">
-						<div class="col-md-6">
-							<h5>@Html.DisplayFor(c => info.Name)</h5>
-						</div>
-						<div class="col-md-6">
-							<h5>@Html.DisplayFor(c => info.BalanceStr)</h5>
-						</div>
-					</div>
-                    }
+                    <div class="box-content">
+                        <div class="row">
+                            <div class="col-md-6"><h5><b>Всего</b></h5></div>
+                            <div class="col-md-6"><h5><b>@Html.DisplayFor(c => Model.ExchangeTotalInfo)</b></h5></div>
+                        </div>
+                        @foreach (var info in Model.ExchangeBalanceInfo)
+                        {
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>@Html.DisplayFor(c => info.Name)</h5>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>@Html.DisplayFor(c => info.BalanceStr)</h5>
+                            </div>
+                        </div>
+                        }
+                    </div>
                 </div>
-            </div>
-        </div>*@
+            </div>*@
     </div>
 </div>
 
@@ -224,10 +246,25 @@
                 <span>Покупюрный учет</span>
                 <button type="button" class="close" data-dismiss="modal">×</button>
             </div>
-            <div class="modal-body">
-                <p>This is the default dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
-            </div>
+            <div class="modal-body"></div>
             <div class="modal-footer"></div>
         </div>
     </div>
 </div>
+
+<script>
+    $("#officeDialogBtn").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/Report/OfficeBillEdit",
+            type: "GET",
+            cache: false,
+            success: function (result) {
+                $(".modal-body").html(result);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+</script>
