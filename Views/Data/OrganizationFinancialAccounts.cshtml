@@ -1,0 +1,12 @@
+﻿@using AvibaWeb.ViewModels.DataViewModels
+@model OrganizationFinancialAccountsViewModel
+
+<div>
+    <select data-rel="chosen">
+        <option value=""></option>
+        @foreach (var account in Model.Accounts)
+        {
+            <option>@account</option>
+        }
+    </select>
+</div>

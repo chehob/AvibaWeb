@@ -1,4 +1,149 @@
-﻿
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using AvibaWeb.ViewModels.DataViewModels
+@model CreateCashlessRecordViewModel
+
+<div class="box col-md-12">
+    <div>
+        <select id="selectPayer" data-rel="chosen">
+            <option value=""></option>
+            <optgroup label="Контрагенты">
+                @foreach (var counterparty in Model.Counterparties)
+                {
+                    <option>@counterparty</option>
+                }
+            </optgroup>
+            <optgroup label="Организации">
+                @foreach (var org in Model.Organizations)
+                {
+                    <option>@org</option>
+                }
+            </optgroup>
+        </select>
+        <div id="payerOrgFinancialAccountsDiv"></div>
+    </div>
+
+    <div>
+        <select id="selectPayee" data-rel="chosen">
+            <option value=""></option>
+            <optgroup label="Контрагенты">
+                @foreach (var counterparty in Model.Counterparties)
+                {
+                    <option>@counterparty</option>
+                }
+            </optgroup>
+            <optgroup label="Организации">
+                @foreach (var org in Model.Organizations)
+                {
+                    <option>@org</option>
+                }
+            </optgroup>
+        </select>
+        <div id="payeeOrgFinancialAccountsDiv"></div>
+    </div>
+
+    <div>
+        <label>Сумма</label>
+        <input id="recordAmount" asp-for="Amount" />
+    </div>
+    <div>
+        <label>Назначение платежа</label>
+        <input id="recordDescription" asp-for="Description" />
+    </div>
+    <div>
+        <a href="/" id="sendDataBtn" class="btn">Добавить</a>
+    </div>
+</div>
+
+<script>
+    onload = function () {
+        $('[data-rel="chosen"],[rel="chosen"]').chosen();
+
+        // Select the node that will be observed for mutations
+        var payerTargetNode = $("#selectPayer").next().find("a.chosen-single span")[0];
+
+        // Options for the observer (which mutations to observe)
+        var config = { attributes: true, childList: true, subtree: true };
+
+        // Callback function to execute when mutations are observed
+        var payerCallback = function (mutationsList, observer) {
+            var mutation = mutationsList[0]
+            $.ajax({
+                url: "/Data/OrganizationFinancialAccounts",
+                type: "GET",
+                cache: false,
+                data: { orgName: mutation.target.textContent },
+                success: function (result) {
+                    $("#payerOrgFinancialAccountsDiv").html(result);
+                    $('[data-rel="chosen"],[rel="chosen"]').chosen();
+                },
+                error: function (error) {
+                    $("#payerOrgFinancialAccountsDiv").html();
+                }
+            });
+        };
+
+        // Create an observer instance linked to the callback function
+        var payerObserver = new MutationObserver(payerCallback);
+
+        // Start observing the target node for configured mutations
+        payerObserver.observe(payerTargetNode, config);
+
+        // Select the node that will be observed for mutations
+        var payeeTargetNode = $("#selectPayee").next().find("a.chosen-single span")[0];
+
+        // Callback function to execute when mutations are observed
+        var payeeCallback = function (mutationsList, observer) {
+            var mutation = mutationsList[0]
+            $.ajax({
+                url: "/Data/OrganizationFinancialAccounts",
+                type: "GET",
+                cache: false,
+                data: { orgName: mutation.target.textContent },
+                success: function (result) {
+                    $("#payeeOrgFinancialAccountsDiv").html(result);
+                    $('[data-rel="chosen"],[rel="chosen"]').chosen();
+                },
+                error: function (error) {
+                    $("#payeeOrgFinancialAccountsDiv").html();
+                }
+            });
+        };
+
+        // Create an observer instance linked to the callback function
+        var payeeObserver = new MutationObserver(payeeCallback);
+
+        // Start observing the target node for configured mutations
+        payeeObserver.observe(payeeTargetNode, config);
+    }
+
+    onload();
+
+    $("#sendDataBtn").click(function (e) {
+        var sendJsonData = {
+            PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
+            PayerBankName: $("#payerOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html(),
+            PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html(),
+            PayeeBankName: $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html(),
+            Amount: $("#recordAmount").val(),
+            Description: $("#recordDescription").val()
+        };
+
+        console.log(JSON.stringify(sendJsonData));
+
+        e.preventDefault();
+        $.ajax({
+            url: "/Data/CreateCashlessRecord",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                console.log(result);
+                //$("#importTable").html(result.message);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+</script>
