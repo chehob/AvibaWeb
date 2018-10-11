@@ -1,9 +1,16 @@
 ﻿@using AvibaWeb.ViewModels.DataViewModels
 @model CreateCashlessRecordViewModel
 
-<div class="box col-md-12">
-    <div>
-        <select id="selectPayer" data-rel="chosen">
+
+    <!-- CONTENT START -->
+    <div class="box col-md-12">
+        <div class="box-inner">
+            <div class="box-header well" data-original-title="">
+                <h2>Создание платежного поручения</h2>
+            </div>
+            <div class="box-content">
+                <div class="col-md-5">
+        <select  data-placeholder="Выбрать плательщика" id="selectPayer" data-rel="chosen">
             <option value=""></option>
             <optgroup label="Контрагенты">
                 @foreach (var counterparty in Model.Counterparties)
@@ -19,10 +26,10 @@
             </optgroup>
         </select>
         <div id="payerOrgFinancialAccountsDiv"></div>
-    </div>
+                </div>
 
-    <div>
-        <select id="selectPayee" data-rel="chosen">
+    
+        <select data-placeholder="Выбрать получателя" id="selectPayee" data-rel="chosen">
             <option value=""></option>
             <optgroup label="Контрагенты">
                 @foreach (var counterparty in Model.Counterparties)
@@ -38,7 +45,7 @@
             </optgroup>
         </select>
         <div id="payeeOrgFinancialAccountsDiv"></div>
-    </div>
+    
 
     <div>
         <label>Сумма</label>
@@ -55,7 +62,7 @@
     <div>
         <a href="/" id="sendDataBtn" class="btn">Добавить</a>
     </div>
-</div>
+</div></div></div>
 
 <script>
     onload = function () {
