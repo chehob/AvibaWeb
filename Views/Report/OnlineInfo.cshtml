@@ -4,7 +4,7 @@
 
 <div class="box col-md-10">
     <div class="row">
-        <div class="col-md-3 col-sm-3 col-xs-6">
+        <div class="col-md-3 col-sm-3 col-xs-12">
             <span data-toggle="tooltip" title="Всего" class="well top-block">
                 <i class="glyphicon glyphicon-globe yellow"></i>
             <div class="yellow">@Html.DisplayFor(c => Model.TotalBalanceStr)</div>
@@ -13,7 +13,7 @@
             </div>
             </span>
         </div>
-        <div class="col-md-3 col-sm-3 col-xs-6">
+        <div class="col-md-3 col-sm-3 col-xs-12">
             <span data-toggle="tooltip" title="В офисе и у инкассаторов" class="well top-block">
                 <i class="glyphicon glyphicon-home yellow"></i><i class="yellow"> + </i><i class="glyphicon glyphicon-user yellow"></i>
                 <div class="yellow">@Html.DisplayFor(c => Model.OfficeCollectorsTotalInfo)</div>
@@ -22,8 +22,8 @@
                 </div>
             </span>
         </div>
-        <div class="col-md-3 col-sm-3 col-xs-6">
-            <span id="officeDialogBtn" data-toggle="tooltip" title="В офисе" class="well top-block btn-setting">
+        <div class="col-md-3 col-sm-3 col-xs-12">
+            <span id="officeDialogBtn" data-toggle="tooltip" title="В офисе" class="well top-block btn-setting" style="cursor: pointer;">
                 <i class="glyphicon glyphicon-home blue"></i>           
                 <div class="blue">@Html.DisplayFor(c => Model.OfficeBalanceStr)</div>
                 <div id="officeBillInfo" class="row">
@@ -31,7 +31,7 @@
                 </div>
             </span>
         </div>        
-        <div class="col-md-3 col-sm-3 col-xs-6">
+        <div class="col-md-3 col-sm-3 col-xs-12">
             <span data-toggle="tooltip" title="В кассах" class="well top-block">
                 <i class="glyphicon glyphicon-shopping-cart blue"></i>
                 <div class="blue">@Html.DisplayFor(c => Model.DeskBalanceStr)</div>
