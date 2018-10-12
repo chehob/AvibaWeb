@@ -2,7 +2,7 @@
 @model OrganizationFinancialAccountsViewModel
 
 <div>
-    <select data-rel="chosen">
+    <select data-placeholder="Выбрать счет" data-rel="chosen">
         <option value=""></option>
         @foreach (var account in Model.Accounts)
         {

@@ -9,7 +9,13 @@
                 <h2>Создание платежного поручения</h2>
             </div>
             <div class="box-content">
-                <div class="col-md-5">
+    <div class="row">
+        <div class="col-md-12">
+        <input autocomplete="off" placeholder="Номер п/п" class="form-control" id="recordOrderNumber" asp-for="OrderNumber" />
+        </div></div>
+ <br>                   
+        <div class="row">
+            <div class="col-md-12">        
         <select  data-placeholder="Выбрать плательщика" id="selectPayer" data-rel="chosen">
             <option value=""></option>
             <optgroup label="Контрагенты">
@@ -26,9 +32,12 @@
             </optgroup>
         </select>
         <div id="payerOrgFinancialAccountsDiv"></div>
-                </div>
-
-    
+         </div>
+        
+        </div>   
+<br>
+<div class="row">
+                <div class="col-md-12">        
         <select data-placeholder="Выбрать получателя" id="selectPayee" data-rel="chosen">
             <option value=""></option>
             <optgroup label="Контрагенты">
@@ -45,22 +54,23 @@
             </optgroup>
         </select>
         <div id="payeeOrgFinancialAccountsDiv"></div>
-    
-
-    <div>
-        <label>Сумма</label>
-        <input id="recordAmount" asp-for="Amount" value="" />
-    </div>
-    <div>
-        <label>Назначение платежа</label>
-        <input id="recordDescription" asp-for="Description" />
-    </div>
-    <div>
-        <label>Номер платежного поручения</label>
-        <input id="recordOrderNumber" asp-for="OrderNumber" />
-    </div>
-    <div>
-        <a href="/" id="sendDataBtn" class="btn">Добавить</a>
+                </div></div>
+<br>
+    <div class="row">
+        <div class="col-md-12">
+        <input autocomplete="off" placeholder="Сумма" class="form-control" id="recordAmount" asp-for="Amount" value="" />
+    </div></div>
+<br>    
+    <div class="row">
+        <div class="col-md-12">
+        <input autocomplete="off" placeholder="Комментарий" class="form-control" id="recordDescription" asp-for="Description" />
+    </div></div>
+<br>   
+    <div class="row">
+        <div class="col-md-12">
+        <a href="/" id="sendDataBtn" class="btn btn-success">Сохранить</a>
+        <a class="btn btn-primary" href="#"><i class="glyphicon glyphicon-plus"></i> Новая фирма</a>
+        </div>
     </div>
 </div></div></div>
 
