@@ -4,13 +4,20 @@
 <form asp-controller="Data" asp-action="CreateCounterparty"
       data-ajax="true" data-ajax-method="post" data-ajax-mode="replace" data-ajax-update="#results"
       data-ajax-begin="$('#dialog').modal('toggle');">
+    <label>ИНН</label>
     <input asp-for="@Model.Counterparty.ITN" />
     <input type="button" id="findCounterparty" class="btn" value="Найти" />
+    <label>Наименование</label>
     <input asp-for="@Model.Counterparty.Name" readonly />
+    <label>Адрес</label>
     <input asp-for="@Model.Counterparty.Address" readonly />
+    <label>КПП</label>
     <input asp-for="@Model.Counterparty.KPP" readonly />
+    <label>ОГРН</label>
     <input asp-for="@Model.Counterparty.OGRN" readonly />
+    <label>Имя</label>
     <input asp-for="@Model.Counterparty.ManagementName" readonly />
+    <label>Должность</label>
     <input asp-for="@Model.Counterparty.ManagementPosition" readonly />
 
     <label asp-for="@Model.Counterparty.TypeId"></label>
