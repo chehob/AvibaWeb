@@ -1,0 +1,78 @@
+﻿@using AvibaWeb.ViewModels.AdminViewModels
+@model ShowCounterpartyOperationsViewModel
+
+<input type="hidden" value="@Model.LoanGroupId" id="loanGroupId" />
+<input type="hidden" value="@Model.CounterpartyId" id="counterpartyId" />
+<table class="table table-striped table-bordered bootstrap-datatable datatable responsive" id="">
+    <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var operation in Model.CounterpartyOperations)
+        {
+            <tr>
+                <td>
+                    @operation.OperationDate
+                </td>
+                <td>@operation.PayeeName</td>
+                <td>@operation.Amount</td>
+                <td>
+                    <input type="checkbox" value="@operation.IsProcessed" />
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a href="/" id="addCounterparty" class="btn btn-success">Добавить и пересчитать</a>
+
+<script type="text/javascript">
+    $("#addCounterparty").click(function (e) {
+        var counterpartyOperations = new Array();
+        $("tbody tr").each(function () {
+            const firstInput = $(this).find("input");
+            const firstTd = $(this).find("td");
+
+            const operation = {
+                Amount: firstTd.next().next().html(),
+                IsProcessed: firstTd.next().next().next().children().first().is(":checked")
+            };
+            counterpartyOperations.push(operation);
+        });
+
+        var sendJsonData = {
+            LoanGroupId: $("#loanGroupId").val(),
+            CounterpartyId: $("#counterpartyId").val(),
+            CounterpartyOperations: counterpartyOperations
+        };
+
+        e.preventDefault();
+        $.ajax({
+            url: "/Admin/EditLoanGroup",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $('#dialog').modal('toggle');
+                $.ajax({
+                    url: "/Admin/EditLoanGroup",
+                    type: "GET",
+                    cache: false,
+                    data: { id: result.loanGroupId },
+                    success: function (getResult) {
+                        $("#results").html(getResult);
+                    }
+                });
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+</script>

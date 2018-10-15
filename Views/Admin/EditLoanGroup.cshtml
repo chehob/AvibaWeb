@@ -7,42 +7,59 @@
             <h2><i class="glyphicon glyphicon-user"></i> Редактор подразделения</h2>
         </div>
         <div class="box-content">
+            
+            <input type="hidden" value="@Model.Id" id="loanGroupId" />
+            <select data-placeholder="Контрагенты" id="selectCounterparty" data-rel="chosen">
+                <option value=""></option>
+                @foreach (var counterparty in Model.Counterparties)
+                {
+                    <option>@counterparty</option>
+                }
+            </select>
+            <a class="btn btn-primary btn-setting" href="#" id="addCounterpartyBtn"><i class="glyphicon glyphicon-plus"></i> Добавить фирму</a>
 
-            <form asp-controller="Admin" asp-action="EditLoanGroup"
-                  data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
-                @Html.HiddenFor(m => m.Id)
-                <div class="row">
-                    @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
-                    </div>
-                </div>
-                <br>
-                <div class="row">
-                    <span class="col-md-2 control-label"><b>Контрагенты</b></span>
-                   
-                    <div class="col-md-10">
-                        @Html.ListBoxFor(i => i.CounterpartyIds, Model.Counterparties,
-                            new { id="counterpartySelect", @class = "form-control" })
-                    </div>
-                </div>
-                <script type="text/javascript">
-                    $('#counterpartySelect').multiSelect()
-                </script>
-                <div class="row">
-                    @Html.LabelFor(m => m.IsActive, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-1">
-                        @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-control" })
-                    </div>
-                </div>
-                @Html.ValidationSummary(false)
-                <div class="row">
-                    <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" class="btn btn-success" value="Сохранить" />
-                        <a asp-action="LoanGroups" asp-controller="Admin"
-                           data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-                           class="btn btn-danger">Отмена</a>
-                    </div>
-                </div>
-            </form>
+            @foreach (var counterparty in Model.GroupCounterparties)
+            {
+                <div>@counterparty</div>
+            }
         </div></div></div>
+
+<div class="modal fade" id="dialog" title="Basic dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Новая фирма</span>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    onload = function () {
+        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+    }
+
+    onload();
+
+    $("#addCounterpartyBtn").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/Admin/ShowCounterpartyOperations",
+            type: "GET",
+            cache: false,
+            data: {
+                LoanGroupId: $("#loanGroupId").val(),
+                CounterpartyName: $("#selectCounterparty").next().find("a.chosen-single span").first().html()
+            },
+            success: function (result) {
+                $(".modal-body").html(result);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+</script>
