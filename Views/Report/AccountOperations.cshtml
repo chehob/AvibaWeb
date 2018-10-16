@@ -17,7 +17,7 @@
             {
                 if (operation.Amount < 0)
                 {
-                <tr>
+                <tr class="danger">
                     <td>@operation.OperationDateTime</td>
                     <td>@operation.OrderNumber</td>
                     <td>@operation.CounterpartyName</td>
@@ -27,7 +27,7 @@
                 }
                 else
                 {
-                <tr>
+                <tr class="success">
                     <td>@operation.OperationDateTime</td>
                     <td>@operation.OrderNumber</td>
                     <td>@operation.CounterpartyName</td>
