@@ -1,4 +1,28 @@
-﻿
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using AvibaWeb.ViewModels.ReportViewModels
+@model List<AccountOperationsViewModel>
+
+<div class="box col-md-10">
+    <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+        <thead>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var operation in Model)
+            {
+                <tr>
+                    <td>@operation.OperationDateTime</td>
+                    <td>@operation.OrderNumber</td>
+                    <td>@operation.CounterpartyName</td>
+                    <td>@operation.Amount</td>
+                    <td>@operation.Description</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
