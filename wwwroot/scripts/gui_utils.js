@@ -83,6 +83,21 @@ $(function () {
         e.preventDefault();
         $('#dialog').modal('show');
     });
+	
+	$(document).on('click', '.accountLink', function (e) {
+        e.preventDefault();
+        $.ajax({
+			url: "/Report/AccountOperations",
+			type: "GET",
+			cache: false,
+			data: {
+				accountId: $(this).attr("data-account-id")
+			},
+			success: function (getResult) {
+				$("#results").html(getResult);
+			}
+		});
+    });
 });
 
 // fix for charisma scripts on ajax reload
