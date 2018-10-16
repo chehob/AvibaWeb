@@ -1,6 +1,7 @@
 ﻿@using AvibaWeb.ViewModels.ReportViewModels
 @model OrganizationCashlessViewModel
 
+
     <div class="box col-md-10">
         <div class="row">
         <div class="col-md-3 col-sm-3 col-xs-6">
@@ -34,9 +35,11 @@
     </div>
                         }
     </div>
+    
+    <div class="row">
         @foreach (var org in Model.Organizations)
         {
-            <div class="box col-md-6">
+            <div class="box col-md-4">
                 <div class="box-inner">
                     <div class="box-header well" data-original-title="" style="overflow: hidden;">
                         <h2><i class="glyphicon glyphicon-user"></i> @org.Name</h2>
@@ -58,4 +61,12 @@
                 </div>
             </div>
         }
-    </div>
+    </div></div>
+    <script>
+var equal_height = 0;
+$(".row .box-inner").each(function(){
+if ($(this).height() > equal_height) { equal_height = $(this).height(); }
+});
+$(".row .box-inner").height(equal_height);
+</script>
+

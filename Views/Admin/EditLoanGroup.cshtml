@@ -4,31 +4,39 @@
 <div class="box col-md-10">
     <div class="box-inner" style="">
         <div class="box-header well" data-original-title="">
-            <h2><i class="glyphicon glyphicon-user"></i> Редактор подразделения</h2>
+            <h2><i class="glyphicon glyphicon-user"></i> Редактирование группы </h2><h2 class="green"> &nbsp;@Model.Name</h2>
         </div>
         <div class="box-content">
             
             <input type="hidden" value="@Model.Id" id="loanGroupId" />
-            <select data-placeholder="Контрагенты" id="selectCounterparty" data-rel="chosen">
+            <select data-placeholder="Выбрать фирму" id="selectCounterparty" data-rel="chosen">
                 <option value=""></option>
                 @foreach (var counterparty in Model.Counterparties)
                 {
                     <option>@counterparty</option>
                 }
             </select>
-            <a class="btn btn-primary btn-setting" href="#" id="addCounterpartyBtn"><i class="glyphicon glyphicon-plus"></i> Добавить фирму</a>
-
-            @foreach (var counterparty in Model.GroupCounterparties)
+ <br><br>           
+            <a class="btn btn-primary btn-setting" href="#" id="addCounterpartyBtn"><i class="glyphicon glyphicon-arrow-down"></i> Добавить к группе <i class="glyphicon glyphicon-arrow-down"></i></a>
+<hr>
+<h5 class="blue">В составе группы:</h5>
+<div class="box-inner box-content">
+    @foreach (var counterparty in Model.GroupCounterparties)
             {
                 <div>@counterparty</div>
             }
+
+
+            </div>
+
+            
         </div></div></div>
 
 <div class="modal fade" id="dialog" title="Basic dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <span>Новая фирма</span>
+                <span>Добавить к группе</span>
                 <button type="button" class="close" data-dismiss="modal">×</button>
             </div>
             <div class="modal-body"></div>
