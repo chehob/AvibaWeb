@@ -2,14 +2,15 @@
 @model List<AccountOperationsViewModel>
 
 <div class="box col-md-10">
+
     <table class="table table-striped table-bordered bootstrap-datatable datatable responsive" id="dataTable">
         <thead>
             <tr>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
+                <th>Дата</th>
+                <th>№ п/п</th>
+                <th>Агент</th>
+                <th>Сумма</th>
+                <th style="width: 30%;">Назначение платежа</th>
             </tr>
         </thead>
         <tbody>
@@ -38,6 +39,7 @@
             }
         </tbody>
     </table>
+ 
 </div>
 
 <script>
