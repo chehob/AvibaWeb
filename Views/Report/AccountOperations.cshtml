@@ -15,13 +15,26 @@
         <tbody>
             @foreach (var operation in Model)
             {
+                if (operation.Amount < 0)
+                {
                 <tr>
                     <td>@operation.OperationDateTime</td>
                     <td>@operation.OrderNumber</td>
                     <td>@operation.CounterpartyName</td>
-                    <td>@operation.Amount</td>
+                    <td>@operation.AmountStr</td>
                     <td>@operation.Description</td>
                 </tr>
+                }
+                else
+                {
+                <tr>
+                    <td>@operation.OperationDateTime</td>
+                    <td>@operation.OrderNumber</td>
+                    <td>@operation.CounterpartyName</td>
+                    <td>@operation.AmountStr</td>
+                    <td>@operation.Description</td>
+                </tr>
+                }
             }
         </tbody>
     </table>
