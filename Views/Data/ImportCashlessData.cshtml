@@ -39,6 +39,7 @@
                          <input type="hidden" value="@counterpartyGroup.ITN" />
                          <input type="hidden" value="@counterpartyGroup.Name" />
                          <input type="hidden" value="@counterpartyGroup.IsUserITN.ToString()" />
+                         <input type="hidden" value="@counterpartyGroup.IsTransferAccount.ToString()" />
 
                          <div class="box-inner">
                              <div class="box-header well hdr-minimize" style="cursor: pointer;">
@@ -139,13 +140,14 @@
             records.push(record);
         });
 
-        const counterparty = {
+        const counterpartyGroup = {
             Records: records,
             ITN: ITN.val(),
             Name: ITN.next().val(),
             IsUserITN: ITN.next().next().val(),
+            IsTransferAccount: ITN.next().next().next().val()
         };
-        counterpartyGroups.push(counterparty);
+        counterpartyGroups.push(counterpartyGroup);
     });
 
     var sendJsonData = { 
@@ -154,6 +156,8 @@
             AccountNumber: $("#importDestination > div").first().next().find("b").html()
         }
     };
+
+    console.log(sendJsonData);
 
     $("#saveOperations").click(function (e) {
         e.preventDefault();
