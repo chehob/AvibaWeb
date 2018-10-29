@@ -1,17 +1,26 @@
 ﻿ <p class="btn-group">
+     @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+    {
     <a asp-action="OnlineInfo" asp-controller="Report"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary">Наличные</a>
     <a asp-action="CashlessOrg" asp-controller="Report"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary">Безнал счета</a>
+    }
+    @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Кассиры"))
+    {
     <a asp-action="CashlessCounterparties" asp-controller="Report"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary">Корпораторы</a>
+    }
+    <!--
        <span class="label-default btn">Продажи</a>
+    -->
 </p>
     
  <div id="results">
+<!--
     <div class="box col-md-10">
         <div class="col-md-3 col-sm-3 col-xs-12">
         <span data-toggle="tooltip" title="Наличные" class="well top-block">
@@ -148,5 +157,5 @@
 
 
     </div>
-
+-->
  </div>
