@@ -1,0 +1,67 @@
+﻿@using AvibaWeb.ViewModels.CollectionViewModels
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Common
+@model IPagedList<AvibaWeb.ViewModels.ManagementViewModels.KRSCancelRequestViewModel>
+
+<div class="row">
+    <!-- CONTENT START -->
+    <div class="box col-md-12">
+        <div class="box-inner">
+            <div class="box-header well" data-original-title="">
+                <h2>Запросы на аннуляцию КРС</h2>
+            </div>
+            <div class="box-content">
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="4" class="text-center">Нет запросов</td></tr>
+                }
+                else
+                {
+                    foreach (var krs in Model)
+                    {
+                    <div class="row">
+                        <div class="col-md-1">@krs.BSONumber</div>
+                        <div class="col-md-3">@krs.PassengerName</div>
+                        <div class="col-md-2">@krs.Payment</div>
+                        <div class="col-md-2">@krs.Route</div>
+                        <div class="col-md-2">@krs.KRSAmount</div>
+                        <div class="col-md-1">@krs.DealDateTime</div>
+                        <div class="col-md-1">@krs.Description</div>
+                        <div class="col-md-2">
+
+                            <form style="display: inline-block;" asp-controller="Management" asp-action="AcceptKRSCancellation" asp-route-id="@krs.RequestId"
+                                  data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+                                <input id="btnAcceptCollection" type="submit" name="picture" class="btn btn-success btn-sm" value="Принять" />
+                            </form>
+
+                            <form style="display: inline-block;" asp-controller="Management" asp-action="RejectKRSCancellation" asp-route-id="@krs.RequestId"
+                                  data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+                                <input id="btnRejectCollection" type="submit" name="picture" class="btn btn-danger btn-sm" value="Отклонить" />
+                            </form>
+
+                        </div>
+                    </div>
+                        <hr>
+                    }
+                }
+
+
+
+
+                @Html.PagedListPager(Model, page => Url.Action("KRSCancelRequests", new { page }),
+                    new Func<PagedListRenderOptionsBase>(() =>
+                    {
+                        var options = PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+                            new AjaxOptions()
+                            {
+                                HttpMethod = "GET",
+                                UpdateTargetId = "results"
+                            });
+                        options.MaximumPageNumbersToDisplay = 5;
+                        return options;
+                    })())
+            </div>
+        </div>
+    </div>
+</div>
