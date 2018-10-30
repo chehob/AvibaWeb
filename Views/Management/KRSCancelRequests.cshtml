@@ -2,7 +2,9 @@
 @using X.PagedList
 @using X.PagedList.Mvc.Core
 @using X.PagedList.Mvc.Common
-@model IPagedList<AvibaWeb.ViewModels.ManagementViewModels.KRSCancelRequestViewModel>
+@using AvibaWeb.ViewModels.ManagementViewModels
+@using AvibaWeb.DomainModels
+@model IPagedList<KRSCancelRequestViewModel>
 
 <div class="row">
     <!-- CONTENT START -->
@@ -28,18 +30,21 @@
                         <div class="col-md-2">@krs.KRSAmount</div>
                         <div class="col-md-1">@krs.DealDateTime</div>
                         <div class="col-md-1">@krs.Description</div>
+                        <div class="col-md-1">@krs.CashierName</div>
+                        <div class="col-md-1">@krs.Desk</div>
                         <div class="col-md-2">
+                            @if (krs.Status == KRSCancelRequestOperation.KCROType.New)
+                            {
+                                <form style="display: inline-block;" asp-controller="Management" asp-action="AcceptKRSCancellation" asp-route-id="@krs.RequestId"
+                                      data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+                                    <input id="btnAcceptCollection" type="submit" name="picture" class="btn btn-success btn-sm" value="Принять" />
+                                </form>
 
-                            <form style="display: inline-block;" asp-controller="Management" asp-action="AcceptKRSCancellation" asp-route-id="@krs.RequestId"
-                                  data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
-                                <input id="btnAcceptCollection" type="submit" name="picture" class="btn btn-success btn-sm" value="Принять" />
-                            </form>
-
-                            <form style="display: inline-block;" asp-controller="Management" asp-action="RejectKRSCancellation" asp-route-id="@krs.RequestId"
-                                  data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
-                                <input id="btnRejectCollection" type="submit" name="picture" class="btn btn-danger btn-sm" value="Отклонить" />
-                            </form>
-
+                                <form style="display: inline-block;" asp-controller="Management" asp-action="RejectKRSCancellation" asp-route-id="@krs.RequestId"
+                                      data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+                                    <input id="btnRejectCollection" type="submit" name="picture" class="btn btn-danger btn-sm" value="Отклонить" />
+                                </form>
+                            }
                         </div>
                     </div>
                         <hr>
