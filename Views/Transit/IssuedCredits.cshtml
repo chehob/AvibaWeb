@@ -30,7 +30,7 @@
                                 <div class="col-md-2"><b>@Html.DisplayFor(c => credit.AddAmount)</b></div>
                                 <div class="col-md-2">@Html.DisplayFor(c => credit.Status)</div>
                                 <div class="col-md-2">
-                                    @if (credit.Status != TransitAccountCreditOperation.TACOType.Cancelled)
+                                    @if (credit.CreditId != 0 && credit.Status != TransitAccountCreditOperation.TACOType.Cancelled)
                                     {
                                         <form asp-controller="Transit" asp-action="CancelCredit" asp-route-id="@credit.CreditId"
                                               data-ajax-update="#contentResults" data-ajax="true" data-ajax-method="POST">
