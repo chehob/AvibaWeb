@@ -32,6 +32,12 @@
                         <div class="col-md-1">@krs.Description</div>
                         <div class="col-md-1">@krs.CashierName</div>
                         <div class="col-md-1">@krs.Desk</div>
+                        <div class="col-md-1">
+                            @if (krs.Status == KRSCancelRequestOperation.KCROType.New)
+                            {
+                                @krs.ManagerName
+                            }
+                        </div>
                         <div class="col-md-1">@Html.DisplayFor(k => krs.Status)</div>
                         <div class="col-md-2">
                             @if (krs.Status == KRSCancelRequestOperation.KCROType.New)
