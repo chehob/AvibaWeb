@@ -22,23 +22,46 @@
                     {
                         foreach (var credit in Model)
                         {
-                            <div class="row">
-                                <div class="col-md-2">
-                                    @Html.DisplayFor(c => credit.IssuedDateTime)
+                            @if (credit.Amount >= 0)
+                            {
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        @Html.DisplayFor(c => credit.IssuedDateTime)
+                                    </div>
+                                    <div class="col-md-2"><b>@Html.DisplayFor(c => credit.AmountStr)</b></div>
+                                    <div class="col-md-2"><b>@Html.DisplayFor(c => credit.AddAmount)</b></div>
+                                    <div class="col-md-2">@Html.DisplayFor(c => credit.Status)</div>
+                                    <div class="col-md-2">
+                                        @if (credit.CreditId != 0 && credit.Status != TransitAccountCreditOperation.TACOType.Cancelled)
+                                        {
+                                            <form asp-controller="Transit" asp-action="CancelCredit" asp-route-id="@credit.CreditId"
+                                                  data-ajax-update="#contentResults" data-ajax="true" data-ajax-method="POST">
+                                                <input id="btnCancelCredit" type="image" name="picture" src="~/images/del.png" width="32" height="32" />
+                                            </form>
+                                        }
+                                    </div>
                                 </div>
-                                <div class="col-md-2"><b>@Html.DisplayFor(c => credit.Amount)</b></div>
-                                <div class="col-md-2"><b>@Html.DisplayFor(c => credit.AddAmount)</b></div>
-                                <div class="col-md-2">@Html.DisplayFor(c => credit.Status)</div>
-                                <div class="col-md-2">
-                                    @if (credit.CreditId != 0 && credit.Status != TransitAccountCreditOperation.TACOType.Cancelled)
-                                    {
-                                        <form asp-controller="Transit" asp-action="CancelCredit" asp-route-id="@credit.CreditId"
-                                              data-ajax-update="#contentResults" data-ajax="true" data-ajax-method="POST">
-                                            <input id="btnCancelCredit" type="image" name="picture" src="~/images/del.png" width="32" height="32" />
-                                        </form>
-                                    }
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        @Html.DisplayFor(c => credit.IssuedDateTime)
+                                    </div>
+                                    <div class="col-md-2"><b>@Html.DisplayFor(c => credit.AmountStr)</b></div>
+                                    <div class="col-md-2"><b>@Html.DisplayFor(c => credit.AddAmount)</b></div>
+                                    <div class="col-md-2">@Html.DisplayFor(c => credit.Status)</div>
+                                    <div class="col-md-2">
+                                        @if (credit.CreditId != 0 && credit.Status != TransitAccountCreditOperation.TACOType.Cancelled)
+                                        {
+                                            <form asp-controller="Transit" asp-action="CancelCredit" asp-route-id="@credit.CreditId"
+                                                  data-ajax-update="#contentResults" data-ajax="true" data-ajax-method="POST">
+                                                <input id="btnCancelCredit" type="image" name="picture" src="~/images/del.png" width="32" height="32" />
+                                            </form>
+                                        }
+                                    </div>
                                 </div>
-                            </div>
+                            }
                             <hr>
                         }
                     }
@@ -53,7 +76,7 @@
                                 new AjaxOptions()
                                 {
                                     HttpMethod = "GET",
-                                    UpdateTargetId = "results"
+                                    UpdateTargetId = "contentResults"
                                 });
                             options.MaximumPageNumbersToDisplay = 5;
                             return options;
