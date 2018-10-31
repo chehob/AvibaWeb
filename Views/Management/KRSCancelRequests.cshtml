@@ -24,6 +24,20 @@
                     {
                     <div class="row">
                         <div class="col-md-1">
+                            @switch (krs.Status)
+                            {
+                                case KRSCancelRequestOperation.KCROType.New:
+                                    // новый
+                                    break;
+
+                                case KRSCancelRequestOperation.KCROType.Accepted:
+                                    // принят
+                                    break;
+
+                                case KRSCancelRequestOperation.KCROType.Rejected:
+                                    // отказ
+                                    break;
+                            }
                             @Html.DisplayFor(k => krs.Status)<br>
                             @krs.DealDateTime</div>
                         <div class="col-md-3">
@@ -54,20 +68,7 @@
                             </span>
                             } 
 
-                            @switch (krs.Status)
-                            {
-                                case KRSCancelRequestOperation.KCROType.New:
-                                    // новый
-                                    break;
-
-                                case KRSCancelRequestOperation.KCROType.Accepted:
-                                    // принят
-                                    break;
-
-                                case KRSCancelRequestOperation.KCROType.Rejected:
-                                    // отказ
-                                    break;
-                            }
+                            
                              
 
                         </div>
