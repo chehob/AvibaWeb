@@ -53,13 +53,29 @@
                                 @krs.ManagerName
                             </span>
                             } 
-                            
+
+                            @switch (krs.Status)
+                            {
+                                case KRSCancelRequestOperation.KCROType.New:
+                                    // новый
+                                    break;
+
+                                case KRSCancelRequestOperation.KCROType.Accepted:
+                                    // принят
+                                    break;
+
+                                case KRSCancelRequestOperation.KCROType.Rejected:
+                                    // отказ
+                                    break;
+                            }
+                             
+
                         </div>
                     </div>
                         <div class="row">
                           <div class="col-md-5">
                             @if (krs.Status == KRSCancelRequestOperation.KCROType.New)
-                            {
+                                    {
                                 <form style="display: inline-block;" asp-controller="Management" asp-action="AcceptKRSCancellation" asp-route-id="@krs.RequestId"
                                       data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
                                     <input id="btnAcceptCollection" type="submit" name="picture" class="btn btn-success btn-sm" value="Принять" />
@@ -90,7 +106,7 @@
                                 HttpMethod = "GET",
                                 UpdateTargetId = "results"
                             });
-                        options.MaximumPageNumbersToDisplay = 5;
+                            options.MaximumPageNumbersToDisplay = 5;
                         return options;
                     })())
             </div>
