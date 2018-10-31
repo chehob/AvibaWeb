@@ -28,17 +28,20 @@
                             {
                                 case KRSCancelRequestOperation.KCROType.New:
                                     // новый
+                                    @Html.DisplayFor(k => krs.Status)<br>
                                     break;
 
                                 case KRSCancelRequestOperation.KCROType.Accepted:
                                     // принят
+                                    @Html.DisplayFor(k => krs.Status)<br>
                                     break;
 
                                 case KRSCancelRequestOperation.KCROType.Rejected:
                                     // отказ
+                                    @Html.DisplayFor(k => krs.Status)<br>
                                     break;
                             }
-                            @Html.DisplayFor(k => krs.Status)<br>
+                            
                             @krs.DealDateTime</div>
                         <div class="col-md-3">
                             @krs.CashierName<br>
