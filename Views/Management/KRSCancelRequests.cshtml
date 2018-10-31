@@ -23,24 +23,41 @@
                     foreach (var krs in Model)
                     {
                     <div class="row">
-                        <div class="col-md-1">@krs.BSONumber</div>
-                        <div class="col-md-1">@krs.KRSNumber</div>
-                        <div class="col-md-3">@krs.PassengerName</div>
-                        <div class="col-md-2">@krs.Payment</div>
-                        <div class="col-md-2">@krs.Route</div>
-                        <div class="col-md-2">@krs.KRSAmount</div>
-                        <div class="col-md-1">@krs.DealDateTime</div>
-                        <div class="col-md-1">@krs.Description</div>
-                        <div class="col-md-1">@krs.CashierName</div>
-                        <div class="col-md-1">@krs.Desk</div>
                         <div class="col-md-1">
-                            @if (krs.Status != KRSCancelRequestOperation.KCROType.New)
-                            {
-                                @krs.ManagerName
-                            }
+                            @Html.DisplayFor(k => krs.Status)<br>
+                            @krs.DealDateTime</div>
+                        <div class="col-md-3">
+                            @krs.CashierName<br>
+                            @krs.Desk
                         </div>
-                        <div class="col-md-1">@Html.DisplayFor(k => krs.Status)</div>
-                        <div class="col-md-2">
+
+                        <div class="col-md-3">
+                            @krs.BSONumber <br>
+                            <b>@krs.PassengerName</b><br>
+                            @krs.Route
+                            </div>
+
+                        <div class="col-md-3">
+                            Стоимость билета: @krs.Payment<br>
+                            <b>Стоимость КРС: @krs.KRSAmount</b><br>
+                            <i>@krs.Description</i>
+                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5">
+                            
+                           @if (krs.Status != KRSCancelRequestOperation.KCROType.New)
+                            {
+                               <span style="background-color:rgb(198, 233, 164)">
+                                Заявку обаботал: 
+                                @krs.ManagerName
+                            </span>
+                            } 
+                            
+                        </div>
+                    </div>
+                        <div class="row">
+                          <div class="col-md-5">
                             @if (krs.Status == KRSCancelRequestOperation.KCROType.New)
                             {
                                 <form style="display: inline-block;" asp-controller="Management" asp-action="AcceptKRSCancellation" asp-route-id="@krs.RequestId"
@@ -53,8 +70,10 @@
                                     <input id="btnRejectCollection" type="submit" name="picture" class="btn btn-danger btn-sm" value="Отклонить" />
                                 </form>
                             }
+                        </div>  
                         </div>
-                    </div>
+                        
+                    
                         <hr>
                     }
                 }
