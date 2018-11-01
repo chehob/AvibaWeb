@@ -28,47 +28,69 @@
                             {
                                 case KRSCancelRequestOperation.KCROType.New:
                                     // новый
-                                    @Html.DisplayFor(k => krs.Status)<br>
+                                     <span class="label-success label label-info">@Html.DisplayFor(k => krs.Status)</span><br>
                                     break;
 
                                 case KRSCancelRequestOperation.KCROType.Accepted:
                                     // принят
-                                    @Html.DisplayFor(k => krs.Status)<br>
+                                    <span class="label-success label label-default">@Html.DisplayFor(k => krs.Status)</span><br>
                                     break;
 
                                 case KRSCancelRequestOperation.KCROType.Rejected:
                                     // отказ
-                                    @Html.DisplayFor(k => krs.Status)<br>
+                                     <span class="label-success label label-danger">@Html.DisplayFor(k => krs.Status)</span><br>
                                     break;
                             }
                             
                             @krs.DealDateTime</div>
                         <div class="col-md-3">
-                            @krs.CashierName<br>
-                            @krs.Desk
+                            <b>@krs.CashierName</b><br>
+                            @krs.Desk<br>
+                            
                         </div>
-
-                        <div class="col-md-3">
-                            @krs.BSONumber <br>
-                            <b>@krs.PassengerName</b><br>
-                            @krs.Route
-                            </div>
-
-                        <div class="col-md-3">
-                            Стоимость билета: @krs.Payment<br>
+                            <div class="col-md-3">
+                            <b>КРС №: @krs.KRSNumber</b><br>
                             <b>Стоимость КРС: @krs.KRSAmount</b><br>
                             <i>@krs.Description</i>
                             </div>
+                        <div class="col-md-3">
+                            @krs.BSONumber <br>
+                            <b>@krs.PassengerName</b><br>
+                            @krs.Route<br>
+                            Стоимость билета: @krs.Payment
+                            </div>
+
+                        
                     </div>
                     <div class="row">
                         <div class="col-md-5">
                             
                            @if (krs.Status != KRSCancelRequestOperation.KCROType.New)
                             {
-                               <span style="background-color:rgb(198, 233, 164)">
-                                Заявку обработал(а): 
-                                @krs.ManagerName
-                            </span>
+                                @switch (krs.Status)
+                            {
+                                case KRSCancelRequestOperation.KCROType.New:
+                                    // новый
+                                     
+                                    break;
+
+                                case KRSCancelRequestOperation.KCROType.Accepted:
+                                    // принят
+                                <span style="background-color:rgb(198, 233, 164)">
+                                &nbsp;Заявку принял(а): 
+                                @krs.ManagerName&nbsp;
+                                </span>    
+                                    break;
+
+                                case KRSCancelRequestOperation.KCROType.Rejected:
+                                    // отказ
+                                     <span style="background-color:#c71c22; color:white">
+                                &nbsp;Заявку отменил(а): 
+                                @krs.ManagerName&nbsp;
+                                </span>  
+                                    break;
+                            }
+                               
                             } 
 
                             
