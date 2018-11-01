@@ -4,16 +4,31 @@
 @using X.PagedList.Mvc.Common
 @using AvibaWeb.ViewModels.ManagementViewModels
 @using AvibaWeb.DomainModels
-@model IPagedList<KRSCancelRequestViewModel>
+@model List<KRSCancelRequestViewModel>
 
 <div class="row">
     <!-- CONTENT START -->
     <div class="box col-md-12">
-        <div class="box-inner">
-            <div class="box-header well" data-original-title="">
-                <h2>Запросы на аннуляцию КРС</h2>
-            </div>
-            <div class="box-content">
+        <div class="box-header well" data-original-title="">
+            <h2>Запросы на аннуляцию КРС</h2>
+        </div>
+        <table border="0" cellspacing="5" cellpadding="5">
+            <tr>
+                <td>С:</td>
+                <td><input type="text" id="min" name="min" class="date-range-filter"></td>
+            </tr>
+            <tr>
+                <td>По:</td>
+                <td><input type="text" id="max" name="max" class="date-range-filter"></td>
+            </tr>
+        </table>
+        <table class="table table-striped table-bordered bootstrap-datatable datatable responsive" id="dataTable">
+            <thead>
+                <tr>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
                 @if (!Model.Any())
                 {
                     <tr><td colspan="4" class="text-center">Нет запросов</td></tr>
@@ -22,120 +37,156 @@
                 {
                     foreach (var krs in Model)
                     {
-                    <div class="row">
-                        <div class="col-md-1">
-                            @switch (krs.Status)
-                            {
-                                case KRSCancelRequestOperation.KCROType.New:
-                                    // новый
-                                     <span class="label-success label label-info">@Html.DisplayFor(k => krs.Status)</span><br>
-                                    break;
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        @switch (krs.Status)
+                                        {
+                                            case KRSCancelRequestOperation.KCROType.New:
+                                                // новый
+                                                <span class="label-success label label-info">@Html.DisplayFor(k => krs.Status)</span><br>
+                                                break;
 
-                                case KRSCancelRequestOperation.KCROType.Accepted:
-                                    // принят
-                                    <span class="label-success label label-default">@Html.DisplayFor(k => krs.Status)</span><br>
-                                    break;
+                                            case KRSCancelRequestOperation.KCROType.Accepted:
+                                                // принят
+                                                <span class="label-success label label-default">@Html.DisplayFor(k => krs.Status)</span><br>
+                                                break;
 
-                                case KRSCancelRequestOperation.KCROType.Rejected:
-                                    // отказ
-                                     <span class="label-success label label-danger">@Html.DisplayFor(k => krs.Status)</span><br>
-                                    break;
-                            }
-                            
-                            @krs.DealDateTime</div>
-                        <div class="col-md-3">
-                            <b>@krs.CashierName</b><br>
-                            @krs.Desk<br>
-                            
-                        </div>
-                            <div class="col-md-3">
-                            <b>КРС №: @krs.KRSNumber</b><br>
-                            <b>Стоимость КРС: @krs.KRSAmount</b><br>
-                            <i>@krs.Description</i>
-                            </div>
-                        <div class="col-md-3">
-                            @krs.BSONumber <br>
-                            <b>@krs.PassengerName</b><br>
-                            @krs.Route<br>
-                            Стоимость билета: @krs.Payment
-                            </div>
+                                            case KRSCancelRequestOperation.KCROType.Rejected:
+                                                // отказ
+                                                <span class="label-success label label-danger">@Html.DisplayFor(k => krs.Status)</span><br>
+                                                break;
+                                        }
 
-                        
-                    </div>
-                    <div class="row">
-                        <div class="col-md-5">
-                            
-                           @if (krs.Status != KRSCancelRequestOperation.KCROType.New)
-                            {
-                                @switch (krs.Status)
-                            {
-                                case KRSCancelRequestOperation.KCROType.New:
-                                    // новый
-                                     
-                                    break;
-
-                                case KRSCancelRequestOperation.KCROType.Accepted:
-                                    // принят
-                                <span style="background-color:rgb(198, 233, 164)">
-                                &nbsp;Заявку принял(а): 
-                                @krs.ManagerName&nbsp;
-                                </span>    
-                                    break;
-
-                                case KRSCancelRequestOperation.KCROType.Rejected:
-                                    // отказ
-                                     <span style="background-color:#c71c22; color:white">
-                                &nbsp;Заявку отменил(а): 
-                                @krs.ManagerName&nbsp;
-                                </span>  
-                                    break;
-                            }
-                               
-                            } 
-
-                            
-                             
-
-                        </div>
-                    </div>
-                        <div class="row">
-                          <div class="col-md-5">
-                            @if (krs.Status == KRSCancelRequestOperation.KCROType.New)
+                                        <span id="myId">@krs.DealDateTime</span>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <b>@krs.CashierName</b><br>
+                                        @krs.Desk<br>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <b>КРС №: @krs.KRSNumber</b><br>
+                                        <b>Стоимость КРС: @krs.KRSAmount</b><br>
+                                        <i>@krs.Description</i>
+                                    </div>
+                                    <div class="col-md-1">
+                                        @if (krs.BSONumber != "0")
+                                        {
+                                            @krs.BSONumber <br>
+                                            <b>@krs.PassengerName</b><br>
+                                            @krs.Route<br>
+                                            @:Стоимость билета: @krs.Payment
+                                        }
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    @if (krs.Status != KRSCancelRequestOperation.KCROType.New)
                                     {
-                                <form style="display: inline-block;" asp-controller="Management" asp-action="AcceptKRSCancellation" asp-route-id="@krs.RequestId"
-                                      data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
-                                    <input id="btnAcceptCollection" type="submit" name="picture" class="btn btn-success btn-sm" value="Принять" />
-                                </form>
+                                        @switch (krs.Status)
+                                        {
+                                            case KRSCancelRequestOperation.KCROType.New:
+                                                // новый
 
-                                <form style="display: inline-block;" asp-controller="Management" asp-action="RejectKRSCancellation" asp-route-id="@krs.RequestId"
-                                      data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
-                                    <input id="btnRejectCollection" type="submit" name="picture" class="btn btn-danger btn-sm" value="Отклонить" />
-                                </form>
-                            }
-                        </div>  
-                        </div>
-                        
-                    
-                        <hr>
+                                                break;
+
+                                            case KRSCancelRequestOperation.KCROType.Accepted:
+                                                // принят
+                                                <span style="background-color:rgb(198, 233, 164)">
+                                                    &nbsp;Заявку принял(а):
+                                                    @krs.ManagerName&nbsp;
+                                                </span>
+                                                break;
+
+                                            case KRSCancelRequestOperation.KCROType.Rejected:
+                                                // отказ
+                                                <span style="background-color:#c71c22; color:white">
+                                                    &nbsp;Заявку отменил(а):
+                                                    @krs.ManagerName&nbsp;
+                                                </span>
+                                                break;
+                                        }
+                                    }
+                                </div>
+                                <div class="row">
+                                    @if (krs.Status == KRSCancelRequestOperation.KCROType.New)
+                                    {
+                                        <form style="display: inline-block;" asp-controller="Management" asp-action="AcceptKRSCancellation" asp-route-id="@krs.RequestId"
+                                              data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+                                            <input id="btnAcceptCollection" type="submit" name="picture" class="btn btn-success btn-sm" value="Принять" />
+                                        </form>
+
+                                        <form style="display: inline-block;" asp-controller="Management" asp-action="RejectKRSCancellation" asp-route-id="@krs.RequestId"
+                                              data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+                                            <input id="btnRejectCollection" type="submit" name="picture" class="btn btn-danger btn-sm" value="Отклонить" />
+                                        </form>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
                     }
                 }
-
-
-
-
-                @Html.PagedListPager(Model, page => Url.Action("KRSCancelRequests", new { page }),
-                    new Func<PagedListRenderOptionsBase>(() =>
-                    {
-                        var options = PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
-                            new AjaxOptions()
-                            {
-                                HttpMethod = "GET",
-                                UpdateTargetId = "results"
-                            });
-                            options.MaximumPageNumbersToDisplay = 5;
-                        return options;
-                    })())
-            </div>
-        </div>
+            </tbody>
+        </table>
     </div>
 </div>
+
+<script>
+    /* Custom filtering function which will filter data in column four between two values */
+    $.fn.dataTableExt.afnFiltering.push(
+        function (oSettings, aData, iDataIndex) {
+            //var iMin = moment(document.getElementById('min').value, 'DD.MM.YYYY' );
+            //var iMax = moment(document.getElementById('max').value, 'DD.MM.YYYY');
+
+            var iMin = document.getElementById('min').value;
+            var iMax = document.getElementById('max').value;
+
+            // create a fake document
+            var df = document.createDocumentFragment();
+            // create a placeholder node to hold the innerHTML
+            var el = document.createElement('body');
+            el.innerHTML = aData[0];
+            // append to the document fragment
+            df.appendChild(el);
+            // execute .getElementById
+            var createdAt = df.getElementById('myId').innerHTML;
+
+            //console.log(iMin.toDate());
+            var iVersion = aData[3] == "-" ? 0 : aData[3] * 1;
+            if (
+                (iMin == "" && iMax == "") ||
+                (moment(createdAt, 'DD.MM.YYYY HH:mm:ss').isSameOrAfter(moment(iMin, 'DD.MM.YYYY')) &&
+                    moment(createdAt, 'DD.MM.YYYY HH:mm:ss').isSameOrBefore(moment(iMax, 'DD.MM.YYYY')))
+            ) {
+                return true;
+            }            
+            return false;
+        }
+    );
+
+    onload = function () {
+        $("#min").datepicker();
+        $("#max").datepicker();
+
+        var oTable = $('#dataTable').dataTable({
+            "bSort": false,
+            "oLanguage": {
+                "sSearch": "Поиск:",
+                "sLengthMenu": "Показать _MENU_ записей",
+                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)"
+            }
+        });
+
+        /* Add event listeners to the two range filtering inputs */
+        $('#min').keyup(function () { oTable.fnDraw(); });
+        $('#max').keyup(function () { oTable.fnDraw(); });
+
+        $('.date-range-filter').change(function () {
+            oTable.fnDraw();
+        });
+    }
+
+    onload();
+</script>
