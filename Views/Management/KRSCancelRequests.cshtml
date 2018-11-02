@@ -12,20 +12,20 @@
         <div class="box-header well" data-original-title="">
             <h2>Запросы на аннуляцию КРС</h2>
         </div>
-        <table border="0" cellspacing="5" cellpadding="5">
-            <tr>
-                <td>С:</td>
-                <td><input type="text" id="min" name="min" class="date-range-filter"></td>
-            </tr>
-            <tr>
-                <td>По:</td>
-                <td><input type="text" id="max" name="max" class="date-range-filter"></td>
-            </tr>
-        </table>
+        <br>
+        <div class="col-md-12">
+                  Выбрать с: <input type="text" id="min" name="min" class="date-range-filter"> по: <input type="text" id="max" name="max" class="date-range-filter">
+  
+        </div>
+        <br><br>
+<div class="col-md-12">
         <table class="table table-striped table-bordered bootstrap-datatable datatable responsive" id="dataTable">
             <thead>
                 <tr>
-                    <th></th>
+                    <th>Заявка</th>
+                    <th>Оператор</th>
+                    <th>КРС</th>
+                    <th>Билет</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,8 +39,8 @@
                     {
                         <tr>
                             <td>
-                                <div class="row">
-                                    <div class="col-md-1">
+                                
+                                    
                                         @switch (krs.Status)
                                         {
                                             case KRSCancelRequestOperation.KCROType.New:
@@ -59,29 +59,8 @@
                                                 break;
                                         }
 
-                                        <span id="myId">@krs.DealDateTime</span>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <b>@krs.CashierName</b><br>
-                                        @krs.Desk<br>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <b>КРС №: @krs.KRSNumber</b><br>
-                                        <b>Стоимость КРС: @krs.KRSAmount</b><br>
-                                        <i>@krs.Description</i>
-                                    </div>
-                                    <div class="col-md-1">
-                                        @if (krs.BSONumber != "0")
-                                        {
-                                            @krs.BSONumber <br>
-                                            <b>@krs.PassengerName</b><br>
-                                            @krs.Route<br>
-                                            @:Стоимость билета: @krs.Payment
-                                        }
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    @if (krs.Status != KRSCancelRequestOperation.KCROType.New)
+                                        <span id="myId">@krs.DealDateTime</span><br>
+                                        @if (krs.Status != KRSCancelRequestOperation.KCROType.New)
                                     {
                                         @switch (krs.Status)
                                         {
@@ -93,7 +72,7 @@
                                             case KRSCancelRequestOperation.KCROType.Accepted:
                                                 // принят
                                                 <span style="background-color:rgb(198, 233, 164)">
-                                                    &nbsp;Заявку принял(а):
+                                                    &nbsp;Заявку принял(а):<br>
                                                     @krs.ManagerName&nbsp;
                                                 </span>
                                                 break;
@@ -101,15 +80,13 @@
                                             case KRSCancelRequestOperation.KCROType.Rejected:
                                                 // отказ
                                                 <span style="background-color:#c71c22; color:white">
-                                                    &nbsp;Заявку отменил(а):
+                                                    &nbsp;Заявку отменил(а):<br>
                                                     @krs.ManagerName&nbsp;
                                                 </span>
                                                 break;
                                         }
                                     }
-                                </div>
-                                <div class="row">
-                                    @if (krs.Status == KRSCancelRequestOperation.KCROType.New)
+                                                                        @if (krs.Status == KRSCancelRequestOperation.KCROType.New)
                                     {
                                         <form style="display: inline-block;" asp-controller="Management" asp-action="AcceptKRSCancellation" asp-route-id="@krs.RequestId"
                                               data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
@@ -121,13 +98,33 @@
                                             <input id="btnRejectCollection" type="submit" name="picture" class="btn btn-danger btn-sm" value="Отклонить" />
                                         </form>
                                     }
-                                </div>
                             </td>
+                            <td>        
+                                    
+                                        <b>@krs.CashierName</b><br>
+                                        @krs.Desk<br>
+                            </td>
+                            <td>
+                                    
+                                        <b>КРС №: @krs.KRSNumber</b><br>
+                                        <b>Сумма: @krs.KRSAmount руб.</b><br>
+                                        <i>@krs.Description</i>
+                            </td>
+                            <td>
+                                        @if (krs.BSONumber != "0")
+                                        {
+                                            @krs.BSONumber <br>
+                                            <b>@krs.PassengerName</b><br>
+                                            @krs.Route<br>
+                                            @:Стоимость билета: @krs.Payment
+                                        }
+                            </td>
+
                         </tr>
                     }
                 }
             </tbody>
-        </table>
+        </table></div>
     </div>
 </div>
 
