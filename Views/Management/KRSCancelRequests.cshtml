@@ -116,7 +116,8 @@
                                             @krs.BSONumber <br>
                                             <b>@krs.PassengerName</b><br>
                                             @krs.Route<br>
-                                            @:Стоимость билета: @krs.Payment
+                                            @:Стоимость билета: @krs.Payment<br />
+                                            @Html.DisplayFor(k => krs.TicketStatus)
                                         }
                             </td>
 
@@ -129,26 +130,17 @@
 </div>
 
 <script>
-    /* Custom filtering function which will filter data in column four between two values */
     $.fn.dataTableExt.afnFiltering.push(
         function (oSettings, aData, iDataIndex) {
-            //var iMin = moment(document.getElementById('min').value, 'DD.MM.YYYY' );
-            //var iMax = moment(document.getElementById('max').value, 'DD.MM.YYYY');
-
             var iMin = document.getElementById('min').value;
             var iMax = document.getElementById('max').value;
 
-            // create a fake document
             var df = document.createDocumentFragment();
-            // create a placeholder node to hold the innerHTML
             var el = document.createElement('body');
             el.innerHTML = aData[0];
-            // append to the document fragment
             df.appendChild(el);
-            // execute .getElementById
             var createdAt = df.getElementById('myId').innerHTML;
 
-            //console.log(iMin.toDate());
             var iVersion = aData[3] == "-" ? 0 : aData[3] * 1;
             if (
                 (iMin == "" && iMax == "") ||
@@ -176,7 +168,6 @@
             }
         });
 
-        /* Add event listeners to the two range filtering inputs */
         $('#min').keyup(function () { oTable.fnDraw(); });
         $('#max').keyup(function () { oTable.fnDraw(); });
 
