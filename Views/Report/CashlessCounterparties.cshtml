@@ -42,6 +42,14 @@
             </div>
             <div class="box-content">
 <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+    <thead>
+        <th>Наименование</th>
+        <th>Сумма</th>
+        <th>Счет не оплачен<br><i>(раб.дней)</i></th>
+        <th>Оплата<br><i>(дней назад)</i></th>
+        
+
+    </thead>
                                 <tbody>
                 @foreach (var counterparty in Model.Items)
                 {
@@ -69,11 +77,9 @@
                                         <td>
                                 <span class="red">@counterparty.BalanceStr</span>
                                 </td>
-                                <td>
-                                <span class="red">@counterparty.LastReceiptDays р.д.</span>
-    
-                                </td>
+                                
                             }    
+                            <td>@counterparty.LastReceiptDays</td>
                                         <td>@counterparty.LastPaymentDays</td>
                             </tr>            
 
