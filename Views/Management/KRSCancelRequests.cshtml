@@ -116,8 +116,8 @@
                                             @krs.BSONumber <br>
                                             <b>@krs.PassengerName</b><br>
                                             @krs.Route<br>
-                                            @:Стоимость билета: @krs.Payment<br />
-                                            @Html.DisplayFor(k => krs.TicketStatus)
+                                            @:Стоимость билета: @krs.Payment <b class="blue">Статус: @Html.DisplayFor(k => krs.TicketStatus)</b>
+                                            
                                         }
                             </td>
 
