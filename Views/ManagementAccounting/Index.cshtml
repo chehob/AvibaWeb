@@ -1,11 +1,42 @@
-﻿<partial name="Cashless"/>
+﻿<style>
+.col-md-10 {
+    display: flex;
+    
+    flex-flow: row wrap;
+}
+.b1{
+    order: 1;
+}
+.b2{
+    order: 2;
+}
+.b3{
+    order: 3;
+}
+.b4{
+    order: 8;
+}
+.b5{
+    order: 5;
+}
+.b6{
+    order: 6;
+}
+.b7{
+    order: 7;
+}
+.b8 {
+    order:4;
+}
+</style>
+
+<div class="box col-md-10">
+<partial name="Cashless"/>
 <partial name="Cash" />
+<div class="col-md-12 b8"></div>
 <partial name="Transit" />
 <partial name="Providers" />
 <partial name="Corporators" />
 <partial name="Sales" />
 <partial name="Expenditures" />
-
-<div class="box col-md-10">
-    <div id="results"></div>
 </div>
