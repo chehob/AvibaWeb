@@ -1,10 +1,19 @@
-﻿<div class="box col-md-3 b2">
+﻿@using AvibaWeb.ViewModels.ManagementAccountingViewModels
+@model CashlessBlockViewModel
+
+<div class="box col-md-3 b2">
     <div class="box-inner" style="cursor: pointer;" id="cashlessBlock">
         <div class="box-header well" data-original-title="" style="overflow: hidden;">
             <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Банк</h2>
         </div>
-    </div>
-    <div class="box-content">
+        <div class="box-content">
+            @foreach (var org in Model.Organizations)
+            {
+                <div>@org.Name</div>
+                <div>@org.BalanceStr</div>
+            }
+            <div>@Model.Total</div>
+        </div>
     </div>
 </div>
 
