@@ -11,7 +11,7 @@
     order: 2;
 }
 .b3{
-    order: 3;
+    order: 4;
 }
 .b4{
     order: 8;
@@ -26,14 +26,14 @@
     order: 7;
 }
 .b8 {
-    order:4;
+    order:3;
 }
 </style>
 
-<div class="box col-md-10">
+<div class="col-md-10">
 @await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Cashless" })
 @await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Cash" })
-<div class="col-md-12 b8"></div>
+<div class="box col-md-12 b8"></div>
 @await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Transit" })
 @await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Providers" })
 @await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Corporators" })

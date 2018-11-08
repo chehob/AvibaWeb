@@ -1,17 +1,21 @@
 ﻿@using AvibaWeb.ViewModels.ManagementAccountingViewModels
 @model SaleBlockViewModel
 
-<div class="box col-md-4 b1">
+<div class="box col-md-3 b1">
     <div class="box-inner" style="cursor: pointer;" id="cashBlock">
         <div class="box-header well" data-original-title="" style="overflow: hidden;">
-            <h2><i class="glyphicon glyphicon-user"></i> Наличные</h2>
+            <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Наличные</h2>
         </div>
     </div>
     <div class="box-content">
-        <div>@Model.OfficeBalanceStr</div>
-        <div>@Model.DeskBalanceStr</div>
-        <div>@Model.OfficeCollectorsTotalStr</div>
-        <div>@Model.TotalBalanceStr</div>
+        <div class="col-md-6"><b class="yellow">Итого:</b></div>
+        <div class="col-md-6"><b class="yellow pull-right">@Model.TotalBalanceStr</b></div>
+        <div class="col-md-6"><span class="yellow">Оф.+Инк.+Тр.:</span></div>
+        <div class="col-md-6"><span class="yellow pull-right">@Model.OfficeCollectorsTotalStr</span></div>
+        <div class="col-md-6"><span class="blue">Офис:</span></div>
+        <div class="col-md-6"><span class="blue pull-right">@Model.OfficeBalanceStr</span></div>
+        <div class="col-md-6"><span class="blue">Кассы:</span></div>
+        <div class="col-md-6"><span class="blue pull-right">@Model.DeskBalanceStr</span></div>
     </div>
 </div>
 
