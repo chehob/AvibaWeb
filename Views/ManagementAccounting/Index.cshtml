@@ -1,11 +1,42 @@
-﻿@await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Cashless" })
+<style>
+.col-md-10 {
+    display: flex;
+    
+    flex-flow: row wrap;
+}
+.b1{
+    order: 1;
+}
+.b2{
+    order: 2;
+}
+.b3{
+    order: 3;
+}
+.b4{
+    order: 8;
+}
+.b5{
+    order: 5;
+}
+.b6{
+    order: 6;
+}
+.b7{
+    order: 7;
+}
+.b8 {
+    order:4;
+}
+</style>
+
+<div class="box col-md-10">
+@await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Cashless" })
 @await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Cash" })
+<div class="col-md-12 b8"></div>
 @await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Transit" })
 @await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Providers" })
 @await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Corporators" })
 @await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Sales" })
 @await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Expenditures" })
-
-<div class="box col-md-10">
-    <div id="results"></div>
 </div>
