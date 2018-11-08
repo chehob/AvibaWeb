@@ -1,0 +1,26 @@
+﻿<div class="box col-md-4">
+    <div class="box-inner" style="cursor: pointer;" id="providersBlock">
+        <div class="box-header well" data-original-title="" style="overflow: hidden;">
+            <h2><i class="glyphicon glyphicon-user"></i> Взаиморасчеты</h2>
+        </div>
+    </div>
+    <div class="box-content">
+    </div>
+</div>
+
+<script>
+    $("#providersBlock").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/ManagementAccounting/ProviderBalance",
+            type: "GET",
+            cache: false,
+            success: function (result) {
+                $("#contentResults").html(result);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+</script>
