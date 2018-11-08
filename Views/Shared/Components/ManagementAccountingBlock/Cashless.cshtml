@@ -6,13 +6,17 @@
         <div class="box-header well" data-original-title="" style="overflow: hidden;">
             <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Банк</h2>
         </div>
-        <div class="box-content">
+        <div class="box-content row">
+            <div class="col-md-6"><b class="yellow">Итого:</b></div>
+            <div class="col-md-6"><b class="yellow pull-right">@Model.Total</b></div>
+
             @foreach (var org in Model.Organizations)
             {
-                <div>@org.Name</div>
-                <div>@org.BalanceStr</div>
+                
+                <div class="col-md-6"><span class="blue">@org.Name</span></div>
+                <div class="col-md-6"><span class="blue pull-right">@org.BalanceStr</span></div>
             }
-            <div>@Model.Total</div>
+            <div></div>
         </div>
     </div>
 </div>
