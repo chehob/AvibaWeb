@@ -8,7 +8,14 @@
     }
 
     </div>
-    <div class="box col-md-10">
+    <div class="box col-md-5">
+        <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+            <thead>
+
+            </thead>
+            <tbody>
+
+            
         @if (!Model.Any())
     {
         <div class="row">
@@ -19,23 +26,25 @@
     {
         foreach (var counterparty in Model)
         {
-        <div class="box col-md-6">
-            <div class="box-inner" style="">
-                <div class="box-header well" data-original-title="">
-                    <h2><i class="glyphicon glyphicon-user"></i> @counterparty.Name</h2>
-                    <div class="text-right box-icon">
-                        <a asp-action="EditCounterparty" asp-controller="Admin" asp-route-id="@counterparty.ITN"
+            <tr>
+              <td>
+                @counterparty.Name
+            </td>
+        <td>
+            <a asp-action="EditCounterparty" asp-controller="Admin" asp-route-id="@counterparty.ITN"
                            data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
-                           class="btn btn-setting btn-round btn-default">
-                            <i class="glyphicon glyphicon-pencil"></i>
+                           class="btn btn-setting btn-sm btn-info">
+                            Изменить
                         </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </td>  
+            </tr>
+            
+                           
+                    
         }
     }
-
+</tbody>
+        </table>
 
     </div>
 
