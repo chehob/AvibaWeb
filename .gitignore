@@ -18,6 +18,7 @@
 /Scripts/
 /Test/
 /ViewModels/
+/ViewComponents/
 /DomainModels/
 *.dll
 *.pdb
