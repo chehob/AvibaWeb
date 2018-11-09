@@ -1,0 +1,9 @@
+﻿@using AvibaWeb.ViewModels.ManagementAccountingViewModels
+@model CorporatorBlockViewModel
+
+<div class="col-md-6"><span class="red">Задолженность:</span></div>
+<div class="col-md-6"><span class="red pull-right">@Model.NegBalance</span></div>
+<div class="col-md-6"><span class="green">Предоплата:</span></div>
+<div class="col-md-6"><span class="green pull-right">@Model.PosBalance</span></div>
+<div class="col-md-6"><span class="">Сальдо:</span></div>
+<div class="col-md-6"><span class="pull-right">@Model.TotalStr</span></div>

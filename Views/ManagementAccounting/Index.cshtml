@@ -31,12 +31,231 @@
 </style>
 
 <div class="col-md-10">
-@await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Cashless" })
-@await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Cash" })
-<div class="box col-md-12 b8"></div>
-@await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Transit" })
-@await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Providers" })
-@await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Corporators" })
-@await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Sales" })
-@await Component.InvokeAsync("ManagementAccountingBlock", new { viewName = "Expenditures" })
+    <div class="box col-md-3 b2">
+        <div class="box-inner" style="cursor: pointer;" id="cashlessBlock">
+            <div class="box-header well" data-original-title="" style="overflow: hidden;">
+                <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Банк</h2>
+            </div>
+            <div class="box-content row" id="cashlessBlockContent">
+            </div>
+        </div>
+    </div>
+    <div class="box col-md-3 b1">
+        <div class="box-inner" style="cursor: pointer;" id="cashBlock">
+            <div class="box-header well" data-original-title="" style="overflow: hidden;">
+                <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Наличные</h2>
+            </div>
+            <div class="box-content row" id="cashBlockContent">
+            </div>
+        </div>
+    </div>
+    <div class="box col-md-12 b8"></div>
+    <div class="box col-md-3 b7">
+        <div class="box-inner" style="cursor: pointer;" id="transitBlock">
+            <div class="box-header well" data-original-title="" style="overflow: hidden;">
+                <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Негодяи</h2>
+            </div>
+            <div class="box-content row" id="transitBlockContent">
+            </div>
+        </div>
+    </div>
+    <div class="box col-md-5 b5">
+        <div class="box-inner" style="cursor: pointer;" id="providersBlock">
+            <div class="box-header well" data-original-title="" style="overflow: hidden;">
+                <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Взаиморасчеты</h2>
+            </div>
+            <div class="box-content row" id="providersBlockContent">
+            </div>
+        </div>
+    </div>
+    <div class="box col-md-3 b3">
+        <div class="box-inner" style="cursor: pointer;" id="corporatorsBlock">
+            <div class="box-header well" data-original-title="" style="overflow: hidden;">
+                <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Корпораторы</h2>
+            </div>
+            <div class="box-content row" id="corporatorsBlockContent">
+            </div>
+        </div>
+    </div>
+    <div class="box col-md-3 b6">
+        <div class="box-inner" style="cursor: pointer;" id="salesBlock">
+            <div class="box-header well" data-original-title="" style="overflow: hidden;">
+                <h2><i class="glyphicon glyphicon-user"></i> Продажи</h2>
+            </div>
+            <div class="box-content" id="salesBlockContent">
+            </div>
+        </div>
+    </div>
+    <div class="box col-md-3 b4">
+        <div class="box-inner" style="cursor: pointer;" id="expendituresBlock">
+            <div class="box-header well" data-original-title="" style="overflow: hidden;">
+                <h2><i class="glyphicon glyphicon-user"></i> Расходы</h2>
+            </div>
+            <div class="box-content" id="expendituresBlockContent">
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    $("#cashlessBlock").click(function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/Report/CashlessOrg",
+            type: "GET",
+            cache: false,
+            success: function(result) {
+                $("#contentResults").html(result);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $("#cashBlock").click(function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/Report/OnlineInfo",
+            type: "GET",
+            cache: false,
+            success: function(result) {
+                $("#contentResults").html(result);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $("#transitBlock").click(function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/Transit/Index",
+            type: "GET",
+            cache: false,
+            success: function(result) {
+                $("#contentResults").html(result);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $("#providersBlock").click(function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/ManagementAccounting/ProviderBalance",
+            type: "GET",
+            cache: false,
+            success: function(result) {
+                $("#contentResults").html(result);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $("#corporatorsBlock").click(function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/Report/CashlessCounterparties",
+            type: "GET",
+            cache: false,
+            success: function(result) {
+                $("#contentResults").html(result);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $(function() {
+        $.ajax({
+            url: "/ManagementAccounting/Cashless",
+            type: "GET",
+            cache: false,
+            success: function(result) {
+                $("#cashlessBlockContent").html(result);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+
+        $.ajax({
+            url: "/ManagementAccounting/Cash",
+            type: "GET",
+            cache: false,
+            success: function(result) {
+                $("#cashBlockContent").html(result);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+
+        $.ajax({
+            url: "/ManagementAccounting/Transit",
+            type: "GET",
+            cache: false,
+            success: function(result) {
+                $("#transitBlockContent").html(result);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+
+        $.ajax({
+            url: "/ManagementAccounting/Providers",
+            type: "GET",
+            cache: false,
+            success: function(result) {
+                $("#providersBlockContent").html(result);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+
+        $.ajax({
+            url: "/ManagementAccounting/Corporators",
+            type: "GET",
+            cache: false,
+            success: function(result) {
+                $("#corporatorsBlockContent").html(result);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+
+        $.ajax({
+            url: "/ManagementAccounting/Sales",
+            type: "GET",
+            cache: false,
+            success: function(result) {
+                $("#salesBlockContent").html(result);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+
+        $.ajax({
+            url: "/ManagementAccounting/Expenditures",
+            type: "GET",
+            cache: false,
+            success: function(result) {
+                $("#expendituresBlockContent").html(result);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+</script>

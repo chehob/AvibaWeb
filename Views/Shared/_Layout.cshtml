@@ -152,7 +152,7 @@
                         {
                             <li>
                                 <a asp-action="Index" asp-controller="ManagementAccounting"
-                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults" data-ajax-begin="disableLoader"
                                    class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Управленческий учет</a>
                             </li>
                             <li>
@@ -191,10 +191,13 @@
 </html>
 
 <script>
-    $body = $("body");
+    function disableLoader() {
+        clearTimeout(showLoader);
+        $('.mWaiting').fadeOut(500);
+    }
 
     $(document).on({
-        ajaxStart: function() { 
+        ajaxStart: function () {
             showLoader = setTimeout("$('.mWaiting').fadeIn(500);", 1000);
         },
         ajaxStop: function() { 
