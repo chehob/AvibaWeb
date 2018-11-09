@@ -127,3 +127,70 @@ function numberWithSpaces(x) {
 	parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 	return parts.join(".");
 }
+
+// ManagementAccounting Summary
+$(document).on('click', '#summaryOrganizationBalanceDiv', function (e) {
+	const block = document.getElementById("cashlessBlock");
+	if (block.classList.contains("hidden")) {
+		block.classList.remove("hidden");
+	} else {
+		block.classList.add("hidden");
+	}
+
+	$("#cashBlock,#transitBlock,#corporatorsBlock,#providersBlock").each(function(){
+		this.classList.add("hidden");
+	});
+	
+});
+$(document).on('click', '#CashTotalStr', function (e) {
+	const block = document.getElementById("cashBlock");
+	if (block.classList.contains("hidden")) {
+		block.classList.remove("hidden");
+	} else {
+		block.classList.add("hidden");
+	}
+
+	$("#cashlessBlock,#transitBlock,#corporatorsBlock,#providersBlock").each(function(){
+		this.classList.add("hidden");
+	});
+	
+});
+$(document).on('click', '#CorpNegativeBalanceStr', function (e) {
+	const block = document.getElementById("corporatorsBlock");
+	if (block.classList.contains("hidden")) {
+		block.classList.remove("hidden");
+	} else {
+		block.classList.add("hidden");
+	}
+
+	$("#cashlessBlock,#transitBlock,#cashBlock,#providersBlock").each(function(){
+		this.classList.add("hidden");
+	});
+	
+});
+$(document).on('click', '#TransitTotalStr', function (e) {
+	const block = document.getElementById("transitBlock");
+	if (block.classList.contains("hidden")) {
+		block.classList.remove("hidden");
+	} else {
+		block.classList.add("hidden");
+	}
+
+	$("#cashlessBlock,#corporatorsBlock,#cashBlock,#providersBlock").each(function(){
+		this.classList.add("hidden");
+	});
+	
+});
+$(document).on('click', '#ProvidersTotalStr', function (e) {
+	const block = document.getElementById("providersBlock");
+	if (block.classList.contains("hidden")) {
+		block.classList.remove("hidden");
+	} else {
+		block.classList.add("hidden");
+	}
+
+	$("#cashlessBlock,#corporatorsBlock,#cashBlock,#transitBlock").each(function(){
+		this.classList.add("hidden");
+	});
+	
+});
