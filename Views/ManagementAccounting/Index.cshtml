@@ -117,8 +117,13 @@
 
 
 <script>
-    $(document).on('click', '#id', function (e) {
-        document.getElementById("MyElement").className = "MyClass";
+    $(document).on('click', '#summaryOrganizationBalanceDiv', function (e) {
+        const block = document.getElementById("cashlessBlock");
+        if (block.classList.contains("hidden")) {
+            block.classList.remove("hidden");
+        } else {
+            block.classList.add("hidden");
+        }
     });
 
 
