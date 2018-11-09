@@ -194,3 +194,18 @@ $(document).on('click', '#ProvidersTotalStr', function (e) {
 	});
 	
 });
+
+$(document).on('click', '#summaryCashlessTotalDiv', function (e) {
+	e.preventDefault();
+	$.ajax({
+		url: "/Report/CashlessOrg",
+		type: "GET",
+		cache: false,
+		success: function(result) {
+			$("#contentResults").html(result);
+		},
+		error: function(error) {
+			console.log(error);
+		}
+	});
+});
