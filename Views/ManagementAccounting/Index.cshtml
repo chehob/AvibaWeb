@@ -32,6 +32,15 @@
 
 <div class="col-md-10">
     <div class="box col-md-3 b2">
+        <div class="box-inner" style="cursor: pointer;" id="summaryBlock">
+            <div class="box-header well" data-original-title="" style="overflow: hidden;">
+                <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Финансы</h2>
+            </div>
+            <div class="box-content row" id="summaryBlockContent">
+            </div>
+        </div>
+    </div>
+    <div class="box col-md-3 b2">
         <div class="box-inner" style="cursor: pointer;" id="cashlessBlock">
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Банк</h2>
@@ -173,7 +182,19 @@
         });
     });
 
-    $(function() {
+    $(function () {
+        $.ajax({
+            url: "/ManagementAccounting/Summary",
+            type: "GET",
+            cache: false,
+            success: function (result) {
+                $("#summaryBlockContent").html(result);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+
         $.ajax({
             url: "/ManagementAccounting/Cashless",
             type: "GET",
