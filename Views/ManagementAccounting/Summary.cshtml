@@ -1,39 +1,38 @@
 ﻿@using AvibaWeb.ViewModels.ManagementAccountingViewModels
 @model SummaryBlockViewModel
 
-<style>
-.link:hover {
-    text-decoration: underline;
-    color: red;
-
-}
-</style>
+<div class="row">
 <div class="col-md-6"><b class="yellow">Всего:</b></div>
 <div class="col-md-6"><b class="yellow pull-right">@Model.FinalTotal</b></div>
+</div>
+<div class="row">
 <div class="col-md-6"><b class="yellow">Итого безнал:</b></div>
-<div class="col-md-6"><b class="yellow pull-right">@Model.CashlessTotal</b></div>
-<div id="CashTotalStr" style="cursor: pointer">
+<div class="col-md-6"><b class="yellow pull-right">@Model.CashlessTotal</b></div>    
+</div>
+
+<div id="CashTotalStr" style="cursor: pointer" class="row">
 <div class="col-md-6"><b class="yellow">Итого нал:</b></div>
 <div class="col-md-6"><b class="yellow pull-right">@Model.CashTotalStr</b></div>
 </div>
 
 
-<div id="summaryOrganizationBalanceDiv" style="cursor: pointer">
+<div id="summaryOrganizationBalanceDiv" style="cursor: pointer" class="row">
     <div class="col-md-6"><span class="blue">Счета:</span></div>
     <div class="col-md-6"><span class="blue pull-right">@Model.OrganizationBalanceStr</span></div>
 </div>
-<div class="link" id="CorpNegativeBalanceStr" style="cursor: pointer">
+<div id="CorpNegativeBalanceStr" style="cursor: pointer" class="row">
 <div class="col-md-6"><span class="blue">Корпораторы:</span></div>
 <div class="col-md-6"><span class="blue pull-right">@Model.CorpNegativeBalanceStr</span></div>
 </div>
-<div id="TransitTotalStr" style="cursor: pointer">
+<div id="TransitTotalStr" style="cursor: pointer" class="row">
 <div class="col-md-6"><span class="blue">Негодяи:</span></div>
 <div class="col-md-6"><span class="blue pull-right">@Model.TransitTotalStr</span></div>
 </div>
-<div id="ProvidersTotalStr" style="cursor: pointer">
+<div id="ProvidersTotalStr" style="cursor: pointer" class="row">
 <div class="col-md-6"><span class="blue">Взаиморасчет:</span></div>
 <div class="col-md-6"><span class="blue pull-right">@Model.ProvidersTotalStr</span></div>
 </div>
-
+<div class="row">
 <div class="col-md-6"><span class="blue">Депозит:</span></div>
-<div class="col-md-6"><span class="blue pull-right">@Model.ProvidersDepositTotalStr</span></div>
+<div class="col-md-6"><span class="blue pull-right">@Model.ProvidersDepositTotalStr</span></div>    
+</div>
