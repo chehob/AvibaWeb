@@ -8,31 +8,31 @@
     order: 1;
 }
 .b2{
-    order: 2;
+    order: 1;
 }
 .b3{
-    order: 4;
+    order: 1;
 }
 .b4{
     order: 6;
 }
 .b5{
-    order: 8;
+    order: 1;
 }
 .b6{
     order: 7;
 }
 .b7{
-    order: 5;
+    order: 1;
 }
 .b8 {
-    order:3;
+    order:10;
 }
 .b9{
     order: -5;
 }
 .b10 {
-    order: -3;
+    order: 2;
 }
 </style>
 
@@ -47,8 +47,8 @@
         </div>
     </div>
     <div class="box col-md-12 b10"></div>
-    <div class="box col-md-3 b2">
-        <div class="box-inner" style="cursor: pointer;" id="cashlessBlock">
+    <div class="box col-md-4 b2 hidden" id="cashlessBlock">
+        <div class="box-inner" style="cursor: pointer;">
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Банк</h2>
             </div>
@@ -56,8 +56,8 @@
             </div>
         </div>
     </div>
-    <div class="box col-md-3 b1 hidden">
-        <div class="box-inner" style="cursor: pointer;" id="cashBlock">
+    <div class="box col-md-4 b1 hidden" id="cashBlock">
+        <div class="box-inner " style="cursor: pointer;">
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Наличные</h2>
             </div>
@@ -66,8 +66,8 @@
         </div>
     </div>
     <div class="box col-md-12 b8"></div>
-    <div class="box col-md-3 b7">
-        <div class="box-inner" style="cursor: pointer;" id="transitBlock">
+    <div class="box col-md-4 b7 hidden" id="transitBlock">
+        <div class="box-inner" style="cursor: pointer;">
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Негодяи</h2>
             </div>
@@ -75,8 +75,8 @@
             </div>
         </div>
     </div>
-    <div class="box col-md-5 b5">
-        <div class="box-inner" style="cursor: pointer;" id="providersBlock">
+    <div class="box col-md-5 b5 hidden" id="providersBlock">
+        <div class="box-inner" style="cursor: pointer;">
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Взаиморасчеты</h2>
             </div>
@@ -84,8 +84,8 @@
             </div>
         </div>
     </div>
-    <div class="box col-md-3 b3">
-        <div class="box-inner" style="cursor: pointer;" id="corporatorsBlock">
+    <div class="box col-md-4 b3 hidden" id="corporatorsBlock">
+        <div class="box-inner" style="cursor: pointer;">
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Корпораторы</h2>
             </div>
@@ -93,7 +93,7 @@
             </div>
         </div>
     </div>
-    <div class="box col-md-3 b6">
+    <div class="box col-md-4 b6">
         <div class="box-inner" style="cursor: pointer;" id="salesBlock">
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-user"></i> Продажи</h2>
@@ -102,7 +102,7 @@
             </div>
         </div>
     </div>
-    <div class="box col-md-3 b4">
+    <div class="box col-md-4 b4">
         <div class="box-inner" style="cursor: pointer;" id="expendituresBlock">
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-user"></i> Расходы</h2>
@@ -124,6 +124,63 @@
         } else {
             block.classList.add("hidden");
         }
+
+        $("#cashBlock,#transitBlock,#corporatorsBlock,#providersBlock").each(function(){
+            this.classList.add("hidden");
+        });
+        
+    });
+    $(document).on('click', '#CashTotalStr', function (e) {
+        const block = document.getElementById("cashBlock");
+        if (block.classList.contains("hidden")) {
+            block.classList.remove("hidden");
+        } else {
+            block.classList.add("hidden");
+        }
+
+        $("#cashlessBlock,#transitBlock,#corporatorsBlock,#providersBlock").each(function(){
+            this.classList.add("hidden");
+        });
+        
+    });
+    $(document).on('click', '#CorpNegativeBalanceStr', function (e) {
+        const block = document.getElementById("corporatorsBlock");
+        if (block.classList.contains("hidden")) {
+            block.classList.remove("hidden");
+        } else {
+            block.classList.add("hidden");
+        }
+
+        $("#cashlessBlock,#transitBlock,#cashBlock,#providersBlock").each(function(){
+            this.classList.add("hidden");
+        });
+        
+    });
+    $(document).on('click', '#TransitTotalStr', function (e) {
+        const block = document.getElementById("transitBlock");
+        if (block.classList.contains("hidden")) {
+            block.classList.remove("hidden");
+        } else {
+            block.classList.add("hidden");
+        }
+
+        $("#cashlessBlock,#corporatorsBlock,#cashBlock,#providersBlock").each(function(){
+            this.classList.add("hidden");
+        });
+        
+    });
+    $(document).on('click', '#ProvidersTotalStr', function (e) {
+        const block = document.getElementById("providersBlock");
+        if (block.classList.contains("hidden")) {
+            block.classList.remove("hidden");
+        } else {
+            block.classList.add("hidden");
+        }
+
+        $("#cashlessBlock,#corporatorsBlock,#cashBlock,#transitBlock").each(function(){
+            this.classList.add("hidden");
+        });
+        
     });
 
 
