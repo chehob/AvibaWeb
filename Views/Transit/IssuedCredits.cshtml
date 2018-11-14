@@ -3,24 +3,27 @@
 @using X.PagedList
 @using X.PagedList.Mvc.Core
 @using X.PagedList.Mvc.Common
-@model IPagedList<TransitAccountCreditListViewModel>
+@model TransitAccountIssuedCreditsViewModel
 
 <div class="box col-md-10">
     <div class="row">
         <!-- CONTENT START -->
+        <div class="col-md-2"><b>@Html.DisplayFor(c => Model.FinancialOperationsTotal)</b></div>
+        <div class="col-md-2"><b>@Html.DisplayFor(c => Model.CreditsTotal)</b></div>
+        <div class="col-md-2"><b>@Html.DisplayFor(c => Model.AddTotal)</b></div>
         <div class="box col-md-12">
             <div class="box-inner">
                 <div class="box-header well" data-original-title="">
                     <h2>Оформленные переводы на группу</h2>
                 </div>
                 <div class="box-content">
-                    @if (!Model.Any())
+                    @if (!Model.Credits.Any())
                     {
                         <div>Нет операций</div>
                     }
                     else
                     {
-                        foreach (var credit in Model)
+                        foreach (var credit in Model.Credits)
                         {
                             @if (credit.Amount >= 0)
                             {
@@ -29,7 +32,7 @@
                                         @Html.DisplayFor(c => credit.IssuedDateTime)
                                     </div>
                                     <div class="col-md-2"><b>@Html.DisplayFor(c => credit.AmountStr)</b></div>
-                                    <div class="col-md-2"><b>@Html.DisplayFor(c => credit.AddAmount)</b></div>
+                                    <div class="col-md-2"><b>@Html.DisplayFor(c => credit.AddAmountStr)</b></div>
                                     <div class="col-md-2">@Html.DisplayFor(c => credit.Status)</div>
                                     <div class="col-md-2">
                                         @if (credit.CreditId != 0 && credit.Status != TransitAccountCreditOperation.TACOType.Cancelled)
@@ -48,7 +51,7 @@
                                     <div class="col-md-2">
                                         @Html.DisplayFor(c => credit.IssuedDateTime)
                                     </div>
-                                    <div class="col-md-2" style="background-color:rgb(197, 247, 197)"><b>@Html.DisplayFor(c => credit.AmountStr)</b></div>
+                                    <div class="col-md-2" style="background-color: rgb(197, 247, 197)"><b>@Html.DisplayFor(c => credit.AmountStr)</b></div>
                                     <div class="col-md-2"><b>@Html.DisplayFor(c => credit.AddAmount)</b></div>
                                     <div class="col-md-2">@Html.DisplayFor(c => credit.Status)</div>
                                     <div class="col-md-2">
@@ -67,9 +70,9 @@
                     }
 
                 </div>
-                Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+                Страница @(Model.Credits.PageCount < Model.Credits.PageNumber ? 0 : Model.Credits.PageNumber) из @Model.Credits.PageCount
 
-                @Html.PagedListPager(Model, page => Url.Action("IssuedCredits", new { page, Model.FirstOrDefault().LoanGroupId }),
+                @Html.PagedListPager(Model.Credits, page => Url.Action("IssuedCredits", new { page, Model.Credits.FirstOrDefault().LoanGroupId }),
                         new Func<PagedListRenderOptionsBase>(() =>
                         {
                             var options = PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
