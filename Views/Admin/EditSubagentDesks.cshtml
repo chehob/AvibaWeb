@@ -1,0 +1,39 @@
+﻿@using AvibaWeb.ViewModels.AdminViewModels
+@model SubagentDesksViewModel
+
+<div class="box col-md-10">
+    <div class="box-inner" style="">
+        <div class="box-header well" data-original-title="">
+            <h2><i class="glyphicon glyphicon-user"></i> Редактор субагента</h2>
+        </div>
+        <div class="box-content">
+
+            <form asp-controller="Admin" asp-action="EditSubagentDesks" data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+                @Html.HiddenFor(m => m.Id)
+                <div class="form-group row">
+                    @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    @Html.LabelFor(m => m.Desks, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.ListBoxFor(i => i.DeskIds, Model.Desks,
+                            new { id="deskSelect", @class = "form-control" })
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $('#deskSelect').multiSelect()
+                </script>
+                @Html.ValidationSummary(false)
+                <div class="form-group row">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" class="btn btn-success" value="Сохранить" />
+                        <a asp-action="SubagentDesks" asp-controller="Admin"
+                           data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+                           class="btn btn-danger">Отмена</a>
+                    </div>
+                </div>
+            </form>
+        </div></div></div>

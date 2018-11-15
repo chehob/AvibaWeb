@@ -1,0 +1,56 @@
+﻿@using AvibaWeb.DomainModels
+@using AvibaWeb.Models
+@using AvibaWeb.Infrastructure
+@model IQueryable<AvibaWeb.DomainModels.Counterparty>
+
+<div class="box col-md-10">
+    <div class="box-inner" style="">
+        <div class="box-header well" data-original-title="">
+            <h2><i class="glyphicon glyphicon-user"></i> Субагенты</h2>
+        </div>
+        <div class="box-content">
+            <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+                <thead>
+                    <tr>
+                        <th>Субагент</th>
+                        <th>Пульты</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="3" class="text-center">Нет субагентов</td></tr>
+                    }
+                    else
+                    {
+                        foreach (var subagent in Model)
+                        {
+                            <tr>
+                                <td>@subagent.Name</td>
+                                <td>
+                                    @if (subagent.SubagentData.SubagentDesks == null || subagent.SubagentData.SubagentDesks.Count == 0)
+                                    {
+                                        @: Нет пультов
+                                    }
+                                    else
+                                    {
+                                        <p>
+                                            @string.Join(", ", subagent.SubagentData.SubagentDesks.Select(d => d.Desk.Description))
+                                        </p>
+                                    }
+                                </td>
+                                <td>
+                                    <a class="btn btn-info" data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results" href=@Url.Action("EditSubagentDesks","Admin", new{id = subagent.SubagentData.SubagentId})>
+                                        <i class="glyphicon glyphicon-edit icon-white"></i>
+                                        Изменить
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
