@@ -1,5 +1,5 @@
-﻿@using AvibaWeb.DomainModels
-@model List<Counterparty>
+﻿@using AvibaWeb.ViewModels.DataViewModels
+@model DepositViewModel
 
 <div class="box col-md-10">
     <div class="row">
@@ -9,7 +9,7 @@
                     <h2>Баланс провайдеров услуг</h2>
                 </div>
                 <div class="box-content">
-                    @if (!Model.Any())
+                    @if (!Model.Deposits.Any())
                     {
                         <div class="row">
                             <div>Нет контрагентов</div>
@@ -18,12 +18,13 @@
                     else
                     {
                         <form asp-controller="Data" asp-action="EditProviderDeposit" data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
-                            @for (var i = 0; i < Model.Count; ++i)
+                            @for (var i = 0; i < Model.Deposits.Count; ++i)
                             {
-                                @Html.HiddenFor(c => Model[i].ITN)
+                                @Html.HiddenFor(c => Model.Deposits[i].ITN)
+                                @Html.HiddenFor(c => Model.Deposits[i].Type)
                                 <div class="row">
-                                    <div class="col-md-3">@Html.DisplayFor(c => Model[i].Name)</div>
-                                    <div class="col-md-2">@Html.TextBoxFor(c => Model[i].ProviderBalance.Deposit, new { @class = "form-control" })</div>
+                                    <div class="col-md-3">@Html.DisplayFor(c => Model.Deposits[i].Name)</div>
+                                    <div class="col-md-2">@Html.TextBoxFor(c => Model.Deposits[i].Deposit, new { @class = "form-control" })</div>
                                 </div>
                                 <hr>
                             }
