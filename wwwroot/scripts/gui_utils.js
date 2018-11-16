@@ -137,7 +137,7 @@ $(document).on('click', '#summaryOrganizationBalanceDiv', function (e) {
 		block.classList.add("hidden");
 	}
 
-	$("#cashBlock,#transitBlock,#corporatorsBlock,#providersBlock").each(function(){
+	$("#cashBlock,#transitBlock,#corporatorsBlock,#providersBlock,#subagentsBlock").each(function(){
 		this.classList.add("hidden");
 	});
 	
@@ -150,7 +150,7 @@ $(document).on('click', '#CashTotalStr', function (e) {
 		block.classList.add("hidden");
 	}
 
-	$("#cashlessBlock,#transitBlock,#corporatorsBlock,#providersBlock").each(function(){
+	$("#cashlessBlock,#transitBlock,#corporatorsBlock,#providersBlock,#subagentsBlock").each(function(){
 		this.classList.add("hidden");
 	});
 	
@@ -163,7 +163,7 @@ $(document).on('click', '#CorpNegativeBalanceStr', function (e) {
 		block.classList.add("hidden");
 	}
 
-	$("#cashlessBlock,#transitBlock,#cashBlock,#providersBlock").each(function(){
+	$("#cashlessBlock,#transitBlock,#cashBlock,#providersBlock,#subagentsBlock").each(function(){
 		this.classList.add("hidden");
 	});
 	
@@ -176,7 +176,7 @@ $(document).on('click', '#TransitTotalStr', function (e) {
 		block.classList.add("hidden");
 	}
 
-	$("#cashlessBlock,#corporatorsBlock,#cashBlock,#providersBlock").each(function(){
+	$("#cashlessBlock,#corporatorsBlock,#cashBlock,#providersBlock,#subagentsBlock").each(function(){
 		this.classList.add("hidden");
 	});
 	
@@ -189,7 +189,20 @@ $(document).on('click', '#ProvidersTotalStr', function (e) {
 		block.classList.add("hidden");
 	}
 
-	$("#cashlessBlock,#corporatorsBlock,#cashBlock,#transitBlock").each(function(){
+	$("#cashlessBlock,#corporatorsBlock,#cashBlock,#transitBlock,#subagentsBlock").each(function(){
+		this.classList.add("hidden");
+	});
+	
+});
+$(document).on('click', '#SubagentsTotalStr', function (e) {
+	const block = document.getElementById("subagentsBlock");
+	if (block.classList.contains("hidden")) {
+		block.classList.remove("hidden");
+	} else {
+		block.classList.add("hidden");
+	}
+
+	$("#cashlessBlock,#corporatorsBlock,#cashBlock,#transitBlock,#providersBlock").each(function(){
 		this.classList.add("hidden");
 	});
 	
