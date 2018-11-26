@@ -1,11 +1,21 @@
 ﻿@using AvibaWeb.ViewModels.ManagementAccountingViewModels
 @model CashBlockViewModel
-
+<div class="row">
 <div class="col-md-6"><b class="yellow">Итого:</b></div>
-<div class="col-md-6"><b class="yellow pull-right">@Model.TotalBalanceStr</b></div>
+<div class="col-md-6"><b class="yellow pull-right animated flash">@Model.TotalBalanceStr</b></div>
+</div>
+<div class="row">
 <div class="col-md-6"><span class="yellow">Оф.+Инк.+Тр.:</span></div>
-<div class="col-md-6"><span class="yellow pull-right">@Model.OfficeCollectorsTotalStr</span></div>
+<div class="col-md-6"><span class="yellow pull-right animated flash">@Model.OfficeCollectorsTotalStr</span></div>    
+</div>
+<div class="row">
 <div class="col-md-6"><span class="blue">Офис:</span></div>
-<div class="col-md-6"><span class="blue pull-right">@Model.OfficeBalanceStr</span></div>
+<div class="col-md-6"><span class="blue pull-right animated flash">@Model.OfficeBalanceStr</span></div>    
+</div>
+<div class="row">
 <div class="col-md-6"><span class="blue">Кассы:</span></div>
-<div class="col-md-6"><span class="blue pull-right">@Model.DeskBalanceStr</span></div>
+<div class="col-md-6"><span class="blue pull-right animated flash">@Model.DeskBalanceStr</span></div>    
+</div>
+
+
+

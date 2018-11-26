@@ -34,13 +34,18 @@
 .b10 {
     order: 2;
 }
+.mWaiting {
+    
+    background: none;
+}
 </style>
-
 <div class="col-md-10">
+    
     <div class="box col-md-5 col-sm-12 b9">
         <div class="box-inner" id="summaryBlock">
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Финансы</h2>
+                <div class="box-icon"><h2 class="blue" id="doc_time"></h2><img class="hidden" id="fLoad" src="img/ajax-loaders/ajax-loader-1.gif" title="img/ajax-loaders/ajax-loader-1.gif"></div>
             </div>
             <div class="box-content" id="summaryBlockContent">
             </div>
@@ -52,7 +57,7 @@
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Банк</h2>
             </div>
-            <div class="box-content row" id="cashlessBlockContent">
+            <div class="box-content" id="cashlessBlockContent">
             </div>
         </div>
     </div>
@@ -71,7 +76,7 @@
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Негодяи</h2>
             </div>
-            <div class="box-content row" id="transitBlockContent">
+            <div class="box-content" id="transitBlockContent">
             </div>
         </div>
     </div>
@@ -80,7 +85,7 @@
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Взаиморасчеты</h2>
             </div>
-            <div class="box-content row" id="providersBlockContent">
+            <div class="box-content" id="providersBlockContent">
             </div>
         </div>
     </div>
@@ -89,11 +94,11 @@
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Корпораторы</h2>
             </div>
-            <div class="box-content row" id="corporatorsBlockContent">
+            <div class="box-content" id="corporatorsBlockContent">
             </div>
         </div>
     </div>
-    <div class="box col-md-4 b6">
+    <div class="box col-md-4 b6 hidden">
         <div class="box-inner" style="cursor: pointer;" id="salesBlock">
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-user"></i> Продажи</h2>
@@ -102,12 +107,21 @@
             </div>
         </div>
     </div>
-    <div class="box col-md-4 b4">
+    <div class="box col-md-4 b4 hidden">
         <div class="box-inner" style="cursor: pointer;" id="expendituresBlock">
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-user"></i> Расходы</h2>
             </div>
             <div class="box-content" id="expendituresBlockContent">
+            </div>
+        </div>
+    </div>
+    <div class="box col-md-6 b3 hidden" id="subagentsBlock">
+        <div class="box-inner" style="cursor: pointer;">
+            <div class="box-header well" data-original-title="" style="overflow: hidden;">
+                <h2><i class="glyphicon glyphicon-user"></i> Субагенты</h2>
+            </div>
+            <div class="box-content" id="subagentsBlockContent">
             </div>
         </div>
     </div>
@@ -189,13 +203,23 @@
         });
     });
 
-    $(function () {
+   
+
+    $(function get_fb() {
         $.ajax({
             url: "/ManagementAccounting/Summary",
             type: "GET",
             cache: false,
-            success: function (result) {
+            beforeSend: function (jqXHR, settings) {
+                    const block = document.getElementById("fLoad");
+                    block.classList.remove("hidden");
+            },
+	            success: function (result) {
                 $("#summaryBlockContent").html(result);
+                setTimeout(function(){get_fb();}, 60000);
+                const block = document.getElementById("fLoad");
+                block.classList.add("hidden");
+                clock();
             },
             error: function (error) {
                 console.log(error);
@@ -285,5 +309,19 @@
                 console.log(error);
             }
         });
+
+        $.ajax({
+            url: "/ManagementAccounting/Subagents",
+            type: "GET",
+            cache: false,
+            success: function(result) {
+                $("#subagentsBlockContent").html(result);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
     });
+
+
 </script>

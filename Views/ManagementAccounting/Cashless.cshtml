@@ -1,13 +1,17 @@
 ﻿@using AvibaWeb.ViewModels.ManagementAccountingViewModels
 @model CashlessBlockViewModel
-
+<div class="row">
 <div class="col-md-6"><b class="yellow">Итого:</b></div>
-<div class="col-md-6"><b class="yellow pull-right">@Model.Total</b></div>
+<div class="col-md-6"><b class="yellow pull-right animated flash">@Model.Total</b></div>    
+</div>
+
 
 @foreach (var org in Model.Organizations)
 {
-                
-    <div class="col-md-6"><span class="blue">@org.Name</span></div>
-    <div class="col-md-6"><span class="blue pull-right">@org.BalanceStr</span></div>
+    <div class="row">
+     <div class="col-md-6"><span class="blue">@org.Name</span></div>
+    <div class="col-md-6"><span class="blue pull-right animated flash">@org.BalanceStr</span></div>   
+    </div>            
+    
 }
-<div></div>
+

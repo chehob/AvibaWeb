@@ -26,9 +26,8 @@
             <span id="officeDialogBtn" data-toggle="tooltip" title="В офисе" class="well top-block btn-setting" style="cursor: pointer;">
                 <i class="glyphicon glyphicon-home blue"></i>           
                 <div class="blue">@Html.DisplayFor(c => Model.OfficeBalanceStr)</div>
-                <div id="officeBillInfo" class="row">
-                    <partial name="OfficeBillInfo" model="Model.OfficeBillInfo" />
-                </div>
+                <partial name="OfficeBillInfo" model="Model.OfficeBillInfo" />
+                
             </span>
         </div>        
         <div class="col-md-3 col-sm-3 col-xs-12">

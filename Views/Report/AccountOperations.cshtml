@@ -1,6 +1,6 @@
 ﻿@using AvibaWeb.ViewModels.ReportViewModels
 @model List<AccountOperationsViewModel>
-
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/af-2.3.2/b-1.5.4/r-2.2.2/datatables.min.css"/>
 <div class="box col-md-10">
 
     <table class="table table-striped table-bordered bootstrap-datatable datatable responsive" id="dataTable">
@@ -21,9 +21,13 @@
                 <tr class="danger">
                     <td>@operation.OperationDateTime</td>
                     <td>@operation.OrderNumber</td>
-                    <td>@operation.CounterpartyName</td>
+                    <td style="overflow: hidden; max-width: 50px; text-overflow: ellipsis; white-space: nowrap;">@operation.CounterpartyName</td>
                     <td>@operation.AmountStr</td>
-                    <td>@operation.Description</td>
+                    <td style="overflow: hidden; max-width: 100px; text-overflow: ellipsis; white-space: nowrap;">
+                        <span data-toggle="tooltip" title="@operation.Description" class="glyphicon glyphicon-list-alt" style="cursor: pointer;"></span>
+                        
+                        @operation.Description
+                        </td>
                 </tr>
                 }
                 else
@@ -33,7 +37,11 @@
                     <td>@operation.OrderNumber</td>
                     <td>@operation.CounterpartyName</td>
                     <td>@operation.AmountStr</td>
-                    <td>@operation.Description</td>
+                    <td style="overflow: hidden; max-width: 100px; text-overflow: ellipsis; white-space: nowrap;">
+                        <span data-toggle="tooltip" title="@operation.Description" class="glyphicon glyphicon-list-alt" style="cursor: pointer;"></span>
+                        @operation.Description
+                        
+                        </td>
                 </tr>
                 }
             }
@@ -45,13 +53,28 @@
 <script>
     onload = function () {
         $('#dataTable').dataTable({
+            "sPaginationType": "full_numbers",
             "bSort": false,
             "oLanguage": {                
                 "sSearch": "Поиск:",
                 "sLengthMenu": "Показать _MENU_ записей",
                 "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
                 "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
-                "sInfoFiltered": "(отфильтровано из _MAX_ записей)"
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
+                "oPaginate": {
+                    "sFirst":    'Первая',
+                    "sPrevious": 'Предыдущая',
+                    "sNext":     'Следующая',
+                    "sLast":     'Последняя'
+                },
+                "oaria": {
+                    "ipaginate": {
+                        "nfirst":    'Начало',
+                        "nprevious": 'Previous',
+                        "nnext":     'Next',
+                        "nlast":     'Last'
+            }
+        }       
             }
         });
     }
