@@ -1,0 +1,121 @@
+﻿@using AvibaWeb.ViewModels.CorpReceiptViewModels
+@model CreateReceiptViewModel
+
+<!-- CONTENT START -->
+<div class="box col-md-12">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="">
+            <h2>Создание счета</h2>
+        </div>
+        <div class="box-content">
+            <div class="row">
+                <div class="col-md-12">
+                    <select data-placeholder="Выбрать корпоратора" id="selectPayer" data-rel="chosen">
+                        <option value=""></option>
+                        <optgroup label="Корпораторы">
+                            @foreach (var counterparty in Model.Counterparties)
+                            {
+                                <option>@counterparty</option>
+                            }
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    Билеты
+                    <div class="col-md-12">
+                        Выбрать с: <input type="text" id="min" name="min" class="date-range-filter"> по: <input type="text" id="max" name="max" class="date-range-filter">
+                        <a href="/" id="getTicketListBtn" class="btn btn-success">Список билетов</a>
+                    </div>                    
+                    <div id="ticketListDiv">
+
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12" id="ticketListBlock">
+                    
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="/" id="sendDataBtn" class="btn btn-success">Сохранить</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    onload = function () {
+        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+
+        $("#min").datepicker();
+        $("#max").datepicker();
+
+        $("#min").val(moment().startOf('month').format("DD.MM.YYYY"));
+        $("#max").val(moment().endOf('month').format("DD.MM.YYYY"));
+    }
+
+    onload();
+
+    $("#sendDataBtn").click(function (e) {
+        var sendJsonData = {
+        };
+
+        e.preventDefault();
+        $.ajax({
+            url: "/CorpReceipt/CreateReceipt",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $.ajax({
+                    url: "/CorpReceipt/Receipts",
+                    type: "GET",
+                    cache: false,
+                    success: function (r) {
+                        $("#results").html(r);
+                    },
+                    error: function (err) {
+                        console.log(err.message);
+                    }
+                });
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+
+    $("#getTicketListBtn").click(function (e) {
+        var sendJsonData = {
+            fromDate: moment().startOf('month').toISOString(),
+            toDate: moment().endOf('month').toISOString()
+        };
+
+        console.log(sendJsonData);
+
+        e.preventDefault();
+        $.ajax({
+            url: "/CorpReceipt/TicketList",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $("#ticketListBlock").html(result.message);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+</script>

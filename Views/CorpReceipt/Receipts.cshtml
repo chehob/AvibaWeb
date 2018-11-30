@@ -1,0 +1,46 @@
+﻿@using AvibaWeb.ViewModels.CorpReceiptViewModels
+@model List<ReceiptsViewModel>
+
+<table class="table table-striped table-bordered bootstrap-datatable datatable" id="dataTable">
+    <thead>
+        <tr>
+            <th>№ счета</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr><td colspan="4" class="text-center">Нет счетов</td></tr>
+        }
+        else
+        {
+            foreach (var receipt in Model)
+            {
+                <tr>
+                    <td>
+                        <span id="myId">@receipt.ReceiptNumber</span><br>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script>
+    $(function () {
+        var oTable = $('#dataTable').dataTable({
+            "bSort": false,
+            "oLanguage": {
+                "sSearch": "Поиск:",
+                "sLengthMenu": "Показать _MENU_ записей",
+                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)"
+            }
+        });
+    });
+</script>

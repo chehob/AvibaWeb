@@ -119,7 +119,7 @@
                                 <a asp-action="Index" asp-controller="Collection"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults" data-ajax-success="updateBalance"
                                    class="main"><i class="glyphicon glyphicon-share"></i>&nbsp;Инкассация</a>
-                                   
+
                             </li>
                         }
                         @if (User.IsInRole("Administrators"))
@@ -129,7 +129,12 @@
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
                                    class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Транзитный счет</a>
                             </li>
-                            
+                            <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
+                                <a asp-action="Index" asp-controller="CorpReceipt"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Счета корпораторам</a>
+                            </li>
+
                         }
                         @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Кассиры"))
                         {
@@ -139,8 +144,8 @@
                                    class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Отчеты</a>
                             </li>
                         }
-                        
-                        
+
+
                         @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
                         {
                             <li class="nav-header hidden-md"><hr></li>
@@ -160,7 +165,7 @@
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
                                    class="main"><i class="glyphicon glyphicon-retweet"></i>&nbsp;Безнал</a>
                             </li>
-                        
+
                         }
                         @if (User.IsInRole("Administrators") || User.IsInRole("Менеджеры"))
                         {
@@ -170,11 +175,11 @@
                                    class="main"><i class="glyphicon glyphicon-briefcase"></i>&nbsp;Менеджмент</a>
                             </li>
                         }
-                        
+
                         @if (User.IsInRole("Administrators"))
                         {
-                            
-                            
+
+
                             <li>
                                 <a asp-action="Index" asp-controller="Admin"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
