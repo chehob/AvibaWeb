@@ -7,6 +7,7 @@
             <th>Дата операции</th>
             <th>Билет</th>
             <th>Маршрут</th>
+            <th>Сумма</th>
         </tr>
     </thead>
     <tbody>
@@ -18,19 +19,23 @@
         {
             foreach (var operation in Model)
             {
-                <tr>
-                    <td>
-                        @Html.HiddenFor(m => operation.TicketOperationId)
-                        <span id="myId">@operation.ExecutionDateTime</span><br>
-                        <a href="/" class="btn btn-success btn-sm addTicketBtn">Добавить</a>
-                    </td>
-                    <td>
-                        <b>@operation.TicketNumber</b>
-                    </td>
-                    <td>
-                        <b>@operation.Route</b>
-                    </td>
-                </tr>
+            <tr>
+                <td>
+                    @Html.HiddenFor(m => operation.TicketOperationId)
+                    <span id="myId">@operation.ExecutionDateTime</span><br>
+                    @Html.DisplayFor(c => operation.OperationType)
+                    <a href="/" class="btn btn-success btn-sm addTicketBtn">Добавить</a>
+                </td>
+                <td>
+                    <b>@operation.TicketNumber</b>
+                </td>
+                <td>
+                    <b>@operation.Route</b>
+                </td>
+                <td>
+                    <b>@operation.Payment</b>
+                </td>
+            </tr>
             }
         }
     </tbody>
@@ -84,9 +89,10 @@
     $(".addTicketBtn").click(function (e) {
         e.preventDefault();
         $("#ticketListDiv").append(`<div>
+            <input type="hidden" value="${$($(this).siblings()[0]).val()}"></input>
             ${$($(this).parent().siblings()[0]).html()}
         </div>`);
 
-        $('#dataTable').dataTable().fnDeleteRow($(this).parents('tr'));
+        $('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
     });
 </script>

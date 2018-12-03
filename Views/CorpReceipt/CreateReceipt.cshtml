@@ -64,8 +64,23 @@
     onload();
 
     $("#sendDataBtn").click(function (e) {
+        var items = new Array();
+        $("#ticketListDiv").children().each(function () {
+            console.log($(this));
+            const firstDiv = $(this).find("input");
+            console.log(firstDiv);
+            const receiptItem = {
+                TicketOperationId: firstDiv.val()
+            };
+            items.push(receiptItem);
+        });
+
         var sendJsonData = {
+            PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
+            Items: items
         };
+
+        console.log(sendJsonData);
 
         e.preventDefault();
         $.ajax({
