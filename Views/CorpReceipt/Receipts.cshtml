@@ -3,30 +3,33 @@
 
 <table class="table table-striped table-bordered bootstrap-datatable datatable" id="dataTable">
     <thead>
-        <tr>
-            <th>№ счета</th>
-            <th></th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>№ счета</th>
+        <th></th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-        @if (!Model.Any())
+    @if (!Model.Any())
+    {
+        <tr><td colspan="4" class="text-center">Нет счетов</td></tr>
+    }
+    else
+    {
+        foreach (var receipt in Model)
         {
-            <tr><td colspan="4" class="text-center">Нет счетов</td></tr>
+            <tr>
+                <td>
+                    <span id="myId">@receipt.ReceiptNumber</span><br>
+                </td>
+                <td></td>
+                <td>
+                    @Html.HiddenFor(m => receipt.ReceiptId)
+                    <a href="/" class="btn btn-success btn-sm createReceiptPDF">PDF</a>
+                </td>
+            </tr>
         }
-        else
-        {
-            foreach (var receipt in Model)
-            {
-                <tr>
-                    <td>
-                        <span id="myId">@receipt.ReceiptNumber</span><br>
-                    </td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            }
-        }
+    }
     </tbody>
 </table>
 
@@ -40,6 +43,165 @@
                 "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
                 "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
                 "sInfoFiltered": "(отфильтровано из _MAX_ записей)"
+            }
+        });
+    });
+
+    $(".createReceiptPDF").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/CorpReceipt/ReceiptPDFData",
+            type: "POST",
+            cache: false,
+            data: { id: $($(this).siblings()[0]).val() },
+            success: function (result) {
+                console.log(result);
+                const bodyData = [];
+
+                const headerRow = [];
+
+                headerRow.push({ text: '№', style: 'tableHeader' });
+                headerRow.push({ text: 'Наименование', style: 'tableHeader' });
+                headerRow.push({ text: 'Кол-во', style: 'tableHeader' });
+                headerRow.push({ text: 'Ед.', style: 'tableHeader' });
+                headerRow.push({ text: 'Цена', style: 'tableHeader' });
+                headerRow.push({ text: 'Сумма', style: 'tableHeader' });
+
+                bodyData.push(headerRow);
+
+                var dataRow = [];
+                var itemCount = 0;
+                result.items.forEach(function(item) {
+                    dataRow = [];
+
+                    itemCount++;
+                    dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
+                    dataRow.push({ text: item.ticketLabel, style: 'smallText' });
+                    dataRow.push({ text: '1', alignment: 'center' });
+                    dataRow.push({ text: 'шт', alignment: 'center' });
+                    dataRow.push({ text: item.amount, alignment: 'right' });
+                    dataRow.push({ text: item.amount, alignment: 'right' });
+
+                    bodyData.push(dataRow);
+
+                    dataRow = [];
+
+                    itemCount++;
+                    dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
+                    dataRow.push({ text: 'Сбор за оформление авиабилета', style: 'smallText' });
+                    dataRow.push({ text: item.segCount, alignment: 'center' });
+                    dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                    dataRow.push({ text: result.feeRateStr, alignment: 'right' });
+                    dataRow.push({ text: item.feeTotalStr, alignment: 'right' });
+
+                    bodyData.push(dataRow);
+                });
+
+                dataRow = [];
+
+                dataRow.push({ text: 'Итого: ', colSpan: 5, alignment: 'right' });
+                dataRow.push({});
+                dataRow.push({});
+                dataRow.push({});
+                dataRow.push({});
+                dataRow.push({ text: result.totalAmountStr, alignment: 'right' });
+
+                bodyData.push(dataRow);
+
+                const docDefinition = {
+                    content: [
+                        {
+                            text: 'Внимание! Счет действителен для оплаты в течении 3 банковских дней. Оплата данного счета означает согласие с условиями договора.',
+                            style: 'headerWarning'
+                        },
+                        {
+                            table: {
+                                widths: [150, 150, 40, '*'],
+                                heights: [15, 30, 15, 15],
+
+                                body: [
+                                    [`ИНН: ${result.orgITN}`, `КПП: ${result.orgKPP}`, { text: 'Сч. №', rowSpan: 2, margin: [0, 35, 0, 0] }, { text: result.orgFinancialAccount, rowSpan: 2, margin: [0, 35, 0, 0] }],
+                                    [{ text: `Получатель\n${result.orgName}`, colSpan: 2 }, {}, {}, {}],
+                                    [{ text: `Банк получателя\n${result.orgBankName}`, colSpan: 2, rowSpan: 2 }, {}, 'БИК', result.orgBIK],
+                                    [{}, {}, 'Сч. №', result.orgCorrAccount]
+                                ]
+                            },
+                            style: 'mediumText',
+                            margin: [0, 20, 0, 0]
+                        },
+                        {
+                            text: `Счет № ${result.receiptNumber} от `,
+                            style: 'mediumText',
+                            bold: true,
+                            margin: [0, 15, 0, 0]
+                        },
+                        {
+                            text: `Поставщик: ${result.orgName} ${result.orgAddress}`,
+                            style: 'mediumText',
+                            margin: [0, 15, 0, 0]
+                        },
+                        {
+                            text: `Покупатель: ${result.payerName}\n${result.payerAddress}`,
+                            style: 'mediumText',
+                            margin: [0, 15, 0, 0]
+                        },
+                        {
+                            table: {
+                                headerRows: 1,
+                                widths: [20, 220, 45, 'auto', 65, '*'],
+                                body: bodyData
+                            },
+                            style: 'mediumText',
+                            margin: [0, 15, 0, 150]
+                        }
+                    ],
+
+                    footer: [
+                        {
+                            text: `Всего наименований: ${itemCount}, на сумму ${result.totalAmountStr} руб.`,
+                            style: 'mediumText',
+                            margin: [45, -150, 0, 0]
+                        },
+                        {
+                            text: `Сумма прописью: . Без НДС`,
+                            style: 'mediumText',
+                            margin: [45, 0, 0, 0]
+                        },
+                        {
+                            columns: [
+                                { text: 'Руководитель', margin: [0, 40, 0, 0]},
+                                { image: `${result.signatureImage}`, width: 150, alignment: 'center', margin: [25, 40, 25, 0] },
+                                { text: `${result.orgHeadName}`, margin: [0, 40, 0, 0] },
+                                { image: `${result.stampImage}`, width: 125, alignment: 'center', margin: [25, 0, 45, 0] }
+                            ],
+                            style: 'mediumText',
+                            margin: [45, 20, 0, 0]
+                        }
+                    ],
+
+                    styles: {
+                        headerWarning: {
+                            fontSize: 7,
+                            alignment: 'center'
+                        },
+                        mediumText: {
+                            fontSize: 10,
+                        },
+                        smallText: {
+                            fontSize: 8
+                        },
+                        tableHeader: {
+                            bold: true,
+                            fontSize: 10,
+                            alignment: 'center'
+                        }
+                    }
+                };
+
+                pdfMake.createPdf(docDefinition).open();
+            },
+            error: function (error) {
+                console.log(error.message);
             }
         });
     });
