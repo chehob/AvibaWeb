@@ -24,11 +24,33 @@
             <br>
             <div class="row">
                 <div class="col-md-12">
+                    <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
+                        <option value=""></option>
+                        <optgroup label="Организации">
+                            @foreach (var org in Model.Organizations)
+                            {
+                                <option>@org</option>
+                            }
+                        </optgroup>
+                    </select>
+                    <div id="payeeOrgFinancialAccountsDiv"></div>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="feeRate">Тариф сборов</label>
+                    <input type="text" id="feeRate"/>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
                     Билеты
                     <div class="col-md-12">
                         Выбрать с: <input type="text" id="min" name="min" class="date-range-filter"> по: <input type="text" id="max" name="max" class="date-range-filter">
                         <a href="/" id="getTicketListBtn" class="btn btn-success">Список билетов</a>
-                    </div>                    
+                    </div>
                     <div id="ticketListDiv">
 
                     </div>
@@ -37,7 +59,7 @@
             <br />
             <div class="row">
                 <div class="col-md-12" id="ticketListBlock">
-                    
+
                 </div>
             </div>
             <br />
@@ -53,6 +75,36 @@
 <script>
     onload = function () {
         $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+
+        // Select the node that will be observed for mutations
+        const payeeTargetNode = $("#selectPayee").next().find("a.chosen-single span")[0];
+
+        // Options for the observer (which mutations to observe)
+        const config = { attributes: true, childList: true, subtree: true };
+
+        // Callback function to execute when mutations are observed
+        const payeeCallback = function (mutationsList, observer) {
+            const mutation = mutationsList[0];
+            $.ajax({
+                url: "/Data/OrganizationFinancialAccounts",
+                type: "GET",
+                cache: false,
+                data: { orgName: mutation.target.textContent },
+                success: function (result) {
+                    $("#payeeOrgFinancialAccountsDiv").html(result);
+                    $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+                },
+                error: function (error) {
+                    $("#payeeOrgFinancialAccountsDiv").html();
+                }
+            });
+        };
+
+        // Create an observer instance linked to the callback function
+        const payeeObserver = new MutationObserver(payeeCallback);
+
+        // Start observing the target node for configured mutations
+        payeeObserver.observe(payeeTargetNode, config);
 
         $("#min").datepicker();
         $("#max").datepicker();
@@ -75,8 +127,11 @@
             items.push(receiptItem);
         });
 
-        var sendJsonData = {
+        const sendJsonData = {
             PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
+            PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html(),
+            PayeeBankName: $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html(),
+            FeeRate: $("#feeRate").val(),
             Items: items
         };
 
@@ -110,7 +165,7 @@
     });
 
     $("#getTicketListBtn").click(function (e) {
-        var sendJsonData = {
+        const sendJsonData = {
             fromDate: moment().startOf('month').toISOString(),
             toDate: moment().endOf('month').toISOString()
         };
