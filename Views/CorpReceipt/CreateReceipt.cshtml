@@ -7,6 +7,7 @@
         <div class="box-header well" data-original-title="">
             <h2>Создание счета</h2>
         </div>
+        <input id="editReceiptId" type="hidden" value="@Model.Receipt?.ReceiptId" />
         <div class="box-content">
             <div class="row">
                 <div class="col-md-12">
@@ -19,6 +20,7 @@
                             }
                         </optgroup>
                     </select>
+                    <input id="editReceiptCorpName" type="hidden" value="@Model.Receipt?.CorporatorName" />
                 </div>
             </div>
             <br>
@@ -34,13 +36,15 @@
                         </optgroup>
                     </select>
                     <div id="payeeOrgFinancialAccountsDiv"></div>
+                    <input id="editReceiptOrgName" type="hidden" value="@Model.Receipt?.OrganizationName" />
+                    <input id="editReceiptBankName" type="hidden" value="@Model.Receipt?.BankName" />
                 </div>
             </div>
             <br>
             <div class="row">
                 <div class="col-md-12">
                     <label for="feeRate">Тариф сборов</label>
-                    <input type="text" id="feeRate"/>
+                    <input type="text" id="feeRate" value="@Model.Receipt?.FeeRate" />
                 </div>
             </div>
             <br>
@@ -52,7 +56,16 @@
                         <a href="/" id="getTicketListBtn" class="btn btn-success">Список билетов</a>
                     </div>
                     <div id="ticketListDiv">
-
+                        @if (Model.Receipt != null)
+                        {
+                            foreach (var item in Model.Receipt.Items)
+                            {
+                                <div>
+                                    <input type="hidden" value="@item.TicketOperationId" />
+                                    <b>@item.BSONumber</b>
+                                </div>
+                            }
+                        }
                     </div>
                 </div>
             </div>
@@ -93,6 +106,11 @@
                 success: function (result) {
                     $("#payeeOrgFinancialAccountsDiv").html(result);
                     $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+
+                    var editValue = $("#editReceiptBankName").val();
+                    if (editValue) {
+                        $('#selectBank').val(editValue).trigger('chosen:updated');
+                    }
                 },
                 error: function (error) {
                     $("#payeeOrgFinancialAccountsDiv").html();
@@ -111,6 +129,16 @@
 
         $("#min").val(moment().startOf('month').format("DD.MM.YYYY"));
         $("#max").val(moment().endOf('month').format("DD.MM.YYYY"));
+
+        var editValue = $("#editReceiptCorpName").val();
+        if (editValue) {
+            $('#selectPayer').val(editValue).trigger('chosen:updated');
+        }
+
+        editValue = $("#editReceiptOrgName").val();
+        if (editValue) {
+            $('#selectPayee').val(editValue).trigger('chosen:updated');
+        }
     }
 
     onload();
@@ -128,6 +156,7 @@
         });
 
         const sendJsonData = {
+            ReceiptId: $('#editReceiptId').val(),
             PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
             PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html(),
             PayeeBankName: $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html(),

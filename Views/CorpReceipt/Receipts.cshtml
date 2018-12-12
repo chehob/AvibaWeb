@@ -25,6 +25,9 @@
                 <td></td>
                 <td>
                     @Html.HiddenFor(m => receipt.ReceiptId)
+                    <a asp-action="CreateReceipt" asp-controller="CorpReceipt" asp-route-id="@receipt.ReceiptId"
+                       data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
+                       class="btn btn-setting btn-round btn-default"><i class="glyphicon glyphicon-pencil"></i></a>
                     <a href="/" class="btn btn-success btn-sm createReceiptPDF">PDF</a>
                 </td>
             </tr>
@@ -163,7 +166,7 @@
                             margin: [45, -150, 0, 0]
                         },
                         {
-                            text: `Сумма прописью: . Без НДС`,
+                            text: `Сумма прописью: ${rubles(result.totalAmount + result.feeTotal)}. Без НДС`,
                             style: 'mediumText',
                             margin: [45, 0, 0, 0]
                         },

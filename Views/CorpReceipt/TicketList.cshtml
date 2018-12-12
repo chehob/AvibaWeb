@@ -89,7 +89,7 @@
     $(".addTicketBtn").click(function (e) {
         e.preventDefault();
         $("#ticketListDiv").append(`<div>
-            <input type="hidden" value="${$($(this).siblings()[0]).val()}"></input>
+            <input type="hidden" value="${$($(this).siblings()[0]).val()}" />
             ${$($(this).parent().siblings()[0]).html()}
         </div>`);
 
