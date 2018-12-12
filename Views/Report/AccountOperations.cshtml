@@ -1,8 +1,10 @@
 ﻿@using AvibaWeb.ViewModels.ReportViewModels
-@model List<AccountOperationsViewModel>
+@model AccountOperationsViewModel
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/af-2.3.2/b-1.5.4/r-2.2.2/datatables.min.css"/>
 <div class="box col-md-10">
-
+    
+    <span>@Model.OrgName</span>
+    <span>@Model.BankName</span>
     <table class="table table-striped table-bordered bootstrap-datatable datatable responsive" id="dataTable">
         <thead>
             <tr>
@@ -14,7 +16,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var operation in Model)
+            @foreach (var operation in Model.Operations)
             {
                 if (operation.Amount < 0)
                 {
