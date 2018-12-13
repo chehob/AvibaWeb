@@ -60,10 +60,11 @@
                         {
                             foreach (var item in Model.Receipt.Items)
                             {
-                                <div>
-                                    <input type="hidden" value="@item.TicketOperationId" />
-                                    <b>@item.BSONumber</b>
-                                </div>
+                        <div>
+                            <input type="hidden" value="@item.TicketOperationId" />
+                            <b>@item.BSONumber</b>
+                            <a href="/" class="btn btn-success btn-sm removeTicketBtn"><i class="glyphicon glyphicon-pencil"></i></a>
+                        </div>
                             }
                         }
                     </div>
@@ -146,9 +147,7 @@
     $("#sendDataBtn").click(function (e) {
         var items = new Array();
         $("#ticketListDiv").children().each(function () {
-            console.log($(this));
             const firstDiv = $(this).find("input");
-            console.log(firstDiv);
             const receiptItem = {
                 TicketOperationId: firstDiv.val()
             };
@@ -194,9 +193,19 @@
     });
 
     $("#getTicketListBtn").click(function (e) {
+        var exceptItems = new Array();
+        $("#ticketListDiv").children().each(function () {
+            const firstDiv = $(this).find("input");
+            const receiptItem = {
+                TicketOperationId: firstDiv.val()
+            };
+            exceptItems.push(receiptItem);
+        });
+
         const sendJsonData = {
-            fromDate: moment().startOf('month').toISOString(),
-            toDate: moment().endOf('month').toISOString()
+            fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+            toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true),
+            ExceptItems: exceptItems
         };
 
         console.log(sendJsonData);
@@ -217,4 +226,12 @@
             }
         });
     });
+
+    $(document).on('click',
+        '.removeTicketBtn',
+        function(e) {
+            e.preventDefault();
+            $(this).parent().remove();
+            //$('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
+        });
 </script>

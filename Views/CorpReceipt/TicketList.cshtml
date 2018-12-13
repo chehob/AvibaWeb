@@ -91,6 +91,7 @@
         $("#ticketListDiv").append(`<div>
             <input type="hidden" value="${$($(this).siblings()[0]).val()}" />
             ${$($(this).parent().siblings()[0]).html()}
+            <a href="/" class="btn btn-success btn-sm removeTicketBtn"><i class="glyphicon glyphicon-pencil"></i></a>
         </div>`);
 
         $('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
