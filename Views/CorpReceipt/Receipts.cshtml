@@ -39,13 +39,28 @@
 <script>
     $(function () {
         var oTable = $('#dataTable').dataTable({
+            "sPaginationType": "full_numbers",
             "bSort": false,
-            "oLanguage": {
+            "oLanguage": {                
                 "sSearch": "Поиск:",
                 "sLengthMenu": "Показать _MENU_ записей",
                 "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
                 "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
-                "sInfoFiltered": "(отфильтровано из _MAX_ записей)"
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
+                "oPaginate": {
+                    "sFirst":    'Первая',
+                    "sPrevious": 'Предыдущая',
+                    "sNext":     'Следующая',
+                    "sLast":     'Последняя'
+                },
+                "oaria": {
+                    "ipaginate": {
+                        "nfirst":    'Начало',
+                        "nprevious": 'Previous',
+                        "nnext":     'Next',
+                        "nlast":     'Last'
+            }
+        }       
             }
         });
     });
