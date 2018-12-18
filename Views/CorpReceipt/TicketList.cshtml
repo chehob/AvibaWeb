@@ -7,6 +7,7 @@
             <th>Дата операции</th>
             <th>Билет</th>
             <th>Маршрут</th>
+            <th>Пассажир</th>
             <th>Сумма</th>
         </tr>
     </thead>
@@ -23,7 +24,7 @@
                 <td>
                     @Html.HiddenFor(m => operation.TicketOperationId)
                     <span id="myId">@operation.ExecutionDateTime</span><br>
-                    @Html.DisplayFor(c => operation.OperationType)
+                    <span>@Html.DisplayFor(c => operation.OperationType)</span>
                     <a href="/" class="btn btn-success btn-sm addTicketBtn">Добавить</a>
                 </td>
                 <td>
@@ -31,6 +32,9 @@
                 </td>
                 <td>
                     <b>@operation.Route</b>
+                </td>
+                <td>
+                    <b>@operation.PassengerName</b>
                 </td>
                 <td>
                     <b>@operation.Payment</b>
@@ -67,14 +71,28 @@
 
     $(function () {
         var oTable = $('#dataTable').dataTable({
-            //"aaSorting": [[0, "desc"]],
+            "sPaginationType": "full_numbers",
             "bSort": false,
-            "oLanguage": {
+            "oLanguage": {                
                 "sSearch": "Поиск:",
                 "sLengthMenu": "Показать _MENU_ записей",
                 "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
                 "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
-                "sInfoFiltered": "(отфильтровано из _MAX_ записей)"
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
+                "oPaginate": {
+                    "sFirst":    'Первая',
+                    "sPrevious": 'Предыдущая',
+                    "sNext":     'Следующая',
+                    "sLast":     'Последняя'
+                },
+                "oaria": {
+                    "ipaginate": {
+                        "nfirst":    'Начало',
+                        "nprevious": 'Previous',
+                        "nnext":     'Next',
+                        "nlast":     'Last'
+                    }
+                }       
             }
         });
 
@@ -84,16 +102,5 @@
         //$('.date-range-filter').change(function () {
         //    oTable.fnDraw();
         //});
-    });
-
-    $(".addTicketBtn").click(function (e) {
-        e.preventDefault();
-        $("#ticketListDiv").append(`<div>
-            <input type="hidden" value="${$($(this).siblings()[0]).val()}" />
-            ${$($(this).parent().siblings()[0]).html()}
-            <a href="/" class="btn btn-danger btn-sm removeTicketBtn"><i class="glyphicon glyphicon-remove"></i></a>
-        </div>`);
-
-        $('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
     });
 </script>
