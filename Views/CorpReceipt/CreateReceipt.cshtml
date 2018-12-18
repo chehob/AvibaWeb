@@ -10,22 +10,8 @@
         <input id="editReceiptId" type="hidden" value="@Model.Receipt?.ReceiptId" />
         <div class="box-content">
             <div class="row">
-                <div class="col-md-12">
-                    <select data-placeholder="Выбрать корпоратора" id="selectPayer" data-rel="chosen">
-                        <option value=""></option>
-                        <optgroup label="Корпораторы">
-                            @foreach (var counterparty in Model.Counterparties)
-                            {
-                                <option>@counterparty</option>
-                            }
-                        </optgroup>
-                    </select>
-                    <input id="editReceiptCorpName" type="hidden" value="@Model.Receipt?.CorporatorName" />
-                </div>
-            </div>
-            <br>
-            <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
+                    <h5>Поставщик:</h5>
                     <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
                         <option value=""></option>
                         <optgroup label="Организации">
@@ -39,22 +25,34 @@
                     <input id="editReceiptOrgName" type="hidden" value="@Model.Receipt?.OrganizationName" />
                     <input id="editReceiptBankName" type="hidden" value="@Model.Receipt?.BankName" />
                 </div>
+            
+                <div class="col-md-6">
+                    <h5>Покупатель:</h5>
+                    <select data-placeholder="Выбрать корпоратора" id="selectPayer" data-rel="chosen">
+                        <option value=""></option>
+                        <optgroup label="Корпораторы">
+                            @foreach (var counterparty in Model.Counterparties)
+                            {
+                                <option>@counterparty</option>
+                            }
+                        </optgroup>
+                    </select>
+                    <input id="editReceiptCorpName" type="hidden" value="@Model.Receipt?.CorporatorName" />
+                </div>
             </div>
+            <br>
+            
             <br>
             <div class="row">
                 <div class="col-md-12">
-                    <label for="feeRate">Тариф сборов</label>
+                    <label for="feeRate">Сбор за сегмент:</label>
                     <input type="text" id="feeRate" value="@Model.Receipt?.FeeRate" />
+                    <hr>
                 </div>
             </div>
             <br>
             <div class="row">
                 <div class="col-md-12">
-                    Билеты
-                    <div class="col-md-12">
-                        Выбрать с: <input type="text" id="min" name="min" class="date-range-filter"> по: <input type="text" id="max" name="max" class="date-range-filter">
-                        <a href="/" id="getTicketListBtn" class="btn btn-success">Список билетов</a>
-                    </div>
                     <div id="ticketListDiv">
                         @if (Model.Receipt != null)
                         {
@@ -68,6 +66,13 @@
                             }
                         }
                     </div>
+                    <hr>
+                    <h5>Добавить билеты</h5>
+                    <div class="col-md-12">
+                        Выбрать с: <input type="text" id="min" name="min" class="date-range-filter"> по: <input type="text" id="max" name="max" class="date-range-filter">
+                        <a href="/" id="getTicketListBtn" class="btn btn-success">Список билетов</a>
+                    </div>
+                    
                 </div>
             </div>
             <br />
