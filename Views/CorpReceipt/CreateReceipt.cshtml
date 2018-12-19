@@ -203,10 +203,12 @@
         var items = new Array();
         $("#receiptItemsTable tbody").children().each(function () {
             const firstDiv = $(this).find("input");
-            const receiptItem = {
-                TicketOperationId: firstDiv.val()
-            };
-            items.push(receiptItem);
+            if (firstDiv.length) {
+                const receiptItem = {
+                    TicketOperationId: firstDiv.val()
+                };
+                items.push(receiptItem);
+            }
         });
 
         const sendJsonData = {
