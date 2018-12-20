@@ -90,7 +90,7 @@
                                                 <b>@item.PassengerName</b>
                                             </td>
                                             <td>
-                                                <b>@item.Payment</b>
+                                                <input type="text" value="@item.Payment" />
                                             </td>
                                         </tr>
                                     }
@@ -172,7 +172,10 @@
 
         var oTable = $('#receiptItemsTable').dataTable({
             "sPaginationType": "full_numbers",
+            "bPaginate": false,
+            "bFilter": false,
             "bSort": false,
+            "bInfo": false,
             "oLanguage": {                
                 "sSearch": "Поиск:",
                 "sLengthMenu": "Показать _MENU_ записей",
@@ -192,7 +195,7 @@
                         "nnext":     'Next',
                         "nlast":     'Last'
                     }
-                }       
+                }
             }
         });
     }
@@ -205,7 +208,8 @@
             const firstDiv = $(this).find("input");
             if (firstDiv.length) {
                 const receiptItem = {
-                    TicketOperationId: firstDiv.val()
+                    TicketOperationId: firstDiv.val(),
+                    Amount: Number(firstDiv[1].value.replace(/[^0-9.-]+/g, ""))
                 };
                 items.push(receiptItem);
             }
@@ -265,7 +269,7 @@
             ExceptItems: exceptItems
         };
 
-        console.log(sendJsonData);
+        //console.log(sendJsonData);
 
         e.preventDefault();
         $.ajax({
@@ -297,7 +301,7 @@
                     $($(this).parent().siblings()[0]).html(),
                     $($(this).parent().siblings()[1]).html(),
                     $($(this).parent().siblings()[2]).html(),
-                    $($(this).parent().siblings()[3]).html()
+                    `<b>${$($(this).parent().siblings()[3]).find('input').val()}</b>`
                     ]);
 
                 var my_array = $('#dataTable').dataTable().fnGetNodes();
@@ -313,8 +317,6 @@
         function (e) {
             e.preventDefault();;
 
-            console.log($(this).siblings());
-
             $('#receiptItemsTable').dataTable().fnAddData([
                 `<input type="hidden" value="${$($(this).siblings()[0]).val()}" />
                 ${$(this).siblings()[1].outerHTML}<br />
@@ -323,7 +325,8 @@
                 $($(this).parent().siblings()[0]).html(),
                 $($(this).parent().siblings()[1]).html(),
                 $($(this).parent().siblings()[2]).html(),
-                $($(this).parent().siblings()[3]).html()
+                `<input type="text" value="${$($(this).parent().siblings()[3]).html().replace(/ /g, '')
+                .replace('</b>', '').replace('<b>', '')}" />`
             ]);
 
             $('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
