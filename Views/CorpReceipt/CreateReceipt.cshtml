@@ -204,16 +204,18 @@
 
     $("#sendDataBtn").click(function (e) {
         var items = new Array();
-        $("#receiptItemsTable tbody").children().each(function () {
-            const firstDiv = $(this).find("input");
-            if (firstDiv.length) {
-                const receiptItem = {
-                    TicketOperationId: firstDiv.val(),
-                    Amount: Number(firstDiv[1].value.replace(/[^0-9.-]+/g, ""))
-                };
-                items.push(receiptItem);
-            }
-        });
+        if ($("#receiptItemsTable").dataTable().fnSettings().aoData.length) {
+            $("#receiptItemsTable tbody").children().each(function () {
+                const firstDiv = $(this).find("input");
+                if (firstDiv.length) {
+                    const receiptItem = {
+                        TicketOperationId: firstDiv.val(),
+                        Amount: Number(firstDiv[1].value.replace(/[^0-9.-]+/g, ""))
+                    };
+                    items.push(receiptItem);
+                }
+            });
+        }
 
         const sendJsonData = {
             ReceiptId: $('#editReceiptId').val(),
@@ -255,13 +257,16 @@
 
     $("#getTicketListBtn").click(function (e) {
         var exceptItems = new Array();
-        $("#receiptItemsTable tbody").children().each(function () {
-            const firstDiv = $(this).find("input");
-            const receiptItem = {
-                TicketOperationId: firstDiv.val()
-            };
-            exceptItems.push(receiptItem);
-        });
+        if ($("#receiptItemsTable").dataTable().fnSettings().aoData.length) {
+            console.log('test');
+            $("#receiptItemsTable tbody").children().each(function () {
+                const firstDiv = $(this).find("input");
+                const receiptItem = {
+                    TicketOperationId: firstDiv.val()
+                };
+                exceptItems.push(receiptItem);
+            });
+        }
 
         const sendJsonData = {
             fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
