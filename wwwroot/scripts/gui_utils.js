@@ -314,14 +314,24 @@ $(document).on('click',
                             margin: [0, 15, 0, 0]
                         },
                         {
-                            text: `Поставщик: ${result.orgName} ${result.orgAddress}`,
+                            text: `Поставщик: ${result.orgName}`,
                             style: 'mediumText',
+                            bold: true,
                             margin: [0, 15, 0, 0]
                         },
                         {
-                            text: `Покупатель: ${result.payerNameWithITN}\n${result.payerAddress}`,
+                            text: `${result.orgAddress}`,
                             style: 'mediumText',
+                        },
+                        {
+                            text: `Покупатель: ${result.payerName}`,
+                            style: 'mediumText',
+                            bold: true,
                             margin: [0, 15, 0, 0]
+                        },
+                        {
+                            text: `ИНН: ${result.payerITN}, КПП: ${result.payerKPP}, Адрес: ${result.payerAddress}`,
+                            style: 'mediumText'
                         },
                         {
                             table: {
@@ -445,20 +455,16 @@ $(document).on('click',
 
                     feeData.push(headerRow);
 
-                    itemCount = 0;
-                    result.items.forEach(function (item) {
-                        dataRow = [];
+                    dataRow = [];
+                    
+                    dataRow.push({ text: '1', alignment: 'center' });
+                    dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
+                    dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                    dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                    dataRow.push({ text: result.feeRateStr, alignment: 'right' });
+                    dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
 
-                        itemCount++;
-                        dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
-                        dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
-                        dataRow.push({ text: result.segCountTotal, alignment: 'center' });
-                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
-                        dataRow.push({ text: result.feeRateStr, alignment: 'right' });
-                        dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
-
-                        feeData.push(dataRow);
-                    });
+                    feeData.push(dataRow);
 
                     const docDefinition = {
                         content: [
