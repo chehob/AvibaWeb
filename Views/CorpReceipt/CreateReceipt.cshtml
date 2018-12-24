@@ -255,7 +255,7 @@
 
     $("#getTicketListBtn").click(function (e) {
         var exceptItems = new Array();
-        $("#ticketListDiv").children().each(function () {
+        $("#receiptItemsTable tbody").children().each(function () {
             const firstDiv = $(this).find("input");
             const receiptItem = {
                 TicketOperationId: firstDiv.val()
@@ -286,49 +286,5 @@
                 console.log(error);
             }
         });
-    });
-
-    $(document).on('click',
-        '.removeTicketBtn',
-        function(e) {
-            e.preventDefault();
-            if ($("#dataTable").length) {
-                $('#dataTable').dataTable().fnAddData([
-                    `<input type="hidden" value="${$($(this).siblings()[0]).val()}" />
-                    ${$(this).siblings()[1].outerHTML}<br />
-                    ${$(this).siblings()[3].outerHTML}
-                    <a href="/" class="btn btn-success btn-sm addTicketBtn">Добавить</a>`,
-                    $($(this).parent().siblings()[0]).html(),
-                    $($(this).parent().siblings()[1]).html(),
-                    $($(this).parent().siblings()[2]).html(),
-                    `<b>${$($(this).parent().siblings()[3]).find('input').val()}</b>`
-                    ]);
-
-                var my_array = $('#dataTable').dataTable().fnGetNodes();
-                var last_element = my_array[my_array.length - 1];      
-                $(last_element).insertBefore($('#dataTable tbody tr:first-child'));
-            }
-
-            $('#receiptItemsTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
-        });
-
-    $(document).on('click',
-        '.addTicketBtn',
-        function (e) {
-            e.preventDefault();;
-
-            $('#receiptItemsTable').dataTable().fnAddData([
-                `<input type="hidden" value="${$($(this).siblings()[0]).val()}" />
-                ${$(this).siblings()[1].outerHTML}<br />
-                ${$(this).siblings()[3].outerHTML}
-                <a href="/" class="btn btn-danger btn-sm removeTicketBtn"><i class="glyphicon glyphicon-remove"></i></a>`,
-                $($(this).parent().siblings()[0]).html(),
-                $($(this).parent().siblings()[1]).html(),
-                $($(this).parent().siblings()[2]).html(),
-                `<input type="text" value="${$($(this).parent().siblings()[3]).html().replace(/ /g, '')
-                .replace('</b>', '').replace('<b>', '')}" />`
-            ]);
-
-            $('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
-        });
+    });   
 </script>
