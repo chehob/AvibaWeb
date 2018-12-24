@@ -456,7 +456,7 @@ $(document).on('click',
                     feeData.push(headerRow);
 
                     dataRow = [];
-                    
+
                     dataRow.push({ text: '1', alignment: 'center' });
                     dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
                     dataRow.push({ text: result.segCountTotal, alignment: 'center' });
@@ -553,77 +553,35 @@ $(document).on('click',
                                     {
                                         text: `Итого передано документов на сумму: ${rubles(result.itemTotal)}. Без НДС`,
                                         style: 'mediumText',
-                                        margin: [45, -150, 45, 0]
+                                        margin: [45, -195, 45, 0]
                                     },
-                                    {
-                                        columns: [
-                                            [
-                                                {
-                                                    text: `Передал: ${result.orgName}`
-                                                },
-                                                {
-                                                    text: `Адрес: ${result.orgAddress}`
-                                                },
-                                                {
-                                                    text: `Расчетный счет: ${result.orgFinancialAccount}`
-                                                },
-                                                {
-                                                    text: `Кор. счет: ${result.orgCorrAccount}`
-                                                },
-                                                {
-                                                    text: `Банк: ${result.orgBankName}`
-                                                },
-                                                {
-                                                    text: `ИНН: ${result.orgITN}`
-                                                },
-                                                {
-                                                    text: `КПП: ${result.orgKPP}`
-                                                },
-                                                {
-                                                    text: `БИК: ${result.orgBIK}`
-                                                },
-                                                {
-                                                    text: `Сдал _____________________________________________`
-                                                },
-                                                {
-                                                    text: `М.П.`,
-                                                    alignment: 'center'
-                                                }
-                                            ],
-                                            [
-                                                {
-                                                    text: `Принял: ${result.payerName}`
-                                                },
-                                                {
-                                                    text: `Адрес: ${result.payerAddress}`
-                                                },
-                                                {
-                                                    text: `Расчетный счет: ${result.payerFinancialAccount}`
-                                                },
-                                                {
-                                                    text: `Кор. счет: ${result.payerCorrAccount}`
-                                                },
-                                                {
-                                                    text: `Банк: ${result.payerBankName}`
-                                                },
-                                                {
-                                                    text: `ИНН: ${result.payerITN}`
-                                                },
-                                                {
-                                                    text: `КПП: ${result.payerKPP}`
-                                                },
-                                                {
-                                                    text: `БИК: ${result.payerBIK}`
-                                                },
-                                                {
-                                                    text: `Принял ______________________________________`
-                                                },
-                                                {
-                                                    text: `М.П.`,
-                                                    alignment: 'center'
-                                                }
+                                    {                                        
+                                        table: {
+                                            widths: ['*', '*'],
+                                            heights: [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
+            
+                                            body: [
+                                                [`Передал: ${result.orgName}`,`Принял: ${result.payerName}`],
+                                                [`Адрес: ${result.orgAddress}`,`Адрес: ${result.payerAddress}`],
+                                                [`Расчетный счет: ${result.orgFinancialAccount}`,`Расчетный счет: ${result.payerFinancialAccount}`],
+                                                [`Кор. счет: ${result.orgCorrAccount}`,`Кор. счет: ${result.payerCorrAccount}`],
+                                                [`Банк: ${result.orgBankName}`,`Банк: ${result.payerBankName}`],
+                                                [`ИНН: ${result.orgITN}`,`ИНН: ${result.payerITN}`],
+                                                [`КПП: ${result.orgKPP}`,`КПП: ${result.payerKPP}`],
+                                                [`БИК: ${result.orgBIK}`,`БИК: ${result.payerBIK}`],
+                                                [{},{}],
+                                                [`Сдал _____________________________________________`,`Принял ______________________________________`],
+                                                [
+                                                    {
+                                                        text: `М.П.`, alignment: 'center'
+                                                    },
+                                                    {
+                                                        text: `М.П.`, alignment: 'center'
+                                                    }
+                                                ]
                                             ]
-                                        ],
+                                        },
+                                        layout: 'noBorders',
                                         style: 'mediumText',
                                         margin: [45, 10, 45, 0]
                                     }
@@ -669,7 +627,7 @@ $(document).on('click',
                                                     bold: true,
                                                 },
                                                 {
-                                                    text: ' ',
+                                                    text: `${result.payerHeadTitle} ${result.payerName}`,
                                                     margin: [0, 10, 0, 0]
                                                 },
                                                 {
