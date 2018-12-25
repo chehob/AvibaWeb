@@ -7,8 +7,16 @@
         <div class="box-header well" data-original-title="">
             <h2>Создание счета</h2>
         </div>
-        <input id="editReceiptId" type="hidden" value="@Model.Receipt?.ReceiptId" />
+        <input id="editReceiptId" type="hidden" value="@Model.Receipt.ReceiptId" />
         <div class="box-content">
+            <div class="row">
+                <div class="col-md-6">
+                    <span>@Model.Receipt.ReceiptNumber</span>
+                </div>
+                <div class="col-md-6">
+                    <span id="receiptCreatedDate">@Model.Receipt.CreatedDateTime</span>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-6">
                     <h5>Поставщик:</h5>
@@ -22,10 +30,10 @@
                         </optgroup>
                     </select>
                     <div id="payeeOrgFinancialAccountsDiv"></div>
-                    <input id="editReceiptOrgName" type="hidden" value="@Model.Receipt?.OrganizationName" />
-                    <input id="editReceiptBankName" type="hidden" value="@Model.Receipt?.BankName" />
+                    <input id="editReceiptOrgName" type="hidden" value="@Model.Receipt.OrganizationName" />
+                    <input id="editReceiptBankName" type="hidden" value="@Model.Receipt.BankName" />
                 </div>
-            
+
                 <div class="col-md-6">
                     <h5>Покупатель:</h5>
                     <select data-placeholder="Выбрать корпоратора" id="selectPayer" data-rel="chosen">
@@ -37,16 +45,16 @@
                             }
                         </optgroup>
                     </select>
-                    <input id="editReceiptCorpName" type="hidden" value="@Model.Receipt?.CorporatorName" />
+                    <input id="editReceiptCorpName" type="hidden" value="@Model.Receipt.CorporatorName" />
                 </div>
             </div>
             <br>
-            
+
             <br>
             <div class="row">
                 <div class="col-md-12">
                     <label for="feeRate">Сбор за сегмент:</label>
-                    <input type="text" id="feeRate" value="@Model.Receipt?.FeeRate" />
+                    <input type="text" id="feeRate" value="@Model.Receipt.FeeRate" />
                     <hr>
                 </div>
             </div>
@@ -58,8 +66,8 @@
                         Выбрать с: <input type="text" id="min" name="min" class="date-range-filter"> по: <input type="text" id="max" name="max" class="date-range-filter">
                         <a href="/" id="getTicketListBtn" class="btn btn-success">Список билетов</a>
                     </div>
-                        <table class="table table-striped table-bordered bootstrap-datatable datatable" id="receiptItemsTable">
-                            <thead>
+                    <table class="table table-striped table-bordered bootstrap-datatable datatable" id="receiptItemsTable">
+                        <thead>
                             <tr>
                                 <th>Дата операции</th>
                                 <th>Билет</th>
@@ -67,36 +75,37 @@
                                 <th>Пассажир</th>
                                 <th>Сумма</th>
                             </tr>
-                            </thead>
-                            <tbody>
-                                @if (Model.Receipt != null)
+                        </thead>
+                        <tbody>
+                            @if (Model.Receipt.Items != null)
+                            {
+                                foreach (var item in Model.Receipt.Items)
                                 {
-                                    foreach (var item in Model.Receipt.Items)
-                                    {
-                                        <tr>
-                                            <td>
-                                                <input type="hidden" value="@item.TicketOperationId" />
-                                                <span id="myId">@item.ExecutionDateTime</span><br>
-                                                <span>@Html.DisplayFor(c => item.OperationType)</span>
-                                                <a href="/" class="btn btn-danger btn-sm removeTicketBtn"><i class="glyphicon glyphicon-remove"></i></a>
-                                            </td>
-                                            <td>
-                                                <b>@item.TicketNumber</b>
-                                            </td>
-                                            <td>
-                                                <b>@item.Route</b>
-                                            </td>
-                                            <td>
-                                                <b>@item.PassengerName</b>
-                                            </td>
-                                            <td>
-                                                <input type="text" value="@item.Payment" />
-                                            </td>
-                                        </tr>
-                                    }
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" value="@item.TicketOperationId" />
+                                            <span id="myId">@item.ExecutionDateTime</span><br>
+                                            <span>@Html.DisplayFor(c => item.OperationType)</span>
+                                            <a href="/" class="btn btn-danger btn-sm removeTicketBtn"><i class="glyphicon glyphicon-remove"></i></a>
+                                        </td>
+                                        <td>
+                                            <b>@item.TicketNumber</b>
+                                        </td>
+                                        <td>
+                                            <b>@item.Route</b>
+                                            <input type="hidden" value="@item.SegCount" />
+                                        </td>
+                                        <td>
+                                            <b>@item.PassengerName</b>
+                                        </td>
+                                        <td>
+                                            <input type="text" value="@item.Payment" />
+                                        </td>
+                                    </tr>
                                 }
-                            </tbody>
-                        </table>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <br />
@@ -111,6 +120,26 @@
                     <a href="/" id="sendDataBtn" class="btn btn-success">Сохранить</a>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <span id="feeTotal"></span>
+                    <span id="ticketTotal"></span>
+                    <span id="finalTotal"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dialog" title="Basic dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Новая фирма</span>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer"></div>
         </div>
     </div>
 </div>
@@ -157,12 +186,18 @@
         $("#min").datepicker();
         $("#max").datepicker();
 
-        $("#min").val(moment().startOf('month').format("DD.MM.YYYY"));
-        $("#max").val(moment().endOf('month').format("DD.MM.YYYY"));
+        //$("#min").val(moment().startOf('month').format("DD.MM.YYYY"));
+        //$("#max").val(moment().endOf('month').format("DD.MM.YYYY"));
 
         var editValue = $("#editReceiptCorpName").val();
         if (editValue) {
             $('#selectPayer').val(editValue).trigger('chosen:updated');
+            $("#min").val(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").subtract(5, 'days').format("DD.MM.YYYY"));
+            $("#max").val(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").format("DD.MM.YYYY"));
+        }
+        else {
+            $("#min").val(moment().subtract(5, 'days').format("DD.MM.YYYY"));
+            $("#max").val(moment().format("DD.MM.YYYY"));
         }
 
         editValue = $("#editReceiptOrgName").val();
@@ -210,7 +245,7 @@
                 if (firstDiv.length) {
                     const receiptItem = {
                         TicketOperationId: firstDiv.val(),
-                        Amount: Number(firstDiv[1].value.replace(/[^0-9.-]+/g, ""))
+                        Amount: Number(firstDiv[2].value.replace(/[^0-9.-]+/g, ""))
                     };
                     items.push(receiptItem);
                 }
@@ -258,7 +293,6 @@
     $("#getTicketListBtn").click(function (e) {
         var exceptItems = new Array();
         if ($("#receiptItemsTable").dataTable().fnSettings().aoData.length) {
-            console.log('test');
             $("#receiptItemsTable tbody").children().each(function () {
                 const firstDiv = $(this).find("input");
                 const receiptItem = {
