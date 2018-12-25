@@ -11,6 +11,7 @@
         <div class="box-content">
             <div class="row">
                 <div class="col-md-6">
+                    <h6>Счет № </h6>
                     <span>@Model.Receipt.ReceiptNumber</span>
                 </div>
                 <div class="col-md-6">
@@ -52,11 +53,32 @@
 
             <br>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <label for="feeRate">Сбор за сегмент:</label>
                     <input type="text" id="feeRate" value="@Model.Receipt.FeeRate" />
                     <hr>
                 </div>
+                
+<style>
+    .popup {
+    position: fixed;
+    top: 100px;
+    right: 0;
+    padding: 10px;
+    text-align: center;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    z-index: 1;
+}
+</style>
+<div class="popup">
+    <span>Сумма сборов:</span>
+    <span id="feeTotal"></span><br>
+    <span>Сумма билетов:</span>
+    <span id="ticketTotal"></span><br>
+    <label>Сумма счета:</label>
+    <span id="finalTotal"></span>
+</div>
             </div>
             <br>
             <div class="row">
@@ -122,13 +144,7 @@
 
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <span id="feeTotal"></span>
-                    <span id="ticketTotal"></span>
-                    <span id="finalTotal"></span>
-                </div>
-            </div>
+
         </div>
     </div>
 </div>
@@ -148,6 +164,8 @@
 
 <script>
     onload = function () {
+        
+
         $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
 
         // Select the node that will be observed for mutations
