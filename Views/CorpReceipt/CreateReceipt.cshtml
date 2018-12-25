@@ -11,11 +11,11 @@
         <div class="box-content">
             <div class="row">
                 <div class="col-md-6">
-                    <h6>Счет № </h6>
-                    <span>@Model.Receipt.ReceiptNumber</span>
+                    <h5>Счет № <b>@Model.Receipt.ReceiptNumber</b> от <b><span id="receiptCreatedDate">@Model.Receipt.CreatedDateTime</span></b></h5>
+                    <span></span>
                 </div>
                 <div class="col-md-6">
-                    <span id="receiptCreatedDate">@Model.Receipt.CreatedDateTime</span>
+                    
                 </div>
             </div>
             <div class="row">
@@ -62,7 +62,7 @@
 <style>
     .popup {
     position: fixed;
-    top: 100px;
+    top: 350px;
     right: 0;
     padding: 10px;
     text-align: center;
