@@ -673,6 +673,26 @@ $(document).on('click',
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
         }
 
+        $(document).on('input',
+        '.ticketPayment',
+        function(e) {
+            var segTotal = 0;
+            var ticketTotal = 0;
+            var feeRate = Number($('#feeRate').val().replace(',', '.'));
+            $("#receiptItemsTable tbody").children().each(function () {
+                const firstDiv = $(this).find("input");
+                if (firstDiv.length) {
+                    segTotal += Number(firstDiv[1].value);
+                    ticketTotal += Number(firstDiv[2].value.replace(/[^0-9.-]+/g, ""));
+                }
+            });
+
+            $('#segTotal').html(numberWithSpaces(segTotal));
+            $('#feeTotal').html(numberWithSpaces(segTotal * feeRate));
+            $('#ticketTotal').html(numberWithSpaces(ticketTotal));
+            $('#finalTotal').html(numberWithSpaces(segTotal * feeRate + ticketTotal));
+        });
+
 		 $(document).on('click',
         '.removeTicketBtn',
         function(e) {
@@ -728,7 +748,7 @@ $(document).on('click',
                 $($(this).parent().siblings()[0]).html(),
                 $($(this).parent().siblings()[1]).html(),
                 $($(this).parent().siblings()[2]).html(),
-                `<input type="text" value="${$($(this).parent().siblings()[3]).html().replace(/ /g, '')
+                `<input class="ticketPayment" type="text" value="${$($(this).parent().siblings()[3]).html().replace(/ /g, '')
                 .replace('</b>', '').replace('<b>', '')}" />`
             ]);
 
