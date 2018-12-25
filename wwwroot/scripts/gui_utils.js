@@ -253,12 +253,24 @@ $(document).on('click',
                     dataRow = [];
 
                     itemCount++;
-                    dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
-                    dataRow.push({ text: item.ticketLabel, style: 'smallText' });
-                    dataRow.push({ text: item.segCount, alignment: 'center' });
-                    dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
-                    dataRow.push({ text: item.amountStr, alignment: 'right' });
-                    dataRow.push({ text: item.amountStr, alignment: 'right' });
+                    if(itemCount === 12)
+                    {
+                        dataRow.push({ text: (itemCount).toString(), alignment: 'center', pageBreak: 'before' });
+                        dataRow.push({ text: item.ticketLabel, style: 'smallText', pageBreak: 'before' });
+                        dataRow.push({ text: item.segCount, alignment: 'center', pageBreak: 'before' });
+                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center', pageBreak: 'before' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right', pageBreak: 'before' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right', pageBreak: 'before' });
+                    }
+                    else
+                    {
+                        dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
+                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
+                        dataRow.push({ text: item.segCount, alignment: 'center' });
+                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+                    }
 
                     bodyData.push(dataRow);
                 });
@@ -340,11 +352,12 @@ $(document).on('click',
                                 body: bodyData
                             },
                             style: 'mediumText',
-                            margin: [0, 15, 0, 150]
+                            margin: [0, 15, 0, 250]
                         }
                     ],
 
-                    footer: [
+                    footer: function (currentPage, pageCount) {
+                        if(currentPage === pageCount) return [
                         {
                             text: `Всего наименований: ${itemCount}, на сумму ${result.totalAmountStr} руб.`,
                             style: 'mediumText',
@@ -365,7 +378,7 @@ $(document).on('click',
                             style: 'mediumText',
                             margin: [45, 20, 0, 0]
                         }
-                    ],
+                    ]},
 
                     styles: {
                         headerWarning: {
@@ -423,11 +436,22 @@ $(document).on('click',
                         dataRow = [];
 
                         itemCount++;
-                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
-                        dataRow.push({ text: item.amountStr, alignment: 'right' });
-                        dataRow.push({ text: item.segCount, alignment: 'center' });
-                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });                        
-                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+                        if(itemCount === 13)
+                        {
+                            dataRow.push({ text: item.ticketLabel, style: 'smallText', pageBreak: 'before' });
+                            dataRow.push({ text: item.amountStr, alignment: 'right', pageBreak: 'before' });
+                            dataRow.push({ text: item.segCount, alignment: 'center', pageBreak: 'before' });
+                            dataRow.push({ text: 'полетный\nсегмент', alignment: 'center', pageBreak: 'before' });                        
+                            dataRow.push({ text: item.amountStr, alignment: 'right', pageBreak: 'before' });
+                        }
+                        else
+                        {
+                            dataRow.push({ text: item.ticketLabel, style: 'smallText' });
+                            dataRow.push({ text: item.amountStr, alignment: 'right' });
+                            dataRow.push({ text: item.segCount, alignment: 'center' });
+                            dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });                        
+                            dataRow.push({ text: item.amountStr, alignment: 'right' });
+                        }
 
                         itemData.push(dataRow);
                     });
@@ -548,7 +572,7 @@ $(document).on('click',
                         ],
 
                         footer: function (currentPage, pageCount) {
-                            if (currentPage == 1) {
+                            if (currentPage === pageCount - 1) {
                                 return [
                                     {
                                         text: `Итого передано документов на сумму: ${rubles(result.itemTotal)}. Без НДС`,
@@ -587,7 +611,7 @@ $(document).on('click',
                                     }
                                 ];                                
                             }
-                            else {
+                            else if(currentPage === pageCount) {
                                 return [
                                     {
                                         text: `Всего оказано услуг ${result.segCountTotal}, на сумму ${result.feeTotalStr} руб.`,
