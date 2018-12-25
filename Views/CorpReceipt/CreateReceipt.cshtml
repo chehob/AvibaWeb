@@ -72,6 +72,8 @@
 }
 </style>
 <div class="popup">
+    <span>Кол-во сегментов:</span>
+    <span id="segTotal"></span><br>
     <span>Сумма сборов:</span>
     <span id="feeTotal"></span><br>
     <span>Сумма билетов:</span>
@@ -267,9 +269,10 @@
                 }
             });
 
-            $('#feeTotal').html(segTotal * feeRate);
-            $('#ticketTotal').html(ticketTotal);
-            $('#finalTotal').html(segTotal * feeRate + ticketTotal);
+            $('#segTotal').html(numberWithSpaces(segTotal));
+            $('#feeTotal').html(numberWithSpaces(segTotal * feeRate));
+            $('#ticketTotal').html(numberWithSpaces(ticketTotal));
+            $('#finalTotal').html(numberWithSpaces(segTotal * feeRate + ticketTotal));
         }
     }
 
