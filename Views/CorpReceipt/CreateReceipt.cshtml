@@ -56,13 +56,13 @@
                 <div class="col-md-6">
                     <label for="feeRate">Сбор за сегмент:</label>
                     <input type="text" id="feeRate" value="@Model.Receipt.FeeRate" />
-                    <hr>
+                    
                 </div>
-                
+               <hr> 
 <style>
     .popup {
     position: fixed;
-    top: 350px;
+    top: 150px;
     right: 0;
     padding: 10px;
     text-align: center;
@@ -78,8 +78,8 @@
     <span id="feeTotal"></span><br>
     <span>Сумма билетов:</span>
     <span id="ticketTotal"></span><br>
-    <label>Сумма счета:</label>
-    <span id="finalTotal"></span>
+    <label class="red">Сумма счета:</label>
+    <b><span class="red" id="finalTotal"></span></b>
 </div>
             </div>
             <br>
