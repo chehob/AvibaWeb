@@ -691,6 +691,23 @@ $(document).on('click',
             }
 
             $('#receiptItemsTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
+
+            if ($("#receiptItemsTable").dataTable().fnSettings().aoData.length) {
+                var segTotal = 0;
+                var ticketTotal = 0;
+                var feeRate = $('#feeRate').val();
+                $("#receiptItemsTable tbody").children().each(function () {
+                    const firstDiv = $(this).find("input");
+                    if (firstDiv.length) {
+                        segTotal += Number(firstDiv[1].value);
+                        ticketTotal += Number(firstDiv[2].value.replace(/[^0-9.-]+/g, ""));
+                    }
+                });
+
+                $('#feeTotal').html(segTotal*feeRate);
+                $('#ticketTotal').html(ticketTotal);
+                $('#finalTotal').html(segTotal*feeRate+ticketTotal);
+            }
         });
 
     $(document).on('click',
@@ -711,4 +728,19 @@ $(document).on('click',
             ]);
 
             $('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
+
+            var segTotal = 0;
+            var ticketTotal = 0;
+            var feeRate = $('#feeRate').val();
+            $("#receiptItemsTable tbody").children().each(function () {
+                const firstDiv = $(this).find("input");
+                if (firstDiv.length) {
+                    segTotal += Number(firstDiv[1].value);
+                    ticketTotal += Number(firstDiv[2].value.replace(/[^0-9.-]+/g, ""));
+                }
+            });
+
+            $('#feeTotal').html(segTotal*feeRate);
+            $('#ticketTotal').html(ticketTotal);
+            $('#finalTotal').html(segTotal*feeRate+ticketTotal);
         });
