@@ -669,6 +669,10 @@ $(document).on('click',
             });
         });
 
+        function numberWithSpaces(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        }
+
 		 $(document).on('click',
         '.removeTicketBtn',
         function(e) {
@@ -695,7 +699,7 @@ $(document).on('click',
             if ($("#receiptItemsTable").dataTable().fnSettings().aoData.length) {
                 var segTotal = 0;
                 var ticketTotal = 0;
-                var feeRate = $('#feeRate').val();
+                var feeRate = Number($('#feeRate').val().replace(',', '.'));
                 $("#receiptItemsTable tbody").children().each(function () {
                     const firstDiv = $(this).find("input");
                     if (firstDiv.length) {
@@ -704,9 +708,10 @@ $(document).on('click',
                     }
                 });
 
-                $('#feeTotal').html(segTotal*feeRate);
-                $('#ticketTotal').html(ticketTotal);
-                $('#finalTotal').html(segTotal*feeRate+ticketTotal);
+                $('#segTotal').html(numberWithSpaces(segTotal));
+                $('#feeTotal').html(numberWithSpaces(segTotal * feeRate));
+                $('#ticketTotal').html(numberWithSpaces(ticketTotal));
+                $('#finalTotal').html(numberWithSpaces(segTotal * feeRate + ticketTotal));
             }
         });
 
@@ -731,7 +736,7 @@ $(document).on('click',
 
             var segTotal = 0;
             var ticketTotal = 0;
-            var feeRate = $('#feeRate').val();
+            var feeRate = Number($('#feeRate').val().replace(',', '.'));
             $("#receiptItemsTable tbody").children().each(function () {
                 const firstDiv = $(this).find("input");
                 if (firstDiv.length) {
@@ -740,7 +745,8 @@ $(document).on('click',
                 }
             });
 
-            $('#feeTotal').html(segTotal*feeRate);
-            $('#ticketTotal').html(ticketTotal);
-            $('#finalTotal').html(segTotal*feeRate+ticketTotal);
+            $('#segTotal').html(numberWithSpaces(segTotal));
+            $('#feeTotal').html(numberWithSpaces(segTotal * feeRate));
+            $('#ticketTotal').html(numberWithSpaces(ticketTotal));
+            $('#finalTotal').html(numberWithSpaces(segTotal * feeRate + ticketTotal));
         });
