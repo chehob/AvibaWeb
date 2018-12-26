@@ -420,6 +420,7 @@ $(document).on('click',
                 headerRow.push({ text: 'Наименование', style: 'tableHeader' });
                 headerRow.push({ text: 'Кол-во', style: 'tableHeader' });
                 headerRow.push({ text: 'Ед.', style: 'tableHeader' });
+                headerRow.push({ text: 'Цена', style: 'tableHeader' });
                 headerRow.push({ text: 'Сумма', style: 'tableHeader' });
 
                 bodyData.push(headerRow);
@@ -430,7 +431,30 @@ $(document).on('click',
                 dataRow.push({ text: 'Оплата за авиабилеты', style: 'smallText' });
                 dataRow.push({ text: result.segCountTotal, alignment: 'center' });
                 dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                dataRow.push({});
                 dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
+
+                bodyData.push(dataRow);
+
+                dataRow = [];
+
+                dataRow.push({ text: '2', alignment: 'center' });
+                dataRow.push({ text: 'Сбор за оформление авиабилета', style: 'smallText' });
+                dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                dataRow.push({ text: result.feeRateStr, alignment: 'right' });
+                dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
+
+                bodyData.push(dataRow);
+
+                dataRow = [];
+
+                dataRow.push({ text: 'Итого: ', colSpan: 5, alignment: 'right' });
+                dataRow.push({});
+                dataRow.push({});
+                dataRow.push({});
+                dataRow.push({});
+                dataRow.push({ text: result.totalAmountStr, alignment: 'right' });
 
                 bodyData.push(dataRow);
 
@@ -484,7 +508,7 @@ $(document).on('click',
                         {
                             table: {
                                 headerRows: 1,
-                                widths: [20, 220, 45, 65, '*'],
+                                widths: [20, 220, 45, 'auto', 65, '*'],
                                 body: bodyData
                             },
                             style: 'mediumText',
@@ -493,11 +517,11 @@ $(document).on('click',
                         {
                             stack: [
                                 {
-                                    text: `Всего наименований: 1, на сумму ${result.itemTotalStr} руб.`,
+                                    text: `Всего наименований: ${itemCount}, на сумму ${result.totalAmountStr} руб.`,
                                     style: 'mediumText'
                                 },
                                 {
-                                    text: `Сумма прописью: ${rubles(result.itemTotal)}. Без НДС`,
+                                    text: `Сумма прописью: ${rubles(result.totalAmount)}. Без НДС`,
                                     style: 'mediumText'
                                 },
                                 {
