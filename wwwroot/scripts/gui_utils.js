@@ -253,24 +253,12 @@ $(document).on('click',
                     dataRow = [];
 
                     itemCount++;
-                    if(itemCount === 12)
-                    {
-                        dataRow.push({ text: (itemCount).toString(), alignment: 'center', pageBreak: 'before' });
-                        dataRow.push({ text: item.ticketLabel, style: 'smallText', pageBreak: 'before' });
-                        dataRow.push({ text: item.segCount, alignment: 'center', pageBreak: 'before' });
-                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center', pageBreak: 'before' });
-                        dataRow.push({ text: item.amountStr, alignment: 'right', pageBreak: 'before' });
-                        dataRow.push({ text: item.amountStr, alignment: 'right', pageBreak: 'before' });
-                    }
-                    else
-                    {
-                        dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
-                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
-                        dataRow.push({ text: item.segCount, alignment: 'center' });
-                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
-                        dataRow.push({ text: item.amountStr, alignment: 'right' });
-                        dataRow.push({ text: item.amountStr, alignment: 'right' });
-                    }
+                    dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
+                    dataRow.push({ text: item.ticketLabel, style: 'smallText' });
+                    dataRow.push({ text: item.segCount, alignment: 'center' });
+                    dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                    dataRow.push({ text: item.amountStr, alignment: 'right' });
+                    dataRow.push({ text: item.amountStr, alignment: 'right' });
 
                     bodyData.push(dataRow);
                 });
@@ -352,33 +340,39 @@ $(document).on('click',
                                 body: bodyData
                             },
                             style: 'mediumText',
-                            margin: [0, 15, 0, 250]
+                            margin: [0, 15, 0, 40]
+                        },
+                        {
+                            stack: [
+                                {
+                                    text: `Всего наименований: ${itemCount}, на сумму ${result.totalAmountStr} руб.`,
+                                    style: 'mediumText'
+                                },
+                                {
+                                    text: `Сумма прописью: ${rubles(result.totalAmount)}. Без НДС`,
+                                    style: 'mediumText'
+                                },
+                                {
+                                    columns: [
+                                        { text: 'Руководитель', margin: [0, 40, 0, 0]},
+                                        { image: `${result.signatureImage}`, width: 150, alignment: 'center', margin: [25, 40, 25, 0] },
+                                        { text: `${result.orgHeadName}`, margin: [0, 40, 0, 0] },
+                                        { image: `${result.stampImage}`, width: 125, alignment: 'center', margin: [25, 0, 45, 0] }
+                                    ],
+                                    style: 'mediumText',
+                                    margin: [0, 20, 0, 0]
+                                }
+                            ],
+                            id: 'NoBreak'
                         }
                     ],
 
-                    footer: function (currentPage, pageCount) {
-                        if(currentPage === pageCount) return [
-                        {
-                            text: `Всего наименований: ${itemCount}, на сумму ${result.totalAmountStr} руб.`,
-                            style: 'mediumText',
-                            margin: [45, -150, 0, 0]
-                        },
-                        {
-                            text: `Сумма прописью: ${rubles(result.totalAmount)}. Без НДС`,
-                            style: 'mediumText',
-                            margin: [45, 0, 0, 0]
-                        },
-                        {
-                            columns: [
-                                { text: 'Руководитель', margin: [0, 40, 0, 0]},
-                                { image: `${result.signatureImage}`, width: 150, alignment: 'center', margin: [25, 40, 25, 0] },
-                                { text: `${result.orgHeadName}`, margin: [0, 40, 0, 0] },
-                                { image: `${result.stampImage}`, width: 125, alignment: 'center', margin: [25, 0, 45, 0] }
-                            ],
-                            style: 'mediumText',
-                            margin: [45, 20, 0, 0]
+                    pageBreakBefore: function(currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
+                        if (currentNode.id === 'NoBreak' && currentNode.pageNumbers.length != 1) {
+                          return true;
                         }
-                    ]},
+                        return false;
+                    }, 
 
                     styles: {
                         headerWarning: {
@@ -436,22 +430,11 @@ $(document).on('click',
                         dataRow = [];
 
                         itemCount++;
-                        if(itemCount === 13)
-                        {
-                            dataRow.push({ text: item.ticketLabel, style: 'smallText', pageBreak: 'before' });
-                            dataRow.push({ text: item.amountStr, alignment: 'right', pageBreak: 'before' });
-                            dataRow.push({ text: item.segCount, alignment: 'center', pageBreak: 'before' });
-                            dataRow.push({ text: 'полетный\nсегмент', alignment: 'center', pageBreak: 'before' });                        
-                            dataRow.push({ text: item.amountStr, alignment: 'right', pageBreak: 'before' });
-                        }
-                        else
-                        {
-                            dataRow.push({ text: item.ticketLabel, style: 'smallText' });
-                            dataRow.push({ text: item.amountStr, alignment: 'right' });
-                            dataRow.push({ text: item.segCount, alignment: 'center' });
-                            dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });                        
-                            dataRow.push({ text: item.amountStr, alignment: 'right' });
-                        }
+                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+                        dataRow.push({ text: item.segCount, alignment: 'center' });
+                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });                        
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
 
                         itemData.push(dataRow);
                     });
@@ -528,7 +511,46 @@ $(document).on('click',
                                     body: itemData
                                 },
                                 style: 'mediumText',
-                                margin: [0, 15, 0, 150]
+                                margin: [0, 15, 0, 40]
+                            },
+                            {
+                                stack: [
+                                    {
+                                        text: `Итого передано документов на сумму: ${rubles(result.itemTotal)}. Без НДС`,
+                                        style: 'mediumText'
+                                    },
+                                    {                                        
+                                        table: {
+                                            widths: ['*', '*'],
+                                            heights: [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
+            
+                                            body: [
+                                                [`Передал: ${result.orgName}`,`Принял: ${result.payerName}`],
+                                                [`Адрес: ${result.orgAddress}`,`Адрес: ${result.payerAddress}`],
+                                                [`Расчетный счет: ${result.orgFinancialAccount}`,`Расчетный счет: ${result.payerFinancialAccount}`],
+                                                [`Кор. счет: ${result.orgCorrAccount}`,`Кор. счет: ${result.payerCorrAccount}`],
+                                                [`Банк: ${result.orgBankName}`,`Банк: ${result.payerBankName}`],
+                                                [`ИНН: ${result.orgITN}`,`ИНН: ${result.payerITN}`],
+                                                [`КПП: ${result.orgKPP}`,`КПП: ${result.payerKPP}`],
+                                                [`БИК: ${result.orgBIK}`,`БИК: ${result.payerBIK}`],
+                                                [{},{}],
+                                                [`Сдал _____________________________________________`,`Принял ______________________________________`],
+                                                [
+                                                    {
+                                                        text: `М.П.`, alignment: 'center'
+                                                    },
+                                                    {
+                                                        text: `М.П.`, alignment: 'center'
+                                                    }
+                                                ]
+                                            ]
+                                        },
+                                        layout: 'noBorders',
+                                        style: 'mediumText',
+                                        margin: [0, 10, 0, 0]
+                                    }
+                                ],
+                                id: 'NoBreak'
                             },
                             {
                                 text: `АКТ № ${result.receiptNumber} от ${result.issuedDateTime}`,
@@ -567,67 +589,23 @@ $(document).on('click',
                                 style: 'mediumText',
                                 alignment: 'right',
                                 bold: true,
-                                margin: [0, 0, 0, 150]
-                            }
-                        ],
-
-                        footer: function (currentPage, pageCount) {
-                            if (currentPage === pageCount - 1) {
-                                return [
-                                    {
-                                        text: `Итого передано документов на сумму: ${rubles(result.itemTotal)}. Без НДС`,
-                                        style: 'mediumText',
-                                        margin: [45, -195, 45, 0]
-                                    },
-                                    {                                        
-                                        table: {
-                                            widths: ['*', '*'],
-                                            heights: [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
-            
-                                            body: [
-                                                [`Передал: ${result.orgName}`,`Принял: ${result.payerName}`],
-                                                [`Адрес: ${result.orgAddress}`,`Адрес: ${result.payerAddress}`],
-                                                [`Расчетный счет: ${result.orgFinancialAccount}`,`Расчетный счет: ${result.payerFinancialAccount}`],
-                                                [`Кор. счет: ${result.orgCorrAccount}`,`Кор. счет: ${result.payerCorrAccount}`],
-                                                [`Банк: ${result.orgBankName}`,`Банк: ${result.payerBankName}`],
-                                                [`ИНН: ${result.orgITN}`,`ИНН: ${result.payerITN}`],
-                                                [`КПП: ${result.orgKPP}`,`КПП: ${result.payerKPP}`],
-                                                [`БИК: ${result.orgBIK}`,`БИК: ${result.payerBIK}`],
-                                                [{},{}],
-                                                [`Сдал _____________________________________________`,`Принял ______________________________________`],
-                                                [
-                                                    {
-                                                        text: `М.П.`, alignment: 'center'
-                                                    },
-                                                    {
-                                                        text: `М.П.`, alignment: 'center'
-                                                    }
-                                                ]
-                                            ]
-                                        },
-                                        layout: 'noBorders',
-                                        style: 'mediumText',
-                                        margin: [45, 10, 45, 0]
-                                    }
-                                ];                                
-                            }
-                            else if(currentPage === pageCount) {
-                                return [
+                                margin: [0, 0, 0, 40]
+                            },
+                            {
+                                stack: [
                                     {
                                         text: `Всего оказано услуг ${result.segCountTotal}, на сумму ${result.feeTotalStr} руб.`,
-                                        style: 'mediumText',
-                                        margin: [45, -150, 0, 0]
+                                        style: 'mediumText'
                                     },
                                     {
                                         text: `${rubles(result.feeTotal)}`,
                                         style: 'mediumText',
-                                        bold: true,
-                                        margin: [45, 0, 0, 0]
+                                        bold: true
                                     },
                                     {
                                         text: `Вышеперечисленные услуги выполнены полностью и в срок. Заказчик претензий по объему, качеству и срокам оказания услуг не имеет.`,
                                         style: 'mediumText',
-                                        margin: [45, 25, 0, 0]
+                                        margin: [0, 25, 0, 0]
                                     },
                                     {
                                         columns: [
@@ -661,11 +639,19 @@ $(document).on('click',
                                             ]
                                         ],
                                         style: 'mediumText',
-                                        margin: [45, 25, 0, 0]
+                                        margin: [0, 25, 0, 0]
                                     }
-                                ];
+                                ],
+                                id: 'NoBreak'
+                            }                       
+                        ],
+
+                        pageBreakBefore: function(currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
+                            if (currentNode.id === 'NoBreak' && currentNode.pageNumbers.length != 1) {
+                              return true;
                             }
-                        },
+                            return false;
+                        },                        
 
                         styles: {
                             bigText: {
