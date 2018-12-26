@@ -517,7 +517,7 @@ $(document).on('click',
                         {
                             stack: [
                                 {
-                                    text: `Всего наименований: ${itemCount}, на сумму ${result.totalAmountStr} руб.`,
+                                    text: `Всего наименований: 2, на сумму ${result.totalAmountStr} руб.`,
                                     style: 'mediumText'
                                 },
                                 {
