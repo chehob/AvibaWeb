@@ -1,4 +1,5 @@
 ﻿@using AvibaWeb.ViewModels.CorpReceiptViewModels
+@using static AvibaWeb.DomainModels.CorporatorReceipt
 @model CreateReceiptViewModel
 
 <!-- CONTENT START -->
@@ -57,6 +58,16 @@
                     <label for="feeRate">Сбор за сегмент:</label>
                     <input type="text" id="feeRate" value="@Model.Receipt.FeeRate" />
                     
+                </div>
+
+                <div class="col-md-6">
+                    <label for="receiptStatus">Статус оплаты:</label>
+                    <div class="col-md-10">
+                        <select 
+                         asp-for="@Model.Receipt.StatusId"
+                         asp-items="Html.GetEnumSelectList(typeof (CRPaymentStatus))"
+                         class="form-control" id="receiptStatus"></select>
+                    </div>
                 </div>
                <hr> 
 <style>
@@ -299,7 +310,8 @@
             PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html(),
             PayeeBankName: $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html(),
             FeeRate: $("#feeRate").val(),
-            Items: items
+            Items: items,
+            StatusId: $("#receiptStatus option:selected").val()
         };
 
         console.log(sendJsonData);
