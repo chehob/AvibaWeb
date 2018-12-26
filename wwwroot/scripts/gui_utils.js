@@ -355,7 +355,7 @@ $(document).on('click',
                                 {
                                     columns: [
                                         { text: 'Руководитель', margin: [0, 40, 0, 0]},
-                                        { image: `${result.signatureImage}`, width: 150, alignment: 'center', margin: [25, 40, 25, 0] },
+                                        { image: `${result.signatureImage}`, width: 150, alignment: 'center', margin: [25, 0, 25, 0] },
                                         { text: `${result.orgHeadName}`, margin: [0, 40, 0, 0] },
                                         { image: `${result.stampImage}`, width: 125, alignment: 'center', margin: [25, 0, 45, 0] }
                                     ],
@@ -527,7 +527,7 @@ $(document).on('click',
                                 {
                                     columns: [
                                         { text: 'Руководитель', margin: [0, 40, 0, 0]},
-                                        { image: `${result.signatureImage}`, width: 150, alignment: 'center', margin: [25, 40, 25, 0] },
+                                        { image: `${result.signatureImage}`, width: 150, alignment: 'center', margin: [25, 0, 25, 0] },
                                         { text: `${result.orgHeadName}`, margin: [0, 40, 0, 0] },
                                         { image: `${result.stampImage}`, width: 125, alignment: 'center', margin: [25, 0, 45, 0] }
                                     ],
