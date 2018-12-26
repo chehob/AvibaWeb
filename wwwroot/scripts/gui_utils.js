@@ -402,6 +402,154 @@ $(document).on('click',
     });
 
     $(document).on('click',
+        '.createReceiptPDF2',
+        function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/CorpReceipt/ReceiptPDFData",
+            type: "POST",
+            cache: false,
+            data: { id: $($(this).siblings()[0]).val() },
+            success: function (result) {
+                console.log(result);
+                const bodyData = [];
+
+                const headerRow = [];
+
+                headerRow.push({ text: '№', style: 'tableHeader' });
+                headerRow.push({ text: 'Наименование', style: 'tableHeader' });
+                headerRow.push({ text: 'Кол-во', style: 'tableHeader' });
+                headerRow.push({ text: 'Ед.', style: 'tableHeader' });
+                headerRow.push({ text: 'Сумма', style: 'tableHeader' });
+
+                bodyData.push(headerRow);
+
+                var dataRow = [];
+
+                dataRow.push({ text: '1', alignment: 'center' });
+                dataRow.push({ text: 'Оплата за авиабилеты', style: 'smallText' });
+                dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
+
+                bodyData.push(dataRow);
+
+                const docDefinition = {
+                    content: [
+                        {
+                            text: 'Внимание! Счет действителен для оплаты в течении 3 банковских дней. Оплата данного счета означает согласие с условиями договора.',
+                            style: 'headerWarning'
+                        },
+                        {
+                            table: {
+                                widths: [150, 150, 40, '*'],
+                                heights: [15, 30, 15, 15],
+
+                                body: [
+                                    [`ИНН: ${result.orgITN}`, `КПП: ${result.orgKPP}`, { text: 'Сч. №', rowSpan: 2, margin: [0, 35, 0, 0] }, { text: result.orgFinancialAccount, rowSpan: 2, margin: [0, 35, 0, 0] }],
+                                    [{ text: `Получатель\n${result.orgName}`, colSpan: 2 }, {}, {}, {}],
+                                    [{ text: `Банк получателя\n${result.orgBankName}`, colSpan: 2, rowSpan: 2 }, {}, 'БИК', result.orgBIK],
+                                    [{}, {}, 'Сч. №', result.orgCorrAccount]
+                                ]
+                            },
+                            style: 'mediumText',
+                            margin: [0, 20, 0, 0]
+                        },
+                        {
+                            text: `Счет № ${result.receiptNumber} от ${result.issuedDateTime}`,
+                            style: 'mediumText',
+                            bold: true,
+                            margin: [0, 15, 0, 0]
+                        },
+                        {
+                            text: `Поставщик: ${result.orgName}`,
+                            style: 'mediumText',
+                            bold: true,
+                            margin: [0, 15, 0, 0]
+                        },
+                        {
+                            text: `${result.orgAddress}`,
+                            style: 'mediumText',
+                        },
+                        {
+                            text: `Покупатель: ${result.payerName}`,
+                            style: 'mediumText',
+                            bold: true,
+                            margin: [0, 15, 0, 0]
+                        },
+                        {
+                            text: `ИНН: ${result.payerITN}, КПП: ${result.payerKPP}, Адрес: ${result.payerAddress}`,
+                            style: 'mediumText'
+                        },
+                        {
+                            table: {
+                                headerRows: 1,
+                                widths: [20, 220, 45, 65, '*'],
+                                body: bodyData
+                            },
+                            style: 'mediumText',
+                            margin: [0, 15, 0, 40]
+                        },
+                        {
+                            stack: [
+                                {
+                                    text: `Всего наименований: 1, на сумму ${result.itemTotalStr} руб.`,
+                                    style: 'mediumText'
+                                },
+                                {
+                                    text: `Сумма прописью: ${rubles(result.itemTotal)}. Без НДС`,
+                                    style: 'mediumText'
+                                },
+                                {
+                                    columns: [
+                                        { text: 'Руководитель', margin: [0, 40, 0, 0]},
+                                        { image: `${result.signatureImage}`, width: 150, alignment: 'center', margin: [25, 40, 25, 0] },
+                                        { text: `${result.orgHeadName}`, margin: [0, 40, 0, 0] },
+                                        { image: `${result.stampImage}`, width: 125, alignment: 'center', margin: [25, 0, 45, 0] }
+                                    ],
+                                    style: 'mediumText',
+                                    margin: [0, 20, 0, 0]
+                                }
+                            ],
+                            id: 'NoBreak'
+                        }
+                    ],
+
+                    pageBreakBefore: function(currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
+                        if (currentNode.id === 'NoBreak' && currentNode.pageNumbers.length != 1) {
+                          return true;
+                        }
+                        return false;
+                    }, 
+
+                    styles: {
+                        headerWarning: {
+                            fontSize: 7,
+                            alignment: 'center'
+                        },
+                        mediumText: {
+                            fontSize: 10,
+                        },
+                        smallText: {
+                            fontSize: 8
+                        },
+                        tableHeader: {
+                            bold: true,
+                            fontSize: 10,
+                            alignment: 'center'
+                        }
+                    }
+                };
+
+                pdfMake.createPdf(docDefinition).open();
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+
+    $(document).on('click',
         ".createReportPDF",
         function (e) {
             e.preventDefault();
