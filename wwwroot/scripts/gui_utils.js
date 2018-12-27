@@ -865,7 +865,7 @@ $(document).on('click',
                 const firstDiv = $(this).find("input");
                 if (firstDiv.length) {
                     segTotal += Number(firstDiv[1].value);
-                    ticketTotal += Number(firstDiv[2].value.replace(/[^0-9.-]+/g, ""));
+                    ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
                 }
             });
 
@@ -886,8 +886,8 @@ $(document).on('click',
                     ${$(this).siblings()[3].outerHTML}
                     <a href="/" class="btn btn-success btn-sm addTicketBtn">Добавить</a>`,
                     $($(this).parent().siblings()[0]).html(),
-                    $($(this).parent().siblings()[1]).html(),
-                    $($(this).parent().siblings()[2]).html(),
+                    `<b>${$($($(this).parent().siblings()[1]).find('input')[1]).val()}</b>`,
+                    `<b>${$($(this).parent().siblings()[2]).find('input').val()}</b>`,
                     `<b>${$($(this).parent().siblings()[3]).find('input').val()}</b>`
                     ]);
 
@@ -906,7 +906,7 @@ $(document).on('click',
                     const firstDiv = $(this).find("input");
                     if (firstDiv.length) {
                         segTotal += Number(firstDiv[1].value);
-                        ticketTotal += Number(firstDiv[2].value.replace(/[^0-9.-]+/g, ""));
+                        ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
                     }
                 });
 
@@ -921,6 +921,8 @@ $(document).on('click',
         '.addTicketBtn',
         function (e) {
             e.preventDefault();;
+            
+            console.log();
 
             $('#receiptItemsTable').dataTable().fnAddData([
                 `<input type="hidden" value="${$($(this).siblings()[0]).val()}" />
@@ -928,8 +930,9 @@ $(document).on('click',
                 ${$(this).siblings()[3].outerHTML}
                 <a href="/" class="btn btn-danger btn-sm removeTicketBtn"><i class="glyphicon glyphicon-remove"></i></a>`,
                 $($(this).parent().siblings()[0]).html(),
-                $($(this).parent().siblings()[1]).html(),
-                $($(this).parent().siblings()[2]).html(),
+                `<input type="hidden" value="${$(this).parent().siblings()[1].children[1].value}" />
+                <input class="ticketRoute" type="text" value="${$(this).parent().siblings()[1].children[0].innerHTML}" />`,
+                `<input class="ticketPassenger" type="text" value="${$(this).parent().siblings()[2].children[0].innerHTML}" />`,
                 `<input class="ticketPayment" type="text" value="${$($(this).parent().siblings()[3]).html().replace(/ /g, '')
                 .replace('</b>', '').replace('<b>', '')}" />`
             ]);
@@ -943,7 +946,7 @@ $(document).on('click',
                 const firstDiv = $(this).find("input");
                 if (firstDiv.length) {
                     segTotal += Number(firstDiv[1].value);
-                    ticketTotal += Number(firstDiv[2].value.replace(/[^0-9.-]+/g, ""));
+                    ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
                 }
             });
 

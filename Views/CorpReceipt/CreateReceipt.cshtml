@@ -123,11 +123,11 @@
                                             <b>@item.TicketNumber</b>
                                         </td>
                                         <td>
-                                            <b>@item.Route</b>
                                             <input type="hidden" value="@item.SegCount" />
+                                            <input class="ticketRoute" type="text" value="@item.Route" />
                                         </td>
                                         <td>
-                                            <b>@item.PassengerName</b>
+                                            <input class="ticketPassenger" type="text" value="@item.PassengerName" />
                                         </td>
                                         <td>
                                             <input class="ticketPayment" type="text" value="@item.Payment" />
@@ -276,7 +276,7 @@
                 const firstDiv = $(this).find("input");
                 if (firstDiv.length) {
                     segTotal += Number(firstDiv[1].value);
-                    ticketTotal += Number(firstDiv[2].value.replace(/[^0-9.-]+/g, ""));
+                    ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
                 }
             });
 
@@ -297,7 +297,9 @@
                 if (firstDiv.length) {
                     const receiptItem = {
                         TicketOperationId: firstDiv.val(),
-                        Amount: Number(firstDiv[2].value.replace(/[^0-9.-]+/g, ""))
+                        Amount: Number(firstDiv[4].value.replace(/[^0-9.-]+/g, "")),
+                        PassengerName: firstDiv[3].value,
+                        Route: firstDiv[2].value
                     };
                     items.push(receiptItem);
                 }
