@@ -1,4 +1,5 @@
 ﻿@using AvibaWeb.ViewModels.CorpReceiptViewModels
+@using static AvibaWeb.DomainModels.CorporatorReceipt
 @model List<ReceiptsViewModel>
 
 <table class="table table-striped table-bordered bootstrap-datatable datatable" id="dataTable">
@@ -39,7 +40,20 @@
                 <span>@receipt.TotalStr</span>
             </td>
             <td>
-                <span>@receipt.Status</span>
+                @switch (receipt.Status)
+                {
+                    case CRPaymentStatus.Unpaid:
+                        <span>Не оплачен</span>
+                        break;
+
+                    case CRPaymentStatus.Partial:
+                        <span>Частичная оплата</span>
+                        break;
+
+                    case CRPaymentStatus.Paid:
+                        <span>Оплачен</span>
+                        break;
+                }
             </td>
             <td>
                 @Html.HiddenFor(m => receipt.ReceiptId)
@@ -53,36 +67,36 @@
             </td>
         </tr>
         }
-    }
+                }
     </tbody>
 </table>
 
 <script>
     $(function () {
         var oTable = $('#dataTable').dataTable({
-            "sPaginationType": "full_numbers",
+                    "sPaginationType": "full_numbers",
             "bSort": false,
-            "oLanguage": {                
-                "sSearch": "Поиск:",
+            "oLanguage": {
+                        "sSearch": "Поиск:",
                 "sLengthMenu": "Показать _MENU_ записей",
                 "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
                 "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
                 "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
                 "oPaginate": {
-                    "sFirst":    'Первая',
+                            "sFirst":    'Первая',
                     "sPrevious": 'Предыдущая',
                     "sNext":     'Следующая',
                     "sLast":     'Последняя'
                 },
                 "oaria": {
-                    "ipaginate": {
-                        "nfirst":    'Начало',
+                            "ipaginate": {
+                                "nfirst":    'Начало',
                         "nprevious": 'Previous',
                         "nnext":     'Next',
                         "nlast":     'Last'
-            }
-        }       
-            }
-        });
+                    }
+                        }
+                    }
+                });
     });
 </script>
