@@ -6,10 +6,10 @@
     <thead>
         <tr>
             <th>№ счета</th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
+            <th>Дата</th>
+            <th>Поставщик</th>
+            <th>Плательщик</th>
+            <th>Сумма</th>
             <th></th>
             <th></th>
         </tr>
@@ -36,26 +36,26 @@
             <td>
                 <span>@receipt.PayerOrgName</span>
             </td>
-            <td>
+            <td style="width: 150px;">
                 <span>@receipt.TotalStr</span>
             </td>
-            <td>
+            <td style="width: 15px;">
                 @switch (receipt.Status)
                 {
                     case CRPaymentStatus.Unpaid:
-                        <span>Не оплачен</span>
+                        <span class="label-default label label-danger">Не оплачен</span>
                         break;
 
                     case CRPaymentStatus.Partial:
-                        <span>Частичная оплата</span>
+                        <span class="label-warning label label-default">Оплачен частично</span>
                         break;
 
                     case CRPaymentStatus.Paid:
-                        <span>Оплачен</span>
+                        <span class="label-success label label-default">Оплачен</span>
                         break;
                 }
             </td>
-            <td>
+            <td style="width: 300px;">
                 @Html.HiddenFor(m => receipt.ReceiptId)
                 <a asp-action="CreateReceipt" asp-controller="CorpReceipt" asp-route-id="@receipt.ReceiptId"
                    data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
