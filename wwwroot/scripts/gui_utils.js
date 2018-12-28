@@ -224,6 +224,28 @@ $(document).on('click', '#summaryCashlessTotalDiv', function (e) {
 });
 
 $(document).on('click',
+        '.clearReceipt',
+        function (e) {
+            var button = $(this);
+            e.preventDefault();
+            $.ajax({
+                url: "/CorpReceipt/ClearReceipt",
+                type: "POST",
+                cache: false,
+                data: { id: $($(this).siblings()[0]).val() },
+                success: function (result) {
+                    button.parent().siblings()[2].innerHTML = "";
+                    button.parent().siblings()[3].innerHTML = "";
+                    button.parent().siblings()[4].innerHTML = `<span>0.00</span>`;
+                    button.parent().siblings()[5].innerHTML = `<span class="label-default label label-danger">Не оплачен</span>`;
+                },
+                error: function (error) {
+                    console.log(error.message);
+                }
+            });
+        });
+
+$(document).on('click',
         '.createReceiptPDF',
         function (e) {
         e.preventDefault();
