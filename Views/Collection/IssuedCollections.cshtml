@@ -51,7 +51,7 @@
 			<hr>
 			}}
                 		
-				@Html.PagedListPager(Model, page => Url.Action("IssuedCollections", new { page }),
+				@Html.PagedListPager(Model, page => Url.Action("IssuedCollections", new { page, isAdmin = true }),
                     new Func<PagedListRenderOptionsBase>(() =>
                     {
                         var options = PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
