@@ -8,11 +8,17 @@
         </div>
         <div class="box-content">
             <form asp-controller="Transit" asp-action="Debit"
-                data-ajax="true" data-ajax-method="post" data-ajax-mode="replace" data-ajax-update="#contentResults">
+                  data-ajax="true" data-ajax-method="post" data-ajax-mode="replace" data-ajax-update="#contentResults">
                 <div class="row">
                     @Html.LabelFor(m => m.Amount, new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
                         <input asp-for="Amount" class="form-control" value="" />
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.Comment, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        <input asp-for="Comment" class="form-control" value="" />
                     </div>
                 </div>
                 @Html.ValidationSummary("", new { @class = "text-danger" })

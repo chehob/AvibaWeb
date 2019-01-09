@@ -18,6 +18,12 @@
                         <input asp-for="@Model.Credit.AddAmount" class="form-control" value="" />
                     </div>
                 </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.Credit.Comment, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        <input asp-for="@Model.Credit.Comment" class="form-control" value="" />
+                    </div>
+                </div>
                 @Html.ValidationSummary("", new { @class = "text-danger" })
                 <div class="row">
                     <div class="col-md-offset-2 col-md-10">

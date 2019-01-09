@@ -3,16 +3,6 @@
 
 
 <div class="box col-md-10">
-<div class="box col-md-3">
-
-            <span data-toggle="tooltip" title="Всего" class="well top-block">
-                <span class="yellow">На транзитном счету</span>
-
-                <div></div>
-                <div class="yellow">@Model.TransitBalance</div>
-                
-            </span>
-</div>
 <div class="row">
         <div class="col-md-3 col-sm-3 col-xs-6">
           
@@ -24,22 +14,28 @@
             <h2><i class="glyphicon glyphicon-random"></i> Списать с транзитного счета </h2>
         </div>
         <div class="box-content">
-            <form asp-controller="Transit" asp-action="CreateCredit" 
-                data-ajax="true" data-ajax-method="post" data-ajax-mode="replace" data-ajax-update="#contentResults">
+            <form asp-controller="Transit" asp-action="CreateCredit"
+                  data-ajax="true" data-ajax-method="post" data-ajax-mode="replace" data-ajax-update="#contentResults">
                 @Html.HiddenFor(m => m.Credit.LoanGroupId)
 
-                
+
 
                 <div class="row">
-                    @Html.LabelFor(m => m.Credit.AccountAmount, new {@class = "col-md-2 control-label"})
+                    @Html.LabelFor(m => m.Credit.AccountAmount, new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
-                        <input asp-for="@Model.Credit.AccountAmount" class="form-control" value=""/>
+                        <input asp-for="@Model.Credit.AccountAmount" class="form-control" value="" />
                     </div>
                 </div>
-                @Html.ValidationSummary("", new {@class = "text-danger"})
+                <div class="row">
+                    @Html.LabelFor(m => m.Credit.Comment, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        <input asp-for="@Model.Credit.Comment" class="form-control" value="" />
+                    </div>
+                </div>
+                @Html.ValidationSummary("", new { @class = "text-danger" })
                 <div class="row">
                     <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" class="btn btn-success" value="ОК"/>
+                        <input type="submit" class="btn btn-success" value="ОК" />
                         <a asp-action="Index" asp-controller="Transit"
                            data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
                            class="btn btn-danger">Отмена</a>

@@ -1,0 +1,82 @@
+﻿@using AvibaWeb.DomainModels
+@using AvibaWeb.ViewModels.TransitViewModels
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc.Common
+
+@model IPagedList<TransitAccountIssuedCredit>
+
+               <div class="box col-md-10">
+                   <div class="row">
+                       <!-- CONTENT START -->
+                       <div class="box col-md-12">
+                           <div class="box-inner">
+                               <div class="box-header well" data-original-title="">
+                                   <h2>Операции по транзитному счету</h2>
+                               </div>
+                               <div class="box-content">
+                                   @if (!Model.Any())
+                                   {
+                                       <div>Нет операций</div>
+                                   }
+                                   else
+                                   {
+                                       foreach (var operation in Model)
+                                       {
+                                           if (operation.Amount < 0 || operation.AddAmount < 0)
+                                           {
+                                       <div class="row">
+                                           <div class="col-md-2">
+                                               @Html.DisplayFor(c => operation.IssuedDateTime)
+                                           </div>
+                                           <div class="col-md-2"><b>@Html.DisplayFor(c => operation.AmountStr)</b></div>
+                                           <div class="col-md-2"><b>@Html.DisplayFor(c => operation.AddAmountStr)</b></div>
+                                           <div class="col-md-2">@Html.DisplayFor(c => operation.Status)</div>
+                                           <div class="col-md-2">@Html.DisplayFor(c => operation.Comment)</div>
+                                           <div class="col-md-2">@Html.DisplayFor(c => operation.LoanGroup)</div>
+                                           <div class="col-md-2">
+                                               @if (operation.CreditId != 0 && operation.Status != TransitAccountCreditOperation.TACOType.Cancelled)
+                                               {
+                                                   <form asp-controller="Transit" asp-action="CancelCredit" asp-route-id="@operation.CreditId"
+                                                         data-ajax-update="#contentResults" data-ajax="true" data-ajax-method="POST">
+                                                       <input id="btnCancelCredit" type="image" name="picture" src="~/images/del.png" width="32" height="32" />
+                                                   </form>
+                                               }
+                                           </div>
+                                       </div>
+                                           }
+                                           else
+                                           {
+                                       <div class="row">
+                                           <div class="col-md-2">
+                                               @Html.DisplayFor(c => operation.IssuedDateTime)
+                                           </div>
+                                           <div class="col-md-2" style="background-color: rgb(197, 247, 197)"><b>@Html.DisplayFor(c => operation.AmountStr)</b></div>
+                                           <div class="col-md-2"><b>@Html.DisplayFor(c => operation.AddAmount)</b></div>
+                                           <div class="col-md-2">@Html.DisplayFor(c => operation.Status)</div>
+                                           <div class="col-md-2">@Html.DisplayFor(c => operation.Comment)</div>
+                                       </div>
+                                           }
+                                           <hr>
+                                       }
+                                   }
+
+                               </div>
+                               Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+
+                               @Html.PagedListPager(Model, page => Url.Action("TransitAccountOperations", new { page }),
+                                       new Func<PagedListRenderOptionsBase>(() =>
+                                       {
+                                           var options = PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(
+                                               new AjaxOptions()
+                                               {
+                                                   HttpMethod = "GET",
+                                                   UpdateTargetId = "results"
+                                               });
+                                           options.MaximumPageNumbersToDisplay = 5;
+                                           return options;
+                                       })())
+                           </div>
+                       </div>
+                   </div>
+               </div>
