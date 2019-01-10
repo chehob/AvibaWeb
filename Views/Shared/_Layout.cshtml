@@ -136,15 +136,16 @@
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
                                    class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Транзитный счет</a>
                             </li>
+                            
+                        }
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Кассиры"))
+                        {
                             <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
                                 <a asp-action="Index" asp-controller="CorpReceipt"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
                                    class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Счета корпораторам</a>
                             </li>
 
-                        }
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Кассиры"))
-                        {
                             <li>
                                 <a asp-action="Index" asp-controller="Report"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
