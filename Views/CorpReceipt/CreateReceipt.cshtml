@@ -64,10 +64,15 @@
                     <label for="receiptStatus">Статус оплаты:</label>
                     <div class="col-md-10">
                         <select 
-                         asp-for="@Model.Receipt.StatusId"
-                         asp-items="Html.GetEnumSelectList(typeof (CRPaymentStatus))"
-                         class="form-control" id="receiptStatus"></select>
+                            asp-for="@Model.Receipt.StatusId"
+                            asp-items="Html.GetEnumSelectList(typeof (CRPaymentStatus))"
+                            class="form-control" id="receiptStatus"></select>
                     </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="feeRate">Дата оформления счета:</label>
+                    <input type="text" id="issuedDateTime" name="min" class="date-range-filter" value="@Model.Receipt.IssuedDateTime" />
+                    
                 </div>
                <hr> 
 <style>
@@ -216,11 +221,9 @@
         // Start observing the target node for configured mutations
         payeeObserver.observe(payeeTargetNode, config);
 
+        $("#issuedDateTime").datepicker();
         $("#min").datepicker();
         $("#max").datepicker();
-
-        //$("#min").val(moment().startOf('month').format("DD.MM.YYYY"));
-        //$("#max").val(moment().endOf('month').format("DD.MM.YYYY"));
 
         var editValue = $("#editReceiptCorpName").val();
         if (editValue) {
@@ -313,7 +316,8 @@
             PayeeBankName: $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html(),
             FeeRate: $("#feeRate").val(),
             Items: items,
-            StatusId: $("#receiptStatus option:selected").val()
+            StatusId: $("#receiptStatus option:selected").val(),
+            IssuedDateTime: moment($('#issuedDateTime').val(), "DD.MM.YYYY").toISOString(true),
         };
 
         console.log(sendJsonData);

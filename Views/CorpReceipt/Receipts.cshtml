@@ -31,6 +31,9 @@
                 <span>@receipt.CreatedDate</span>
             </td>
             <td>
+                <span>@receipt.IssuedDateTime</span>
+            </td>
+            <td>
                 <span>@receipt.PayeeOrgName @receipt.PayeeBankName</span>
             </td>
             <td>
@@ -43,13 +46,15 @@
                 @switch (receipt.Status)
                 {
                     case CRPaymentStatus.Unpaid:
-                        
+
                         <button class="btn btn-danger btn-xs" data-toggle="confirmation"
                                 data-btn-ok-label="Продолжить" data-btn-ok-class="btn-success"
                                 data-btn-ok-icon-class="material-icons" data-btn-ok-icon-content="check"
                                 data-btn-cancel-label="Отмена" data-btn-cancel-class="btn-danger"
                                 data-btn-cancel-icon-class="material-icons" data-btn-cancel-icon-content="close"
-                                data-title="Очистить" data-content="Очистить счет?">Очистить<span class="glyphicon glyphicon-remove"></span></button>
+                                data-title="Очистить" data-content="Очистить счет?">
+                            Очистить<span class="glyphicon glyphicon-remove"></span>
+                        </button>
                         break;
 
                     case CRPaymentStatus.Partial:
@@ -58,6 +63,7 @@
 
                     case CRPaymentStatus.Paid:
                         <span class="label-success label label-default">Оплачен</span>
+                        <span>@receipt.PaidDateTime</span>
                         break;
                 }
             </td>
@@ -119,7 +125,8 @@
                 success: function (result) {
                     button.parent().siblings()[2].innerHTML = "";
                     button.parent().siblings()[3].innerHTML = "";
-                    button.parent().siblings()[4].innerHTML = `<span>0.00</span>`;
+                    button.parent().siblings()[4].innerHTML = "";
+                    button.parent().siblings()[5].innerHTML = `<span>0.00</span>`;
                 },
                 error: function (error) {
                     console.log(error.message);
