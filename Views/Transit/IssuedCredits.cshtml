@@ -8,9 +8,9 @@
 <div class="box col-md-10">
     <div class="row">
         <!-- CONTENT START -->
-        <div class="col-md-2"><b>@Html.DisplayFor(c => Model.FinancialOperationsTotal)</b></div>
-        <div class="col-md-2"><b>@Html.DisplayFor(c => Model.CreditsTotal)</b></div>
-        <div class="col-md-2"><b>@Html.DisplayFor(c => Model.AddTotal)</b></div>
+        <div id="financialOperationsTotalDiv" class="col-md-2"><b>@Html.DisplayFor(c => Model.FinancialOperationsTotal)</b></div>
+        <div id="creditsTotalDiv" class="col-md-2"><b>@Html.DisplayFor(c => Model.CreditsTotal)</b></div>
+        <div id="addTotalDiv" class="col-md-2"><b>@Html.DisplayFor(c => Model.AddTotal)</b></div>
         <div class="box col-md-12">
             <div class="box-inner">
                 <div class="box-header well" data-original-title="">
@@ -29,54 +29,54 @@
                         </tr>
                         </thead>
                         <tbody>
-                            @if (!Model.Credits.Any())
+                        @if (!Model.Credits.Any())
+                        {
+                            <tr><td colspan="4" class="text-center">Нет операций</td></tr>
+                        }
+                        else
+                        {
+                            foreach (var credit in Model.Credits)
                             {
-                                <tr><td colspan="4" class="text-center">Нет операций</td></tr>
-                            }
-                            else
-                            {
-                                foreach (var credit in Model.Credits)
+                                if (credit.Amount >= 0)
                                 {
-                                    if (credit.Amount >= 0)
-                                    {
-                                        <tr>
-                                            <td>@Html.DisplayFor(c => credit.IssuedDateTime)</td>
-                                            <td><b>@Html.DisplayFor(c => credit.AmountStr)</b></td>
-                                            <td><b>@Html.DisplayFor(c => credit.AddAmountStr)</b></td>
-                                            <td>@Html.DisplayFor(c => credit.Status)</td>
-                                            <td>@Html.DisplayFor(c => credit.Comment)</td>
-                                            <td>
-                                                @if (credit.CreditId != 0 && credit.Status != TransitAccountCreditOperation.TACOType.Cancelled)
-                                                {
-                                                    <form asp-controller="Transit" asp-action="CancelCredit" asp-route-id="@credit.CreditId"
-                                                          data-ajax-update="#contentResults" data-ajax="true" data-ajax-method="POST">
-                                                        <input id="btnCancelCredit" type="image" name="picture" src="~/images/del.png" width="32" height="32" />
-                                                    </form>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                    else
-                                    {
-                                        <tr>
-                                            <td> @Html.DisplayFor(c => credit.IssuedDateTime)</td>
-                                            <td style="background-color: rgb(197, 247, 197)"><b>@Html.DisplayFor(c => credit.AmountStr)</b></td>
-                                            <td><b>@Html.DisplayFor(c => credit.AddAmountStr)</b></td>
-                                            <td>@Html.DisplayFor(c => credit.Status)</td>
-                                            <td>@Html.DisplayFor(c => credit.Comment)</td>
-                                            <td>
-                                                @if (credit.CreditId != 0 && credit.Status != TransitAccountCreditOperation.TACOType.Cancelled)
-                                                {
-                                                    <form asp-controller="Transit" asp-action="CancelCredit" asp-route-id="@credit.CreditId"
-                                                          data-ajax-update="#contentResults" data-ajax="true" data-ajax-method="POST">
-                                                        <input id="btnCancelCredit" type="image" name="picture" src="~/images/del.png" width="32" height="32" />
-                                                    </form>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
+                                    <tr>
+                                        <td>@Html.DisplayFor(c => credit.IssuedDateTime)</td>
+                                        <td><b>@Html.DisplayFor(c => credit.AmountStr)</b></td>
+                                        <td><b>@Html.DisplayFor(c => credit.AddAmountStr)</b></td>
+                                        <td>@Html.DisplayFor(c => credit.Status)</td>
+                                        <td>@Html.DisplayFor(c => credit.Comment)</td>
+                                        <td>
+                                            @if (credit.CreditId != 0 && credit.Status != TransitAccountCreditOperation.TACOType.Cancelled)
+                                            {
+                                                <form asp-controller="Transit" asp-action="CancelCredit" asp-route-id="@credit.CreditId"
+                                                      data-ajax-update="#contentResults" data-ajax="true" data-ajax-method="POST">
+                                                    <input id="btnCancelCredit" type="image" name="picture" src="~/images/del.png" width="32" height="32" />
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td> @Html.DisplayFor(c => credit.IssuedDateTime)</td>
+                                        <td style="background-color: rgb(197, 247, 197)"><b>@Html.DisplayFor(c => credit.AmountStr)</b></td>
+                                        <td><b>@Html.DisplayFor(c => credit.AddAmountStr)</b></td>
+                                        <td>@Html.DisplayFor(c => credit.Status)</td>
+                                        <td>@Html.DisplayFor(c => credit.Comment)</td>
+                                        <td>
+                                            @if (credit.CreditId != 0 && credit.Status != TransitAccountCreditOperation.TACOType.Cancelled)
+                                            {
+                                                <form asp-controller="Transit" asp-action="CancelCredit" asp-route-id="@credit.CreditId"
+                                                      data-ajax-update="#contentResults" data-ajax="true" data-ajax-method="POST">
+                                                    <input id="btnCancelCredit" type="image" name="picture" src="~/images/del.png" width="32" height="32" />
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
                                 }
                             }
+                        }
                         </tbody>
                     </table>
                 </div>
@@ -109,6 +109,35 @@
                         "nlast":     'Last'
                     }
                 }
+            },
+            "fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
+                var financialOperationsTotal = 0.0;
+                var creditsTotal = 0.0;
+                var addTotal = 0.0;
+                for ( let i=iStart ; i<iEnd ; i++ )
+                {
+                    if (parseFloat((aaData[aiDisplay[i]][1]).replace(/\s/g, '').replace('<b>', '').replace('</b>', '')) >= 0) {
+                        creditsTotal += parseFloat((aaData[aiDisplay[i]][1]).replace(/\s/g, '').replace('<b>', '').replace('</b>', ''));
+                    } else {
+                        financialOperationsTotal += parseFloat((aaData[aiDisplay[i]][1]).replace(/\s/g, '').replace('<b>', '').replace('</b>', ''));
+                    }
+                    addTotal += parseFloat((aaData[aiDisplay[i]][2]).replace(/\s/g, '').replace('<b>', '').replace('</b>', ''));
+                }
+
+                var parts = financialOperationsTotal.toFixed(2).split(".");
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+             
+                $('#financialOperationsTotalDiv').html(parts.join("."));
+
+                parts = creditsTotal.toFixed(2).split(".");
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
+                $('#creditsTotalDiv').html(parts.join("."));
+
+                parts = addTotal.toFixed(2).split(".");
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
+                $('#addTotalDiv').html(parts.join("."));
             }
         });
     });
