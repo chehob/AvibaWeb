@@ -1017,8 +1017,8 @@ $(document).on('click',
 
             $('#paidReceiptsTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
 
+            var paymentAmount = Number($('#paymentAmountDiv').val().replace(/[,]+/g, "."));
             if ($("#paidReceiptsTable").dataTable().fnSettings().aoData.length) {
-                var paymentAmount = Number($('#paymentAmountDiv').val().replace(/[,]+/g, "."));
                 var paymentTotal = 0;
                 $("#paidReceiptsTable tbody").children().each(function () {
                     paymentTotal += Number($(this).children()[1].innerHTML.replace(/[^0-9.-]+/g, ""));
@@ -1028,7 +1028,7 @@ $(document).on('click',
                 $('#paymentTotal').html(numberWithSpaces(paymentTotal));
             }
             else {
-                $('#paymentReminder').html(numberWithSpaces(0));
+                $('#paymentReminder').html(numberWithSpaces(paymentAmount));
                 $('#paymentTotal').html(numberWithSpaces(0));
             }
         });
