@@ -944,8 +944,6 @@ $(document).on('click',
         function (e) {
             e.preventDefault();;
             
-            console.log();
-
             $('#receiptItemsTable').dataTable().fnAddData([
                 `<input type="hidden" value="${$($(this).siblings()[0]).val()}" />
                 ${$(this).siblings()[1].outerHTML}<br />
@@ -976,4 +974,61 @@ $(document).on('click',
             $('#feeTotal').html(numberWithSpaces(segTotal * feeRate));
             $('#ticketTotal').html(numberWithSpaces(ticketTotal));
             $('#finalTotal').html(numberWithSpaces(segTotal * feeRate + ticketTotal));
+        });
+
+        $(document).on('click',
+        '.addReceiptPayment',
+        function (e) {
+            e.preventDefault();;
+
+            $('#paidReceiptsTable').dataTable().fnAddData([
+                $($(this).parent().siblings()[0]).html(),
+                $($(this).parent().siblings()[1]).html(),
+                `<button class="btn btn-danger btn-sm removeReceiptPayment"><i class="glyphicon glyphicon-remove"></i></button>`
+            ]);
+
+            $('#receiptsTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
+
+            var paymentAmount = Number($('#paymentAmountDiv').val().replace(/[,]+/g, "."));
+            var paymentTotal = 0;
+            $("#paidReceiptsTable tbody").children().each(function () {
+                paymentTotal += Number($(this).children()[1].innerHTML.replace(/[^0-9.-]+/g, ""));
+            });
+
+            $('#paymentReminder').html(numberWithSpaces(paymentAmount - paymentTotal));
+            $('#paymentTotal').html(numberWithSpaces(paymentTotal));
+        });
+
+        $(document).on('click',
+        '.removeReceiptPayment',
+        function(e) {
+            e.preventDefault();
+            if ($("#receiptsTable").length) {
+                $('#receiptsTable').dataTable().fnAddData([
+                    $($(this).parent().siblings()[0]).html(),
+                    $($(this).parent().siblings()[1]).html(),
+                    `<button class="btn btn-success addReceiptPayment">Привязать платеж</button>`
+                    ]);
+
+                var my_array = $('#receiptsTable').dataTable().fnGetNodes();
+                var last_element = my_array[my_array.length - 1];      
+                $(last_element).insertBefore($('#receiptsTable tbody tr:first-child'));
+            }
+
+            $('#paidReceiptsTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
+
+            if ($("#paidReceiptsTable").dataTable().fnSettings().aoData.length) {
+                var paymentAmount = Number($('#paymentAmountDiv').val().replace(/[,]+/g, "."));
+                var paymentTotal = 0;
+                $("#paidReceiptsTable tbody").children().each(function () {
+                    paymentTotal += Number($(this).children()[1].innerHTML.replace(/[^0-9.-]+/g, ""));
+                });
+    
+                $('#paymentReminder').html(numberWithSpaces(paymentAmount - paymentTotal));
+                $('#paymentTotal').html(numberWithSpaces(paymentTotal));
+            }
+            else {
+                $('#paymentReminder').html(numberWithSpaces(0));
+                $('#paymentTotal').html(numberWithSpaces(0));
+            }
         });

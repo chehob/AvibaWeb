@@ -1,0 +1,180 @@
+﻿@using AvibaWeb.ViewModels.CorpReceiptViewModels
+@model MultiPaymentProcessViewModel
+
+<div class="box col-md-12">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="">
+            <h2>Платеж по счетам</h2>
+        </div>
+        <div class="box-content">
+            <input id="paymentId" type="hidden" value="@Model.Payment.CorporatorReceiptMultiPaymentId" />
+            <input id="paymentAmountDiv" type="hidden" value="@Model.Payment.Amount" />
+            <div class="row">
+                <style>
+                    .popup {
+                        position: fixed;
+                        top: 150px;
+                        right: 0;
+                        padding: 10px;
+                        text-align: center;
+                        background-color: #eee;
+                        border: 1px solid #ccc;
+                        z-index: 1;
+                    }
+                </style>
+                <div class="popup">
+                    <span>Остаток суммы платежа:</span>
+                    <span id="paymentReminder"></span><br>
+                    <span>Сумма платежа по счетам:</span>
+                    <span id="paymentTotal"></span><br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-striped table-bordered bootstrap-datatable datatable" id="paidReceiptsTable">
+                        <thead>
+                            <tr>
+                                <th>Номер счета</th>
+                                <th>Сумма</th>
+                                <th>Выбрать</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <table class="table table-striped table-bordered bootstrap-datatable datatable responsive" id="receiptsTable">
+                <thead>
+                    <tr>
+                        <th>Номер счета</th>
+                        <th>Сумма</th>
+                        <th>Выбрать</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var receipt in Model.Receipts)
+                    {
+                        <tr>
+                            <td>
+                                @receipt.ReceiptNumber
+                            </td>
+                            <td>@receipt.Amount</td>
+                            <td>
+                                <button class="btn btn-success addReceiptPayment">Привязать платеж</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="/" id="savePayments" class="btn btn-success">Сохранить платеж</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#paidReceiptsTable').dataTable({
+            "sPaginationType": "full_numbers",
+            "bPaginate": false,
+            "bFilter": false,
+            "bSort": false,
+            "bInfo": false,
+            "oLanguage": {
+                "sSearch": "Поиск:",
+                "sLengthMenu": "Показать _MENU_ записей",
+                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
+                "oPaginate": {
+                    "sFirst": 'Первая',
+                    "sPrevious": 'Предыдущая',
+                    "sNext": 'Следующая',
+                    "sLast": 'Последняя'
+                },
+                "oaria": {
+                    "ipaginate": {
+                        "nfirst": 'Начало',
+                        "nprevious": 'Previous',
+                        "nnext": 'Next',
+                        "nlast": 'Last'
+                    }
+                }
+            }
+        });
+
+        $('#receiptsTable').dataTable({
+            "sPaginationType": "full_numbers",
+            "bSort": false,
+            "oLanguage": {
+                "sSearch": "Поиск:",
+                "sLengthMenu": "Показать _MENU_ записей",
+                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
+                "oPaginate": {
+                    "sFirst": 'Первая',
+                    "sPrevious": 'Предыдущая',
+                    "sNext": 'Следующая',
+                    "sLast": 'Последняя'
+                },
+                "oaria": {
+                    "ipaginate": {
+                        "nfirst": 'Начало',
+                        "nprevious": 'Previous',
+                        "nnext": 'Next',
+                        "nlast": 'Last'
+                    }
+                }
+            }
+        });
+
+        var paymentAmount = Number($('#paymentAmountDiv').val().replace(/[,]+/g, "."));
+    
+        $('#paymentReminder').html(numberWithSpaces(paymentAmount));
+        $('#paymentTotal').html(numberWithSpaces(0));
+    });
+
+    $("#savePayments").click(function (e) {
+        var receiptsPaid = new Array();
+        $("#paidReceiptsTable tbody tr").each(function () {
+            const firstTd = $(this).find("td");
+
+            const receipt = {
+                ReceiptNumber: firstTd.html()
+            };
+            receiptsPaid.push(receipt);
+        });
+
+        var sendJsonData = {
+            PaymentId: $("#paymentId").val(),
+            CounterpartyOperations: receiptsPaid
+        };
+
+        e.preventDefault();
+        $.ajax({
+            url: "/CorpReceipt/EditReceiptPayments",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $.ajax({
+                    url: "/CorpReceipt/MultiPayment",
+                    type: "GET",
+                    cache: false,
+                    success: function (getResult) {
+                        $("#results").html(getResult);
+                    }
+                });
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+</script>
