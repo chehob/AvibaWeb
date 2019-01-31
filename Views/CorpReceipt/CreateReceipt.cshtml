@@ -62,16 +62,16 @@
 
                 <div class="col-md-6">
                     <label for="receiptStatus">Статус оплаты:</label>
-                    <div class="col-md-10">
+                    
                         <select 
                             asp-for="@Model.Receipt.StatusId"
                             asp-items="Html.GetEnumSelectList(typeof (CRPaymentStatus))"
                             class="form-control" id="receiptStatus"></select>
-                    </div>
+                    
                 </div>
                 <div class="col-md-6">
                     <label for="feeRate">Дата оформления счета:</label>
-                    <input type="text" id="issuedDateTime" name="min" class="date-range-filter" value="@Model.Receipt.IssuedDateTime" />
+                    <input type="text" id="issuedDateTime" name="min" class="date-range-filter" autocomplete="off" value="@Model.Receipt.IssuedDateTime" />
                     
                 </div>
                <hr> 
@@ -129,7 +129,7 @@
                                         </td>
                                         <td>
                                             <input type="hidden" value="@item.SegCount" />
-                                            <input class="ticketRoute" type="text" value="@item.Route" />
+                                            <input class="ticketRoute" type="text" value="@item.Route" size="100" />
                                         </td>
                                         <td>
                                             <input class="ticketPassenger" type="text" value="@item.PassengerName" />
@@ -242,6 +242,7 @@
         }
 
         var oTable = $('#receiptItemsTable').dataTable({
+            "bStateSave": true,
             "sPaginationType": "full_numbers",
             "bPaginate": false,
             "bFilter": false,
