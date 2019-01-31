@@ -70,7 +70,7 @@
                 }
             </td>
             <td style="width: 20px;">
-                @Html.HiddenFor(m => receipt.ReceiptId)
+                @Html.HiddenFor(m => receipt.ReceiptId, new {@class="receiptId"})
                 <a asp-action="CreateReceipt" asp-controller="CorpReceipt" asp-route-id="@receipt.ReceiptId"
                    data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
                    class="btn btn-xs btn-success"><i class="glyphicon glyphicon-pencil"></i></a>

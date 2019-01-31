@@ -253,7 +253,7 @@ $(document).on('click',
             url: "/CorpReceipt/ReceiptPDFData",
             type: "POST",
             cache: false,
-            data: { id: $($(this).siblings()[0]).val() },
+            data: { id: $(this).parent().parent().find('.receiptId').val() },
             success: function (result) {
                 console.log(result);
                 const bodyData = [];
@@ -431,7 +431,7 @@ $(document).on('click',
             url: "/CorpReceipt/ReceiptPDFData",
             type: "POST",
             cache: false,
-            data: { id: $($(this).siblings()[0]).val() },
+            data: { id: $(this).parent().parent().find('.receiptId').val() },
             success: function (result) {
                 console.log(result);
                 const bodyData = [];
@@ -603,7 +603,7 @@ $(document).on('click',
                 url: "/CorpReceipt/ReceiptPDFData",
                 type: "POST",
                 cache: false,
-                data: { id: $($(this).siblings()[0]).val() },
+                data: { id: $(this).parent().parent().find('.receiptId').val() },
                 success: function (result) {
                     console.log(result);
                     const itemData = [];
