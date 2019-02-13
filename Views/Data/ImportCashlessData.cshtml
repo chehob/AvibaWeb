@@ -92,6 +92,7 @@
                                                      <input type="hidden" value="@record.Date.ToString("O")" />
                                                      <input type="hidden" value="@record.Number" />
                                                      <input type="hidden" value="@record.PayeeITN" />
+                                                     <input type="hidden" value="@record.PayeeAccount" />
                                                      @record.Date.ToString("d")
                                                  </td>
                                                  <td>@record.Amount</td>
@@ -135,7 +136,8 @@
                 Number: firstInput.next().val(),
                 Amount: firstTd.next().html(),
                 PaymentDescription: firstTd.next().next().html(),
-                PayeeITN: firstInput.next().next().val()
+                PayeeITN: firstInput.next().next().val(),
+                PayeeAccount: firstInput.next().next().next().val()
             };
             records.push(record);
         });
