@@ -1,0 +1,107 @@
+﻿@using AvibaWeb.ViewModels.CorpReceiptViewModels
+@model List<TicketListViewModel>
+
+<table class="table table-striped table-bordered bootstrap-datatable datatable" id="dataTable">
+    <thead>
+        <tr>
+            <th>Дата операции</th>
+            <th>Билет</th>
+            <th>Маршрут</th>
+            <th>Пассажир</th>
+            <th>Сумма</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr><td colspan="4" class="text-center">Нет запросов</td></tr>
+        }
+        else
+        {
+            foreach (var operation in Model)
+            {
+            <tr>
+                <td>
+                    @Html.HiddenFor(m => operation.TicketOperationId)
+                    <span id="myId">@operation.ExecutionDateTime</span><br>
+                    <span>@Html.DisplayFor(c => operation.OperationType)</span>
+                    <a href="/" class="btn btn-success btn-sm addTicketBtnCorp">Добавить</a>
+                </td>
+                <td>
+                    <b>@operation.TicketNumber</b>
+                </td>
+                <td>
+                    <b>@operation.Route</b>
+                    <input type="hidden" value="@operation.SegCount" />
+                </td>
+                <td>
+                    <b>@operation.PassengerName</b>
+                </td>
+                <td>
+                    <b>@operation.Payment</b>
+                </td>
+            </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script>
+    //$.fn.dataTableExt.afnFiltering.push(
+    //    function (oSettings, aData, iDataIndex) {
+    //        var iMin = document.getElementById('min').value;
+    //        var iMax = document.getElementById('max').value;
+
+    //        var df = document.createDocumentFragment();
+    //        var el = document.createElement('body');
+    //        el.innerHTML = aData[0];
+    //        df.appendChild(el);
+    //        var createdAt = df.getElementById('myId').innerHTML;
+
+    //        var iVersion = aData[3] == "-" ? 0 : aData[3] * 1;
+    //        if (
+    //            (iMin == "" && iMax == "") ||
+    //            (moment(createdAt, 'DD.MM.YYYY HH:mm:ss').isSameOrAfter(moment(iMin, 'DD.MM.YYYY')) &&
+    //                moment(createdAt, 'DD.MM.YYYY HH:mm:ss').isSameOrBefore(moment(iMax, 'DD.MM.YYYY')))
+    //        ) {
+    //            return true;
+    //        }
+    //        return false;
+    //    }
+    //);
+
+    $(function () {
+        var oTable = $('#dataTable').dataTable({
+            "sPaginationType": "full_numbers",
+            "bSort": false,
+            "oLanguage": {                
+                "sSearch": "Поиск:",
+                "sLengthMenu": "Показать _MENU_ записей",
+                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
+                "oPaginate": {
+                    "sFirst":    'Первая',
+                    "sPrevious": 'Предыдущая',
+                    "sNext":     'Следующая',
+                    "sLast":     'Последняя'
+                },
+                "oaria": {
+                    "ipaginate": {
+                        "nfirst":    'Начало',
+                        "nprevious": 'Previous',
+                        "nnext":     'Next',
+                        "nlast":     'Last'
+                    }
+                }       
+            }
+        });
+
+        //$('#min').keyup(function () { oTable.fnDraw(); });
+        //$('#max').keyup(function () { oTable.fnDraw(); });
+
+        //$('.date-range-filter').change(function () {
+        //    oTable.fnDraw();
+        //});
+    });
+</script>

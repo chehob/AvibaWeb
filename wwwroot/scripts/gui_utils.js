@@ -1049,27 +1049,49 @@ $(document).on('click',
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
         }
 
-        $(document).on('input',
-        '.ticketPayment',
+    $(document).on('input',
+        '.ticketPaymentCorp',
         function(e) {
             var segTotal = 0;
             var ticketTotal = 0;
-            var feeRate = Number($('#feeRate').val().replace(',', '.'));
+            var feeTotal = 0;
             $("#receiptItemsTable tbody").children().each(function () {
                 const firstDiv = $(this).find("input");
                 if (firstDiv.length) {
                     segTotal += Number(firstDiv[1].value);
                     ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
+                    feeTotal += Number(firstDiv[1].value) * Number(firstDiv[5].value.replace(/[^0-9.-]+/g, ""));
                 }
             });
 
             $('#segTotal').html(numberWithSpaces(segTotal));
-            $('#feeTotal').html(numberWithSpaces(segTotal * feeRate));
+            $('#feeTotal').html(numberWithSpaces(feeTotal));
             $('#ticketTotal').html(numberWithSpaces(ticketTotal));
-            $('#finalTotal').html(numberWithSpaces(segTotal * feeRate + ticketTotal));
+            $('#finalTotal').html(numberWithSpaces(feeTotal + ticketTotal));
         });
 
-		 $(document).on('click',
+    $(document).on('input',
+        '.ticketFee',
+        function(e) {
+            var segTotal = 0;
+            var ticketTotal = 0;
+            var feeTotal = 0;
+            $("#receiptItemsTable tbody").children().each(function () {
+                const firstDiv = $(this).find("input");
+                if (firstDiv.length) {
+                    segTotal += Number(firstDiv[1].value);
+                    ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
+                    feeTotal += Number(firstDiv[1].value) * Number(firstDiv[5].value.replace(/[^0-9.-]+/g, ""));
+                }
+            });
+
+            $('#segTotal').html(numberWithSpaces(segTotal));
+            $('#feeTotal').html(numberWithSpaces(feeTotal));
+            $('#ticketTotal').html(numberWithSpaces(ticketTotal));
+            $('#finalTotal').html(numberWithSpaces(feeTotal + ticketTotal));
+        });
+
+	$(document).on('click',
         '.removeTicketBtn',
         function(e) {
             e.preventDefault();
@@ -1114,7 +1136,7 @@ $(document).on('click',
     $(document).on('click',
         '.addTicketBtn',
         function (e) {
-            e.preventDefault();;
+            e.preventDefault();
             
             $('#receiptItemsTable').dataTable().fnAddData([
                 `<input type="hidden" value="${$($(this).siblings()[0]).val()}" />
@@ -1146,6 +1168,88 @@ $(document).on('click',
             $('#feeTotal').html(numberWithSpaces(segTotal * feeRate));
             $('#ticketTotal').html(numberWithSpaces(ticketTotal));
             $('#finalTotal').html(numberWithSpaces(segTotal * feeRate + ticketTotal));
+        });
+
+    $(document).on('click',
+        '.addTicketBtnCorp',
+        function (e) {
+            e.preventDefault();
+            
+            $('#receiptItemsTable').dataTable().fnAddData([
+                `<input type="hidden" value="${$($(this).siblings()[0]).val()}" />
+                ${$(this).siblings()[1].outerHTML}<br />
+                ${$(this).siblings()[3].outerHTML}
+                <a href="/" class="btn btn-danger btn-sm removeTicketBtnCorp"><i class="glyphicon glyphicon-remove"></i></a>`,
+                $($(this).parent().siblings()[0]).html(),
+                `<input type="hidden" value="${$(this).parent().siblings()[1].children[1].value}" />
+                <input class="ticketRoute" type="text" value="${$(this).parent().siblings()[1].children[0].innerHTML}" />`,
+                `<input class="ticketPassenger" type="text" value="${$(this).parent().siblings()[2].children[0].innerHTML}" />`,
+                `<input class="ticketPaymentCorp" type="text" value="${$($(this).parent().siblings()[3]).html().replace(/ /g, '')
+                .replace('</b>', '').replace('<b>', '')}" />`,
+                `<input class="ticketFee" type="text" value="${$("#feeRate").val()}" />`
+            ]);
+
+            $('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
+
+            var segTotal = 0;
+            var ticketTotal = 0;
+            var feeTotal = 0;
+            $("#receiptItemsTable tbody").children().each(function () {
+                const firstDiv = $(this).find("input");
+                if (firstDiv.length) {
+                    segTotal += Number(firstDiv[1].value);
+                    ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
+                    feeTotal += Number(firstDiv[1].value) * Number(firstDiv[5].value.replace(/[^0-9.-]+/g, ""));
+                }
+            });
+
+            $('#segTotal').html(numberWithSpaces(segTotal));
+            $('#feeTotal').html(numberWithSpaces(feeTotal));
+            $('#ticketTotal').html(numberWithSpaces(ticketTotal));
+            $('#finalTotal').html(numberWithSpaces(feeTotal + ticketTotal));
+        });
+
+    $(document).on('click',
+        '.removeTicketBtnCorp',
+        function(e) {
+            e.preventDefault();
+            if ($("#dataTable").length) {
+                $('#dataTable').dataTable().fnAddData([
+                    `<input type="hidden" value="${$($(this).siblings()[0]).val()}" />
+                    ${$(this).siblings()[1].outerHTML}<br />
+                    ${$(this).siblings()[3].outerHTML}
+                    <a href="/" class="btn btn-success btn-sm addTicketBtn">Добавить</a>`,
+                    $($(this).parent().siblings()[0]).html(),
+                    `<b>${$($($(this).parent().siblings()[1]).find('input')[1]).val()}</b>`,
+                    `<b>${$($(this).parent().siblings()[2]).find('input').val()}</b>`,
+                    `<b>${$($(this).parent().siblings()[3]).find('input').val()}</b>`
+                    ]);
+
+                var my_array = $('#dataTable').dataTable().fnGetNodes();
+                var last_element = my_array[my_array.length - 1];      
+                $(last_element).insertBefore($('#dataTable tbody tr:first-child'));
+            }
+
+            $('#receiptItemsTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
+
+            if ($("#receiptItemsTable").dataTable().fnSettings().aoData.length) {
+                var segTotal = 0;
+                var ticketTotal = 0;
+                var feeTotal = 0;
+                $("#receiptItemsTable tbody").children().each(function () {
+                    const firstDiv = $(this).find("input");
+                    if (firstDiv.length) {
+                        segTotal += Number(firstDiv[1].value);
+                        ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
+                        feeTotal += Number(firstDiv[1].value) * Number(firstDiv[5].value.replace(/[^0-9.-]+/g, ""));
+                    }
+                });
+
+                $('#segTotal').html(numberWithSpaces(segTotal));
+                $('#feeTotal').html(numberWithSpaces(feeTotal));
+                $('#ticketTotal').html(numberWithSpaces(ticketTotal));
+                $('#finalTotal').html(numberWithSpaces(feeTotal + ticketTotal));
+            }
         });
 
         $(document).on('click',
