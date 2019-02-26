@@ -1050,6 +1050,26 @@ $(document).on('click',
         }
 
     $(document).on('input',
+        '.ticketPayment',
+        function(e) {
+            var segTotal = 0;
+            var ticketTotal = 0;
+            var feeRate = Number($('#feeRate').val().replace(',', '.'));
+            $("#receiptItemsTable tbody").children().each(function () {
+                const firstDiv = $(this).find("input");
+                if (firstDiv.length) {
+                    segTotal += Number(firstDiv[1].value);
+                    ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
+                }
+            });
+
+            $('#segTotal').html(numberWithSpaces(segTotal));
+            $('#feeTotal').html(numberWithSpaces(segTotal * feeRate));
+            $('#ticketTotal').html(numberWithSpaces(ticketTotal));
+            $('#finalTotal').html(numberWithSpaces(segTotal * feeRate + ticketTotal));
+        });
+
+    $(document).on('input',
         '.ticketPaymentCorp',
         function(e) {
             var segTotal = 0;
