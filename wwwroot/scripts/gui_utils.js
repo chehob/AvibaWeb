@@ -1186,12 +1186,9 @@ $(document).on('click',
                 if( ticketTypeId == firstDiv[0].innerHTML && firstDiv[1].innerHTML == operationTypeId ) {
                     feeRate = Number(firstDiv[2].innerHTML.replace(",", "."));
                     perSegment = Boolean(firstDiv[3].innerHTML);
-                    console.log(perSegment);
                     return false;
                 }
-                console.log(firstDiv[0].innerHTML + " " + firstDiv[1].innerHTML);
             });
-            console.log(feeRate);
 
             $('#receiptItemsTable').dataTable().fnAddData([
                 `<input type="hidden" value="${$($(this).siblings()[0]).val()}" />
