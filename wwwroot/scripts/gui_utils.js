@@ -1059,8 +1059,8 @@ $(document).on('click',
                 const firstDiv = $(this).find("input");
                 if (firstDiv.length) {
                     segTotal += Number(firstDiv[1].value);
-                    ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
-                    feeTotal += Number(firstDiv[1].value) * Number(firstDiv[5].value.replace(/[^0-9.-]+/g, ""));
+                    ticketTotal += Number(firstDiv[6].value.replace(/[^0-9.-]+/g, ""));
+                    feeTotal += Number(firstDiv[1].value) * Number(firstDiv[7].value.replace(/[^0-9.-]+/g, ""));
                 }
             });
 
@@ -1080,8 +1080,8 @@ $(document).on('click',
                 const firstDiv = $(this).find("input");
                 if (firstDiv.length) {
                     segTotal += Number(firstDiv[1].value);
-                    ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
-                    feeTotal += Number(firstDiv[1].value) * Number(firstDiv[5].value.replace(/[^0-9.-]+/g, ""));
+                    ticketTotal += Number(firstDiv[6].value.replace(/[^0-9.-]+/g, ""));
+                    feeTotal += Number(firstDiv[1].value) * Number(firstDiv[7].value.replace(/[^0-9.-]+/g, ""));
                 }
             });
 
@@ -1175,6 +1175,24 @@ $(document).on('click',
         function (e) {
             e.preventDefault();
             
+            const exportFirstDiv = $(this).parent().parent().find("input");
+
+            const ticketTypeId = exportFirstDiv[2].value;
+            const operationTypeId = exportFirstDiv[3].value;
+            var feeRate;
+            var perSegment;
+            $("#corpFeeRatesDiv tbody").children().each(function () {
+                const firstDiv = $(this).find("td");
+                if( ticketTypeId == firstDiv[0].innerHTML && firstDiv[1].innerHTML == operationTypeId ) {
+                    feeRate = Number(firstDiv[2].innerHTML.replace(",", "."));
+                    perSegment = Boolean(firstDiv[3].innerHTML);
+                    console.log(perSegment);
+                    return false;
+                }
+                console.log(firstDiv[0].innerHTML + " " + firstDiv[1].innerHTML);
+            });
+            console.log(feeRate);
+
             $('#receiptItemsTable').dataTable().fnAddData([
                 `<input type="hidden" value="${$($(this).siblings()[0]).val()}" />
                 ${$(this).siblings()[1].outerHTML}<br />
@@ -1186,7 +1204,7 @@ $(document).on('click',
                 `<input class="ticketPassenger" type="text" value="${$(this).parent().siblings()[2].children[0].innerHTML}" />`,
                 `<input class="ticketPaymentCorp" type="text" value="${$($(this).parent().siblings()[3]).html().replace(/ /g, '')
                 .replace('</b>', '').replace('<b>', '')}" />`,
-                `<input class="ticketFee" type="text" value="${$("#feeRate").val()}" />`
+                `<input class="ticketFee" type="text" value="${( perSegment ? Number($(this).parent().siblings()[1].children[1].value) * feeRate : feeRate)}" />`
             ]);
 
             $('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
@@ -1199,7 +1217,7 @@ $(document).on('click',
                 if (firstDiv.length) {
                     segTotal += Number(firstDiv[1].value);
                     ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
-                    feeTotal += Number(firstDiv[1].value) * Number(firstDiv[5].value.replace(/[^0-9.-]+/g, ""));
+                    feeTotal += ( perSegment ? Number(firstDiv[1].value) * feeRate : feeRate);
                 }
             });
 
@@ -1213,6 +1231,9 @@ $(document).on('click',
         '.removeTicketBtnCorp',
         function(e) {
             e.preventDefault();
+
+            const firstDiv = $(this).find("input");
+
             if ($("#dataTable").length) {
                 $('#dataTable').dataTable().fnAddData([
                     `<input type="hidden" value="${$($(this).siblings()[0]).val()}" />
@@ -1237,11 +1258,10 @@ $(document).on('click',
                 var ticketTotal = 0;
                 var feeTotal = 0;
                 $("#receiptItemsTable tbody").children().each(function () {
-                    const firstDiv = $(this).find("input");
                     if (firstDiv.length) {
                         segTotal += Number(firstDiv[1].value);
-                        ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
-                        feeTotal += Number(firstDiv[1].value) * Number(firstDiv[5].value.replace(/[^0-9.-]+/g, ""));
+                        ticketTotal += Number(firstDiv[6].value.replace(/[^0-9.-]+/g, ""));
+                        feeTotal += Number(firstDiv[1].value) * Number(firstDiv[7].value.replace(/[^0-9.-]+/g, ""));
                     }
                 });
 

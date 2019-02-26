@@ -1,0 +1,33 @@
+﻿@using AvibaWeb.ViewModels.CorpReceiptViewModels
+@model List<CorpFeeListViewModel>
+
+<table id="corpFeeTable">
+    <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="4" class="text-center">Нет запросов</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var fee in Model)
+            {
+            <tr>
+                <td>@fee.TicketTypeId</td>
+                <td>@fee.OperationTypeId</td>
+                <td>@fee.Rate</td>
+                <td>@fee.PerSegment</td>
+            </tr>
+            }
+        }
+    </tbody>
+</table>
