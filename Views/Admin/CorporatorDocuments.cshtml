@@ -1,0 +1,116 @@
+﻿@using AvibaWeb.ViewModels.AdminViewModels
+@model CorporatorDocumentsViewModel
+
+<div class="box col-md-10">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="">
+            <h2>Договора</h2>
+        </div>
+        <div class="box-content">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Организация:</h5>
+                    <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
+                        <option value=""></option>
+                        <optgroup label="Организации">
+                            @foreach (var org in Model.Organizations)
+                            {
+                                <option>@org</option>
+                            }
+                        </optgroup>
+                    </select>
+                    <input id="editOrgName" type="hidden" />
+                </div>
+
+                <div class="col-md-6">
+                    <h5>Корпоратор:</h5>
+                    <select data-placeholder="Выбрать корпоратора" id="selectPayer" data-rel="chosen">
+                        <option value=""></option>
+                        <optgroup label="Корпораторы">
+                            @foreach (var counterparty in Model.Counterparties)
+                            {
+                                <option>@counterparty</option>
+                            }
+                        </optgroup>
+                    </select>
+                    <input id="editCorpName" type="hidden" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12" id="documentsListBlock"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+
+        // Select the node that will be observed for mutations
+        const payeeTargetNode = $("#selectPayee").next().find("a.chosen-single span")[0];
+
+        // Options for the observer (which mutations to observe)
+        const config = { attributes: true, childList: true, subtree: true };
+
+        // Callback function to execute when mutations are observed
+        const payeeCallback = function (mutationsList, observer) {
+            const mutation = mutationsList[0];
+
+            $.ajax({
+                url: "/Admin/GetDocumentsByOrganization",
+                type: "GET",
+                cache: false,
+                data: {
+                    orgName: mutation.target.textContent
+                },
+                success: function (result) {
+                    $("#documentsListBlock").html(result.message);
+                },
+                error: function (error) {
+                }
+            });
+
+            $("#editOrgName").val(mutation.target.textContent);
+            $("#editCorpName").val("");
+        };
+
+        // Create an observer instance linked to the callback function
+        const payeeObserver = new MutationObserver(payeeCallback);
+
+        // Start observing the target node for configured mutations
+        payeeObserver.observe(payeeTargetNode, config);
+
+        // Select the node that will be observed for mutations
+        const payerTargetNode = $("#selectPayer").next().find("a.chosen-single span")[0];
+
+        // Callback function to execute when mutations are observed
+        const payerCallback = function (mutationsList, observer) {
+            const mutation = mutationsList[0];
+
+            $.ajax({
+                url: "/Admin/GetDocumentsByCorporator",
+                type: "GET",
+                cache: false,
+                data: {
+                    payerName: mutation.target.textContent
+                },
+                success: function (result) {
+                    $("#documentsListBlock").html(result.message);
+                },
+                error: function (error) {
+                }
+            });
+
+            $("#editCorpName").val(mutation.target.textContent);
+            $("#editOrgName").val("");
+        };
+
+        // Create an observer instance linked to the callback function
+        const payerObserver = new MutationObserver(payerCallback);
+
+        // Start observing the target node for configured mutations
+        payerObserver.observe(payerTargetNode, config);
+    });
+</script>

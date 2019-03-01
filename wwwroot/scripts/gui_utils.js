@@ -1221,7 +1221,7 @@ $(document).on('click',
                 `<input class="ticketPassenger" type="text" value="${$(this).parent().siblings()[2].children[0].innerHTML}" />`,
                 `<input class="ticketPaymentCorp" type="text" value="${$($(this).parent().siblings()[3]).html().replace(/ /g, '')
                 .replace('</b>', '').replace('<b>', '')}" />`,
-                `<input class="ticketFee" type="text" value="${( perSegment ? Number($(this).parent().siblings()[1].children[1].value) * feeRate : feeRate)}" />`
+                `<input class="ticketFee" type="text" value="${feeRate}" />`
             ]);
 
             $('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
