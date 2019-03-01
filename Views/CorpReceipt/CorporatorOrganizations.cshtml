@@ -1,0 +1,14 @@
+﻿@using AvibaWeb.ViewModels.DataViewModels
+@model OrganizationFinancialAccountsViewModel
+
+<div>
+    <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
+        <option value=""></option>
+        <optgroup label="Организации">
+            @foreach (var org in Model.Accounts)
+            {
+                <option>@org</option>
+            }
+        </optgroup>
+    </select>
+</div>

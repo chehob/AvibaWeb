@@ -1,0 +1,120 @@
+﻿@using AvibaWeb.ViewModels.AdminViewModels
+@model CreateDocumentViewModel
+
+<div class="box col-md-10">
+    <div class="box-inner" style="">
+        <div class="box-header well" data-original-title="">
+            <h2><i class="glyphicon glyphicon-user"></i> Редактировать документ</h2>
+        </div>
+        <div class="box-content">
+            @Html.AntiForgeryToken()
+
+            <input id="editDocumentId" type="hidden" value="@Model.Document.DocumentId" />
+            <div class="row">
+                <label for="selectPayee">Организация:</label>
+                <div class="col-md-10">
+                    <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
+                        <option value=""></option>
+                        <optgroup label="Организации">
+                            @foreach (var org in Model.Organizations)
+                            {
+                                <option>@org</option>
+                            }
+                        </optgroup>
+                    </select>
+                    <input id="editOrgName" type="hidden" value="@Model.Document.OrganizationName" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="selectPayer">Корпоратор:</label>
+                <div class="col-md-10">
+                    <select data-placeholder="Выбрать корпоратора" id="selectPayer" data-rel="chosen">
+                        <option value=""></option>
+                        <optgroup label="Корпораторы">
+                            @foreach (var counterparty in Model.Counterparties)
+                            {
+                                <option>@counterparty</option>
+                            }
+                        </optgroup>
+                    </select>
+                    <input id="editCorpName" type="hidden" value="@Model.Document.CorporatorName" />
+                </div>
+            </div>
+            <div class="row">
+                <label for="doc">Договор:</label>
+                <div class="col-md-10">
+                    <input type="text" id="doc" value="@Model.Document.Doc" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="date">Дата:</label>
+                <div class="col-md-1">
+                    <input type="text" id="date" class="date-range-filter" value="@Model.Document.Date" />
+                </div>
+            </div>
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-md-offset-2 col-md-10">
+                    <button class="btn btn-success" id="createDocumentBtn">Сохранить</button>
+                    <a asp-action="CorporatorDocuments" asp-controller="Admin"
+                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+                       class="btn btn-danger">Отмена</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+
+        $("#date").datepicker();
+
+        var editValue = $("#editCorpName").val();
+        if (editValue) {
+            $('#selectPayer').val(editValue).trigger('chosen:updated');
+        }
+       
+        editValue = $("#editOrgName").val();
+        if (editValue) {
+            $('#selectPayee').val(editValue).trigger('chosen:updated');
+        }
+    });
+
+    $("#createDocumentBtn").click(function (e) {
+        const sendJsonData = {
+            DocumentId: $('#editDocumentId').val(),
+            CorpName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
+            OrgName: $("#selectPayee").next().find("a.chosen-single span").first().html(),
+            Document: $("#doc").val(),
+            IssuedDateTime: moment($('#date').val(), "DD.MM.YYYY").toISOString(true)
+        };
+
+        e.preventDefault();
+        $.ajax({
+            url: "/Admin/CreateDocument",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $.ajax({
+                    url: "/Admin/CorporatorDocuments",
+                    type: "GET",
+                    cache: false,
+                    success: function (r) {
+                        $("#results").html(r);
+                    },
+                    error: function (err) {
+                        console.log(err.message);
+                    }
+                });
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+</script>

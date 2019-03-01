@@ -1,149 +1,34 @@
 ﻿@using AvibaWeb.ViewModels.CorpReceiptViewModels
-@using static AvibaWeb.DomainModels.CorporatorReceipt
-@model List<ReceiptsViewModel>
 
-<table class="table table-striped table-bordered bootstrap-datatable datatable" id="dataTable">
-    <thead>
-        <tr>
-            <th>№ счета</th>
-            <th>Дата</th>
-            <th>Дата оформления</th>
-            <th>Поставщик</th>
-            <th>Плательщик</th>
-            <th>Сумма</th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-    @if (!Model.Any())
-    {
-        <tr>
-            <td colspan="9" class="text-center">Нет счетов</td>
-        </tr>
-    }
-    else
-    {
-        foreach (var receipt in Model)
-        {
-        <tr>
-            <td>
-                <span id="myId">@receipt.ReceiptNumber</span>
-            </td>
-            <td>
-                <span>@receipt.CreatedDate</span>
-            </td>
-            <td>
-                <span>@receipt.IssuedDateTime</span>
-            </td>
-            <td>
-                <span>@receipt.PayeeOrgName @receipt.PayeeBankName</span>
-            </td>
-            <td>
-                <span>@receipt.PayerOrgName</span>
-            </td>
-            <td style="width: 150px;">
-                <span>@receipt.TotalStr</span>
-            </td>
-            <td style="width: 15px;">
-                @switch (receipt.Status)
-                {
-                    case CRPaymentStatus.Unpaid:
+<div class="col-md-12">
+    Выбрать с: <input type="text" id="min" name="min" class="date-range-filter"> по: <input type="text" id="max" name="max" class="date-range-filter">
+    <a href="/" id="getReceiptListBtn" class="btn btn-success">Список счетов</a>
+</div>
 
-                        <button class="btn btn-danger btn-xs" data-toggle="confirmation"
-                                data-btn-ok-label="Продолжить" data-btn-ok-class="btn-success"
-                                data-btn-ok-icon-class="material-icons" data-btn-ok-icon-content="check"
-                                data-btn-cancel-label="Отмена" data-btn-cancel-class="btn-danger"
-                                data-btn-cancel-icon-class="material-icons" data-btn-cancel-icon-content="close"
-                                data-title="Очистить" data-content="Очистить счет?">
-                            Очистить<span class="glyphicon glyphicon-remove"></span>
-                        </button>
-                        break;
-
-                    case CRPaymentStatus.Partial:
-                        <span class="label-warning label label-default">Оплачен частично</span>
-                        break;
-
-                    case CRPaymentStatus.Paid:
-                        <span class="label-success label label-default">Оплачен</span>
-                        <span>@receipt.PaidDateTime</span>
-                        break;
-                }
-            </td>
-            <td style="width: 20px;">
-                @Html.HiddenFor(m => receipt.ReceiptId, new {@class="receiptId"})
-                <a asp-action="CreateReceipt" asp-controller="CorpClient" asp-route-id="@receipt.ReceiptId"
-                   data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
-                   class="btn btn-xs btn-success"><i class="glyphicon glyphicon-pencil"></i></a>
-                
-
-            </td>
-            <td style="width: 150px;">
-                <a href="/" class="btn btn-info btn-xs createReceiptPDF" style="width: 70px;">Счет PDF</a>
-                <a href="/" class="btn btn-info btn-xs createReportPDF" style="width: 70px;">Акт PDF</a>
-                <a href="/" class="btn btn-warning btn-xs createReceiptPDF2" style="width: 70px;">Счет -> <span class="glyphicon glyphicon-envelope"></span></a>
-                <a href="/" class="btn btn-warning btn-xs createReceiptPDF3" style="width: 70px;">Счет 2 -> <span class="glyphicon glyphicon-envelope"></span></a>
-            </td>
-        </tr>
-        }
-                }
-    </tbody>
-</table>
+<div class="col-md-12" id="receiptListBlock">
+</div>
 
 <script>
-    $(function () {
-        var oTable = $('#dataTable').dataTable({
-            "iDisplayLength": 100,
-            "aLengthMenu": [[ 10, 20, 50, 100 ,-1],[10,20,50,100,"все"]],
-            "bStateSave": false,
-                    "sPaginationType": "full_numbers",
-            "bSort": true,
-            "aaSorting": [[ 0, "desc" ]],
-            "oLanguage": {
-                        "sSearch": "Поиск:",
-                "sLengthMenu": "Показать _MENU_ записей",
-                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
-                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
-                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
-                "oPaginate": {
-                            "sFirst":    'Первая',
-                    "sPrevious": 'Предыдущая',
-                    "sNext":     'Следующая',
-                    "sLast":     'Последняя'
-                },
-                "oaria": {
-                            "ipaginate": {
-                                "nfirst":    'Начало',
-                        "nprevious": 'Previous',
-                        "nnext":     'Next',
-                        "nlast":     'Last'
-                    }
-                        }
-                    }
-                });
-    });
+    $("#getReceiptListBtn").click(function (e) {
+        const sendJsonData = {
+            fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+            toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true)
+        };
 
-    $('[data-toggle=confirmation]').confirmation({
-        rootSelector: '[data-toggle=confirmation]',
-        onConfirm: function (e) {
-            var button = $(this);
-
-            $.ajax({
-                url: "/CorpReceipt/ClearReceipt",
-                type: "POST",
-                cache: false,
-                data: { id: $(button.parent().siblings()[6]).children()[0].value },
-                success: function (result) {
-                    button.parent().siblings()[2].innerHTML = "";
-                    button.parent().siblings()[3].innerHTML = "";
-                    button.parent().siblings()[4].innerHTML = "";
-                    button.parent().siblings()[5].innerHTML = `<span>0.00</span>`;
-                },
-                error: function (error) {
-                    console.log(error.message);
-                }
-            });
-        }
+        e.preventDefault();
+        $.ajax({
+            url: "/CorpClient/ReceiptList",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $("#receiptListBlock").html(result.message);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
     });
 </script>

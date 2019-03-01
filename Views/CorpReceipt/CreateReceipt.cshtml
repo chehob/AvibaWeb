@@ -22,15 +22,17 @@
             <div class="row">
                 <div class="col-md-6">
                     <h5>Поставщик:</h5>
-                    <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
-                        <option value=""></option>
-                        <optgroup label="Организации">
-                            @foreach (var org in Model.Organizations)
-                            {
-                                <option>@org</option>
-                            }
-                        </optgroup>
-                    </select>
+                    <div id="payeeSelectDiv">
+                        <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
+                            <option value=""></option>
+                            <optgroup label="Организации">
+                                @foreach (var org in Model.Organizations)
+                                {
+                                    <option>@org</option>
+                                }
+                            </optgroup>
+                        </select>
+                    </div>
                     <div id="payeeOrgFinancialAccountsDiv"></div>
                     <input id="editReceiptOrgName" type="hidden" value="@Model.Receipt.OrganizationName" />
                     <input id="editReceiptBankName" type="hidden" value="@Model.Receipt.BankName" />
@@ -38,15 +40,17 @@
 
                 <div class="col-md-6">
                     <h5>Покупатель:</h5>
-                    <select data-placeholder="Выбрать корпоратора" id="selectPayer" data-rel="chosen">
-                        <option value=""></option>
-                        <optgroup label="Корпораторы">
-                            @foreach (var counterparty in Model.Counterparties)
-                            {
-                                <option>@counterparty</option>
-                            }
-                        </optgroup>
-                    </select>
+                    <div id="payerSelectDiv">
+                        <select data-placeholder="Выбрать корпоратора" id="selectPayer" data-rel="chosen">
+                            <option value=""></option>
+                            <optgroup label="Корпораторы">
+                                @foreach (var counterparty in Model.Counterparties)
+                                {
+                                    <option>@counterparty</option>
+                                }
+                            </optgroup>
+                        </select>
+                     </div>
                     <input id="editReceiptCorpName" type="hidden" value="@Model.Receipt.CorporatorName" />
                 </div>
             </div>
@@ -213,6 +217,20 @@
                     $("#payeeOrgFinancialAccountsDiv").html();
                 }
             });
+
+            $.ajax({
+                url: "/CorpReceipt/OrganizationCorporators",
+                type: "GET",
+                cache: false,
+                data: { orgName: mutation.target.textContent },
+                success: function (result) {
+                    $("#payerSelectDiv").html(result);
+                    $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+                },
+                error: function (error) {
+                    $("#payerSelectDiv").html();
+                }
+            });
         };
 
         // Create an observer instance linked to the callback function
@@ -220,6 +238,34 @@
 
         // Start observing the target node for configured mutations
         payeeObserver.observe(payeeTargetNode, config);
+
+        // Select the node that will be observed for mutations
+        const payerTargetNode = $("#selectPayer").next().find("a.chosen-single span")[0];
+
+        // Callback function to execute when mutations are observed
+        const payerCallback = function (mutationsList, observer) {
+            const mutation = mutationsList[0];
+
+            $.ajax({
+                url: "/CorpReceipt/CorporatorOrganizations",
+                type: "GET",
+                cache: false,
+                data: { corpName: mutation.target.textContent },
+                success: function (result) {
+                    $("#payeeSelectDiv").html(result);
+                    $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+                },
+                error: function (error) {
+                    $("#payeeSelectDiv").html();
+                }
+            });
+        };
+
+        // Create an observer instance linked to the callback function
+        const payerObserver = new MutationObserver(payerCallback);
+
+        // Start observing the target node for configured mutations
+        payerObserver.observe(payerTargetNode, config);
 
         $("#issuedDateTime").datepicker();
         $("#min").datepicker();
