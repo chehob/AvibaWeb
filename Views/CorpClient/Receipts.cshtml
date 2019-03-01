@@ -7,7 +7,7 @@
         <tr>
             <th>№ счета</th>
             <th>Дата</th>
-            <th>Дата оформления</th>
+            
             <th>Поставщик</th>
             <th>Плательщик</th>
             <th>Сумма</th>
@@ -34,10 +34,8 @@
             <td>
                 <span>@receipt.CreatedDate</span>
             </td>
-            <td>
-                <span>@receipt.IssuedDateTime</span>
-            </td>
-            <td>
+
+            <td style="width: 200px;">
                 <span>@receipt.PayeeOrgName @receipt.PayeeBankName</span>
             </td>
             <td>
@@ -51,13 +49,8 @@
                 {
                     case CRPaymentStatus.Unpaid:
 
-                        <button class="btn btn-danger btn-xs" data-toggle="confirmation"
-                                data-btn-ok-label="Продолжить" data-btn-ok-class="btn-success"
-                                data-btn-ok-icon-class="material-icons" data-btn-ok-icon-content="check"
-                                data-btn-cancel-label="Отмена" data-btn-cancel-class="btn-danger"
-                                data-btn-cancel-icon-class="material-icons" data-btn-cancel-icon-content="close"
-                                data-title="Очистить" data-content="Очистить счет?">
-                            Очистить<span class="glyphicon glyphicon-remove"></span>
+                        <button class="btn btn-danger btn-xs">
+                            Не оплачен
                         </button>
                         break;
 
@@ -79,11 +72,11 @@
                 
 
             </td>
-            <td style="width: 150px;">
+            <td style="width: 80px;">
                 <a href="/" class="btn btn-info btn-xs createReceiptPDF" style="width: 70px;">Счет PDF</a>
+                <br>
                 <a href="/" class="btn btn-info btn-xs createReportPDF" style="width: 70px;">Акт PDF</a>
-                <a href="/" class="btn btn-warning btn-xs createReceiptPDF2" style="width: 70px;">Счет -> <span class="glyphicon glyphicon-envelope"></span></a>
-                <a href="/" class="btn btn-warning btn-xs createReceiptPDF3" style="width: 70px;">Счет 2 -> <span class="glyphicon glyphicon-envelope"></span></a>
+                
             </td>
         </tr>
         }

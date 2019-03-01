@@ -72,6 +72,8 @@
 
     $(function () {
         var oTable = $('#dataTable').dataTable({
+            "iDisplayLength": 100,
+            "aLengthMenu": [[ 10, 20, 50, 100 ,-1],[10,20,50,100,"все"]],
             "sPaginationType": "full_numbers",
             "bSort": false,
             "oLanguage": {                
