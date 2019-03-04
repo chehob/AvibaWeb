@@ -4,7 +4,7 @@
 <div class="box col-md-10">
     <div class="box-inner" style="">
         <div class="box-header well" data-original-title="">
-            <h2><i class="glyphicon glyphicon-user"></i> Редактировать документ</h2>
+            <h2><i class="glyphicon glyphicon-user"></i> Редактировать договор</h2>
         </div>
         <div class="box-content">
             @Html.AntiForgeryToken()
@@ -41,14 +41,14 @@
                 </div>
             </div>
             <div class="row">
-                <label for="doc">Договор:</label>
+                <label for="doc">Номер договора:</label>
                 <div class="col-md-10">
                     <input type="text" id="doc" value="@Model.Document.Doc" />
                 </div>
             </div>
-            <div class="form-group">
+            <div class="row">
                 <label for="date">Дата:</label>
-                <div class="col-md-1">
+                <div class="col-md-10">
                     <input type="text" id="date" class="date-range-filter" value="@Model.Document.Date" />
                 </div>
             </div>
