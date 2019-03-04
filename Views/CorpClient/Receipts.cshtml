@@ -9,11 +9,6 @@
 </div>
 
 <script>
-    $(function() {
-        $("#min").datepicker();
-        $("#max").datepicker();
-    });
-
     $("#getReceiptListBtn").click(function (e) {
         const sendJsonData = {
             fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
@@ -35,5 +30,15 @@
                 console.log(error);
             }
         });
+    });
+
+    $(function() {
+        $("#min").datepicker();
+        $("#max").datepicker();
+
+        $("#min").val(moment().startOf('month').format("DD.MM.YYYY"));
+        $("#max").val(moment().endOf('month').format("DD.MM.YYYY"));
+
+        $("#getReceiptListBtn").trigger("click");
     });
 </script>

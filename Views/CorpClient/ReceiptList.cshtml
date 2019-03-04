@@ -7,7 +7,6 @@
         <tr>
             <th>№ счета</th>
             <th>Дата</th>
-            
             <th>Поставщик</th>
             <th>Плательщик</th>
             <th>Сумма</th>
@@ -20,7 +19,14 @@
     @if (!Model.Any())
     {
         <tr>
-            <td colspan="9" class="text-center">Нет счетов</td>
+            <td colspan="8" class="text-center">Нет счетов</td>
+            <td style="display: none;"></td>
+            <td style="display: none;"></td>
+            <td style="display: none;"></td>
+            <td style="display: none;"></td>
+            <td style="display: none;"></td>
+            <td style="display: none;"></td>
+            <td style="display: none;"></td>
         </tr>
     }
     else
@@ -91,8 +97,12 @@
             "aLengthMenu": [[10, 20, 50, 100, -1], [10, 20, 50, 100, "все"]],
             "bStateSave": false,
             "sPaginationType": "full_numbers",
-            "bSort": true,
+            "bSort": false,
             "aaSorting": [[0, "desc"]],
+            "columnDefs": [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
             "oLanguage": {
                 "sSearch": "Поиск:",
                 "sLengthMenu": "Показать _MENU_ записей",
