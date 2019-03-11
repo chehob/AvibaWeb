@@ -43,6 +43,10 @@
                     <i class="glyphicon glyphicon-edit icon-white"></i>
                     Изменить
                 </button>
+                <button class="btn btn-success" id="editTaxBtn">
+                    <i class="glyphicon glyphicon-edit icon-white"></i>
+                    Изменить сборы
+                </button>
             </td>
         </tr>
         }
@@ -74,6 +78,24 @@
         e.preventDefault();
         $.ajax({
             url: "/Admin/CreateDocument",
+            type: "GET",
+            cache: false,
+            data: {
+                id: $(this).parent().parent().find(".docId").val()
+            },
+            success: function (result) {
+                $("#results").html(result.message);
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+
+    $("#editTaxBtn").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/Admin/EditDocumentTaxes",
             type: "GET",
             cache: false,
             data: {

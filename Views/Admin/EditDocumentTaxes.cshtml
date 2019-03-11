@@ -1,0 +1,118 @@
+﻿@using AvibaWeb.ViewModels.AdminViewModels
+@model EditDocumentTaxesViewModel
+
+<div class="box col-md-10">
+    <div class="box-inner" style="">
+        <div class="box-header well" data-original-title="">
+            <h2><i class="glyphicon glyphicon-user"></i> Редактировать сборы</h2>
+        </div>
+        <div class="box-content">
+            @Html.AntiForgeryToken()
+
+            <input id="editOrganizationId" type="hidden" value="@Model.OrganizationId" />
+            <input id="editCorporatorId" type="hidden" value="@Model.CorporatorId" />
+            <table id="corpFeeTable">
+                <thead>
+                    <tr>
+                        <th>Тип билета</th>
+                        <th>Тип операции</th>
+                        <th>Сбор</th>
+                        <th>За сегмент</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.FeeRates.Any())
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center">Нет данных</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var fee in Model.FeeRates)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(e => fee.TicketType)
+                                    <input class="ticketType" type="hidden" value="@fee.TicketTypeId" />
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(e => fee.OperationType)
+                                    <input class="opType" type="hidden" value=" @fee.OperationTypeId" />
+                                </td>
+                                <td>
+                                    <input type="text" value="@fee.Rate" />
+                                </td>
+                                <td>
+                                    @Html.CheckBoxFor(e => fee.PerSegment)
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-md-offset-2 col-md-10">
+                    <button class="btn btn-success" id="editDocumentTaxesBtn">Сохранить</button>
+                    <a asp-action="CorporatorDocuments" asp-controller="Admin"
+                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+                       class="btn btn-danger">Отмена</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+    });
+
+    $("#editDocumentTaxesBtn").click(function (e) {
+        var items = new Array();
+        $("#corpFeeTable tbody").children().each(function () {
+            const firstDiv = $(this).find("input");
+            if (firstDiv.length) {
+                const receiptItem = {
+                    TicketTypeId: firstDiv[0].value,
+                    OperationTypeId: firstDiv[1].value,
+                    Rate: Number(firstDiv[2].value.replace(",", ".")),
+                    PerSegment: firstDiv[3].checked
+                };
+                items.push(receiptItem);
+            }
+        });
+
+        const sendJsonData = {
+            OrganizationId: $('#editOrganizationId').val(),
+            CorporatorId: $('#editCorporatorId').val(),
+            FeeRates: items
+        };
+
+        e.preventDefault();
+        $.ajax({
+            url: "/Admin/EditDocumentTaxes",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $.ajax({
+                    url: "/Admin/CorporatorDocuments",
+                    type: "GET",
+                    cache: false,
+                    success: function (r) {
+                        $("#results").html(r);
+                    },
+                    error: function (err) {
+                        console.log(err.message);
+                    }
+                });
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+</script>
