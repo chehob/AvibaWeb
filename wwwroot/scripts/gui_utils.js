@@ -285,17 +285,29 @@ $(document).on('click',
                     bodyData.push(dataRow);
                 });
 
-                dataRow = [];
+                result.taxes.forEach(function(item) {
+                    dataRow = [];
 
-                itemCount++;
-                dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
-                dataRow.push({ text: 'Сбор за оформление авиабилета', style: 'smallText' });
-                dataRow.push({ text: result.segCountTotal, alignment: 'center' });
-                dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
-                dataRow.push({ text: result.feeRateStr, alignment: 'right' });
-                dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
+                    itemCount++;
+                    dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
+                    dataRow.push({ text: 'Сбор за оформление билета', style: 'smallText' });
+                    dataRow.push({ text: item.segCount, alignment: 'center' });
+                    dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                    dataRow.push({ text: item.feeStr, alignment: 'right' });
+                    dataRow.push({ text: item.amountStr, alignment: 'right' });
 
-                bodyData.push(dataRow);
+                    bodyData.push(dataRow);
+                });
+
+                // itemCount++;
+                // dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
+                // dataRow.push({ text: 'Сбор за оформление авиабилета', style: 'smallText' });
+                // dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                // dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                // dataRow.push({ text: result.feeRateStr, alignment: 'right' });
+                // dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
+
+                // bodyData.push(dataRow);
 
                 dataRow = [];
 
@@ -828,16 +840,31 @@ $(document).on('click',
 
                     feeData.push(headerRow);
 
-                    dataRow = [];
+                    itemCount = 0;
+                    result.taxes.forEach(function(item) {
+                        dataRow = [];
+    
+                        itemCount++;
+                        dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
+                        dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
+                        dataRow.push({ text: item.segCount, alignment: 'center' });
+                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                        dataRow.push({ text: item.feeStr, alignment: 'right' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+    
+                        feeData.push(dataRow);
+                    });
 
-                    dataRow.push({ text: '1', alignment: 'center' });
-                    dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
-                    dataRow.push({ text: result.segCountTotal, alignment: 'center' });
-                    dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
-                    dataRow.push({ text: result.feeRateStr, alignment: 'right' });
-                    dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
+                    // dataRow = [];
 
-                    feeData.push(dataRow);
+                    // dataRow.push({ text: '1', alignment: 'center' });
+                    // dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
+                    // dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                    // dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                    // dataRow.push({ text: result.feeRateStr, alignment: 'right' });
+                    // dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
+
+                    // feeData.push(dataRow);
 
                     const docDefinition = {
                         content: [
