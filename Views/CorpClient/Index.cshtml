@@ -13,18 +13,8 @@
        class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-list-alt">&nbsp;</i>Список счетов</a>
     <a asp-action="Corporators" asp-controller="CorpClient"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-<<<<<<< HEAD
-       class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-plus">&nbsp;</i>Корпораторы</a>
-=======
-       class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-plus">&nbsp;</i>Новый клиент</a>
-    @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
-    {
-    <a asp-action="CorporatorDocuments" asp-controller="Admin"
-        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-        class="btn btn-primary"><i class="glyphicon glyphicon-list-alt">&nbsp;</i>Договоры</a>
-    }
->>>>>>> 004d1a1ec70910c959224d16415958506110df6f
 
+       class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-plus">&nbsp;</i>Корпораторы</a>
 </p>
 }
 else
