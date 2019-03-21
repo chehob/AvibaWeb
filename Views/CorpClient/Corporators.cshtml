@@ -1,0 +1,97 @@
+﻿@using System.Linq
+@using AvibaWeb.DomainModels
+@model IQueryable<Counterparty>
+
+<div>
+    <a asp-action="CreateCounterparty" asp-controller="Data"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-plus">&nbsp;</i>Новый клиент</a>
+    <table class="table table-striped table-bordered bootstrap-datatable datatable responsive" id="dataTable">
+        <thead>
+            <tr>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="2" class="text-center">Нет корпораторов</td>
+                <td style="display: none;"></td>
+            </tr>
+        }
+        else
+        {
+            foreach (var counterparty in Model)
+            {
+                <tr>
+                    <td>
+                        @counterparty.Name
+                    </td>
+                    <td>
+                        <a asp-action="EditCorporator" asp-controller="CorpClient" asp-route-id="@counterparty.ITN"
+                           data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
+                           class="btn btn-setting btn-sm btn-info">
+                            Изменить
+                        </a>
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+                        {
+                            <div class="row">
+                                <a asp-action="CorporatorDocuments" asp-controller="CorpClient" asp-route-id="@counterparty.ITN"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+                                   class="btn btn-primary"><i class="glyphicon glyphicon-list-alt"> </i>Договоры</a>
+                            </div>
+                        }
+                        <a asp-action="CorporatorAccounts" asp-controller="CorpClient" asp-route-id="@counterparty.ITN"
+                           data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
+                           class="btn btn-setting btn-sm btn-info">
+                            Счета
+                        </a>
+                    </td>  
+                </tr>   
+            }
+        }
+        </tbody>
+    </table>
+</div>
+    
+<script>
+    $(function () {
+        var oTable = $('#dataTable').dataTable({
+            "iDisplayLength": 100,
+            "aLengthMenu": [[10, 20, 50, 100, -1], [10, 20, 50, 100, "все"]],
+            "bStateSave": false,
+            "sPaginationType": "full_numbers",
+            "bSort": false,
+            "aaSorting": [[0, "desc"]],
+            "columnDefs": [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
+            "oLanguage": {
+                "sSearch": "Поиск:",
+                "sLengthMenu": "Показать _MENU_ записей",
+                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
+                "oPaginate": {
+                    "sFirst": 'Первая',
+                    "sPrevious": 'Предыдущая',
+                    "sNext": 'Следующая',
+                    "sLast": 'Последняя'
+                },
+                "oaria": {
+                    "ipaginate": {
+                        "nfirst": 'Начало',
+                        "nprevious": 'Previous',
+                        "nnext": 'Next',
+                        "nlast": 'Last'
+                    }
+                }
+            }
+        });
+    });
+</script>

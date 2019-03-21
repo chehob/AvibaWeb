@@ -1,0 +1,131 @@
+﻿@using AvibaWeb.ViewModels.CorpClientViewModels
+@model CorporatorDocumentsViewModel
+
+<div class="box col-md-10">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="">
+            <h2>Договоры</h2>
+        </div>
+        <div class="box-content">
+            <input id="corpITN" type="hidden" value="@Model.ITN" />
+
+            <div class="row">
+                <div class="col-md-12" id="documentsListBlock">
+                    <div class="alert" style="text-align: right;">
+                        <button class="btn btn-success" id="createDocumentBtn">
+                            <i class="glyphicon glyphicon-plus icon-white"></i>
+                            Создать
+                        </button>
+                    </div>
+
+                    <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+                        <thead>
+                            <tr>
+                                <th>Организация</th>
+                                <th>Номер договора</th>
+                                <th>Дата</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.Documents.Any())
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center">Нет договоров</td>
+                                    <td style="display: none;"></td>
+                                    <td style="display: none;"></td>
+                                    <td style="display: none;"></td>
+                                </tr>
+                            }
+                            else
+                            {
+                                foreach (var doc in Model.Documents)
+                                {
+                                    <tr>
+                                        <td>@doc.Organization</td>
+                                        <td>
+                                            <input class="docId" type="hidden" value="@doc.CorporatorDocumentId" />
+                                            <b>@doc.Document</b>
+                                        </td>
+                                        <td>@doc.Date</td>
+                                        <td>
+                                            <button class="btn btn-success" id="editDocumentBtn">
+                                                <i class="glyphicon glyphicon-edit icon-white"></i>
+                                                Изменить
+                                            </button>
+                                            <button class="btn btn-success" id="editTaxBtn">
+                                                <i class="glyphicon glyphicon-edit icon-white"></i>
+                                                Изменить сборы
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(function () {
+    });
+
+    $("#createDocumentBtn").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/CorpClient/EditCorporatorDocument",
+            type: "GET",
+            cache: false,
+            data: {
+                corpITN: $("#corpITN").val(),
+            },
+            success: function (result) {
+                $("#results").html(result.message);
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+
+    $("#editDocumentBtn").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/CorpClient/EditCorporatorDocument",
+            type: "GET",
+            cache: false,
+            data: {
+                id: $(this).parent().parent().find(".docId").val()
+            },
+            success: function (result) {
+                $("#results").html(result.message);
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+
+    $("#editTaxBtn").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/CorpClient/EditCorporatorDocumentTaxes",
+            type: "GET",
+            cache: false,
+            data: {
+                id: $(this).parent().parent().find(".docId").val()
+            },
+            success: function (result) {
+                $("#results").html(result.message);
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+</script>

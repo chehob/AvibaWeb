@@ -11,15 +11,9 @@
     <a asp-action="Receipts" asp-controller="CorpClient"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-list-alt">&nbsp;</i>Список счетов</a>
-    <a asp-action="CreateCounterparty" asp-controller="Data"
+    <a asp-action="Corporators" asp-controller="CorpClient"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-plus">&nbsp;</i>Новый клиент</a>
-    @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
-    {
-    <a asp-action="CorporatorDocuments" asp-controller="Admin"
-        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-        class="btn btn-primary"><i class="glyphicon glyphicon-list-alt"> </i>Договоры</a>
-    }
+       class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-plus">&nbsp;</i>Корпораторы</a>
 
 </p>
 }
