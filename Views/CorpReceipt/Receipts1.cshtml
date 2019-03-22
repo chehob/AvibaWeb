@@ -3,7 +3,7 @@
 @using static AvibaWeb.DomainModels.CorporatorReceipt
 @model List<ReceiptsViewModel>
 
-<table class="table table-striped table-bordered bootstrap-datatable datatable" id="dataTable">
+<table class="table table-bordered bootstrap-datatable datatable" id="dataTable">
     <thead>
         <tr>
             <th>№ счета</th>
@@ -32,7 +32,7 @@
                         break;
 
                     case CorporatorReceipt.CRPaymentStatus.Paid:
-                        @:lightgreen
+                        @: #dfefd8
                         break;
                 }">
                 <td style="width: 70px;">
@@ -60,12 +60,11 @@
                                 break;
 
                             case CorporatorReceipt.CRPaymentStatus.Partial:
-                                <span class="label-warning label label-default">Оплачен частично</span>
+                                
                                 break;
 
                             case CorporatorReceipt.CRPaymentStatus.Paid:
-                                <span class="label-success label label-default">Оплачен</span>
-                                <br>
+                                
                                 <span>@receipt.PaidDateTime</span>
                                 break;
                         }
