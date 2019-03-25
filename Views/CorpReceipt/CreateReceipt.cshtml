@@ -12,6 +12,7 @@
         <div class="box-content">
             <div class="row">
                 <div class="col-md-6">
+                    <input id="editReceiptCreatedDate" type="hidden" value="@Model.Receipt.CreatedDateTime" />
                     <h5>Счет № <b>@Model.Receipt.ReceiptNumber</b> от <b><span id="receiptCreatedDate">@Model.Receipt.CreatedDateTime</span></b></h5>
                     <span></span>
                 </div>
@@ -245,7 +246,11 @@
 
         var editValue = $("#editReceiptCorpName").val();
         if (editValue) {
-            $('#selectPayer').val(editValue).trigger('chosen:updated');
+            $('#selectPayer').val(editValue).trigger('chosen:updated'); 
+        }
+
+        editValue = $("#editReceiptCreatedDate").val();
+        if (editValue) {
             $("#min").val(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").subtract(5, 'days').format("DD.MM.YYYY"));
             $("#max").val(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").format("DD.MM.YYYY"));
         }
