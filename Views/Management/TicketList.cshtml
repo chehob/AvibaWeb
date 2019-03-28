@@ -1,0 +1,167 @@
+﻿@using AvibaWeb.DomainModels
+@using AvibaWeb.ViewModels.ManagementViewModels
+@model List<TicketCancelViewModel>
+
+<table class="table table-striped table-bordered bootstrap-datatable datatable" id="dataTable">
+    <thead>
+    <tr>
+        <th>Заявка</th>
+        <th>Билет</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (!Model.Any())
+    {
+        <tr>
+            <td colspan="2" class="text-center">Нет билетов</td>
+            <td style="display: none;"></td>
+        </tr>
+
+    }
+    else
+    {
+        foreach (var ticket in Model)
+        {
+            <tr>
+                <td>
+                    <input hidden value="@ticket.TicketId" class="ticketId" />
+                    @if (ticket.TicketStatus == VTicketCancelList.TOType.Cancel && ticket.Status != null)
+                    {
+                        <span id="myId">@ticket.DealDateTime</span><br>
+                        switch (ticket.Status)
+                        {
+                            case TicketCancelOperation.TCOType.Accepted:
+                                // принят
+                                <span style="background-color: rgb(198, 233, 164)">
+                                    &nbsp;Билет аннулировал(а):<br>
+                                    @ticket.ManagerName&nbsp;
+                                </span><br/>
+                                <button class="btn btn-success btn-sm rejectBtn" >
+                                    <span class="glyphicon glyphicon-remove">Отменить</span>
+                                </button>
+                                break;
+
+                            case TicketCancelOperation.TCOType.Rejected:
+                                // отказ
+                                <span style="background-color: #c71c22; color: white">
+                                    &nbsp;Аннуляцию отменил(а):<br>
+                                    @ticket.ManagerName&nbsp;
+                                </span><br/>
+                                <button class="btn btn-danger btn-xs" data-toggle="confirmation"
+                                        data-btn-ok-label="Продолжить" data-btn-ok-class="btn-success"
+                                        data-btn-ok-icon-class="material-icons" data-btn-ok-icon-content="check"
+                                        data-btn-cancel-label="Отмена" data-btn-cancel-class="btn-danger"
+                                        data-btn-cancel-icon-class="material-icons" data-btn-cancel-icon-content="close"
+                                        data-title="Аннулировать" data-content="Аннулировать билет?">
+                                    <span class="glyphicon glyphicon-remove">Аннулировать</span>
+                                </button>
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        <button class="btn btn-danger btn-xs" data-toggle="confirmation"
+                                data-btn-ok-label="Продолжить" data-btn-ok-class="btn-success"
+                                data-btn-ok-icon-class="material-icons" data-btn-ok-icon-content="check"
+                                data-btn-cancel-label="Отмена" data-btn-cancel-class="btn-danger"
+                                data-btn-cancel-icon-class="material-icons" data-btn-cancel-icon-content="close"
+                                data-title="Аннулировать" data-content="Аннулировать билет?">
+                            <span class="glyphicon glyphicon-remove">Аннулировать</span>
+                        </button>
+                    }
+                </td>
+                <td>
+                    @ticket.BSONumber <br>
+                    <b>@ticket.PassengerName</b><br>
+                    @ticket.Route<br>
+                    Стоимость билета: @ticket.Payment <b class="blue">Статус: @Html.DisplayFor(k => ticket.TicketStatus)</b>
+                </td>
+
+            </tr>
+        }
+    }
+    </tbody>
+</table>
+    
+<script>
+    $(function() {
+        var oTable = $('#dataTable').dataTable({
+            "iDisplayLength": 100,
+            "aLengthMenu": [[10, 20, 50, 100, -1], [10, 20, 50, 100, "все"]],
+            "bStateSave": false,
+            "sPaginationType": "full_numbers",
+            "bSort": false,
+            "aaSorting": [[0, "desc"]],
+            "columnDefs": [
+                {
+                    "defaultContent": "-",
+                    "targets": "_all"
+                }
+            ],
+            "oLanguage": {
+                "sSearch": "Поиск:",
+                "sLengthMenu": "Показать _MENU_ записей",
+                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
+                "oPaginate": {
+                    "sFirst": 'Первая',
+                    "sPrevious": 'Предыдущая',
+                    "sNext": 'Следующая',
+                    "sLast": 'Последняя'
+                },
+                "oaria": {
+                    "ipaginate": {
+                        "nfirst": 'Начало',
+                        "nprevious": 'Previous',
+                        "nnext": 'Next',
+                        "nlast": 'Last'
+                    }
+                }
+            }
+        });
+    });
+
+    $('[data-toggle=confirmation]').confirmation({
+        rootSelector: '[data-toggle=confirmation]',
+        onConfirm: function (e) {
+            var button = $(this);
+
+            $.ajax({
+                url: "/Management/CancelTicket",
+                type: "POST",
+                cache: false,
+                data: {
+                    id: $(this).closest('tr').find('.ticketId').val(),
+                    cancelOpType: @((int)TicketCancelOperation.TCOType.Accepted)
+                },
+                success: function (result) {
+                    $("#getTicketListBtn").trigger("click");
+                },
+                error: function (error) {
+                    console.log(error.message);
+                }
+            });
+        }
+    });
+
+    $(".rejectBtn").click(function (e) {
+        var button = $(this);
+
+        $.ajax({
+            url: "/Management/CancelTicket",
+            type: "POST",
+            cache: false,
+            data: {
+                id: $(this).closest('tr').find('.ticketId').val(),
+                cancelOpType: @((int)TicketCancelOperation.TCOType.Rejected)
+            },
+            success: function (result) {
+                $("#getTicketListBtn").trigger("click");
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+</script>

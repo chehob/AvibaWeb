@@ -131,12 +131,12 @@
                 url: "/CorpReceipt/ClearReceipt",
                 type: "POST",
                 cache: false,
-                data: { id: $(button.parent().siblings()[6]).children()[0].value },
+                data: { id: $(this).closest('tr').find('.receiptId').val() },
                 success: function (result) {
-                    button.parent().siblings()[2].innerHTML = "";
-                    button.parent().siblings()[3].innerHTML = "";
-                    button.parent().siblings()[4].innerHTML = "";
-                    button.parent().siblings()[5].innerHTML = `<span>0.00</span>`;
+                    $(this).closest('tr').siblings()[2].innerHTML = "";
+                    $(this).closest('tr').siblings()[3].innerHTML = "";
+                    $(this).closest('tr').siblings()[4].innerHTML = "";
+                    $(this).closest('tr').siblings()[5].innerHTML = `<span>0.00</span>`;
                 },
                 error: function (error) {
                     console.log(error.message);

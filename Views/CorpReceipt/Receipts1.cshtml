@@ -14,7 +14,7 @@
     <tbody>
     @if (!Model.Any())
     {
-        <tr><td colspan="4" class="text-center">Нет счетов</td></tr>
+        <tr><td colspan="3" class="text-center">Нет счетов</td></tr>
     }
     else
     {
@@ -162,12 +162,17 @@
                 url: "/CorpReceipt/ClearReceipt",
                 type: "POST",
                 cache: false,
-                data: { id: $(button.parent().siblings()[6]).children()[0].value },
+                data: { id: $(this).closest('tr').find('.receiptId').val() },
                 success: function (result) {
-                    button.parent().siblings()[2].innerHTML = "";
-                    button.parent().siblings()[3].innerHTML = "";
-                    button.parent().siblings()[4].innerHTML = "";
-                    button.parent().siblings()[5].innerHTML = `<span>0.00</span>`;
+                    button.closest('tr').children()[2].innerHTML = 
+                        `<div class="col-md-4">                        
+                        </div>
+                        <div class="col-md-4">                        
+                        </div>
+                        <div class="col-md-2">
+                            <span style="color: chocolate"><b>0.00</b></span>
+                        </div>`;
+                    button.remove();
                 },
                 error: function (error) {
                     console.log(error.message);

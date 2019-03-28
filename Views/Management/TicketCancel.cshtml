@@ -1,0 +1,51 @@
+﻿<div class="row">
+    <!-- CONTENT START -->
+    <div class="box col-md-12">
+        <div class="box-header well" data-original-title="">
+            <h2>Аннуляция билетов</h2>
+        </div>
+        <br>
+        <div class="col-md-12">
+            Выбрать с: <input type="text" autocomplete="off" id="min" name="min" class="date-range-filter"> по: <input type="text" autocomplete="off" id="max" name="max" class="date-range-filter">
+            <a href="/" id="getTicketListBtn" class="btn btn-success">Список билетов</a>
+        </div>
+        <br><br>
+        <div class="col-md-12" id="ticketListBlock">
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#getTicketListBtn").click(function (e) {
+        const sendJsonData = {
+            fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+            toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true)
+        };
+
+        e.preventDefault();
+        $.ajax({
+            url: "/Management/TicketList",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $("#ticketListBlock").html(result.message);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $(function () {
+        $("#min").datepicker();
+        $("#max").datepicker();
+
+        $("#min").val(moment().startOf('day').format("DD.MM.YYYY"));
+        $("#max").val(moment().endOf('day').format("DD.MM.YYYY"));
+
+        $("#getTicketListBtn").trigger("click");
+    });
+</script>

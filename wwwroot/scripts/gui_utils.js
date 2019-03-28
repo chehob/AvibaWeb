@@ -232,7 +232,7 @@ $(document).on('click',
                 url: "/CorpReceipt/ClearReceipt",
                 type: "POST",
                 cache: false,
-                data: { id: $($(this).siblings()[0]).val() },
+                data: { id: $(this).closest('tr').find('.receiptId').val() },
                 success: function (result) {
                     button.parent().siblings()[2].innerHTML = "";
                     button.parent().siblings()[3].innerHTML = "";
