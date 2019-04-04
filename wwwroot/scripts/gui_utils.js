@@ -436,6 +436,35 @@ $(document).on('click',
     });
 
     $(document).on('click',
+    '.ticketCancelConfirmBtn[data-toggle=confirmation]',
+    function (e) {
+        e.preventDefault();
+        $(this).confirmation({
+            rootSelector: '[data-toggle=confirmation]',
+            onConfirm: function (e) {
+                var button = $(this);
+
+                $.ajax({
+                    url: "/Management/CancelTicket",
+                    type: "POST",
+                    cache: false,
+                    data: {
+                        id: $(this).closest('tr').find('.ticketId').val(),
+                        cancelOpType: $("#tcoAccepted").val()
+                    },
+                    success: function (result) {
+                        $("#getTicketListBtn").trigger("click");
+                    },
+                    error: function (error) {
+                        console.log(error.message);
+                    }
+                });
+            }
+        });
+        $(this).confirmation('show');
+    });
+
+    $(document).on('click',
         '.createReceiptPDF2',
         function (e) {
         e.preventDefault();
