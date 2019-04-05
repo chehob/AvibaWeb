@@ -49,11 +49,11 @@
                                         </td>
                                         <td>@doc.Date</td>
                                         <td>
-                                            <button class="btn btn-success" id="editDocumentBtn">
+                                            <button class="btn btn-success editDocumentBtn" id="editDocumentBtn">
                                                 <i class="glyphicon glyphicon-edit icon-white"></i>
                                                 Изменить
                                             </button>
-                                            <button class="btn btn-success" id="editTaxBtn">
+                                            <button class="btn btn-success editTaxBtn" id="editTaxBtn">
                                                 <i class="glyphicon glyphicon-edit icon-white"></i>
                                                 Изменить сборы
                                             </button>
@@ -93,7 +93,7 @@
         });
     });
 
-    $("#editDocumentBtn").click(function (e) {
+    $(".editDocumentBtn").click(function (e) {
         e.preventDefault();
         $.ajax({
             url: "/CorpClient/EditCorporatorDocument",
@@ -111,7 +111,7 @@
         });
     });
 
-    $("#editTaxBtn").click(function (e) {
+    $(".editTaxBtn").click(function (e) {
         e.preventDefault();
         $.ajax({
             url: "/CorpClient/EditCorporatorDocumentTaxes",

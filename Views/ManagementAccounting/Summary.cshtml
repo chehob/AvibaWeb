@@ -1,26 +1,29 @@
 ﻿@using AvibaWeb.ViewModels.ManagementAccountingViewModels
 @model SummaryBlockViewModel
 
-<div class="row">
-<div class="col-md-6"><b class="yellow">Наши:</b></div>
-<div class="col-md-6"><b class="yellow pull-right animated flash">@Model.FinalTotal</b></div>
-</div>
+@if (User.IsInRole("Administrators"))
+{
+    <div class="row">
+        <div class="col-md-6"><b class="yellow">Наши:</b></div>
+        <div class="col-md-6"><b class="yellow pull-right animated flash">@Model.FinalTotal</b></div>
+    </div>
+}
 <div id="ProvidersTotalStr" style="cursor: pointer" class="row">
-<div class="col-md-6"><span class="blue">Взаиморасчеты:</span></div>
-<div class="col-md-6"><span class="blue pull-right animated flash">@Model.ProvidersTotalStr</span></div>
+    <div class="col-md-6"><span class="blue">Взаиморасчеты:</span></div>
+    <div class="col-md-6"><span class="blue pull-right animated flash">@Model.ProvidersTotalStr</span></div>
 </div>
 <div id="SubagentsTotalStr" style="cursor: pointer" class="row">
-<div class="col-md-6"><span class="blue">Субагенты:</span></div>
-<div class="col-md-6"><span class="blue pull-right animated flash">@Model.SubagentsTotalStr</span></div>
+    <div class="col-md-6"><span class="blue">Субагенты:</span></div>
+    <div class="col-md-6"><span class="blue pull-right animated flash">@Model.SubagentsTotalStr</span></div>
 </div>
 <div id="summaryCashlessTotalDiv" style="cursor: pointer" class="row">
-<div class="col-md-6"><b class="yellow">Итого безнал:</b></div>
-<div class="col-md-6"><b class="yellow pull-right animated flash">@Model.CashlessTotal</b></div>    
+    <div class="col-md-6"><b class="yellow">Итого безнал:</b></div>
+    <div class="col-md-6"><b class="yellow pull-right animated flash">@Model.CashlessTotal</b></div>
 </div>
 
 <div id="CashTotalStr" style="cursor: pointer" class="row">
-<div class="col-md-6"><b class="yellow">Итого нал:</b></div>
-<div class="col-md-6"><b class="yellow pull-right animated flash">@Model.CashTotalStr</b></div>
+    <div class="col-md-6"><b class="yellow">Итого нал:</b></div>
+    <div class="col-md-6"><b class="yellow pull-right animated flash">@Model.CashTotalStr</b></div>
 </div>
 
 
@@ -29,18 +32,18 @@
     <div class="col-md-6"><span class="blue pull-right animated flash">@Model.OrganizationBalanceStr</span></div>
 </div>
 <div id="CorpNegativeBalanceStr" style="cursor: pointer" class="row">
-<div class="col-md-6"><span class="blue">Корпораторы:</span></div>
-<div class="col-md-6"><span class="blue pull-right animated flash">@Model.CorpNegativeBalanceStr</span></div>
+    <div class="col-md-6"><span class="blue">Корпораторы:</span></div>
+    <div class="col-md-6"><span class="blue pull-right animated flash">@Model.CorpNegativeBalanceStr</span></div>
 </div>
 @if (User.IsInRole("Administrators"))
 {
-<div id="TransitTotalStr" style="cursor: pointer" class="row">
-<div class="col-md-6"><span class="blue">Негодяи:</span></div>
-<div class="col-md-6"><span class="blue pull-right animated flash">@Model.TransitTotalStr</span></div>
-</div>
+    <div id="TransitTotalStr" style="cursor: pointer" class="row">
+        <div class="col-md-6"><span class="blue">Негодяи:</span></div>
+        <div class="col-md-6"><span class="blue pull-right animated flash">@Model.TransitTotalStr</span></div>
+    </div>
 }
 
 <div id="DepositTotalStr" style="cursor: pointer" class="row">
-<div class="col-md-6"><span class="blue">Депозиты:</span></div>
-<div class="col-md-6"><span class="blue pull-right animated flash">@Model.DepositTotalStr</span></div>    
+    <div class="col-md-6"><span class="blue">Депозиты:</span></div>
+    <div class="col-md-6"><span class="blue pull-right animated flash">@Model.DepositTotalStr</span></div>
 </div>
