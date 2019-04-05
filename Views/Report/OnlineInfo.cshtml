@@ -159,14 +159,17 @@
                     </div>
                     @foreach (var info in Model.CollectorsBalanceInfo)
                     {
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h5>@Html.DisplayFor(c => info.Name)</h5>
+                        if (info.Name != "Инкассатор" || (info.Name == "Инкассатор" && User.IsInRole("Administrators")))
+                        {
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5>@Html.DisplayFor(c => info.Name)</h5>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>@Html.DisplayFor(c => info.BalanceStr)</h5>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <h5>@Html.DisplayFor(c => info.BalanceStr)</h5>
-                            </div>
-                        </div>
+                        }
                     }
                 </div>
             </div>
