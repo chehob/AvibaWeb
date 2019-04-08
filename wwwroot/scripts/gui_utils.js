@@ -1272,11 +1272,9 @@ $(document).on('click',
                 ${$(this).siblings()[3].outerHTML}
                 <a href="/" class="btn btn-danger btn-sm removeTicketBtnCorp"><i class="glyphicon glyphicon-remove"></i></a>`,
                 $($(this).parent().siblings()[0]).html(),
-                `<input type="hidden" value="${$(this).parent().siblings()[1].children[1].value}" />
-                <input class="ticketRoute" type="text" value="${$(this).parent().siblings()[1].children[0].innerHTML}" />`,
-                `<input class="ticketPassenger" type="text" value="${$(this).parent().siblings()[2].children[0].innerHTML}" />`,
-                `<input class="ticketPaymentCorp" type="text" value="${$($(this).parent().siblings()[3]).html().replace(/ /g, '')
-                .replace('</b>', '').replace('<b>', '')}" />`,
+                $($(this).parent().siblings()[1]).html(),
+                $($(this).parent().siblings()[2]).html(),
+                $($(this).parent().siblings()[3]).html(),
                 `<input class="ticketFee" type="text" value="${feeRate}" />`
             ]);
 
@@ -1314,9 +1312,9 @@ $(document).on('click',
                     ${$(this).siblings()[3].outerHTML}
                     <a href="/" class="btn btn-success btn-sm addTicketBtn">Добавить</a>`,
                     $($(this).parent().siblings()[0]).html(),
-                    `<b>${$($($(this).parent().siblings()[1]).find('input')[1]).val()}</b>`,
-                    `<b>${$($(this).parent().siblings()[2]).find('input').val()}</b>`,
-                    `<b>${$($(this).parent().siblings()[3]).find('input').val()}</b>`
+                    $($(this).parent().siblings()[1]).html(),
+                    $($(this).parent().siblings()[2]).html(),
+                    $($(this).parent().siblings()[3]).html()
                     ]);
 
                 var my_array = $('#dataTable').dataTable().fnGetNodes();

@@ -56,7 +56,11 @@
                 </div>
             </div>
             <br>
-
+            <div class="row">
+                <div class="col-md-6">
+                    <button id="resetOrgDataBtn" class="btn btn-success">Сбросить</button>
+                </div>
+            </div>
             <br>
             <div class="row">
                 <div class="col-md-6">
@@ -108,46 +112,46 @@
 
                     <table class="table table-striped table-bordered bootstrap-datatable datatable" id="receiptItemsTable">
                         <thead>
-                        <tr>
-                            <th>Дата операции</th>
-                            <th>Билет</th>
-                            <th>Маршрут</th>
-                            <th>Пассажир</th>
-                            <th>Сумма</th>
-                            <th>Сбор</th>
-                        </tr>
+                            <tr>
+                                <th>Дата операции</th>
+                                <th>Билет</th>
+                                <th>Маршрут</th>
+                                <th>Пассажир</th>
+                                <th>Сумма</th>
+                                <th>Сбор</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        @if (Model.Receipt.Items != null)
-                        {
-                            foreach (var item in Model.Receipt.Items)
+                            @if (Model.Receipt.Items != null)
                             {
-                                <tr>
-                                    <td>
-                                        <input type="hidden" value="@item.TicketOperationId" />
-                                        <span id="myId">@item.ExecutionDateTime</span><br>
-                                        <span>@Html.DisplayFor(c => item.OperationType)</span>
-                                        <a href="/" class="btn btn-danger btn-sm removeTicketBtn"><i class="glyphicon glyphicon-remove"></i></a>
-                                    </td>
-                                    <td>
-                                        <b>@item.TicketNumber</b>
-                                    </td>
-                                    <td>
-                                        <input type="hidden" value="@item.SegCount" />
-                                        <input class="ticketRoute" type="text" value="@item.Route" size="100" />
-                                    </td>
-                                    <td>
-                                        <input class="ticketPassenger" type="text" value="@item.PassengerName" />
-                                    </td>
-                                    <td>
-                                        <input class="ticketPaymentCorp" type="text" value="@item.Payment" />
-                                    </td>
-                                    <td>
-                                        <input class="ticketFee" type="text" value="@item.FeeRate" />
-                                    </td>
-                                </tr>
+                                foreach (var item in Model.Receipt.Items)
+                                {
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" value="@item.TicketOperationId" />
+                                            <span id="myId">@item.ExecutionDateTime</span><br>
+                                            <span>@Html.DisplayFor(c => item.OperationType)</span>
+                                            <a href="/" class="btn btn-danger btn-sm removeTicketBtn"><i class="glyphicon glyphicon-remove"></i></a>
+                                        </td>
+                                        <td>
+                                            <b>@item.TicketNumber</b>
+                                        </td>
+                                        <td>
+                                            <input type="hidden" value="@item.SegCount" />
+                                            <input class="ticketRoute" type="text" value="@item.Route" size="100" />
+                                        </td>
+                                        <td>
+                                            <input class="ticketPassenger" type="text" value="@item.PassengerName" />
+                                        </td>
+                                        <td>
+                                            <input class="ticketPaymentCorp" type="text" value="@item.Payment" />
+                                        </td>
+                                        <td>
+                                            <input class="ticketFee" type="text" value="@item.FeeRate" />
+                                        </td>
+                                    </tr>
+                                }
                             }
-                        }
                         </tbody>
                     </table>
                 </div>
@@ -162,7 +166,7 @@
                 </div>
                 <div class="col-md-6" style="display: none;" id="receiptTotalDiv">
                     <label for="receiptTotal">Сумма:</label>
-                    <input type="text" id="receiptTotal" value="0"/>
+                    <input type="text" id="receiptTotal" value="0" />
                 </div>
             </div>
             <div class="row">
@@ -205,7 +209,7 @@
 </div>
 
 <script>
-    onload = function () {
+    var initChosen = function () {
         $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
 
         // Select the node that will be observed for mutations
@@ -241,13 +245,15 @@
                     url: "/CorpClient/CorpFeeList",
                     type: "GET",
                     cache: false,
-                    data: { PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
-                        PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html() },
+                    data: {
+                        PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
+                        PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html()
+                    },
                     success: function (result) {
                         $("#corpFeeRatesDiv").html(result.message);
                     },
                     error: function (error) {
-                                
+
                     }
                 });
             }
@@ -283,13 +289,15 @@
                     url: "/CorpClient/CorpFeeList",
                     type: "GET",
                     cache: false,
-                    data: { PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
-                        PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html() },
+                    data: {
+                        PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
+                        PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html()
+                    },
                     success: function (result) {
                         $("#corpFeeRatesDiv").html(result.message);
                     },
                     error: function (error) {
-                                
+
                     }
                 });
             }
@@ -316,6 +324,10 @@
 
         // Start observing the target node for configured mutations
         payerObserver.observe(payerTargetNode, config);
+    }
+
+    onload = function () {
+        initChosen();
 
         $("#issuedDateTime").datepicker();
         $("#min").datepicker();
@@ -328,11 +340,11 @@
 
         editValue = $("#editReceiptCreatedDate").val();
         if (editValue) {
-            $("#min").val(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").subtract(5, 'days').format("DD.MM.YYYY"));
+            $("#min").val(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").format("DD.MM.YYYY"));
             $("#max").val(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").format("DD.MM.YYYY"));
         }
         else {
-            $("#min").val(moment().subtract(5, 'days').format("DD.MM.YYYY"));
+            $("#min").val(moment().format("DD.MM.YYYY"));
             $("#max").val(moment().format("DD.MM.YYYY"));
         }
 
@@ -398,13 +410,14 @@
         if ($("#receiptItemsTable").dataTable().fnSettings().aoData.length) {
             $("#receiptItemsTable tbody").children().each(function () {
                 const firstDiv = $(this).find("input");
+                const firstTd = $(this).find("td");
                 if (firstDiv.length) {
                     const receiptItem = {
                         TicketOperationId: firstDiv.val(),
-                        Amount: Number(firstDiv[4].value.replace(/[^0-9.-]+/g, "")),
-                        FeeRate: Number(firstDiv[5].value.replace(/[^0-9.-]+/g, "")),
-                        PassengerName: firstDiv[3].value,
-                        Route: firstDiv[2].value
+                        Amount: Number(firstTd[4].innerHTML.replace(/[^0-9.-]+/g, "")),
+                        FeeRate: Number(firstDiv[4].value.replace(/[^0-9.-]+/g, "")),
+                        PassengerName: firstTd[3].innerText,
+                        Route: firstTd[2].innerText
                     };
                     items.push(receiptItem);
                 }
@@ -448,6 +461,34 @@
             },
             error: function (error) {
                 console.log(error.message);
+            }
+        });
+    });
+
+    $("#resetOrgDataBtn").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: "/CorpReceipt/CorporatorOrganizations",
+            type: "GET",
+            cache: false,
+            success: function (result) {
+                $("#payeeSelectDiv").html(result);
+            },
+            error: function (error) {
+                $("#payeeSelectDiv").html();
+            }
+        });
+
+        $.ajax({
+            url: "/CorpReceipt/OrganizationCorporators",
+            type: "GET",
+            cache: false,
+            success: function (result) {
+                $("#payerSelectDiv").html(result);
+                initChosen();
+            },
+            error: function (error) {
+                $("#payerSelectDiv").html();
             }
         });
     });
