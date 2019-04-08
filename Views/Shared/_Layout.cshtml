@@ -142,7 +142,7 @@
                             </li>
                             
                         }
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Кассиры"))
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Кассиры") || User.IsInRole("Офис"))
                         {
                         <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
                             <a asp-action="Index" asp-controller="CorpClient"
