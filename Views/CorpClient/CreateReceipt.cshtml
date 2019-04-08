@@ -213,13 +213,13 @@
         $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
 
         // Select the node that will be observed for mutations
-        const payeeTargetNode = $("#selectPayee").next().find("a.chosen-single span")[0];
+        var payeeTargetNode = $("#selectPayee").next().find("a.chosen-single span")[0];
 
         // Options for the observer (which mutations to observe)
-        const config = { attributes: true, childList: true, subtree: true };
+        var config = { attributes: true, childList: true, subtree: true };
 
         // Callback function to execute when mutations are observed
-        const payeeCallback = function (mutationsList, observer) {
+        var payeeCallback = function (mutationsList, observer) {
             const mutation = mutationsList[0];
             $.ajax({
                 url: "/Data/OrganizationFinancialAccounts",
@@ -274,16 +274,16 @@
         };
 
         // Create an observer instance linked to the callback function
-        const payeeObserver = new MutationObserver(payeeCallback);
+        var payeeObserver = new MutationObserver(payeeCallback);
 
         // Start observing the target node for configured mutations
         payeeObserver.observe(payeeTargetNode, config);
 
         // Select the node that will be observed for mutations
-        const payerTargetNode = $("#selectPayer").next().find("a.chosen-single span")[0];
+        var payerTargetNode = $("#selectPayer").next().find("a.chosen-single span")[0];
 
         // Callback function to execute when mutations are observed
-        const payerCallback = function (mutationsList, observer) {
+        var payerCallback = function (mutationsList, observer) {
             if ($("#selectPayee").next().find("a.chosen-single span").first().html() !== "Выбрать организацию") {
                 $.ajax({
                     url: "/CorpClient/CorpFeeList",
@@ -320,10 +320,12 @@
         };
 
         // Create an observer instance linked to the callback function
-        const payerObserver = new MutationObserver(payerCallback);
+        var payerObserver = new MutationObserver(payerCallback);
 
         // Start observing the target node for configured mutations
         payerObserver.observe(payerTargetNode, config);
+
+        console.log('ok');
     }
 
     onload = function () {
@@ -467,29 +469,38 @@
 
     $("#resetOrgDataBtn").click(function (e) {
         e.preventDefault();
-        $.ajax({
-            url: "/CorpReceipt/CorporatorOrganizations",
-            type: "GET",
-            cache: false,
-            success: function (result) {
-                $("#payeeSelectDiv").html(result);
-            },
-            error: function (error) {
-                $("#payeeSelectDiv").html();
-            }
-        });
 
-        $.ajax({
-            url: "/CorpReceipt/OrganizationCorporators",
-            type: "GET",
-            cache: false,
-            success: function (result) {
-                $("#payerSelectDiv").html(result);
-                initChosen();
-            },
-            error: function (error) {
-                $("#payerSelectDiv").html();
-            }
+        var corpOrgAjax = function() {
+            return $.ajax({
+                url: "/CorpReceipt/CorporatorOrganizations",
+                type: "GET",
+                cache: false,
+                success: function(result) {
+                    $("#payeeSelectDiv").html(result);
+                    $("#selectBank").val('').trigger("chosen:updated");
+                },
+                error: function(error) {
+                    $("#payeeSelectDiv").html();
+                }
+            });
+        };
+
+        var orgCorpAjax = function() {
+            return $.ajax({
+                url: "/CorpReceipt/OrganizationCorporators",
+                type: "GET",
+                cache: false,
+                success: function(result) {
+                    $("#payerSelectDiv").html(result);
+                },
+                error: function(error) {
+                    $("#payerSelectDiv").html();
+                }
+            });
+        };
+
+        $.when(corpOrgAjax(), orgCorpAjax()).done(function() {
+            initChosen();
         });
     });
 
