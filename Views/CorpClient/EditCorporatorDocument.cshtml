@@ -12,8 +12,9 @@
             <input id="corpITN" type="hidden" value="@Model.ITN" />
             <input id="editDocumentId" type="hidden" value="@Model.Document.DocumentId" />
             <div class="row">
-                <label for="selectPayee">Организация:</label>
+                
                 <div class="col-md-10">
+                  <label for="selectPayee">Организация:</label>  
                     <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
                         <option value=""></option>
                         <optgroup label="Организации">
@@ -26,16 +27,22 @@
                     <input id="editOrgName" type="hidden" value="@Model.Document.OrganizationName" />
                 </div>
             </div>
+            <br>
             <div class="row">
-                <label for="doc">Номер договора:</label>
+                
                 <div class="col-md-10">
+                    <label for="doc">Номер договора:</label>
                     <input type="text" id="doc" value="@Model.Document.Doc" />
+                    <label for="date">Дата:</label>
+                    <input type="text" id="date" class="date-range-filter" value="@Model.Document.Date" />
                 </div>
             </div>
+            <br>
             <div class="row">
-                <label for="date">Дата:</label>
+                
                 <div class="col-md-10">
-                    <input type="text" id="date" class="date-range-filter" value="@Model.Document.Date" />
+                    
+                    
                 </div>
             </div>
             @Html.ValidationSummary("", new { @class = "text-danger" })

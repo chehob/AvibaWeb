@@ -70,6 +70,8 @@
             </div>
         </div>
     </div>
+@if (User.IsInRole("Administrators"))
+                        {
     <div class="box col-md-12 b8"></div>
     <div class="box col-md-4 b7 hidden" id="transitBlock">
         <div class="box-inner" style="cursor: pointer;">
@@ -80,6 +82,7 @@
             </div>
         </div>
     </div>
+                        }
     <div class="box col-md-5 b5 hidden" id="providersBlock">
         <div class="box-inner" style="cursor: pointer;">
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
