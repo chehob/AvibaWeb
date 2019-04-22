@@ -1101,9 +1101,44 @@ $(document).on('click',
             });
         });
 
+    $(document).on('click',
+        ".createReceiptText",
+        function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "/CorpReceipt/ReceiptPDFData",
+                type: "POST",
+                cache: false,
+                data: { id: $(this).closest('tr').find('.receiptId').val() },
+                success: function (result) {
+                    console.log(result);
+
+                    var receiptText = `Оплата по сч. N ${result.receiptNumber} от ${result.issuedDateTime}<br/>
+                    Сумма: ${result.totalAmountStr}р<br/>
+                    Без НДС <br/>
+                    ${result.orgName}<br/>
+                    ИНН: ${result.orgITN}<br/>
+                    КПП: ${result.orgKPP}<br/>
+                    ${result.orgAddress}<br/>
+                    ${result.orgBankName}<br/>
+                    БИК: ${result.orgBIK}<br/>
+                    Кор/сч.: ${result.orgCorrAccount}<br/>
+                    Р/сч.: ${result.orgFinancialAccount}`;
+
+                    var win = window.open('', '_blank');
+                    win.document.write(receiptText);
+                },
+                error: function (error) {
+                    console.log(error.message);
+                }
+        });
+    });
+
         function numberWithSpaces(x) {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
         }
+
+    
 
     $(document).on('input',
         '.ticketPayment',
@@ -1343,7 +1378,7 @@ $(document).on('click',
             }
         });
 
-        $(document).on('click',
+    $(document).on('click',
         '.addReceiptPayment',
         function (e) {
             e.preventDefault();;
@@ -1366,7 +1401,7 @@ $(document).on('click',
             $('#paymentTotal').html(numberWithSpaces(paymentTotal));
         });
 
-        $(document).on('click',
+    $(document).on('click',
         '.removeReceiptPayment',
         function(e) {
             e.preventDefault();
@@ -1399,3 +1434,161 @@ $(document).on('click',
                 $('#paymentTotal').html(numberWithSpaces(0));
             }
         });
+
+    $(document).on('click',
+        '#resetOrgDataBtn',
+        function(e) {
+            e.preventDefault();
+    
+            var corpOrgAjax = function() {
+                return $.ajax({
+                    url: "/CorpReceipt/CorporatorOrganizations",
+                    type: "GET",
+                    cache: false,
+                    success: function(result) {
+                        $("#payeeSelectDiv").html(result);
+                        $("#selectBank").val('').trigger("chosen:updated");
+                    },
+                    error: function(error) {
+                        $("#payeeSelectDiv").html();
+                    }
+                });
+            };
+    
+            var orgCorpAjax = function() {
+                return $.ajax({
+                    url: "/CorpReceipt/OrganizationCorporators",
+                    type: "GET",
+                    cache: false,
+                    success: function(result) {
+                        $("#payerSelectDiv").html(result);
+                    },
+                    error: function(error) {
+                        $("#payerSelectDiv").html();
+                    }
+                });
+            };
+    
+            $.when(corpOrgAjax(), orgCorpAjax()).done(function() {
+                initChosen();
+            });
+        });
+
+    function initChosen() {
+            $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+    
+            // Select the node that will be observed for mutations
+            var payeeTargetNode = $("#selectPayee").next().find("a.chosen-single span")[0];
+    
+            // Options for the observer (which mutations to observe)
+            var config = { attributes: true, childList: true, subtree: true };
+    
+            // Callback function to execute when mutations are observed
+            var payeeCallback = function (mutationsList, observer) {
+                const mutation = mutationsList[0];
+                $.ajax({
+                    url: "/Data/OrganizationFinancialAccounts",
+                    type: "GET",
+                    cache: false,
+                    data: { orgName: mutation.target.textContent },
+                    success: function (result) {
+                        $("#payeeOrgFinancialAccountsDiv").html(result);
+                        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+    
+                        var editValue = $("#editReceiptBankName").val();
+                        if (editValue) {
+                            $('#selectBank').val(editValue).trigger('chosen:updated');
+                        }
+                    },
+                    error: function (error) {
+                        $("#payeeOrgFinancialAccountsDiv").html();
+                    }
+                });
+    
+                if ($("#selectPayer").next().find("a.chosen-single span").first().html() !== "Выбрать корпоратора") {
+                    $.ajax({
+                        url: "/CorpClient/CorpFeeList",
+                        type: "GET",
+                        cache: false,
+                        data: {
+                            PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
+                            PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html()
+                        },
+                        success: function (result) {
+                            $("#corpFeeRatesDiv").html(result.message);
+                        },
+                        error: function (error) {
+    
+                        }
+                    });
+                }
+    
+                $.ajax({
+                    url: "/CorpReceipt/OrganizationCorporators",
+                    type: "GET",
+                    cache: false,
+                    data: { orgName: mutation.target.textContent },
+                    success: function (result) {
+                        $("#payerSelectDiv").html(result);
+                        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+                    },
+                    error: function (error) {
+                        $("#payerSelectDiv").html();
+                    }
+                });
+            };
+    
+            // Create an observer instance linked to the callback function
+            var payeeObserver = new MutationObserver(payeeCallback);
+    
+            // Start observing the target node for configured mutations
+            payeeObserver.observe(payeeTargetNode, config);
+    
+            // Select the node that will be observed for mutations
+            var payerTargetNode = $("#selectPayer").next().find("a.chosen-single span")[0];
+    
+            // Callback function to execute when mutations are observed
+            var payerCallback = function (mutationsList, observer) {
+                if ($("#selectPayee").next().find("a.chosen-single span").first().html() !== "Выбрать организацию") {
+                    $.ajax({
+                        url: "/CorpClient/CorpFeeList",
+                        type: "GET",
+                        cache: false,
+                        data: {
+                            PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
+                            PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html()
+                        },
+                        success: function (result) {
+                            $("#corpFeeRatesDiv").html(result.message);
+                        },
+                        error: function (error) {
+    
+                        }
+                    });
+                }
+    
+                const mutation = mutationsList[0];
+    
+                $.ajax({
+                    url: "/CorpReceipt/CorporatorOrganizations",
+                    type: "GET",
+                    cache: false,
+                    data: { corpName: mutation.target.textContent },
+                    success: function (result) {
+                        $("#payeeSelectDiv").html(result);
+                        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+                    },
+                    error: function (error) {
+                        $("#payeeSelectDiv").html();
+                    }
+                });
+            };
+    
+            // Create an observer instance linked to the callback function
+            var payerObserver = new MutationObserver(payerCallback);
+    
+            // Start observing the target node for configured mutations
+            payerObserver.observe(payerTargetNode, config);
+    
+            console.log('ok');
+        }
