@@ -234,6 +234,22 @@
 </html>
 
 <script>
+    $(function() {
+        pdfMake.fonts = {
+            Roboto: {
+                normal: 'Roboto-Regular.ttf',
+                bold: 'Roboto-Medium.ttf',
+                italics: 'Roboto-Italic.ttf',
+                bolditalics: 'Roboto-MediumItalic.ttf'
+            },
+            Helios: {
+                normal: 'Helios.otf',
+                bold: 'Helios Bold.otf',
+                italics: 'HeliosLight.otf'
+            }
+        };
+    });
+
     function disableLoader() {
         clearTimeout(showLoader);
         $('.mWaiting').fadeOut(500);

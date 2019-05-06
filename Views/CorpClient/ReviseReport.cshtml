@@ -1,4 +1,5 @@
-﻿@model List<string>
+﻿@using AvibaWeb.ViewModels.CorpClientViewModels
+@model ReviseReportViewModel
 
 <div class="box col-md-12">
     <div class="box-inner">
@@ -8,12 +9,28 @@
         <div class="box-content">
             <div class="row">
                 <div class="col-md-6">
+                    <h5>Организация:</h5>
+                    <div id="payeeSelectDiv">
+                        <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
+                            <option value=""></option>
+                            <optgroup label="Организации">
+                                @foreach (var org in Model.Organizations)
+                                {
+                                    <option>@org</option>
+                                }
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div id="payeeOrgFinancialAccountsDiv"></div>
+                </div>
+
+                <div class="col-md-6">
                     <h5>Корпоратор:</h5>
                     <div id="payerSelectDiv">
                         <select data-placeholder="Выбрать корпоратора" id="selectPayer" data-rel="chosen">
                             <option value=""></option>
                             <optgroup label="Корпораторы">
-                                @foreach (var counterparty in Model)
+                                @foreach (var counterparty in Model.Counterparties)
                                 {
                                     <option>@counterparty</option>
                                 }
@@ -23,6 +40,13 @@
                     <div id="payeeOrgFinancialAccountsDiv"></div>
                 </div>
             </div>
+            <br />
+            <div class="row">
+                <div class="col-md-6">
+                    <button id="resetOrgDataBtn" class="btn btn-success">Сбросить</button>
+                </div>
+            </div>
+            <br />
             <div class="row">
                 <div class="col-md-12">
                     За период с: <input type="text" id="min" name="min" class="date-range-filter"> по: <input type="text" id="max" name="max" class="date-range-filter">
@@ -34,15 +58,17 @@
 </div>
 
 <script>
-    $(function() {
-        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+    $(function () {
+        initChosen();
     });
 
     $("#createReviseReportBtn").click(function (e) {
         const sendJsonData = {
             fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
             toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true),
-            payerName: $("#selectPayer").next().find("a.chosen-single span").first().html()
+            payerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
+            payeeName: $("#selectPayee").next().find("a.chosen-single span").first().html(),
+            payeeBankName: $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html()
         };
 
         e.preventDefault();
@@ -54,167 +80,173 @@
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(sendJsonData),
             success: function (result) {
+                console.log(result);
+
                 const bodyData = [];
 
-                const headerRow = [];
+                var headerRow = [];
 
-                headerRow.push({ text: '№', style: 'tableHeader' });
-                headerRow.push({ text: 'Наименование', style: 'tableHeader' });
-                headerRow.push({ text: 'Кол-во', style: 'tableHeader' });
-                headerRow.push({ text: 'Ед.', style: 'tableHeader' });
-                headerRow.push({ text: 'Цена', style: 'tableHeader' });
-                headerRow.push({ text: 'Сумма', style: 'tableHeader' });
+                headerRow.push({ text: `По данным ${result.orgName}, руб`, colSpan: 4 });
+                headerRow.push({});
+                headerRow.push({});
+                headerRow.push({});
+                headerRow.push({ text: `По данным ${result.payerName}, руб`, colSpan: 4 });
+                headerRow.push({});
+                headerRow.push({});
+                headerRow.push({});
+
+                bodyData.push(headerRow);
+
+                headerRow = [];
+
+                headerRow.push({ text: 'Дата' });
+                headerRow.push({ text: 'Документ' });
+                headerRow.push({ text: 'Дебет' });
+                headerRow.push({ text: 'Кредит' });
+                headerRow.push({ text: 'Дата' });
+                headerRow.push({ text: 'Документ' });
+                headerRow.push({ text: 'Дебет' });
+                headerRow.push({ text: 'Кредит' });
 
                 bodyData.push(headerRow);
 
                 var dataRow = [];
-                var itemCount = 0;
+
+                dataRow.push({ text: 'Сальдо начальное', colSpan: 2 });
+                dataRow.push({});
+                dataRow.push({ text: `${result.oldDebit}` });
+                dataRow.push({ text: `${result.oldCredit}` });
+                dataRow.push({ text: 'Сальдо начальное', colSpan: 2 });
+                dataRow.push({});
+                dataRow.push({});
+                dataRow.push({});
+
+                bodyData.push(dataRow);
+
                 result.items.forEach(function (item) {
                     dataRow = [];
 
-                    itemCount++;
-                    dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
-                    dataRow.push({ text: item.ticketLabel, style: 'smallText' });
-                    dataRow.push({ text: item.segCount, alignment: 'center' });
-                    dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
-                    dataRow.push({ text: item.amountStr, alignment: 'right' });
-                    dataRow.push({ text: item.amountStr, alignment: 'right' });
+                    dataRow.push({ text: item.Date });
+                    dataRow.push({ text: `Принято (${item.receiptNumber} от ${item.date})` });
+                    dataRow.push({ text: item.Amount });
+                    dataRow.push({});
+                    dataRow.push({});
+                    dataRow.push({});
+                    dataRow.push({});
+                    dataRow.push({});
 
                     bodyData.push(dataRow);
                 });
-
-                result.taxes.forEach(function (item) {
-                    dataRow = [];
-
-                    itemCount++;
-                    dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
-                    dataRow.push({ text: 'Сбор за оформление билета', style: 'smallText' });
-                    dataRow.push({ text: item.segCount, alignment: 'center' });
-                    dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
-                    dataRow.push({ text: item.feeStr, alignment: 'right' });
-                    dataRow.push({ text: item.amountStr, alignment: 'right' });
-
-                    bodyData.push(dataRow);
-                });
-
-                // itemCount++;
-                // dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
-                // dataRow.push({ text: 'Сбор за оформление авиабилета', style: 'smallText' });
-                // dataRow.push({ text: result.segCountTotal, alignment: 'center' });
-                // dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
-                // dataRow.push({ text: result.feeRateStr, alignment: 'right' });
-                // dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
-
-                // bodyData.push(dataRow);
 
                 dataRow = [];
 
-                dataRow.push({ text: 'Итого: ', colSpan: 5, alignment: 'right' });
+                dataRow.push({ text: 'Обороты за период', colSpan: 2 });
+                dataRow.push({});
+                dataRow.push({ text: '' });
+                dataRow.push({ text: '' });
+                dataRow.push({ text: 'Обороты за период', colSpan: 2 });
                 dataRow.push({});
                 dataRow.push({});
                 dataRow.push({});
+
+                bodyData.push(dataRow);
+
+                dataRow = [];
+
+                dataRow.push({ text: 'Сальдо конечное', colSpan: 2 });
                 dataRow.push({});
-                dataRow.push({ text: result.totalAmountStr, alignment: 'right' });
+                dataRow.push({ text: '' });
+                dataRow.push({ text: '' });
+                dataRow.push({ text: 'Сальдо конечное', colSpan: 2 });
+                dataRow.push({});
+                dataRow.push({});
+                dataRow.push({});
 
                 bodyData.push(dataRow);
 
                 const docDefinition = {
                     content: [
                         {
-                            text: 'Внимание! Счет действителен для оплаты в течении 3 банковских дней. Оплата данного счета означает согласие с условиями договора.',
-                            style: 'headerWarning'
+                            text: 'Акт сверки',
+                            style: 'largerText',
+                            alignment: 'center',
+                            bold: true
+                        },
+                        {
+                            text: `взаимных расчетов за период ${result.fromDate} - ${result.toDate}`,
+                            style: 'normalText',
+                            alignment: 'center'
+                        },
+                        {
+                            text: `между ${result.orgName}`,
+                            style: 'normalText',
+                            alignment: 'center'
+                        },
+                        {
+                            text: `и ${result.payerName}`,
+                            style: 'normalText',
+                            alignment: 'center'
+                        },
+                        {
+                            text: 'по договору Основной договор',
+                            style: 'normalText',
+                            alignment: 'center'
+                        },
+                        {
+                            text: `Мы, нижеподписавшиеся, ________________ ${result.orgName} _______________, с одной стороны,`,
+                            style: 'normalText'
+                        },
+                        {
+                            text: `и ________________ ${result.payerName} _______________, с другой стороны,`,
+                            style: 'normalText'
+                        },
+                        {
+                            text: 'составили настоящий акт сверки в том, что состояние взаимных расчетов по данным учета следующее:',
+                            style: 'normalText'
                         },
                         {
                             table: {
-                                widths: [150, 150, 40, '*'],
-                                heights: [15, 30, 15, 15],
-
-                                body: [
-                                    [`ИНН: ${result.orgITN}`, `КПП: ${result.orgKPP}`, { text: 'Сч. №', rowSpan: 2, margin: [0, 35, 0, 0] }, { text: result.orgFinancialAccount, rowSpan: 2, margin: [0, 35, 0, 0] }],
-                                    [{ text: `Получатель\n${result.orgName}`, colSpan: 2 }, {}, {}, {}],
-                                    [{ text: `Банк получателя\n${result.orgBankName}`, colSpan: 2, rowSpan: 2 }, {}, 'БИК', result.orgBIK],
-                                    [{}, {}, 'Сч. №', result.orgCorrAccount]
-                                ]
-                            },
-                            style: 'mediumText',
-                            margin: [0, 20, 0, 0]
-                        },
-                        {
-                            text: `Счет № ${result.receiptNumber} от ${result.issuedDateTime}`,
-                            style: 'mediumText',
-                            bold: true,
-                            margin: [0, 15, 0, 0]
-                        },
-                        {
-                            text: `Поставщик: ${result.orgName}`,
-                            style: 'mediumText',
-                            bold: true,
-                            margin: [0, 15, 0, 0]
-                        },
-                        {
-                            text: `${result.orgAddress}`,
-                            style: 'mediumText',
-                        },
-                        {
-                            text: `Покупатель: ${result.payerName}`,
-                            style: 'mediumText',
-                            bold: true,
-                            margin: [0, 15, 0, 0]
-                        },
-                        {
-                            text: `ИНН: ${result.payerITN}, КПП: ${result.payerKPP}, Адрес: ${result.payerAddress}`,
-                            style: 'mediumText'
-                        },
-                        {
-                            table: {
-                                headerRows: 1,
-                                widths: [20, 220, 45, 'auto', 65, '*'],
+                                headerRows: 2,
+                                widths: [40, 100, 45, 45, 40, 100, 45, 45],
                                 body: bodyData
                             },
-                            style: 'mediumText',
+                            style: 'normalText',
                             margin: [0, 15, 0, 40]
                         },
                         {
-                            stack: [
-                                {
-                                    text: `Всего наименований: ${itemCount}, на сумму ${result.totalAmountStr} руб.`,
-                                    style: 'mediumText'
-                                },
-                                {
-                                    text: `Сумма прописью: ${rubles(result.totalAmount)}. Без НДС`,
-                                    style: 'mediumText'
-                                },
-                                {
-                                    columns: [
-                                        { text: 'Руководитель', margin: [0, 40, 0, 0] },
-                                        { image: `${result.signatureImage}`, width: 150, alignment: 'center', margin: [25, 0, 25, 0] },
-                                        { text: `${result.orgHeadName}`, margin: [0, 40, 0, 0] },
-                                        { image: `${result.stampImage}`, width: 125, alignment: 'center', margin: [25, 0, 45, 0] }
-                                    ],
-                                    style: 'mediumText',
-                                    margin: [0, 20, 0, 0]
-                                }
+                            columns: [
+                                [
+                                    {
+                                        text: `От ${result.orgName}`
+                                    },
+                                    {
+                                        text: '_____________________________(_______________)'
+                                    },
+                                    {
+                                        text: 'М.П.'
+                                    }
+                                ],
+                                [
+                                    {
+                                        text: `От ${result.payerName}`
+                                    },
+                                    {
+                                        text: '_____________________________(_______________)'
+                                    },
+                                    {
+                                        text: 'М.П.'
+                                    }
+                                ]
                             ],
-                            id: 'NoBreak'
+                            style: 'normalText'
                         }
                     ],
 
-                    pageBreakBefore: function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
-                        if (currentNode.id === 'NoBreak' && currentNode.pageNumbers.length != 1) {
-                            return true;
-                        }
-                        return false;
-                    },
-
                     styles: {
-                        headerWarning: {
-                            fontSize: 7,
-                            alignment: 'center'
-                        },
-                        mediumText: {
+                        largerText: {
                             fontSize: 10,
                         },
-                        smallText: {
+                        normalText: {
                             fontSize: 8
                         },
                         tableHeader: {

@@ -321,6 +321,9 @@ $(document).on('click',
                 bodyData.push(dataRow);
 
                 const docDefinition = {
+                    info: {
+                        title: `Счет №${result.receiptNumber}`
+                      },
                     content: [
                         {
                             text: 'Внимание! Счет действителен для оплаты в течении 3 банковских дней. Оплата данного счета означает согласие с условиями договора.',
@@ -1127,6 +1130,408 @@ $(document).on('click',
 
                     var win = window.open('', '_blank');
                     win.document.write(receiptText);
+                },
+                error: function (error) {
+                    console.log(error.message);
+                }
+        });
+    });
+
+    $(document).on('click',
+        ".createTicketsPDF",
+        function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "/CorpClient/TicketPDFData",
+                type: "POST",
+                cache: false,
+                data: { id: $(this).closest('tr').find('.receiptId').val() },
+                success: function (result) {
+                    result.tickets.forEach(function(item) {
+                        const docDefinition = {
+                            pageMargins: [ 0, 0, 0, 0 ],
+
+                            background: {
+                                image: `${item.blankImage}`,
+                                width: 600,
+                            },
+
+                            content: [
+                                {
+                                    text: 'МАРШРУТ / КВИТАНЦИЯ ЭЛЕКТРОННОГО БИЛЕТА',
+                                    fontSize: 13,
+                                    italics: true,
+                                    margin: [ 252, 30, 0, 0 ],
+                                    color: '#192646'
+                                },
+                                {
+                                    text: item.ticketNumber,
+                                    fontSize: 11,
+                                    bold: true,
+                                    margin: [ 420, 8, 0, 0 ],
+                                    color: '#192646'
+                                },
+                                {
+                                    columns: [
+                                        {                                    
+                                            text: 'СВЕДЕНИЯ О ПАССАЖИРЕ',
+                                            bold: true,
+                                            width: 142                                        
+                                        },
+                                        {
+                                            text: '/ PASSENGER INFORMATION'                                          
+                                        }
+                                    ],
+                                    fontSize: 10,
+                                    color: '#002857',
+                                    margin: [ 18, 34, 0, 0 ]
+                                },
+                                {                                        
+                                    table: {
+                                        widths: [338, 116, 100],
+                                        heights: [15, 15],
+        
+                                        body: [
+                                            [
+                                                {
+                                                    text: 'Фамилия Имя Отчество',
+                                                    color: '#ffffff',
+                                                    bold: true
+                                                },
+                                                {
+                                                    text: 'Тип документа',
+                                                    color: '#ffffff',
+                                                    bold: true
+                                                },
+                                                {
+                                                    text: 'Номер документа',
+                                                    color: '#ffffff',
+                                                    bold: true
+                                                }
+                                            ],
+                                            [item.passengerName,item.docType,item.doc]
+                                        ]
+                                    },
+                                    fontSize: 9,     
+                                    color: '#002857',                               
+                                    margin: [ 18, 8, 0, 0 ],
+                                    layout: 'noBorders',
+                                },
+                                {
+                                    columns: [
+                                        {                                    
+                                            text: 'МАРШРУТ ПЕРЕЛЕТА',
+                                            bold: true,
+                                            width: 112                                        
+                                        },
+                                        {
+                                            text: '/ THE ROUTE',
+                                            width: 233                                       
+                                        },
+                                        {
+                                            text: 'Указано местное время отправления/прибытия',
+                                            color: '#009bd9'                                          
+                                        }
+                                    ],
+                                    fontSize: 10,
+                                    color: '#002857',
+                                    margin: [ 18, 17, 0, 0 ]
+                                },
+                                {                                        
+                                    table: {
+                                        widths: [155, 155, 48, 87, 87],
+                                        heights: [13, 14, 14, 14, 14],
+        
+                                        body: [
+                                            [
+                                                {
+                                                    text: 'Аэропорт отправления',
+                                                    color: '#ffffff',
+                                                    bold: true
+                                                },
+                                                {
+                                                    text: 'Аэропорт прибытия',
+                                                    color: '#ffffff',
+                                                    bold: true
+                                                },
+                                                {
+                                                    text: 'Рейс',
+                                                    color: '#ffffff',
+                                                    bold: true
+                                                },
+                                                {
+                                                    text: 'Отправление',
+                                                    color: '#ffffff',
+                                                    bold: true
+                                                },
+                                                {
+                                                    text: 'Прибытие',
+                                                    color: '#ffffff',
+                                                    bold: true
+                                                }
+                                            ],
+                                            [item.seg[0].origin,item.seg[0].destination,item.seg[0].flight,item.seg[0].departure,item.seg[0].arrival],
+                                            [item.seg[1].origin,item.seg[1].destination,item.seg[1].flight,item.seg[1].departure,item.seg[1].arrival],
+                                            [item.seg[2].origin,item.seg[2].destination,item.seg[2].flight,item.seg[2].departure,item.seg[2].arrival],
+                                            [item.seg[3].origin,item.seg[3].destination,item.seg[3].flight,item.seg[3].departure,item.seg[3].arrival]
+                                        ]
+                                    },
+                                    fontSize: 9,     
+                                    color: '#002857',                               
+                                    margin: [ 18, 5, 0, 0 ],
+                                    layout: 'noBorders',
+                                },
+                                {
+                                    columns: [
+                                        {
+                                            stack: [
+                                                {                                    
+                                                    text: '03БЕД ТКП'                          
+                                                },
+                                                {                                    
+                                                    text: 'AVIBA.RU',
+                                                    margin: [0, 2, 0, 0]                         
+                                                },
+                                                {                                    
+                                                    text: 'БЕЛГОРОД РФ',
+                                                    margin: [0, 2, 0, 0]                         
+                                                },
+                                                {                                    
+                                                    text: item.stamp,
+                                                    margin: [0, 2, 0, 0]
+                                                },
+                                            ],
+                                            width: 200,
+                                            margin: [0, 5, 0, 0]
+                                        },                                     
+                                        {                                        
+                                            table: {
+                                                widths: [82, 80, 150],
+                                                heights: [11, 11, 11, 11],
+                
+                                                body: [                                                    
+                                                    ['ВЫДАН ОТ','ISSUED BY',item.issuedBy],
+                                                    [
+                                                        {
+                                                            text: 'НОМЕР БИЛЕТА',
+                                                            bold: true
+                                                        },
+                                                        'TICKET NUMBER',
+                                                        {
+                                                            text: item.ticketNumber,
+                                                            bold: true
+                                                        }],
+                                                    ['ДАННЫЕ БРОНИ','BOOKING REF',item.pnr],
+                                                    [
+                                                        {
+                                                            text: 'ДАТА ВЫДАЧИ',
+                                                            bold: true
+                                                        },
+                                                        'DATE OF ISSUE',
+                                                        {
+                                                            text: item.dateOfIssue,
+                                                            bold: true
+                                                        }]
+                                                ]
+                                            },
+                                            layout: 'noBorders',
+                                        }
+                                    ],
+                                    fontSize: 9,
+                                    color: '#002857',
+                                    margin: [ 18, 42, 0, 0 ]
+                                },
+                                {
+                                    table: {
+                                        widths: [550],
+                                        heights: [120],
+
+                                        body: [
+                                            [
+                                                {
+                                                    columns: [
+                                                        {
+                                                            stack: [
+                                                                {                                    
+                                                                    columns: [
+                                                                        {                                    
+                                                                            text: 'РАСЧЕТ СТОИМОСТИ',
+                                                                            bold: true,
+                                                                            width: 113                                       
+                                                                        },
+                                                                        {
+                                                                            text: '/ FARE CALCULATION'                                          
+                                                                        }
+                                                                    ],
+                                                                    fontSize: 10   
+                                                                },
+                                                                {                                    
+                                                                    text: item.fareCalc,
+                                                                    margin: [0, 11, 0, 0],
+                                                                    lineHeight: 1.45,            
+                                                                }
+                                                            ],
+                                                            width: 370
+                                                        },                                     
+                                                        {
+                                                            stack: [
+                                                                {                                    
+                                                                    columns: [
+                                                                        {                                    
+                                                                            text: 'БАГАЖ:',
+                                                                            bold: true,
+                                                                            width: 45                                       
+                                                                        },
+                                                                        {
+                                                                            text: item.luggage                                        
+                                                                        }
+                                                                    ],
+                                                                    fontSize: 10          
+                                                                },
+                                                                {                                    
+                                                                    columns: [
+                                                                        {                                    
+                                                                            text: 'СТ/ST:',
+                                                                            bold: true,
+                                                                            width: 32                                       
+                                                                        },
+                                                                        {
+                                                                            text: item.status                                          
+                                                                        }
+                                                                    ],
+                                                                    fontSize: 8,
+                                                                    margin: [0, 40, 0, 0]                         
+                                                                },
+                                                                {                                    
+                                                                    columns: [
+                                                                        {                                    
+                                                                            text: 'КЛ/CL:',
+                                                                            bold: true,
+                                                                            width: 32                                       
+                                                                        },
+                                                                        {
+                                                                            text: item.class                                         
+                                                                        }
+                                                                    ],
+                                                                    fontSize: 8,
+                                                                    margin: [0, 5, 0, 0]                        
+                                                                }
+                                                            ],
+                                                            margin: [7, 0, 0, 0]
+                                                        },
+                                                    ]
+                                                }
+                                            ]
+                                        ]
+                                    },       
+                                    layout: 'noBorders',                                                            
+                                    fontSize: 9,
+                                    color: '#002857',
+                                    margin: [ 18, 16, 0, 0 ]
+                                }, 
+                                {
+                                    columns: [
+                                        {
+                                            text: 'Итого/Total',
+                                            width: 65,
+                                            color: '#ffffff',
+                                            margin: [ 0, 6, 0, 0 ]
+                                        },         
+                                        {
+                                            text: item.total,
+                                            width: 140,
+                                            margin: [ 0, 6, 0, 0 ]
+                                        },                              
+                                        {      
+                                            stack: [
+                                                {
+                                                    text: [
+                                                        'ФОРМА ОПЛАТЫ',
+                                                        {
+                                                            text: ' / FORM OF PAYMENT',
+                                                            bold: false
+                                                        }
+                                                    ]                                                   
+                                                },
+                                                item.payment
+                                            ]
+                                        }
+                                    ],
+                                    fontSize: 9,
+                                    color: '#002857',
+                                    bold: true,
+                                    margin: [ 190, 8, 0, 0 ]
+                                },
+                                {
+                                    table: {
+                                        widths: [70],
+                                        heights: [70],
+
+                                        body: [
+                                            [
+                                                {
+                                                    qr: item.qr,
+                                                    fit: 70                                                    
+                                                }
+                                            ]
+                                        ]                                    
+                                    },
+                                    layout: 'noBorders',   
+                                    margin: [ 23, 150, 0, 0 ]
+                                },
+                                {
+                                    columns: [
+                                        {
+                                            text: 'Аккредитованное агентство ООО «АВИБА.РУ»',
+                                            width: 305,
+                                            fontSize: 13
+                                        },         
+                                        {
+                                            stack: [
+                                                'тел: 8-800-707-76-77, e-mail: office@aviba.ru',
+                                                'WWW.AVIBA.RU'
+                                            ],
+                                            fontSize: 11,
+                                            margin: [ 0, 1, 0, 0 ]
+                                        }
+                                    ],                                    
+                                    color: '#002857',
+                                    margin: [ 24, 22, 0, 0 ]
+                                }
+                            ],
+                            
+                            defaultStyle: {
+                                font: 'Helios',
+                                color: '#002147'
+                            },
+
+                            styles: {
+                                Calibri10: {
+                                    fontSize: 10
+                                },
+                                CalibriBd10: {
+                                    fontSize: 10,
+                                    bold: true
+                                },
+                                Calibri12: {
+                                    fontSize: 12
+                                },
+                                CalibriBd12: {
+                                    fontSize: 12,
+                                    bold: true
+                                },
+                                Calibri11: {
+                                    fontSize: 11
+                                },
+                                CalibriBd11: {
+                                    fontSize: 11,
+                                    bold: true
+                                }
+                            }
+                        };
+
+                        pdfMake.createPdf(docDefinition).open();
+                    });
                 },
                 error: function (error) {
                     console.log(error.message);
