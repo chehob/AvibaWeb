@@ -1,9 +1,12 @@
 ﻿ <p class="btn-group">
-     @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+     @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Кассиры"))
     {
     <a asp-action="OnlineInfo" asp-controller="Report"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary">Наличные</a>
+    }
+    @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+    {
     <a asp-action="CashlessOrg" asp-controller="Report"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary">Безнал счета</a>
