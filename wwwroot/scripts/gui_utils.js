@@ -1940,6 +1940,7 @@ $(document).on('click',
                         }
                     },
                     error: function (error) {
+                        console.log('err');
                         $("#payeeOrgFinancialAccountsDiv").html();
                     }
                 });
@@ -1957,24 +1958,27 @@ $(document).on('click',
                             $("#corpFeeRatesDiv").html(result.message);
                         },
                         error: function (error) {
-    
+                            console.log('err2');
                         }
                     });
                 }
     
-                $.ajax({
-                    url: "/CorpReceipt/OrganizationCorporators",
-                    type: "GET",
-                    cache: false,
-                    data: { orgName: mutation.target.textContent },
-                    success: function (result) {
-                        $("#payerSelectDiv").html(result);
-                        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
-                    },
-                    error: function (error) {
-                        $("#payerSelectDiv").html();
-                    }
-                });
+                if ($("#selectPayer").next().find("a.chosen-single span").first().html() === "Выбрать корпоратора") {
+                    $.ajax({
+                        url: "/CorpReceipt/OrganizationCorporators",
+                        type: "GET",
+                        cache: false,
+                        data: { orgName: mutation.target.textContent },
+                        success: function (result) {
+                            $("#payerSelectDiv").html(result);
+                            $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+                        },
+                        error: function (error) {
+                            console.log('err3');
+                            $("#payerSelectDiv").html();
+                        }
+                    });
+                }
             };
     
             // Create an observer instance linked to the callback function
@@ -2001,26 +2005,29 @@ $(document).on('click',
                             $("#corpFeeRatesDiv").html(result.message);
                         },
                         error: function (error) {
-    
+                            console.log('err4');
                         }
                     });
                 }
     
                 const mutation = mutationsList[0];
     
-                $.ajax({
-                    url: "/CorpReceipt/CorporatorOrganizations",
-                    type: "GET",
-                    cache: false,
-                    data: { corpName: mutation.target.textContent },
-                    success: function (result) {
-                        $("#payeeSelectDiv").html(result);
-                        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
-                    },
-                    error: function (error) {
-                        $("#payeeSelectDiv").html();
-                    }
-                });
+                if ($("#selectPayee").next().find("a.chosen-single span").first().html() === "Выбрать организацию") {
+                    $.ajax({
+                        url: "/CorpReceipt/CorporatorOrganizations",
+                        type: "GET",
+                        cache: false,
+                        data: { corpName: mutation.target.textContent },
+                        success: function (result) {
+                            $("#payeeSelectDiv").html(result);
+                            $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+                        },
+                        error: function (error) {
+                            $("#payeeSelectDiv").html();
+                            console.log('err5');
+                        }
+                    });
+                }
             };
     
             // Create an observer instance linked to the callback function

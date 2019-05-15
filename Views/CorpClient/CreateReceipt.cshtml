@@ -220,6 +220,7 @@
 
         var editValue = $("#editReceiptCorpName").val();
         if (editValue) {
+            console.log(editValue);
             $('#selectPayer').val(editValue).trigger('chosen:updated');
         }
 
@@ -234,6 +235,7 @@
 
         editValue = $("#editReceiptOrgName").val();
         if (editValue) {
+            console.log(editValue);
             $('#selectPayee').val(editValue).trigger('chosen:updated');
         }
 
