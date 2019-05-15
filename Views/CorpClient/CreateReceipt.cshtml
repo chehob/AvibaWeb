@@ -268,15 +268,30 @@
         });
 
         if ($("#receiptItemsTable").dataTable().fnSettings().aoData.length) {
+            
             var segTotal = 0;
             var ticketTotal = 0;
             var feeTotal = 0;
             $("#receiptItemsTable tbody").children().each(function() {
                 const firstDiv = $(this).find("input");
+                const firstTd = $(this).find("td");
+                const ticketTypeId = firstDiv[2].value;
+                const operationTypeId = firstDiv[3].value;
+                var feeRate = Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
+                var perSegment;
+                console.log(firstTd);
+                $("#corpFeeRatesDiv tbody").children().each(function () {
+                    const firstDiv = $(this).find("td");
+                    if( ticketTypeId == firstDiv[0].innerHTML && firstDiv[1].innerHTML == operationTypeId ) {
+                        perSegment = Boolean(firstDiv[3].innerHTML);
+                        return false;
+                    }
+                });
+                
                 if (firstDiv.length) {
                     segTotal += Number(firstDiv[1].value);
-                    ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
-                    feeTotal += Number(firstDiv[1].value) * Number(firstDiv[5].value.replace(/[^0-9.-]+/g, ""));
+                    ticketTotal += Number(firstTd[4].innerText.replace(/[^0-9.-]+/g, ""));
+                    feeTotal += (perSegment ? Number(firstDiv[1].value) * feeRate : feeRate);;
                 }
             });
 
