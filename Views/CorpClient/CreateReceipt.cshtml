@@ -137,14 +137,16 @@
                                             <b>@item.TicketNumber</b>
                                         </td>
                                         <td>
+                                            <b>@item.Route</b>
                                             <input type="hidden" value="@item.SegCount" />
-                                            <input class="ticketRoute" type="text" value="@item.Route" size="100" />
+                                            <input type="hidden" value="@item.TicketTypeId" />
+                                            <input type="hidden" value="@item.OperationTypeId" />
                                         </td>
                                         <td>
-                                            <input class="ticketPassenger" type="text" value="@item.PassengerName" />
+                                            <b>@item.PassengerName</b>
                                         </td>
                                         <td>
-                                            <input class="ticketPaymentCorp" type="text" value="@item.Payment" />
+                                            <b>@item.Payment</b>
                                         </td>
                                         <td>
                                             <input class="ticketFee" type="text" value="@item.FeeRate" />
