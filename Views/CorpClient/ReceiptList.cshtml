@@ -82,8 +82,11 @@
                 <a href="/" class="btn btn-info btn-xs createReceiptPDF" style="width: 70px;">Счет PDF</a>
                 <br>
                 <a href="/" class="btn btn-info btn-xs createReportPDF" style="width: 70px;">Акт PDF</a>
-                <br>
-                <a href="/" class="btn btn-info btn-xs createTicketsPDF" style="width: 70px;">Билеты</a>
+                @if (receipt.TicketsToPDFCount > 0)
+                {
+                    <br>
+                    <a href="/" class="btn btn-info btn-xs createTicketsPDF" style="width: 70px;">Билеты</a>
+                }
             </td>
         </tr>
         }
