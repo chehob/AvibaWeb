@@ -285,6 +285,23 @@ $(document).on('click',
                     bodyData.push(dataRow);
                 });
 
+                console.log(result.items);
+                console.log(result.items.length);
+
+                if(result.items.length == 0) {
+                    dataRow = [];
+
+                    itemCount++;
+                    dataRow.push({ text: '1', alignment: 'center' });
+                    dataRow.push({ text: 'Предоплата за авиа/жд билеты', style: 'smallText' });
+                    dataRow.push({ text: '1', alignment: 'center' });
+                    dataRow.push({ text: '', alignment: 'center' });
+                    dataRow.push({ text: result.totalAmountStr, alignment: 'right' });
+                    dataRow.push({ text: result.totalAmountStr, alignment: 'right' });
+
+                    bodyData.push(dataRow);
+                }
+
                 result.taxes.forEach(function(item) {
                     dataRow = [];
 
