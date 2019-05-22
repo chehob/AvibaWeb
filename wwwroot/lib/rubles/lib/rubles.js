@@ -53,11 +53,11 @@
     var first;
     var second;
     var numeral = '';
-
+	
     if (number.length === 3) {
       first = number.substr(0, 1);
       number = number.substr(1, 3);
-      numeral = '' + words[2][first] + ' ';
+	  numeral = '' + first==='-'?'минус ':words[2][first] + ' ';
     }
 
     if (number < 20) {
@@ -125,9 +125,9 @@
       }
     }
 
-    if (number <= 0) {
-      return false;
-    }
+    //if (number <= 0) {
+    //  return false;
+    //}
 
     var splt;
     var decimals;
