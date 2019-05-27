@@ -8,13 +8,14 @@
             <th></th>
             <th></th>
             <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @if (!Model.Any())
         {
             <tr>
-                <td colspan="4" class="text-center">Нет запросов</td>
+                <td colspan="5" class="text-center">Нет запросов</td>
             </tr>
         }
         else
@@ -25,7 +26,8 @@
                 <td>@fee.TicketTypeId</td>
                 <td>@fee.OperationTypeId</td>
                 <td>@fee.Rate</td>
-                <td>@fee.PerSegment</td>
+                <td>@fee.PerSegment.ToString().ToLower()</td>
+                <td>@fee.IsPercent.ToString().ToLower()</td>
             </tr>
             }
         }

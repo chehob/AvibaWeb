@@ -285,10 +285,21 @@ $(document).on('click',
                     bodyData.push(dataRow);
                 });
 
-                console.log(result.items);
-                console.log(result.items.length);
+                result.luggageItems.forEach(function(item) {
+                    dataRow = [];
 
-                if(result.items.length == 0) {
+                    itemCount++;
+                    dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
+                    dataRow.push({ text: item.ticketLabel, style: 'smallText' });
+                    dataRow.push({ text: item.segCount, alignment: 'center' });
+                    dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                    dataRow.push({ text: item.amountStr, alignment: 'right' });
+                    dataRow.push({ text: item.amountStr, alignment: 'right' });
+
+                    bodyData.push(dataRow);
+                });
+
+                if(result.items.length == 0 && result.luggageItems.length == 0) {
                     dataRow = [];
 
                     itemCount++;
@@ -863,6 +874,19 @@ $(document).on('click',
                         dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });                        
                         dataRow.push({ text: item.amountStr, alignment: 'right' });
 
+                        itemData.push(dataRow);
+                    });
+
+                    result.luggageItems.forEach(function(item) {
+                        dataRow = [];
+    
+                        itemCount++;
+                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+                        dataRow.push({ text: item.segCount, alignment: 'center' });
+                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+    
                         itemData.push(dataRow);
                     });
 
@@ -1747,12 +1771,15 @@ $(document).on('click',
             const ticketTypeId = exportFirstDiv[2].value;
             const operationTypeId = exportFirstDiv[3].value;
             var feeRate;
-            var perSegment;
+            var perSegment = true;
+            var isPercent = false;
             $("#corpFeeRatesDiv tbody").children().each(function () {
                 const firstDiv = $(this).find("td");
                 if( ticketTypeId == firstDiv[0].innerHTML && firstDiv[1].innerHTML == operationTypeId ) {
                     feeRate = Number(firstDiv[2].innerHTML.replace(",", "."));
-                    perSegment = Boolean(firstDiv[3].innerHTML);
+                    perSegment = firstDiv[3].innerHTML === 'true';
+                    isPercent = firstDiv[4].innerHTML === 'true';
+                    console.log(firstDiv);
                     return false;
                 }
             });
@@ -1766,7 +1793,9 @@ $(document).on('click',
                 $($(this).parent().siblings()[1]).html(),
                 $($(this).parent().siblings()[2]).html(),
                 $($(this).parent().siblings()[3]).html(),
-                `<input class="ticketFee" type="text" value="${feeRate}" />`
+                `<input class="ticketFee" type="text" value="${feeRate}" />
+                <input hidden value="${perSegment}" />
+                <input hidden value="${isPercent}" />`
             ]);
 
             $('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
@@ -1779,8 +1808,9 @@ $(document).on('click',
                 const firstTd = $(this).find("td");
                 if (firstDiv.length) {
                     segTotal += Number(firstDiv[1].value);
-                    ticketTotal += Number(firstTd[4].innerText.replace(/[^0-9.-]+/g, ""));
-                    feeTotal += ( perSegment ? Number(firstDiv[1].value) * feeRate : feeRate);
+                    var ticketPayment = Number(firstTd[4].innerText.replace(/[^0-9.-]+/g, ""));
+                    ticketTotal += ticketPayment;
+                    feeTotal += isPercent ? ticketPayment * feeRate / 100 : ( perSegment ? Number(firstDiv[1].value) * feeRate : feeRate);
                 }
             });
 

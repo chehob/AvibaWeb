@@ -147,10 +147,12 @@
                                         </td>
                                         <td>
                                             <b>@item.Payment</b>
+                                            <input type="hidden" value=@item.TypeId />
                                         </td>
                                         <td>
                                             <input class="ticketFee" type="text" value="@item.FeeRate" />
-                                            <input type="hidden" value="@item.PerSegment" />
+                                            <input type="hidden" value=@item.PerSegment.ToString().ToLower() />
+                                            <input type="hidden" value=@item.IsPercent.ToString().ToLower() />                                            
                                         </td>
                                     </tr>
                                 }
@@ -221,7 +223,6 @@
 
         var editValue = $("#editReceiptCorpName").val();
         if (editValue) {
-            console.log(editValue);
             $('#selectPayer').val(editValue).trigger('chosen:updated');
         }
 
@@ -236,9 +237,23 @@
 
         editValue = $("#editReceiptOrgName").val();
         if (editValue) {
-            console.log(editValue);
             $('#selectPayee').val(editValue).trigger('chosen:updated');
         }
+
+        $.ajax({
+            url: "/CorpClient/CorpFeeList",
+            type: "GET",
+            cache: false,
+            data: {
+                PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
+                PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html()
+            },
+            success: function (result) {
+                $("#corpFeeRatesDiv").html(result.message);
+            },
+            error: function (error) {
+            }
+        });
 
         var oTable = $('#receiptItemsTable').dataTable({
             "bStateSave": true,
@@ -279,14 +294,14 @@
                 const firstDiv = $(this).find("input");
                 const firstTd = $(this).find("td");
                 var feeRate = Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
-                var perSegment = Boolean(firstDiv[5].value);
+                var perSegment = firstDiv[5].value === 'true';
+                var isPercent = firstDiv[6].value === 'true';
 
-                console.log(perSegment);
-                console.log(firstDiv);
                 if (firstDiv.length) {
                     segTotal += Number(firstDiv[1].value);
-                    ticketTotal += Number(firstTd[4].innerText.replace(/[^0-9.-]+/g, ""));
-                    feeTotal += (perSegment ? Number(firstDiv[1].value) * feeRate : feeRate);;
+                    var ticketPayment = Number(firstTd[4].innerText.replace(/[^0-9.-]+/g, ""));
+                    ticketTotal += ticketPayment;
+                    feeTotal += isPercent ? ticketPayment * feeRate / 100 : (perSegment ? Number(firstDiv[1].value) * feeRate : feeRate);
                 }
             });
 
@@ -307,9 +322,12 @@
                     const receiptItem = {
                         TicketOperationId: firstDiv.val(),
                         Amount: Number(firstTd[4].innerHTML.replace(/[^0-9.-]+/g, "")),
-                        FeeRate: Number(firstDiv[4].value.replace(/[^0-9.-]+/g, "")),
+                        FeeRate: Number(firstDiv[5].value.replace(/[^0-9.-]+/g, "")),
                         PassengerName: firstTd[3].innerText,
-                        Route: firstTd[2].innerText
+                        Route: firstTd[2].innerText,
+                        PerSegment: firstDiv[6].value,
+                        IsPercent: firstDiv[7].value,
+                        TypeId: firstDiv[4].value
                     };
                     items.push(receiptItem);
                 }

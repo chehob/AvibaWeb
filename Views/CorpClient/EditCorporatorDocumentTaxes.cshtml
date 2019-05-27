@@ -17,6 +17,7 @@
                         <th>Тип билета</th>
                         <th>Тип операции</th>
                         <th>Сбор</th>
+                        <th>Единица</th>
                         <th>За сегмент</th>
                     </tr>
                 </thead>
@@ -31,22 +32,28 @@
                     {
                         foreach (var fee in Model.FeeRates)
                         {
-                            <tr>
-                                <td>
-                                    @Html.DisplayFor(e => fee.TicketType)
-                                    <input class="ticketType" type="hidden" value="@fee.TicketTypeId" />
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(e => fee.OperationType)
-                                    <input class="opType" type="hidden" value=" @fee.OperationTypeId" />
-                                </td>
-                                <td>
-                                    <input type="text" value="@fee.Rate" />
-                                </td>
-                                <td>
-                                    @Html.CheckBoxFor(e => fee.PerSegment)
-                                </td>
-                            </tr>
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(e => fee.TicketType)
+                                <input class="ticketType" type="hidden" value="@fee.TicketTypeId" />
+                            </td>
+                            <td>
+                                @Html.DisplayFor(e => fee.OperationType)
+                                <input class="opType" type="hidden" value=" @fee.OperationTypeId" />
+                            </td>
+                            <td>
+                                <input type="text" value="@fee.Rate" />
+                            </td>
+                            <td>
+                                <select asp-for="@fee.IsPercent">
+                                    <option value="False">руб.</option>
+                                    <option value="True">%</option>
+                                </select>
+                            </td>
+                            <td>
+                                @Html.CheckBoxFor(e => fee.PerSegment)
+                            </td>
+                        </tr>
                         }
                     }
                 </tbody>
@@ -77,11 +84,16 @@
                     TicketTypeId: firstDiv[0].value,
                     OperationTypeId: firstDiv[1].value,
                     Rate: Number(firstDiv[2].value.replace(",", ".")),
-                    PerSegment: firstDiv[3].checked
+                    PerSegment: firstDiv[3].checked,
+                    IsPercent: $(this).find("option:selected")[0].value
                 };
                 items.push(receiptItem);
             }
+
+            console.log($(this).find("option:selected")[0].value);
         });
+
+        
 
         const sendJsonData = {
             OrganizationId: $('#editOrganizationId').val(),
