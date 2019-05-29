@@ -1565,6 +1565,29 @@ $(document).on('click',
                             },
                             {
                                 table: {
+                                    heights: [30],
+
+                                    body: [
+                                        [   
+                                            {
+                                                text: [
+                                                    `${item.isExchange?"ВЫДАН В ОБМЕН БИЛЕТА   № ":""}`,
+                                                    {
+                                                        text: `${item.isExchange?item.exTicketNumber:""}`,
+                                                        bold:true
+                                                    }                                                
+                                                ]                                                  
+                                            }
+                                        ]
+                                    ]                                    
+                                },
+                                fontSize: 9,
+                                color: '#002857',
+                                layout: 'noBorders',   
+                                margin: [ 23, 20, 0, 0 ]
+                            },
+                            {
+                                table: {
                                     widths: [70],
                                     heights: [70],
 
@@ -1578,7 +1601,7 @@ $(document).on('click',
                                     ]                                    
                                 },
                                 layout: 'noBorders',   
-                                margin: [ 23, 150, 0, 0 ]
+                                margin: [ 23, 100, 0, 0 ]
                             },
                             {
                                 columns: [
