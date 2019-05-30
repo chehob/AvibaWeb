@@ -326,7 +326,8 @@
                         TicketOperationId: firstDiv.val(),
                         Amount: Number(firstDiv[4].value.replace(/[^0-9.-]+/g, "")),
                         PassengerName: firstDiv[3].value,
-                        Route: firstDiv[2].value
+                        Route: firstDiv[2].value,
+                        SegCount: firstDiv[1].value
                     };
                     items.push(receiptItem);
                 }
