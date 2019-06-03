@@ -333,7 +333,9 @@ namespace AvibaWeb.Controllers
                 select new ReceiptPDFViewModel
                 {
                     TotalAmount = cr.Amount.Value,
-                    ReceiptNumber = cr.ReceiptNumber.ToString(),
+                    ReceiptNumber = cr.TypeId == CorporatorReceipt.CRType.CorpClient ?
+                        "WR-" + cr.ReceiptNumber.ToString() :
+                        cr.ReceiptNumber.ToString(),
                     PayerNameWithITN = $"{cr.Corporator.Name} ИНН: {cr.Corporator.ITN} ,КПП {cr.Corporator.KPP}",
                     PayerName = cr.Corporator.Name,
                     PayerAddress = cr.Corporator.Address,
@@ -391,7 +393,13 @@ namespace AvibaWeb.Controllers
                     OrgAddress = orgc.Address,
                     FeeRate = cr.FeeRate.Value,
                     FeeRateStr = cr.FeeRate.Value.ToString("#,0.00", nfi),
-                    IssuedDateTime = operation.OperationDateTime.ToShortDateString()
+                    IssuedDateTime = operation.OperationDateTime.ToShortDateString(),
+                    PaymentTemplateLabelStr = cr.TypeId == CorporatorReceipt.CRType.CorpClient ?
+                        $"Образец заполнения назначения платежа:" :
+                        "",
+                    PaymentTemplateStr = cr.TypeId == CorporatorReceipt.CRType.CorpClient ?
+                        $"Оплата по счету WR-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС" :
+                        ""
                 }).FirstOrDefault();
 
             model.ItemTotal = model.Items.Sum(i => i.Amount) + model.LuggageItems.Sum(i => i.Amount);
@@ -445,45 +453,6 @@ namespace AvibaWeb.Controllers
             await _db.SaveChangesAsync();
 
             return Json(new { message = "Ok" });
-        }
-
-        [HttpGet]
-        public ActionResult MultiPayment()
-        {
-            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
-            nfi.NumberGroupSeparator = " ";
-
-            var model = (from p in _db.CorporatorReceiptMultiPayments.Include(p=>p.FinancialAccountOperation)
-                select new MultiPaymentViewModel
-                {
-                    Amount = p.Amount.Value.ToString("#,0.00", nfi),
-                    Description = p.FinancialAccountOperation.Description,
-                    PaymentId = p.CorporatorReceiptMultiPaymentId,
-                    CreatedDateTime = p.FinancialAccountOperation.OperationDateTime
-                }).ToList();
-
-            return PartialView(model);
-        }
-
-        [HttpGet]
-        public ActionResult MultiPaymentProcess(int paymentId)
-        {
-            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
-            nfi.NumberGroupSeparator = " ";
-
-            var model = new MultiPaymentProcessViewModel
-            {
-                Payment = _db.CorporatorReceiptMultiPayments.FirstOrDefault(p => p.CorporatorReceiptMultiPaymentId == paymentId),
-                Receipts = (from r in _db.CorporatorReceipts
-                            where r.StatusId != CorporatorReceipt.CRPaymentStatus.Paid && r.Amount > 0
-                            select new MultiPaymentReceipt
-                            {
-                                Amount = ((r.Amount ?? 0) - (r.PaidAmount ?? 0)).ToString("#,0.00", nfi),
-                                ReceiptNumber = r.ReceiptNumber.Value
-                            }).ToList()
-            };
-
-            return PartialView(model);
         }
 
         [HttpGet]

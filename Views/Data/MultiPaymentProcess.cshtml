@@ -151,12 +151,12 @@
 
         var sendJsonData = {
             PaymentId: $("#paymentId").val(),
-            CounterpartyOperations: receiptsPaid
+            Receipts: receiptsPaid
         };
 
         e.preventDefault();
         $.ajax({
-            url: "/CorpReceipt/EditReceiptPayments",
+            url: "/Data/MultiPaymentProcess",
             type: "POST",
             cache: false,
             dataType: "json",
@@ -164,7 +164,7 @@
             data: JSON.stringify(sendJsonData),
             success: function (result) {
                 $.ajax({
-                    url: "/CorpReceipt/MultiPayment",
+                    url: "/Data/MultiPayment",
                     type: "GET",
                     cache: false,
                     success: function (getResult) {

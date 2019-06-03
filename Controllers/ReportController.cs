@@ -147,7 +147,7 @@ namespace AvibaWeb.Controllers
                          join c in _db.Counterparties.Include(c => c.Type) on v.ITN equals c.ITN
                          where v.Balance != 0
                          orderby v.Balance
-                         where c.Type.Description == "Корпоратор"
+                         where c.Type.Description == "Корпоратор" && c.LoanGroupId == null
                          select new CashlessCorpItem
                          {
                              CorpName = v.Corporator.Name,

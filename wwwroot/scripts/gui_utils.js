@@ -410,8 +410,19 @@ $(document).on('click',
                         {
                             stack: [
                                 {
+                                    text: result.paymentTemplateLabelStr,
+                                    style: 'mediumText',    
+                                },
+                                {
+                                    text: result.paymentTemplateStr,
+                                    style: 'mediumText',                                    
+                                    italics: true,   
+                                    bold: true,                                 
+                                    margin: [0, 0, 0, 15],
+                                },
+                                {
                                     text: `Всего наименований: ${itemCount}, на сумму ${result.totalAmountStr} руб.`,
-                                    style: 'mediumText'
+                                    style: 'mediumText',
                                 },
                                 {
                                     text: `Сумма прописью: ${rubles(result.totalAmount)}. Без НДС`,

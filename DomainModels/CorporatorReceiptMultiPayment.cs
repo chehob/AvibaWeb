@@ -9,6 +9,12 @@ namespace AvibaWeb.DomainModels
 {
     public class CorporatorReceiptMultiPayment
     {
+        public enum CRMPType
+        {
+            CorpReceipt = 0,
+            CorpClient = 1
+        }
+
         [Key]
         public int CorporatorReceiptMultiPaymentId { get; set; }
 
@@ -19,5 +25,9 @@ namespace AvibaWeb.DomainModels
         public int FinancialAccountOperationId { get; set; }
         [ForeignKey("FinancialAccountOperationId")]
         public virtual FinancialAccountOperation FinancialAccountOperation { get; set; }
+
+        public CRMPType TypeId { get; set; }
+
+        public bool IsProcessed { get; set; }
     }
 }

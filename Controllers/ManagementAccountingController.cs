@@ -94,13 +94,15 @@ namespace AvibaWeb.Controllers
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
-            var items = await (from v in _db.VCorpBalances
-                where v.Balance != 0
-                orderby v.Balance
-                select new
-                {
-                    v.Balance
-                }).ToListAsync();
+            var items = await (from v in _db.CorporatorAccounts
+                         join c in _db.Counterparties.Include(c => c.Type) on v.ITN equals c.ITN
+                         where v.Balance != 0
+                         orderby v.Balance
+                         where c.Type.Description == "Корпоратор" && c.LoanGroupId == null
+                         select new
+                         {
+                             v.Balance
+                         }).ToListAsync();
 
             var model = new CorporatorBlockViewModel
             {
@@ -212,31 +214,34 @@ namespace AvibaWeb.Controllers
             var model = new SummaryBlockViewModel
             {
                 OrganizationBalance = await (from o in _db.Organizations
-                    join fa in _db.FinancialAccounts on o.OrganizationId equals fa.OrganizationId
-                    where fa.IsActive != false
-                    select fa).SumAsync(a => a.Balance),
-                CorpNegativeBalance = -await (from v in _db.VCorpBalances
-                    orderby v.Balance
-                    select v.Balance).SumAsync(v => v),
+                                             join fa in _db.FinancialAccounts on o.OrganizationId equals fa.OrganizationId
+                                             where fa.IsActive != false
+                                             select fa).SumAsync(a => a.Balance),
+                CorpNegativeBalance = -await (from v in _db.CorporatorAccounts
+                                              join c in _db.Counterparties.Include(c => c.Type) on v.ITN equals c.ITN
+                                              where v.Balance != 0
+                                              orderby v.Balance
+                                              where c.Type.Description == "Корпоратор" && c.LoanGroupId == null
+                                              select v.Balance).SumAsync(v => v),
                 TransitTotal = await (from lg in _db.LoanGroups
-                    where lg.IsActive && lg.Description != "Дивиденты" && lg.Balance != 0
-                    select lg.Balance).SumAsync(v => v),
+                                      where lg.IsActive && lg.Description != "Дивиденты" && lg.Balance != 0
+                                      select lg.Balance).SumAsync(v => v),
                 ProvidersTotal = await (from c in _db.Counterparties
                         .Include(c => c.ProviderBinding)
-                    where c.Type.Description == "Провайдер услуг"
-                    select c.ProviderBalance.Balance).SumAsync(v => v),
+                                        where c.Type.Description == "Провайдер услуг"
+                                        select c.ProviderBalance.Balance).SumAsync(v => v),
                 SubagentsTotal = -await (from c in _db.Counterparties
                         .Include(c => c.SubagentData)
-                    where c.Type.Description == "Субагент Р"
-                    select c.SubagentData.Balance).SumAsync(v => v),
+                                         where c.Type.Description == "Субагент Р"
+                                         select c.SubagentData.Balance).SumAsync(v => v),
                 DepositTotal = await (from c in _db.Counterparties
                                        .Include(c => c.ProviderBinding)
-                                   where c.Type.Description == "Провайдер услуг"
-                                   select c.ProviderBalance.Deposit).SumAsync(v => v) +
+                                      where c.Type.Description == "Провайдер услуг"
+                                      select c.ProviderBalance.Deposit).SumAsync(v => v) +
                                await (from c in _db.Counterparties
                                        .Include(c => c.SubagentData)
-                                   where c.Type.Description == "Субагент Р"
-                                   select c.SubagentData.Deposit).SumAsync(v => v),
+                                      where c.Type.Description == "Субагент Р"
+                                      select c.SubagentData.Deposit).SumAsync(v => v),
                 CashTotal = cashData.OfficeBalance + cashData.CollectorsBalance + cashData.TransitBalance +
                             cashData.DeskBalance
             };

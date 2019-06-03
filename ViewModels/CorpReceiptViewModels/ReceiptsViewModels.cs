@@ -78,5 +78,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public string FeeTotalStr { get; set; }
         public int SegCountTotal { get; set; }
         public string IssuedDateTime { get; set; }
+        public string PaymentTemplateLabelStr { get; set; }
+        public string PaymentTemplateStr { get; set; }
     }
 }

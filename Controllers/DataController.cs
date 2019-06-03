@@ -223,26 +223,26 @@ namespace AvibaWeb.Controllers
                     //}
                     //else
                     //{
-                        if (payAccount == cashlessDestination.AccountNumber)
+                    if (payAccount == cashlessDestination.AccountNumber)
+                    {
+                        index = firstCsv.IndexOf("Получатель1=", recordStartIndex, StringComparison.Ordinal);
+                        if (index == -1)
                         {
-                            index = firstCsv.IndexOf("Получатель1=", recordStartIndex, StringComparison.Ordinal);
-                            if (index == -1)
-                            {
-                                index = firstCsv.IndexOf("Получатель=", recordStartIndex, StringComparison.Ordinal);
-                            }
+                            index = firstCsv.IndexOf("Получатель=", recordStartIndex, StringComparison.Ordinal);
                         }
-                        else
+                    }
+                    else
+                    {
+                        index = firstCsv.IndexOf("Плательщик1=", recordStartIndex, StringComparison.Ordinal);
+                        if (index == -1)
                         {
-                            index = firstCsv.IndexOf("Плательщик1=", recordStartIndex, StringComparison.Ordinal);
-                            if (index == -1)
-                            {
-                                index = firstCsv.IndexOf("Плательщик=", recordStartIndex, StringComparison.Ordinal);
-                            }
+                            index = firstCsv.IndexOf("Плательщик=", recordStartIndex, StringComparison.Ordinal);
                         }
+                    }
 
-                        newLineIndex = firstCsv.IndexOf("\n", index, StringComparison.Ordinal);
-                        sl = firstCsv.Substring(index, newLineIndex - index).Split("=");
-                        record.PayeeName = sl[1].Trim('\r');
+                    newLineIndex = firstCsv.IndexOf("\n", index, StringComparison.Ordinal);
+                    sl = firstCsv.Substring(index, newLineIndex - index).Split("=");
+                    record.PayeeName = sl[1].Trim('\r');
                     //}
 
                     // Payee Account
@@ -513,7 +513,7 @@ namespace AvibaWeb.Controllers
                         fao.OrderNumber == record.Number &&
                         fao.FinancialAccountId == financialAccount.FinancialAccountId &&
                         ((isCashRequest || counterpartyGroup.IsTransferAccount && fao.TransferFinancialAccountId == transferAccount.FinancialAccountId) ||
-                         (fao.CounterpartyId == record.PayeeITN || ( userId != null && fao.UserId == userId ))) &&
+                         (fao.CounterpartyId == record.PayeeITN || (userId != null && fao.UserId == userId))) &&
                         fao.Amount == dAmount &&
                         fao.OperationDateTime == record.Date.ToLocalTime());
                     if (operationExists) continue;
@@ -584,34 +584,40 @@ namespace AvibaWeb.Controllers
                         if (corpClient != null)
                         {
                             var isUnrecognizedOperation = false;
+                            var multiPaymentType = CorporatorReceiptMultiPayment.CRMPType.CorpClient;
                             if ((lowerPaymentDescription.Contains("оплата") || lowerPaymentDescription.Contains("за оформление")) &&
                                 (lowerPaymentDescription.Contains("счет") || lowerPaymentDescription.Contains("сч.") || lowerPaymentDescription.Contains("по сч")) &&
                                 lowerPaymentDescription.Contains("от"))
                             {
                                 var foundIndexes = new List<int>();
-                                for (var i = 0; i < record.PaymentDescription.Length; i++)
+
+                                var matches = Regex.Matches(lowerPaymentDescription, "WR-");
+                                foreach (Match match in matches)
                                 {
-                                    if (record.PaymentDescription[i] == '№' || record.PaymentDescription[i] == 'N')
+                                    foundIndexes.Add(match.Index);
+                                }
+
+                                if (foundIndexes.Count == 0)
+                                {
+                                    multiPaymentType = CorporatorReceiptMultiPayment.CRMPType.CorpReceipt;
+                                    for (var i = 0; i < record.PaymentDescription.Length; i++)
                                     {
-                                        foundIndexes.Add(i);
+                                        if (record.PaymentDescription[i] == '№' || record.PaymentDescription[i] == 'N')
+                                        {
+                                            foundIndexes.Add(i);
+                                        }
                                     }
                                 }
 
                                 if (foundIndexes.Count > 0)
                                 {
-                                    //var index = GetCorpReceiptIndex(lowerPaymentDescription);
-                                    //if (index != -1)
-                                    //{
-                                    //    foundIndexes.Add(index);
-                                    //}
-
                                     var hasUnrecognizedReceipts = false;
                                     var receiptList = new List<CorporatorReceipt>();
                                     string errorString = "";
                                     foreach (var index in foundIndexes)
                                     {
                                         var beginStr = new string(lowerPaymentDescription.Skip(index + 1).ToArray());
-                                        var endIndex = beginStr.IndexOf("от", StringComparison.Ordinal);
+                                        var endIndex = 7;
                                         var receiptStr = beginStr.Substring(0, endIndex);
                                         var receiptStrList = receiptStr.Split(',');
                                         foreach (var receiptNumberStr in receiptStrList)
@@ -628,8 +634,13 @@ namespace AvibaWeb.Controllers
                                                 errorString += "Неопознанный счет " + receiptNumber.ToString() + ". ";
                                                 hasUnrecognizedReceipts = true;
                                             }
-                                            else
+                                            else if (receipt.StatusId == CorporatorReceipt.CRPaymentStatus.Paid)
                                             {
+                                                errorString += "Счет уже оплачен " + receiptNumber.ToString() + ". ";
+                                                hasUnrecognizedReceipts = true;
+                                            }
+                                            else
+                                            { 
                                                 receiptList.Add(receipt);
                                             }
                                         }
@@ -639,11 +650,14 @@ namespace AvibaWeb.Controllers
                                     decimal paidTotal = 0;
                                     foreach (var receipt in receiptList)
                                     {
-                                        var paidAmount = reminder >= receipt.Amount.Value ? receipt.Amount.Value : reminder;
+                                        var receiptPaymentNeeded = receipt.StatusId == CorporatorReceipt.CRPaymentStatus.Partial ?
+                                            receipt.Amount.GetValueOrDefault(0m) - receipt.PaidAmount.GetValueOrDefault(0m) :
+                                            receipt.Amount.GetValueOrDefault(0m);
+                                        var paidAmount = reminder >= receiptPaymentNeeded ? receiptPaymentNeeded : reminder;
                                         reminder -= paidAmount;
                                         paidTotal += paidAmount;
-                                        receipt.PaidAmount = paidAmount;
-                                        receipt.StatusId = paidAmount < receipt.Amount.Value ?
+                                        receipt.PaidAmount = receipt.PaidAmount.GetValueOrDefault(0m) + paidAmount;
+                                        receipt.StatusId = receipt.PaidAmount.GetValueOrDefault(0m) < receipt.Amount.GetValueOrDefault(0m) ?
                                                 CorporatorReceipt.CRPaymentStatus.Partial :
                                                 CorporatorReceipt.CRPaymentStatus.Paid;
                                         receipt.PaidDateTime = operation.OperationDateTime;
@@ -651,12 +665,19 @@ namespace AvibaWeb.Controllers
                                         corpClient.CorporatorAccount.LastPaymentDate = operation.OperationDateTime;
                                     }
 
+                                    if (hasUnrecognizedReceipts == false && reminder > 0)
+                                    {
+                                        hasUnrecognizedReceipts = true;
+                                        errorString = "Неоплаченный остаток";
+                                    }
+
                                     if (hasUnrecognizedReceipts)
                                     {
                                         multiPaymentData = new CorporatorReceiptMultiPayment
                                         {
                                             ErrorString = errorString,
-                                            Amount = reminder
+                                            Amount = reminder,
+                                            TypeId = multiPaymentType
                                         };
                                     }
                                 }
@@ -676,12 +697,13 @@ namespace AvibaWeb.Controllers
                                 isUnrecognizedOperation = true;
                             }
 
-                            if(isUnrecognizedOperation)
+                            if (isUnrecognizedOperation)
                             {
                                 multiPaymentData = new CorporatorReceiptMultiPayment
                                 {
                                     ErrorString = "Нераспознанная операция",
-                                    Amount = operation.Amount
+                                    Amount = operation.Amount,
+                                    TypeId = multiPaymentType
                                 };
                             }
                         }
@@ -774,7 +796,7 @@ namespace AvibaWeb.Controllers
                         {
                             cparty.BankName = dataRecord.PayeeBankName;
                         }
-                        
+
                         await _db.SaveChangesAsync();
                         continue;
                     }
@@ -911,9 +933,9 @@ namespace AvibaWeb.Controllers
             {
 
                 financialAccount = (from fa in _db.FinancialAccounts
-                                   join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
-                                   where o.Description == model.PayerName && fa.BankName == model.PayerBankName
-                                   select fa).FirstOrDefault();
+                                    join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
+                                    where o.Description == model.PayerName && fa.BankName == model.PayerBankName
+                                    select fa).FirstOrDefault();
                 if (financialAccount == null)
                 {
                     return Json(new { success = false, message = "" });
@@ -1007,7 +1029,7 @@ namespace AvibaWeb.Controllers
         public IActionResult OrganizationFinancialAccounts(string orgName)
         {
             var org = _db.Organizations.Include(o => o.Accounts).FirstOrDefault(o => o.Description == orgName);
-            if(org == null)
+            if (org == null)
             {
                 return Json(new { success = false, message = "" });
             }
@@ -1075,7 +1097,7 @@ namespace AvibaWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCounterparty(CreateCounterpartyViewModel model)
         {
-            if(model.Counterparty?.Name != null)
+            if (model.Counterparty?.Name != null)
             {
                 var dbCounterparty = _db.Counterparties.FirstOrDefault(c => c.ITN == model.Counterparty.ITN);
                 if (dbCounterparty == null)
@@ -1099,26 +1121,26 @@ namespace AvibaWeb.Controllers
             {
                 Deposits = await (from c in _db.Counterparties
                         .Include(c => c.ProviderBalance)
-                    where c.Type.Description == "Провайдер услуг"
-                    select new DepositItem
-                    {
-                        ITN = c.ITN,
-                        Name = c.Name,
-                        Deposit = c.ProviderBalance.Deposit,
-                        Type = DepositItem.DepositItemType.Provider
-                    }).ToListAsync()
+                                  where c.Type.Description == "Провайдер услуг"
+                                  select new DepositItem
+                                  {
+                                      ITN = c.ITN,
+                                      Name = c.Name,
+                                      Deposit = c.ProviderBalance.Deposit,
+                                      Type = DepositItem.DepositItemType.Provider
+                                  }).ToListAsync()
             };
 
             model.Deposits.AddRange(await (from c in _db.Counterparties
                         .Include(c => c.SubagentData)
-                    where c.Type.Description == "Субагент Р"
-                    select new DepositItem
-                    {
-                        ITN = c.ITN,
-                        Name = c.Name,
-                        Deposit = c.SubagentData.Deposit,
-                        Type = DepositItem.DepositItemType.Subagent
-                    }).ToListAsync()
+                                           where c.Type.Description == "Субагент Р"
+                                           select new DepositItem
+                                           {
+                                               ITN = c.ITN,
+                                               Name = c.Name,
+                                               Deposit = c.SubagentData.Deposit,
+                                               Type = DepositItem.DepositItemType.Subagent
+                                           }).ToListAsync()
             );
 
             return PartialView(model);
@@ -1155,27 +1177,53 @@ namespace AvibaWeb.Controllers
             return RedirectToAction("ProviderDeposit");
         }
 
-        public int GetCorpReceiptIndex(string receiptDescription)
+        [HttpGet]
+        public ActionResult MultiPayment(CorporatorReceiptMultiPayment.CRMPType type)
         {
-            var index = receiptDescription.IndexOf("счет");
-            if (index != -1)
-            {
-                return index + 3;
-            }
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
 
-            index = receiptDescription.IndexOf("сч.");
-            if (index != -1)
-            {
-                return index + 2;
-            }
+            var model = (from p in _db.CorporatorReceiptMultiPayments.Include(p => p.FinancialAccountOperation)
+                         where p.TypeId == type
+                         select new MultiPaymentViewModel
+                         {
+                             Amount = p.Amount.Value.ToString("#,0.00", nfi),
+                             Description = p.FinancialAccountOperation.Description,
+                             PaymentId = p.CorporatorReceiptMultiPaymentId,
+                             CreatedDateTime = p.FinancialAccountOperation.OperationDateTime
+                         }).ToList();
 
-            index = receiptDescription.IndexOf("по сч");
-            if (index != -1)
-            {
-                return index + 4;
-            }
+            return PartialView(model);
+        }
 
-            return -1;
+        [HttpGet]
+        public ActionResult MultiPaymentProcess(int paymentId)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var model = new MultiPaymentProcessViewModel
+            {
+                Payment = _db.CorporatorReceiptMultiPayments.FirstOrDefault(p => p.CorporatorReceiptMultiPaymentId == paymentId)
+            };
+            model.Receipts = (from r in _db.CorporatorReceipts
+                              where r.StatusId != CorporatorReceipt.CRPaymentStatus.Paid && r.Amount > 0 &&
+                                 ((model.Payment.TypeId == CorporatorReceiptMultiPayment.CRMPType.CorpClient && r.TypeId == CorporatorReceipt.CRType.CorpClient) ||
+                                 (model.Payment.TypeId == CorporatorReceiptMultiPayment.CRMPType.CorpReceipt && r.TypeId == CorporatorReceipt.CRType.WebSite))
+                              orderby r.IssuedDateTime descending
+                              select new MultiPaymentReceipt
+                              {
+                                  Amount = ((r.Amount ?? 0) - (r.PaidAmount ?? 0)).ToString("#,0.00", nfi),
+                                  ReceiptNumber = r.ReceiptNumber.Value
+                              }).ToList();
+
+            return PartialView(model);
+        }
+
+        [HttpPost]
+        public ActionResult MultiPaymentProcess([FromBody]MultiPaymentProcessPostViewModel model)
+        {
+            return Json(new { message = "Ok" });
         }
     }
 }

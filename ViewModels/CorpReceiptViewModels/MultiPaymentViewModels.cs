@@ -25,4 +25,10 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public CorporatorReceiptMultiPayment Payment { get; set; }
         public List<MultiPaymentReceipt> Receipts { get; set; }
     }
+
+    public class MultiPaymentProcessPostViewModel
+    {
+        int PaymentId { get; set; }
+        public List<int> Receipts { get; set; }
+    }
 }
