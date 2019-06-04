@@ -172,6 +172,19 @@
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(sendJsonData),
                 success: function (result) {
+                    if(result.message == "hasMultiPayment")
+                    {
+                        $.ajax({
+                            url: "/Data/MultiPayment",
+                            type: "GET",
+                            data: { type: "@AvibaWeb.DomainModels.CorporatorReceiptMultiPayment.CRMPType.CorpClient" },
+                            cache: false,
+                            success: function (getResult) {
+                                $("#results").html(getResult);
+                            }
+                        });
+                        return false;
+                    }
                     $("#importTable").html(result.message);
                 },
                 error: function (error) {

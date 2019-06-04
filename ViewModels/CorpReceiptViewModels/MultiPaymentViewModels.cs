@@ -10,6 +10,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
     public class MultiPaymentItem
     {
         public string Amount { get; set; }
+        public string CounterpartyName { get; set; }
         public string Description { get; set; }
         public DateTime CreatedDateTime { get; set; }
         public int PaymentId { get; set; }
@@ -31,6 +32,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
 
     public class MultiPaymentProcessViewModel
     {
+        public CRMPType Type { get; set; }
         public CorporatorReceiptMultiPayment Payment { get; set; }
         public List<MultiPaymentReceipt> Receipts { get; set; }
     }

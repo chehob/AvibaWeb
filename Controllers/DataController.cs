@@ -734,7 +734,14 @@ namespace AvibaWeb.Controllers
 
             await _db.SaveChangesAsync();
 
-            return Json(new { message = await _viewRenderService.RenderToStringAsync("Data/RecordsAdded") });
+            var hasMultiPayments = _db.CorporatorReceiptMultiPayments
+                .Where(mp => mp.TypeId == CorporatorReceiptMultiPayment.CRMPType.CorpClient && mp.IsProcessed == false)
+                .Count() > 0;
+
+            return Json(new { message = 
+                hasMultiPayments ?
+                    "hasMultiPayment" : 
+                    await _viewRenderService.RenderToStringAsync("Data/RecordsAdded") });
         }
 
         [HttpPost]
@@ -1180,27 +1187,33 @@ namespace AvibaWeb.Controllers
             return RedirectToAction("ProviderDeposit");
         }
 
-        [HttpGet]
-        public ActionResult MultiPayment(CorporatorReceiptMultiPayment.CRMPType type)
+
+        public MultiPaymentViewModel GetMultiPaymentModel(CorporatorReceiptMultiPayment.CRMPType type)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
-            var model = new MultiPaymentViewModel
+            return new MultiPaymentViewModel
             {
                 Items = (from p in _db.CorporatorReceiptMultiPayments.Include(p => p.FinancialAccountOperation)
+                            .ThenInclude(fao => fao.Counterparty)
                          where p.TypeId == type
                          select new MultiPaymentItem
                          {
                              Amount = p.Amount.Value.ToString("#,0.00", nfi),
                              Description = p.FinancialAccountOperation.Description,
                              PaymentId = p.CorporatorReceiptMultiPaymentId,
-                             CreatedDateTime = p.FinancialAccountOperation.OperationDateTime
+                             CreatedDateTime = p.FinancialAccountOperation.OperationDateTime,
+                             CounterpartyName = p.FinancialAccountOperation.Counterparty.Name
                          }).ToList(),
                 Type = type
             };
+        }
 
-            return PartialView(model);
+        [HttpGet]
+        public ActionResult MultiPayment(CorporatorReceiptMultiPayment.CRMPType type)
+        {
+            return PartialView(GetMultiPaymentModel(type));
         }
 
         [HttpGet]
@@ -1212,7 +1225,7 @@ namespace AvibaWeb.Controllers
             var model = new MultiPaymentProcessViewModel
             {
                 Payment = _db.CorporatorReceiptMultiPayments.FirstOrDefault(p => p.CorporatorReceiptMultiPaymentId == paymentId)
-            };
+            };            
             model.Receipts = (from r in _db.CorporatorReceipts
                               where r.StatusId != CorporatorReceipt.CRPaymentStatus.Paid && r.Amount > 0 &&
                                  ((model.Payment.TypeId == CorporatorReceiptMultiPayment.CRMPType.CorpClient && r.TypeId == CorporatorReceipt.CRType.CorpClient) ||
