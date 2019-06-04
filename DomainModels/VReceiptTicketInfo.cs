@@ -16,5 +16,6 @@ namespace AvibaWeb.DomainModels
         public string BSOLabel { get; set; }
         public string PassengerName { get; set; }
         public int SegCount { get; set; }
+        public int? TicketType { get; set; }
     }
 }

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AvibaWeb.DomainModels;
+using static AvibaWeb.DomainModels.CorporatorReceiptMultiPayment;
 
 namespace AvibaWeb.ViewModels.CorpReceiptViewModels
 {
-    public class MultiPaymentViewModel
+    public class MultiPaymentItem
     {
         public string Amount { get; set; }
         public string Description { get; set; }
@@ -14,10 +15,17 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public int PaymentId { get; set; }
     }
 
+    public class MultiPaymentViewModel
+    {
+        public CRMPType Type { get; set; }
+        public List<MultiPaymentItem> Items { get; set; }
+    }
+
     public class MultiPaymentReceipt
     {
         public string Amount { get; set; }
         public int ReceiptNumber { get; set; }
+        public int ReceiptId { get; set; }
     }
 
     public class MultiPaymentProcessViewModel

@@ -882,7 +882,7 @@ $(document).on('click',
                         dataRow.push({ text: item.ticketLabel, style: 'smallText' });
                         dataRow.push({ text: item.amountStr, alignment: 'right' });
                         dataRow.push({ text: item.segCount, alignment: 'center' });
-                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });                        
+                        dataRow.push({ text: item.amountLabelStr, alignment: 'center' });                        
                         dataRow.push({ text: item.amountStr, alignment: 'right' });
 
                         itemData.push(dataRow);
@@ -932,7 +932,7 @@ $(document).on('click',
                         dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
                         dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
                         dataRow.push({ text: item.segCount, alignment: 'center' });
-                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                        dataRow.push({ text: item.amountLabelStr, alignment: 'center' });
                         dataRow.push({ text: item.feeStr, alignment: 'right' });
                         dataRow.push({ text: item.amountStr, alignment: 'right' });
     
@@ -1904,19 +1904,26 @@ $(document).on('click',
         function (e) {
             e.preventDefault();;
 
+            var paymentAmount = Number($('#paymentAmountDiv').val().replace(/[,]+/g, "."));
+            var paymentTotal = 0;
+            $("#paidReceiptsTable tbody").children().each(function () {
+                if($(this).children().length < 2)
+                {
+                    return false;
+                }
+                paymentTotal += Number($(this).children()[1].innerHTML.replace(/[^0-9.-]+/g, ""));
+            });
+            var reminder = paymentAmount - paymentTotal;
+            var receiptAmount = Number($($(this).parent().siblings()[1]).html().replace(/[^0-9.-]+/g, ""));
             $('#paidReceiptsTable').dataTable().fnAddData([
                 $($(this).parent().siblings()[0]).html(),
-                $($(this).parent().siblings()[1]).html(),
+                reminder > receiptAmount ? $($(this).parent().siblings()[1]).html() : numberWithSpaces(reminder),
                 `<button class="btn btn-danger btn-sm removeReceiptPayment"><i class="glyphicon glyphicon-remove"></i></button>`
             ]);
 
             $('#receiptsTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
 
-            var paymentAmount = Number($('#paymentAmountDiv').val().replace(/[,]+/g, "."));
-            var paymentTotal = 0;
-            $("#paidReceiptsTable tbody").children().each(function () {
-                paymentTotal += Number($(this).children()[1].innerHTML.replace(/[^0-9.-]+/g, ""));
-            });
+            paymentTotal += reminder > receiptAmount ? receiptAmount : reminder;
 
             $('#paymentReminder').html(numberWithSpaces(paymentAmount - paymentTotal));
             $('#paymentTotal').html(numberWithSpaces(paymentTotal));

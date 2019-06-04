@@ -1117,6 +1117,8 @@ namespace AvibaWeb.Migrations
 
                     b.Property<string>("TicketRoute");
 
+                    b.Property<int?>("TicketType");
+
                     b.HasKey("Id");
 
                     b.ToTable("VReceiptTicketInfo");

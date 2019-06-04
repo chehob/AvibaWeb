@@ -27,6 +27,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public string AmountStr { get; set; }
         public string TicketLabel { get; set; }
         public int SegCount { get; set; }
+        public string AmountLabelStr { get; set; }
     }
 
     public class ReceiptTaxItem
@@ -35,6 +36,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public decimal Amount { get; set; }
         public string AmountStr { get; set; }
         public int SegCount { get; set; }
+        public string AmountLabelStr { get; set; }
     }
 
     public class ReceiptPDFViewModel

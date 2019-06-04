@@ -355,7 +355,8 @@ namespace AvibaWeb.Controllers
                             Amount = item.Amount,
                             AmountStr = item.Amount.ToString("#,0.00", nfi),
                             TicketLabel = $"{ti.TicketLabel} {item.Route ?? ti.TicketRoute} {ti.BSOLabel}\n{item.PassengerName ?? ti.PassengerName}",
-                            SegCount = ti.SegCount
+                            SegCount = ti.SegCount,
+                            AmountLabelStr = (ti.TicketType == null || ti.TicketType != 3) ? "полетный\nсегмент" : "шт."
                         }).ToList(),
                     LuggageItems = (from item in _db.CorporatorReceiptItems
                                     join ti in _db.VReceiptLuggageInfo on item.TicketOperationId equals ti.TicketOperationId
@@ -377,7 +378,8 @@ namespace AvibaWeb.Controllers
                             FeeStr = (groups.FirstOrDefault().item.IsPercent ? groups.FirstOrDefault().item.Amount * groups.FirstOrDefault().item.FeeRate / 100 : groups.FirstOrDefault().item.FeeRate).ToString("#,0.00", nfi),
                             Amount = groups.Sum( g => g.item.IsPercent ? g.item.Amount * g.item.FeeRate / 100 : g.item.PerSegment ? g.item.FeeRate * g.ti.SegCount : g.item.FeeRate),
                             AmountStr = groups.Sum(g => g.item.IsPercent ? g.item.Amount * g.item.FeeRate / 100 : g.item.PerSegment ? g.item.FeeRate * g.ti.SegCount : g.item.FeeRate).ToString("#,0.00", nfi),
-                            SegCount = groups.Sum( g => g.item.PerSegment ? g.ti.SegCount : 1 )
+                            SegCount = groups.Sum( g => g.item.PerSegment ? g.ti.SegCount : 1 ),
+                            AmountLabelStr = "шт."
                         }).ToList(),
                     SignatureFileName = org.SignatureFileName,
                     StampFileName = org.StampFileName,

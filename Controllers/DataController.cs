@@ -591,7 +591,8 @@ namespace AvibaWeb.Controllers
                             {
                                 var foundIndexes = new List<int>();
 
-                                var matches = Regex.Matches(lowerPaymentDescription, "WR-");
+                                var offset = 3;
+                                var matches = Regex.Matches(lowerPaymentDescription, "wr-");
                                 foreach (Match match in matches)
                                 {
                                     foundIndexes.Add(match.Index);
@@ -599,6 +600,7 @@ namespace AvibaWeb.Controllers
 
                                 if (foundIndexes.Count == 0)
                                 {
+                                    offset = 1;
                                     multiPaymentType = CorporatorReceiptMultiPayment.CRMPType.CorpReceipt;
                                     for (var i = 0; i < record.PaymentDescription.Length; i++)
                                     {
@@ -616,8 +618,8 @@ namespace AvibaWeb.Controllers
                                     string errorString = "";
                                     foreach (var index in foundIndexes)
                                     {
-                                        var beginStr = new string(lowerPaymentDescription.Skip(index + 1).ToArray());
-                                        var endIndex = 7;
+                                        var beginStr = new string(lowerPaymentDescription.Skip(index + offset).ToArray());
+                                        var endIndex = 6;
                                         var receiptStr = beginStr.Substring(0, endIndex);
                                         var receiptStrList = receiptStr.Split(',');
                                         foreach (var receiptNumberStr in receiptStrList)
@@ -683,6 +685,7 @@ namespace AvibaWeb.Controllers
                                 }
                                 else
                                 {
+                                    multiPaymentType = CorporatorReceiptMultiPayment.CRMPType.CorpClient;
                                     isUnrecognizedOperation = true;
                                 }
                             }
@@ -1183,15 +1186,19 @@ namespace AvibaWeb.Controllers
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
-            var model = (from p in _db.CorporatorReceiptMultiPayments.Include(p => p.FinancialAccountOperation)
+            var model = new MultiPaymentViewModel
+            {
+                Items = (from p in _db.CorporatorReceiptMultiPayments.Include(p => p.FinancialAccountOperation)
                          where p.TypeId == type
-                         select new MultiPaymentViewModel
+                         select new MultiPaymentItem
                          {
                              Amount = p.Amount.Value.ToString("#,0.00", nfi),
                              Description = p.FinancialAccountOperation.Description,
                              PaymentId = p.CorporatorReceiptMultiPaymentId,
                              CreatedDateTime = p.FinancialAccountOperation.OperationDateTime
-                         }).ToList();
+                         }).ToList(),
+                Type = type
+            };
 
             return PartialView(model);
         }
@@ -1213,8 +1220,10 @@ namespace AvibaWeb.Controllers
                               orderby r.IssuedDateTime descending
                               select new MultiPaymentReceipt
                               {
-                                  Amount = ((r.Amount ?? 0) - (r.PaidAmount ?? 0)).ToString("#,0.00", nfi),
-                                  ReceiptNumber = r.ReceiptNumber.Value
+                                  Amount = ((r.Amount.GetValueOrDefault(0m)) - (r.PaidAmount.GetValueOrDefault(0m)))
+                                    .ToString("#,0.00", nfi),
+                                  ReceiptNumber = r.ReceiptNumber.Value,
+                                  ReceiptId = r.CorporatorReceiptId
                               }).ToList();
 
             return PartialView(model);
@@ -1224,6 +1233,17 @@ namespace AvibaWeb.Controllers
         public ActionResult MultiPaymentProcess([FromBody]MultiPaymentProcessPostViewModel model)
         {
             return Json(new { message = "Ok" });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> TransferMultiPayment(int paymentId)
+        {
+            var payment = _db.CorporatorReceiptMultiPayments.FirstOrDefault(p => p.CorporatorReceiptMultiPaymentId == paymentId);
+            payment.TypeId = CorporatorReceiptMultiPayment.CRMPType.CorpReceipt;
+
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("MultiPayment", new { type = CorporatorReceiptMultiPayment.CRMPType.CorpClient });
         }
     }
 }
