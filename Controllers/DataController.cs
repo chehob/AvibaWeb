@@ -1220,7 +1220,7 @@ namespace AvibaWeb.Controllers
                               orderby r.IssuedDateTime descending
                               select new MultiPaymentReceipt
                               {
-                                  Amount = ((r.Amount.GetValueOrDefault(0m)) - (r.PaidAmount.GetValueOrDefault(0m)))
+                                  AmountStr = ((r.Amount.GetValueOrDefault(0m)) - (r.PaidAmount.GetValueOrDefault(0m)))
                                     .ToString("#,0.00", nfi),
                                   ReceiptNumber = r.ReceiptNumber.Value,
                                   ReceiptId = r.CorporatorReceiptId
@@ -1230,8 +1230,29 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult MultiPaymentProcess([FromBody]MultiPaymentProcessPostViewModel model)
+        public async Task<ActionResult> MultiPaymentProcess([FromBody]MultiPaymentProcessPostViewModel model)
         {
+            var payment = _db.CorporatorReceiptMultiPayments.Include(mp => mp.FinancialAccountOperation)
+                .ThenInclude(fao => fao.Counterparty).ThenInclude(c => c.CorporatorAccount)
+                .FirstOrDefault(p => p.CorporatorReceiptMultiPaymentId == model.PaymentId);
+
+            foreach (var item in model.Receipts)
+            {
+                var receipt = _db.CorporatorReceipts.FirstOrDefault(cr => cr.CorporatorReceiptId == item.ReceiptId);
+
+                receipt.PaidAmount = receipt.PaidAmount.GetValueOrDefault(0m) + item.Amount;
+                receipt.StatusId = receipt.PaidAmount.GetValueOrDefault(0m) < receipt.Amount.GetValueOrDefault(0m) ?
+                        CorporatorReceipt.CRPaymentStatus.Partial :
+                        CorporatorReceipt.CRPaymentStatus.Paid;
+                receipt.PaidDateTime = payment.FinancialAccountOperation.InsertDateTime;
+                payment.FinancialAccountOperation.Counterparty.CorporatorAccount.Balance += item.Amount;
+                payment.FinancialAccountOperation.Counterparty.CorporatorAccount.LastPaymentDate = payment.FinancialAccountOperation.InsertDateTime;
+            }
+
+            payment.IsProcessed = true;
+
+            await _db.SaveChangesAsync();
+
             return Json(new { message = "Ok" });
         }
 

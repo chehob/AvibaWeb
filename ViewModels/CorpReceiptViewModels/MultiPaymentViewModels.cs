@@ -23,7 +23,8 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
 
     public class MultiPaymentReceipt
     {
-        public string Amount { get; set; }
+        public decimal Amount { get; set; }
+        public string AmountStr { get; set; }
         public int ReceiptNumber { get; set; }
         public int ReceiptId { get; set; }
     }
@@ -36,7 +37,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
 
     public class MultiPaymentProcessPostViewModel
     {
-        int PaymentId { get; set; }
-        public List<int> Receipts { get; set; }
+        public int PaymentId { get; set; }
+        public List<MultiPaymentReceipt> Receipts { get; set; }
     }
 }

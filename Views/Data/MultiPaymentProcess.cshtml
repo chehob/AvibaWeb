@@ -59,7 +59,7 @@
                                 @receipt.ReceiptNumber
                                 <input hidden class="receiptId" value="@receipt.ReceiptId" />
                             </td>
-                            <td>@receipt.Amount</td>
+                            <td>@receipt.AmountStr</td>
                             <td>
                                 <button class="btn btn-success addReceiptPayment">Привязать платеж</button>
                             </td>
@@ -69,6 +69,9 @@
             </table>
             <div class="row">
                 <div class="col-md-12">
+                    <div id="warningMsg" class="alert alert-danger" style="display: none;">
+                        <strong>Ошибка!</strong> Имеется нераспределенная сумма.
+                    </div>
                     <a href="/" id="savePayments" class="btn btn-success">Сохранить платеж</a>
                 </div>
             </div>
@@ -140,12 +143,21 @@
     });
 
     $("#savePayments").click(function (e) {
+        $("#warningMsg").hide();
+
+        if (Number($("#paymentReminder").text().replace(/[^0-9.-]+/g, "")) != 0) {
+            $("#warningMsg").show();
+            return false;
+        }
+
         var receiptsPaid = new Array();
         $("#paidReceiptsTable tbody tr").each(function () {
             const firstTd = $(this).find("td");
-
+            const firstInput = $(this).find("input");
             const receipt = {
-                ReceiptNumber: firstTd.html()
+                ReceiptNumber: firstTd[0].innerText,
+                ReceiptId: firstInput[0].value,
+                Amount: Number(firstTd[1].innerText.replace(/[^0-9.-]+/g, "")),
             };
             receiptsPaid.push(receipt);
         });
