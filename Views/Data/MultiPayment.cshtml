@@ -45,9 +45,9 @@
                     <a asp-action="MultiPaymentProcess" asp-controller="Data" asp-route-paymentId="@payment.PaymentId"
                        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
                        class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-plus">&nbsp;</i>Распределить платеж</a>
-                    <a asp-action="AcceptMultiPayment" asp-controller="Data" asp-route-paymentId="@payment.PaymentId"
+                    @*<a asp-action="AcceptMultiPayment" asp-controller="Data" asp-route-paymentId="@payment.PaymentId"
                        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-                       class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-plus">&nbsp;</i>Платеж не по билетам</a>
+                       class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-plus">&nbsp;</i>Платеж не по билетам</a>*@
                     @if (Model.Type == AvibaWeb.DomainModels.CorporatorReceiptMultiPayment.CRMPType.CorpClient)
                     {
                         <a asp-action="TransferMultiPayment" asp-controller="Data" asp-route-paymentId="@payment.PaymentId"
