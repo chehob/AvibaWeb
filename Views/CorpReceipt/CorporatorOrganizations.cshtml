@@ -7,7 +7,7 @@
         <optgroup label="Организации">
             @foreach (var org in Model.Accounts)
             {
-                <option>@org</option>
+                <option id=@org.Key>@org.Value</option>
             }
         </optgroup>
     </select>

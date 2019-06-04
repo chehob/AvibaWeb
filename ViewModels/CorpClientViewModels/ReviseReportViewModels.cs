@@ -7,8 +7,8 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
 {
     public class ReviseReportViewModel
     {
-        public List<string> Counterparties { get; set; }
-        public List<string> Organizations { get; set; }
+        public List<KeyValuePair<string, string>> Counterparties { get; set; }
+        public List<KeyValuePair<int, string>> Organizations { get; set; }
     }
 
     public class ReviseReportPDFViewModel
@@ -25,7 +25,7 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
     public class ReviseReportPDFItem
     {
         public string Date { get; set; }
-        public string ReceiptNumber { get; set; }
+        public string Label { get; set; }
         public string Amount { get; set; }
     }
 }

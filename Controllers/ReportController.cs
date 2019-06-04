@@ -105,22 +105,18 @@ namespace AvibaWeb.Controllers
                     {                        
                         Name = g.FirstOrDefault().o.Description,
                         AccountBalances = (from o in g.SelectMany(q => q.operations)
-                            group o by o.FinancialAccountId
-                            into og
-                            join fa in _db.FinancialAccounts on og.Key equals fa.FinancialAccountId
-                            let UploadDate = og.OrderByDescending(o => o.InsertDateTime).FirstOrDefault().InsertDateTime
-                            select new OrganizationAccountBalance
-                            {
-                                Id = fa.FinancialAccountId,
-                                LatestUpload = UploadDate.Date.Equals(DateTime.Now.Date) ? UploadDate.ToString("t") : UploadDate.ToString("dd.MM hh:mm"),
-                                Account = fa.Description,
-                                BankName = fa.BankName,
-                                Balance = og.Sum(ao => ao.Amount).ToString("#,0.00", nfi),
-                                Debit = og.Where(ao => ao.OperationDateTime >= reportDate)
-                                    .Sum(d => d.Amount >= 0 ? d.Amount : 0).ToString("#,0.00", nfi),
-                                Credit = og.Where(ao => ao.OperationDateTime >= reportDate)
-                                    .Sum(cr => cr.Amount < 0 ? -cr.Amount : 0).ToString("#,0.00", nfi)
-                            }).ToList()
+                                           group o by o.FinancialAccountId
+                                            into og
+                                           join fa in _db.FinancialAccounts on og.Key equals fa.FinancialAccountId
+                                           let UploadDate = og.OrderByDescending(o => o.InsertDateTime).FirstOrDefault().InsertDateTime
+                                           select new OrganizationAccountBalance
+                                           {
+                                               Id = fa.FinancialAccountId,
+                                               LatestUpload = UploadDate.Date.Equals(DateTime.Now.Date) ? UploadDate.ToString("t") : UploadDate.ToString("dd.MM hh:mm"),
+                                               Account = fa.Description,
+                                               BankName = fa.BankName,
+                                               Balance = fa.Balance.ToString("#,0.00", nfi)
+                                           }).ToList()
                     }).ToList(),
                 LoanGroupsBalance = _db.LoanGroups.Where(lg => lg.Description != "Дивиденты").Sum(lg => lg.Balance).ToString("#,0.00", nfi)
             };

@@ -68,11 +68,6 @@ namespace AvibaWeb.ViewModels.ReportViewModels
         public string Account { get; set; }
         public string BankName { get; set; }
         public string Balance { get; set; }
-        public string Debit { get; set; }
-        public string Credit { get; set; }
-        public string BalanceEnd => (decimal.Parse(Balance.Replace(".", ",").Replace(" ", string.Empty)) +
-                decimal.Parse(Debit.Replace(".", ",").Replace(" ", string.Empty)) -
-                decimal.Parse(Credit.Replace(".", ",").Replace(" ", string.Empty))).ToString("#,0.00", nfi);
     }
 
     public class OrganizationCashlessViewModel

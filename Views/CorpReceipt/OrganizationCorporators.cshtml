@@ -7,7 +7,7 @@
         <optgroup label="Корпораторы">
             @foreach (var counterparty in Model.Accounts)
             {
-            <option>@counterparty</option>
+            <option id=@counterparty.Key>@counterparty.Value</option>
             }
         </optgroup>
     </select>

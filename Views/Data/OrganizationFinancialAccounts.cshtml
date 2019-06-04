@@ -6,7 +6,7 @@
         <option value=""></option>
         @foreach (var account in Model.Accounts)
         {
-            <option>@account</option>
+            <option id=@account.Key>@account.Value</option>
         }
     </select>
 </div>

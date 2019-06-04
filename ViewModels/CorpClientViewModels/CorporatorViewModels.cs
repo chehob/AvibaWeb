@@ -67,8 +67,10 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
     public class ReviseReportRequest
     {
         public string fromDate { get; set; }
-        public string toDate { get; set; }
+        public string toDate { get; set; }       
+        public string payerId { get; set; }
         public string payerName { get; set; }
+        public string payeeId { get; set; }
         public string payeeName { get; set; }
         public string payeeBankName { get; set; }
     }

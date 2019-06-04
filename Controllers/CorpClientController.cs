@@ -925,10 +925,10 @@ namespace AvibaWeb.Controllers
             {
                 Counterparties = (from c in _db.Counterparties
                     where c.Type.Description == "Корпоратор"
-                    select c.Name).ToList(),
+                    select new KeyValuePair<string, string>(c.ITN, c.Name)).ToList(),
                 Organizations = (from org in _db.Organizations
                     where org.IsActive
-                    select org.Description).ToList()
+                    select new KeyValuePair<int, string>(org.OrganizationId, org.Description)).ToList()
             };
 
             return PartialView(model);
@@ -947,9 +947,9 @@ namespace AvibaWeb.Controllers
                         cr.CorporatorReceiptId == cro.CorporatorReceiptId)
                     .OrderByDescending(o => o.OperationDateTime)
                     .FirstOrDefault()
-                where cr.PayeeAccount.Organization.Description == requestData.payeeName &&
+                where cr.PayeeAccount.Organization.OrganizationId == int.Parse(requestData.payeeId) &&
                       cr.PayeeAccount.BankName == requestData.payeeBankName &&
-                      cr.Corporator.Name == requestData.payerName &&
+                      cr.Corporator.ITN == requestData.payerId &&
                       cr.PaidAmount > 0 && cr.PaidAmount != null &&
                       cr.TypeId == CorporatorReceipt.CRType.CorpClient &&
                       cro != null
@@ -963,27 +963,35 @@ namespace AvibaWeb.Controllers
                 PayerName = requestData.payerName,
                 OldDebit = oldBalance >= 0 ? oldBalance.ToString("#,0.00", nfi) : "",
                 OldCredit = oldBalance < 0 ? oldBalance.ToString("#,0.00", nfi) : "",
-                Items = (from item in _db.CorporatorReceiptItems
-                    join ti in _db.VReceiptTicketInfo on item.TicketOperationId equals ti.TicketOperationId
-                    join cr in _db.CorporatorReceipts.Include(c => c.PayeeAccount.Organization) on item
-                        .CorporatorReceiptId equals cr.CorporatorReceiptId
-                    let cro = _db.CorporatorReceiptOperations.Where(cro =>
-                            cro.OperationDateTime >= DateTime.Parse(requestData.fromDate) &&
-                            cro.OperationDateTime < DateTime.Parse(requestData.toDate).AddDays(1) &&
-                            cr.CorporatorReceiptId == cro.CorporatorReceiptId)
-                        .OrderByDescending(o => o.OperationDateTime)
-                        .FirstOrDefault()
-                    where cr.PayeeAccount.Organization.Description == requestData.payeeName &&
-                          cr.PayeeAccount.BankName == requestData.payeeBankName &&
-                          cr.Corporator.Name == requestData.payerName &&
-                          cro != null &&
-                          cr.TypeId == CorporatorReceipt.CRType.CorpClient
-                    select new ReviseReportPDFItem
-                    {
-                        Date = cro.OperationDateTime.ToString("d"),
-                        ReceiptNumber = cr.ReceiptNumber.ToString(),
-                        Amount = "0"
-                    }).ToList()
+                //Items = (from fao in _db.FinancialAccountOperations
+                //         where fao.
+                //         select new ReviseReportPDFItem
+                //         {
+                //             Date = cro.OperationDateTime.ToString("d"),
+                //             ReceiptNumber = cr.ReceiptNumber.ToString(),
+                //             Amount = "0"
+                //         }).ToList()
+                //Items = (from item in _db.CorporatorReceiptItems
+                //    join ti in _db.VReceiptTicketInfo on item.TicketOperationId equals ti.TicketOperationId
+                //    join cr in _db.CorporatorReceipts.Include(c => c.PayeeAccount.Organization) on item
+                //        .CorporatorReceiptId equals cr.CorporatorReceiptId
+                //    let cro = _db.CorporatorReceiptOperations.Where(cro =>
+                //            cro.OperationDateTime >= DateTime.Parse(requestData.fromDate) &&
+                //            cro.OperationDateTime < DateTime.Parse(requestData.toDate).AddDays(1) &&
+                //            cr.CorporatorReceiptId == cro.CorporatorReceiptId)
+                //        .OrderByDescending(o => o.OperationDateTime)
+                //        .FirstOrDefault()
+                //    where cr.PayeeAccount.Organization.Description == requestData.payeeName &&
+                //          cr.PayeeAccount.BankName == requestData.payeeBankName &&
+                //          cr.Corporator.Name == requestData.payerName &&
+                //          cro != null &&
+                //          cr.TypeId == CorporatorReceipt.CRType.CorpClient
+                //    select new ReviseReportPDFItem
+                //    {
+                //        Date = cro.OperationDateTime.ToString("d"),
+                //        ReceiptNumber = cr.ReceiptNumber.ToString(),
+                //        Amount = "0"
+                //    }).ToList()
             };
 
             return Json(model);

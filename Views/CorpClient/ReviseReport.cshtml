@@ -16,7 +16,7 @@
                             <optgroup label="Организации">
                                 @foreach (var org in Model.Organizations)
                                 {
-                                    <option>@org</option>
+                                    <option id=@org.Key>@org.Value</option>
                                 }
                             </optgroup>
                         </select>
@@ -32,7 +32,7 @@
                             <optgroup label="Корпораторы">
                                 @foreach (var counterparty in Model.Counterparties)
                                 {
-                                    <option>@counterparty</option>
+                                    <option id=@counterparty.Key>@counterparty.Value</option>
                                 }
                             </optgroup>
                         </select>
@@ -49,7 +49,7 @@
             <br />
             <div class="row">
                 <div class="col-md-12">
-                    За период с: <input type="text" id="min" name="min" class="date-range-filter"> по: <input type="text" id="max" name="max" class="date-range-filter">
+                    За период с: <input type="text" autocomplete="off" id="min" name="min" class="date-range-filter"> по: <input type="text" autocomplete="off" id="max" name="max" class="date-range-filter">
                     <a href="/" id="createReviseReportBtn" class="btn btn-success">Создать акт</a>
                 </div>
             </div>
@@ -63,13 +63,21 @@
     });
 
     $("#createReviseReportBtn").click(function (e) {
+        var selectedPayeeId = $("#selectPayee").find('option:selected').map(function () {
+            return $(this).prop('id')
+        }).get();
+
         const sendJsonData = {
             fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
             toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true),
-            payerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
-            payeeName: $("#selectPayee").next().find("a.chosen-single span").first().html(),
+            payerId: $("#selectPayer").find('option:selected').prop('id'),
+            payerName: $("#selectPayer").find('option:selected').text(),
+            payeeId: $("#selectPayee").find('option:selected').prop('id'),
+            payeeName: $("#selectPayee").find('option:selected').text(),
             payeeBankName: $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html()
         };
+
+        console.log(sendJsonData);
 
         e.preventDefault();
         $.ajax({

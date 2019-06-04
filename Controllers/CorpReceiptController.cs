@@ -465,12 +465,12 @@ namespace AvibaWeb.Controllers
                 Accounts = orgName == null
                     ? (from c in _db.Counterparties
                         where c.Type.Description == "Корпоратор"
-                        select c.Name).ToList()
+                        select new KeyValuePair<string,string>(c.ITN, c.Name)).ToList()
                     : (from o in _db.Organizations
                         join cd in _db.CorporatorDocuments on o.OrganizationId equals cd.OrganizationId
                         join c in _db.Counterparties on cd.ITN equals c.ITN
                         where o.Description == orgName
-                        select c.Name).Distinct().ToList()
+                        select new KeyValuePair<string, string>(c.ITN, c.Name)).Distinct().ToList()
             };
 
             return PartialView(model);
@@ -484,12 +484,12 @@ namespace AvibaWeb.Controllers
                 Accounts = corpName == null
                     ? (from org in _db.Organizations
                         where org.IsActive
-                        select org.Description).ToList()
+                        select new KeyValuePair<string, string>(org.OrganizationId.ToString(), org.Description)).ToList()
                     : (from c in _db.Counterparties
                         join cd in _db.CorporatorDocuments on c.ITN equals cd.ITN
                         join o in _db.Organizations on cd.OrganizationId equals o.OrganizationId
                         where c.Name == corpName
-                        select o.Description).Distinct().ToList()
+                        select new KeyValuePair<string, string>(o.OrganizationId.ToString(), o.Description)).Distinct().ToList()
             };
 
             return PartialView(model);

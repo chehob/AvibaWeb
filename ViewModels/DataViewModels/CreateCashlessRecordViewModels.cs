@@ -38,7 +38,7 @@ namespace AvibaWeb.ViewModels.DataViewModels
     public class OrganizationFinancialAccountsViewModel
     {
         [Display(Name = "Счет")]
-        public List<string> Accounts { get; set; }
+        public List<KeyValuePair<string,string>> Accounts { get; set; }
     }
 
     public class CreateCounterpartyViewModel

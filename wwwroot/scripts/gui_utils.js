@@ -2047,8 +2047,6 @@ $(document).on('click',
                             $("#payeeSelectDiv").html(result);
                             $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
 
-                            console.log("corp init corpOrg");
-
                             initPayee();
                         },
                         error: function (error) {
@@ -2150,6 +2148,4 @@ $(document).on('click',
     
             initPayee();
             initPayer();
-    
-            console.log('ok');
         }

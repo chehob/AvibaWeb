@@ -1048,7 +1048,7 @@ namespace AvibaWeb.Controllers
             {
                 Accounts = (from a in org.Accounts
                             where a.IsActive
-                            select a.BankName).ToList()
+                            select new KeyValuePair<string,string>(a.FinancialAccountId.ToString(), a.BankName)).ToList()
             };
 
             return PartialView(model);
