@@ -1198,13 +1198,15 @@ namespace AvibaWeb.Controllers
                 Items = (from p in _db.CorporatorReceiptMultiPayments.Include(p => p.FinancialAccountOperation)
                             .ThenInclude(fao => fao.Counterparty)
                          where p.TypeId == type
+                         orderby p.FinancialAccountOperation.InsertDateTime descending
                          select new MultiPaymentItem
                          {
                              Amount = p.Amount.Value.ToString("#,0.00", nfi),
                              Description = p.FinancialAccountOperation.Description,
                              PaymentId = p.CorporatorReceiptMultiPaymentId,
                              CreatedDateTime = p.FinancialAccountOperation.OperationDateTime,
-                             CounterpartyName = p.FinancialAccountOperation.Counterparty.Name
+                             CounterpartyName = p.FinancialAccountOperation.Counterparty.Name,
+                             IsProcessed = p.IsProcessed
                          }).ToList(),
                 Type = type
             };

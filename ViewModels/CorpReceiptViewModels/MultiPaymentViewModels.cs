@@ -14,6 +14,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public string Description { get; set; }
         public DateTime CreatedDateTime { get; set; }
         public int PaymentId { get; set; }
+        public bool IsProcessed { get; set; }
     }
 
     public class MultiPaymentViewModel
