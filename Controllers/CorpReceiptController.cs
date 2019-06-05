@@ -43,10 +43,10 @@ namespace AvibaWeb.Controllers
             {
                 Counterparties = (from c in _db.Counterparties
                     where c.Type.Description == "Корпоратор"
-                    select c.Name).ToList(),
+                    select new KeyValuePair<string,string>(c.ITN, c.Name)).ToList(),
                 Organizations = (from org in _db.Organizations
                     where org.IsActive
-                    select org.Description).ToList()
+                    select new KeyValuePair<string,string>(org.OrganizationId.ToString(), org.Description)).ToList()
             };
 
             if (id != null)
@@ -109,12 +109,10 @@ namespace AvibaWeb.Controllers
             {
                 receipt = _db.CorporatorReceipts.Include(cr => cr.Items)
                     .FirstOrDefault(cr => cr.CorporatorReceiptId == model.ReceiptId);
-                receipt.CorporatorId = (from c in _db.Counterparties
-                    where c.Name == model.PayerName
-                    select c.ITN).FirstOrDefault();
+                receipt.CorporatorId = model.PayerId;
                 receipt.PayeeAccount = (from fa in _db.FinancialAccounts
                     join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
-                    where o.Description == model.PayeeName && fa.BankName == model.PayeeBankName
+                    where o.OrganizationId == int.Parse(model.PayeeId) && fa.BankName == model.PayeeBankName
                     select fa).FirstOrDefault();
                 receipt.FeeRate = model.FeeRate.Length == 0 ? 0 : decimal.Parse(model.FeeRate);
                 receipt.StatusId = model.StatusId;
@@ -171,12 +169,10 @@ namespace AvibaWeb.Controllers
             {
                 receipt = new CorporatorReceipt
                 {
-                    CorporatorId = (from c in _db.Counterparties
-                        where c.Name == model.PayerName
-                        select c.ITN).FirstOrDefault(),
+                    CorporatorId = model.PayerId,
                     PayeeAccount = (from fa in _db.FinancialAccounts
                         join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
-                        where o.Description == model.PayeeName && fa.BankName == model.PayeeBankName
+                        where o.OrganizationId == int.Parse(model.PayeeId) && fa.BankName == model.PayeeBankName
                         select fa).FirstOrDefault(),
                     FeeRate = model.FeeRate.Length == 0 ? 0 : decimal.Parse(model.FeeRate),
                     Amount = 0,

@@ -12,8 +12,8 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
 {
     public class CreateReceiptViewModel
     {
-        public List<string> Counterparties { get; set; }
-        public List<string> Organizations { get; set; }
+        public List<KeyValuePair<string,string>> Counterparties { get; set; }
+        public List<KeyValuePair<string,string>> Organizations { get; set; }
         public ReceiptEditData Receipt { get; set; }
     }
 
@@ -48,7 +48,9 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
     public class CreateReceiptPostViewModel
     {
         public int? ReceiptId { get; set; }
+        public string PayerId { get; set; }
         public string PayerName { get; set; }
+        public string PayeeId { get; set; }
         public string PayeeName { get; set; }
         public string PayeeBankName { get; set; }
         public string FeeRate { get; set; }

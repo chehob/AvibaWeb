@@ -108,10 +108,10 @@ namespace AvibaWeb.Controllers
             {
                 Counterparties = (from c in _db.Counterparties
                                   where c.Type.Description == "Корпоратор"
-                                  select c.Name).ToList(),
+                                  select new KeyValuePair<string,string>(c.ITN, c.Name)).ToList(),
                 Organizations = (from org in _db.Organizations
                                  where org.IsActive
-                                 select org.Description).ToList()
+                                 select new KeyValuePair<string,string>(org.OrganizationId.ToString(),org.Description)).ToList()
             };
 
             if (id != null)
@@ -173,25 +173,23 @@ namespace AvibaWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateReceipt([FromBody]CreateReceiptPostViewModel model)
         {
-            Counterparty corporator;
             CorporatorReceipt receipt;
             if (model.ReceiptId != null && model.ReceiptId != 0)
             {
                 receipt = _db.CorporatorReceipts.Include(cr => cr.Items)
                     .FirstOrDefault(cr => cr.CorporatorReceiptId == model.ReceiptId);
-                receipt.CorporatorId = (from c in _db.Counterparties
-                                        where c.Name == model.PayerName
-                                        select c.ITN).FirstOrDefault();
 
-                corporator = _db.Counterparties.Include(c => c.CorporatorAccount).FirstOrDefault(c => c.ITN == receipt.CorporatorId);
-                if (receipt.Items.Count > 0)
+                var oldCorp = _db.Counterparties.Include(c => c.CorporatorAccount).FirstOrDefault(c => c.ITN == receipt.CorporatorId);
+                if (receipt.Items.Count > 0 && oldCorp != null)
                 {
-                    corporator.CorporatorAccount.Balance += receipt.Amount.Value;
-                }                
+                    oldCorp.CorporatorAccount.Balance += receipt.Amount.Value;
+                }
+
+                receipt.CorporatorId = model.PayerId;
 
                 receipt.PayeeAccount = (from fa in _db.FinancialAccounts
                                         join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
-                                        where o.Description == model.PayeeName && fa.BankName == model.PayeeBankName
+                                        where o.OrganizationId == int.Parse(model.PayeeId) && fa.BankName == model.PayeeBankName
                                         select fa).FirstOrDefault();
                 receipt.FeeRate = string.IsNullOrEmpty(model.FeeRate) ? 0 : decimal.Parse(model.FeeRate);                
                 receipt.Amount = 0;
@@ -206,11 +204,6 @@ namespace AvibaWeb.Controllers
                 {
                     receipt.IssuedDateTime = DateTime.Now;
                 }
-
-                var corpClient = _db.Counterparties.Include(c => c.CorporatorAccount).FirstOrDefault(c => c.ITN == receipt.CorporatorId);
-                corpClient.CorporatorAccount.LastReceiptDate = DateTime.Now;
-
-                await _db.SaveChangesAsync();
 
                 var viewModelItems = new List<CorporatorReceiptItem>();
                 var receiptOldItems = receipt.Items.ToList();
@@ -284,22 +277,15 @@ namespace AvibaWeb.Controllers
                     receipt.Items.Remove(i);
                     _db.Entry(i).State = EntityState.Deleted;
                 }
-
-                if (model.Items.Count > 0)
-                {
-                    corporator.CorporatorAccount.Balance -= receipt.Amount.Value;
-                }
             }
             else
             {
                 receipt = new CorporatorReceipt
                 {
-                    CorporatorId = (from c in _db.Counterparties
-                                    where c.Name == model.PayerName
-                                    select c.ITN).FirstOrDefault(),
+                    CorporatorId = model.PayerId,
                     PayeeAccount = (from fa in _db.FinancialAccounts
                                     join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
-                                    where o.Description == model.PayeeName && fa.BankName == model.PayeeBankName
+                                    where o.OrganizationId == int.Parse(model.PayeeId) && fa.BankName == model.PayeeBankName
                                     select fa).FirstOrDefault(),
                     FeeRate = string.IsNullOrEmpty(model.FeeRate) ? 0 : decimal.Parse(model.FeeRate),
                     Amount = 0,
@@ -378,18 +364,17 @@ namespace AvibaWeb.Controllers
                 };
 
                 _db.CorporatorReceiptOperations.Add(operation);
-
-                corporator = _db.Counterparties.Include(c => c.CorporatorAccount).FirstOrDefault(c => c.ITN == receipt.CorporatorId);
-
-                if (model.Items.Count > 0)
-                {
-                    corporator.CorporatorAccount.Balance -= receipt.Amount.Value;
-                }
             }
 
+            var corporator = _db.Counterparties.Include(c => c.CorporatorAccount).FirstOrDefault(c => c.ITN == receipt.CorporatorId);
             if (corporator != null)
             {
-                corporator.CorporatorAccount.LastReceiptDate = DateTime.Now;
+                if (model.Items.Count > 0)
+                {
+                    corporator.CorporatorAccount.LastReceiptDate = DateTime.Now;
+                    corporator.CorporatorAccount.Balance -= receipt.Amount.Value;
+                }
+
                 if (corporator.CorporatorAccount.Balance >= 0 || receipt.Amount < 0)
                 {
                     receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Paid;
@@ -948,12 +933,16 @@ namespace AvibaWeb.Controllers
                     .OrderByDescending(o => o.OperationDateTime)
                     .FirstOrDefault()
                 where cr.PayeeAccount.Organization.OrganizationId == int.Parse(requestData.payeeId) &&
-                      cr.PayeeAccount.BankName == requestData.payeeBankName &&
                       cr.Corporator.ITN == requestData.payerId &&
                       cr.PaidAmount > 0 && cr.PaidAmount != null &&
                       cr.TypeId == CorporatorReceipt.CRType.CorpClient &&
                       cro != null
-                select cr.PaidAmount.Value).Sum();
+                select cr.PaidAmount.Value).Sum() -
+                (from cp in _db.FinancialAccountOperations
+                 join fa in _db.FinancialAccounts.Include(fa => fa.Organization) on cp.FinancialAccountId equals fa.FinancialAccountId
+                 where cp.CounterpartyId == requestData.payerId &&
+                    fa.Organization.OrganizationId == int.Parse(requestData.payeeId)
+                 select cp.Amount).Sum();
 
             var model = new ReviseReportPDFViewModel
             {
@@ -963,14 +952,18 @@ namespace AvibaWeb.Controllers
                 PayerName = requestData.payerName,
                 OldDebit = oldBalance >= 0 ? oldBalance.ToString("#,0.00", nfi) : "",
                 OldCredit = oldBalance < 0 ? oldBalance.ToString("#,0.00", nfi) : "",
-                //Items = (from fao in _db.FinancialAccountOperations
-                //         where fao.
-                //         select new ReviseReportPDFItem
-                //         {
-                //             Date = cro.OperationDateTime.ToString("d"),
-                //             ReceiptNumber = cr.ReceiptNumber.ToString(),
-                //             Amount = "0"
-                //         }).ToList()
+                Items = (from fao in _db.FinancialAccountOperations
+                         join fa in _db.FinancialAccounts.Include(fa => fa.Organization) on fao.FinancialAccountId equals fa.FinancialAccountId
+                         where fao.CounterpartyId == requestData.payerId &&
+                            fa.Organization.OrganizationId == int.Parse(requestData.payeeId) &&
+                            fao.OperationDateTime >= DateTime.Parse(requestData.fromDate) &&
+                            fao.OperationDateTime < DateTime.Parse(requestData.toDate).AddDays(1)
+                         select new ReviseReportPDFItem
+                         {
+                             Date = fao.OperationDateTime.ToString("d"),
+                             Label = $"Перевод средств ({fao.OperationDateTime.ToString("d")})",
+                             Amount = fao.Amount.ToString("#,0.00", nfi)
+                         }).ToList()
                 //Items = (from item in _db.CorporatorReceiptItems
                 //    join ti in _db.VReceiptTicketInfo on item.TicketOperationId equals ti.TicketOperationId
                 //    join cr in _db.CorporatorReceipts.Include(c => c.PayeeAccount.Organization) on item

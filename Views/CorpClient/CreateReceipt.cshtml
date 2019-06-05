@@ -29,7 +29,7 @@
                             <optgroup label="Организации">
                                 @foreach (var org in Model.Organizations)
                                 {
-                                    <option>@org</option>
+                                    <option id=@org.Key>@org.Value</option>
                                 }
                             </optgroup>
                         </select>
@@ -47,7 +47,7 @@
                             <optgroup label="Корпораторы">
                                 @foreach (var counterparty in Model.Counterparties)
                                 {
-                                    <option>@counterparty</option>
+                                    <option id=@counterparty.Key>@counterparty.Value</option>
                                 }
                             </optgroup>
                         </select>
@@ -337,7 +337,9 @@
 
         const sendJsonData = {
             ReceiptId: $('#editReceiptId').val(),
+            PayerId: $("#selectPayer").find('option:selected').prop('id'),
             PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
+            PayeeId: $("#selectPayee").find('option:selected').prop('id'),
             PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html(),
             PayeeBankName: $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html(),
             FeeRate: $("#feeRate").val(),

@@ -663,8 +663,11 @@ namespace AvibaWeb.Controllers
                                                 CorporatorReceipt.CRPaymentStatus.Partial :
                                                 CorporatorReceipt.CRPaymentStatus.Paid;
                                         receipt.PaidDateTime = operation.OperationDateTime;
-                                        corpClient.CorporatorAccount.Balance += paidAmount;
-                                        corpClient.CorporatorAccount.LastPaymentDate = operation.OperationDateTime;
+                                        if (corpClient.CorporatorAccount != null)
+                                        {
+                                            corpClient.CorporatorAccount.Balance += paidAmount;
+                                            corpClient.CorporatorAccount.LastPaymentDate = operation.OperationDateTime;
+                                        }
                                     }
 
                                     if (hasUnrecognizedReceipts == false && reminder > 0)
