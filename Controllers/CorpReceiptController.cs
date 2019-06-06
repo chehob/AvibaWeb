@@ -331,7 +331,7 @@ namespace AvibaWeb.Controllers
                     TotalAmount = cr.Amount.Value,
                     ReceiptNumber = cr.TypeId == CorporatorReceipt.CRType.CorpClient ?
                         "WR-" + cr.ReceiptNumber.ToString() :
-                        cr.ReceiptNumber.ToString(),
+                        "RS-" + cr.ReceiptNumber.ToString(),
                     PayerNameWithITN = $"{cr.Corporator.Name} ИНН: {cr.Corporator.ITN} ,КПП {cr.Corporator.KPP}",
                     PayerName = cr.Corporator.Name,
                     PayerAddress = cr.Corporator.Address,
@@ -392,12 +392,10 @@ namespace AvibaWeb.Controllers
                     FeeRate = cr.FeeRate.Value,
                     FeeRateStr = cr.FeeRate.Value.ToString("#,0.00", nfi),
                     IssuedDateTime = operation.OperationDateTime.ToShortDateString(),
-                    PaymentTemplateLabelStr = cr.TypeId == CorporatorReceipt.CRType.CorpClient ?
-                        $"Образец заполнения назначения платежа:" :
-                        "",
+                    PaymentTemplateLabelStr = "Образец заполнения назначения платежа:",
                     PaymentTemplateStr = cr.TypeId == CorporatorReceipt.CRType.CorpClient ?
                         $"Оплата по счету WR-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС" :
-                        ""
+                        $"Оплата по счету RS-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС"
                 }).FirstOrDefault();
 
             model.ItemTotal = model.Items.Sum(i => i.Amount) + model.LuggageItems.Sum(i => i.Amount);

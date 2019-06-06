@@ -60,6 +60,12 @@
 <script>
     $(function () {
         initChosen();
+
+        $("#min").datepicker();
+        $("#max").datepicker();
+
+        $("#min").val(moment().subtract(30, 'days').format("DD.MM.YYYY"));
+        $("#max").val(moment().format("DD.MM.YYYY"));
     });
 
     $("#createReviseReportBtn").click(function (e) {
@@ -107,14 +113,14 @@
 
                 headerRow = [];
 
-                headerRow.push({ text: 'Дата' });
-                headerRow.push({ text: 'Документ' });
-                headerRow.push({ text: 'Дебет' });
-                headerRow.push({ text: 'Кредит' });
-                headerRow.push({ text: 'Дата' });
-                headerRow.push({ text: 'Документ' });
-                headerRow.push({ text: 'Дебет' });
-                headerRow.push({ text: 'Кредит' });
+                headerRow.push({ text: 'Дата', alignment: 'center' });
+                headerRow.push({ text: 'Документ', alignment: 'center' });
+                headerRow.push({ text: 'Дебет', alignment: 'center' });
+                headerRow.push({ text: 'Кредит', alignment: 'center' });
+                headerRow.push({ text: 'Дата', alignment: 'center' });
+                headerRow.push({ text: 'Документ', alignment: 'center' });
+                headerRow.push({ text: 'Дебет', alignment: 'center' });
+                headerRow.push({ text: 'Кредит', alignment: 'center' });
 
                 bodyData.push(headerRow);
 
@@ -122,8 +128,8 @@
 
                 dataRow.push({ text: 'Сальдо начальное', colSpan: 2 });
                 dataRow.push({});
-                dataRow.push({ text: `${result.oldDebit}` });
-                dataRow.push({ text: `${result.oldCredit}` });
+                dataRow.push({ text: result.oldDebit, alignment: 'right' });
+                dataRow.push({ text: result.oldCredit, alignment: 'right' });
                 dataRow.push({ text: 'Сальдо начальное', colSpan: 2 });
                 dataRow.push({});
                 dataRow.push({});
@@ -134,10 +140,10 @@
                 result.items.forEach(function (item) {
                     dataRow = [];
 
-                    dataRow.push({ text: item.Date });
-                    dataRow.push({ text: item.Label });
-                    dataRow.push({ text: item.Amount });
-                    dataRow.push({});
+                    dataRow.push({ text: item.dateStr });
+                    dataRow.push({ text: item.label });
+                    dataRow.push({ text: item.debitStr, alignment: 'right' });
+                    dataRow.push({ text: item.creditStr, alignment: 'right' });
                     dataRow.push({});
                     dataRow.push({});
                     dataRow.push({});
@@ -150,8 +156,8 @@
 
                 dataRow.push({ text: 'Обороты за период', colSpan: 2 });
                 dataRow.push({});
-                dataRow.push({ text: '' });
-                dataRow.push({ text: '' });
+                dataRow.push({ text: result.debit, alignment: 'right' });
+                dataRow.push({ text: result.credit, alignment: 'right' });
                 dataRow.push({ text: 'Обороты за период', colSpan: 2 });
                 dataRow.push({});
                 dataRow.push({});
@@ -163,8 +169,8 @@
 
                 dataRow.push({ text: 'Сальдо конечное', colSpan: 2 });
                 dataRow.push({});
-                dataRow.push({ text: '' });
-                dataRow.push({ text: '' });
+                dataRow.push({ text: result.newDebit, alignment: 'right' });
+                dataRow.push({ text: result.newCredit, alignment: 'right' });
                 dataRow.push({ text: 'Сальдо конечное', colSpan: 2 });
                 dataRow.push({});
                 dataRow.push({});
@@ -173,40 +179,49 @@
                 bodyData.push(dataRow);
 
                 const docDefinition = {
+                    pageMargins: [ 15, 50, 0, 0 ],
+
                     content: [
                         {
                             text: 'Акт сверки',
                             style: 'largerText',
                             alignment: 'center',
-                            bold: true
+                            bold: true,
+                            margin: [0, 0, 0, 2]
                         },
                         {
                             text: `взаимных расчетов за период ${result.fromDate} - ${result.toDate}`,
                             style: 'normalText',
-                            alignment: 'center'
+                            alignment: 'center',
+                            margin: [0, 0, 0, 2]
                         },
                         {
                             text: `между ${result.orgName}`,
                             style: 'normalText',
-                            alignment: 'center'
+                            alignment: 'center',
+                            margin: [0, 0, 0, 2]
                         },
                         {
                             text: `и ${result.payerName}`,
                             style: 'normalText',
-                            alignment: 'center'
+                            alignment: 'center',
+                            margin: [0, 0, 0, 2]
                         },
                         {
                             text: 'по договору Основной договор',
                             style: 'normalText',
-                            alignment: 'center'
+                            alignment: 'center',
+                            margin: [0, 0, 0, 15]
                         },
                         {
                             text: `Мы, нижеподписавшиеся, ________________ ${result.orgName} _______________, с одной стороны,`,
-                            style: 'normalText'
+                            style: 'normalText',
+                            margin: [0, 0, 0, 3]
                         },
                         {
                             text: `и ________________ ${result.payerName} _______________, с другой стороны,`,
-                            style: 'normalText'
+                            style: 'normalText',
+                            margin: [0, 0, 0, 3]
                         },
                         {
                             text: 'составили настоящий акт сверки в том, что состояние взаимных расчетов по данным учета следующее:',
@@ -215,20 +230,30 @@
                         {
                             table: {
                                 headerRows: 2,
-                                widths: [40, 100, 45, 45, 40, 100, 45, 45],
+                                widths: [38, 120, 45, 45, 38, 120, 45, 45],
                                 body: bodyData
                             },
+                            style: 'smallText',
+                            margin: [0, 15, 0, 20]
+                        },
+                        {
+                            text: `По данным ${result.orgName}`,
+                            style: 'normalText'
+                        },
+                        {
+                            text: `На ${result.toDate} задолженность в пользу ${result.balance >= 0 ? result.orgName : result.payerName} составляет ${result.balance >= 0 ? result.newDebit : result.newCredit}`,
                             style: 'normalText',
-                            margin: [0, 15, 0, 40]
+                            margin: [0, 0, 0, 20]
                         },
                         {
                             columns: [
                                 [
                                     {
-                                        text: `От ${result.orgName}`
+                                        text: `От ${result.orgName}`,
+                                        margin: [0, 0, 0, 15]
                                     },
                                     {
-                                        text: '_____________________________(_______________)'
+                                        text: '________________________________(__________________)'
                                     },
                                     {
                                         text: 'М.П.'
@@ -236,13 +261,16 @@
                                 ],
                                 [
                                     {
-                                        text: `От ${result.payerName}`
+                                        text: `От ${result.payerName}`,
+                                        margin: [10, 0, 0, 15]
                                     },
                                     {
-                                        text: '_____________________________(_______________)'
+                                        text: '________________________________(__________________)',
+                                        margin: [10, 0, 0, 0]
                                     },
                                     {
-                                        text: 'М.П.'
+                                        text: 'М.П.',
+                                        margin: [10, 0, 0, 0]
                                     }
                                 ]
                             ],
@@ -256,6 +284,9 @@
                         },
                         normalText: {
                             fontSize: 8
+                        },
+                        smallText: {
+                            fontSize: 7
                         },
                         tableHeader: {
                             bold: true,

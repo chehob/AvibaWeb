@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,12 +21,30 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
         public string OldDebit { get; set; }
         public string OldCredit { get; set; }
         public List<ReviseReportPDFItem> Items { get; set; }
+        public string Debit { get; set; }
+        public string Credit { get; set; }
+        public decimal Balance { get; set; }
+        public string NewDebit { get; set; }
+        public string NewCredit { get; set; }
     }
 
     public class ReviseReportPDFItem
     {
-        public string Date { get; set; }
+        public ReviseReportPDFItem()
+        {
+            nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+            nfi.NumberDecimalSeparator = ",";
+        }
+        private NumberFormatInfo nfi;
+
+        public int Rank { get; set; }
+        public DateTime Date { get; set; }
+        public string DateStr { get; set; }
         public string Label { get; set; }
-        public string Amount { get; set; }
+        public decimal Debit { get; set; }
+        public string DebitStr => Debit != 0 ? Debit.ToString("0.00", nfi) : "";
+        public decimal Credit { get; set; }
+        public string CreditStr => Credit != 0 ? Credit.ToString("0.00", nfi) : "";
     }
 }

@@ -622,6 +622,17 @@ $(document).on('click',
                         {
                             stack: [
                                 {
+                                    text: result.paymentTemplateLabelStr,
+                                    style: 'mediumText',    
+                                },
+                                {
+                                    text: result.paymentTemplateStr,
+                                    style: 'mediumText',                                    
+                                    italics: true,   
+                                    bold: true,                                 
+                                    margin: [0, 0, 0, 15],
+                                },
+                                {
                                     text: `Всего наименований: 2, на сумму ${result.totalAmountStr} руб.`,
                                     style: 'mediumText'
                                 },
@@ -793,6 +804,17 @@ $(document).on('click',
                         },
                         {
                             stack: [
+                                {
+                                    text: result.paymentTemplateLabelStr,
+                                    style: 'mediumText',    
+                                },
+                                {
+                                    text: result.paymentTemplateStr,
+                                    style: 'mediumText',                                    
+                                    italics: true,   
+                                    bold: true,                                 
+                                    margin: [0, 0, 0, 15],
+                                },
                                 {
                                     text: `Всего наименований: 2, на сумму ${result.totalAmountStr} руб.`,
                                     style: 'mediumText'

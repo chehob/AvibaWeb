@@ -600,51 +600,56 @@ namespace AvibaWeb.Controllers
 
                                 if (foundIndexes.Count == 0)
                                 {
-                                    offset = 1;
                                     multiPaymentType = CorporatorReceiptMultiPayment.CRMPType.CorpReceipt;
-                                    for (var i = 0; i < record.PaymentDescription.Length; i++)
+                                    matches = Regex.Matches(lowerPaymentDescription, "rs-");
+                                    foreach (Match match in matches)
                                     {
-                                        if (record.PaymentDescription[i] == '№' || record.PaymentDescription[i] == 'N')
-                                        {
-                                            foundIndexes.Add(i);
-                                        }
+                                        foundIndexes.Add(match.Index);
                                     }
                                 }
 
                                 if (foundIndexes.Count > 0)
                                 {
                                     var hasUnrecognizedReceipts = false;
-                                    var receiptList = new List<CorporatorReceipt>();
+                                    var receiptList = new List<CorporatorReceipt>();                                    
                                     string errorString = "";
+                                    var hasPaidReceipts = false;
                                     foreach (var index in foundIndexes)
                                     {
                                         var beginStr = new string(lowerPaymentDescription.Skip(index + offset).ToArray());
                                         var endIndex = 6;
                                         var receiptStr = beginStr.Substring(0, endIndex);
-                                        var receiptStrList = receiptStr.Split(',');
-                                        foreach (var receiptNumberStr in receiptStrList)
+                                        var receiptNumber =
+                                            int.Parse(new string(receiptStr.Where(char.IsDigit).Take(7).ToArray()));
+
+                                        var receipt = _db.CorporatorReceipts
+                                            .FirstOrDefault(cr => cr.ReceiptNumber == receiptNumber &&
+                                                            cr.CorporatorId == operation.CounterpartyId &&
+                                                            ((multiPaymentType == CorporatorReceiptMultiPayment.CRMPType.CorpClient &&
+                                                                cr.TypeId == CorporatorReceipt.CRType.CorpClient) ||
+                                                                (multiPaymentType == CorporatorReceiptMultiPayment.CRMPType.CorpReceipt &&
+                                                                cr.TypeId == CorporatorReceipt.CRType.WebSite)));
+
+                                        if (receipt == null)
                                         {
-                                            var receiptNumber =
-                                                int.Parse(new string(receiptNumberStr.Where(char.IsDigit).Take(7).ToArray()));
-
-                                            var receipt = _db.CorporatorReceipts
-                                                .FirstOrDefault(cr => cr.ReceiptNumber == receiptNumber &&
-                                                                cr.CorporatorId == operation.CounterpartyId);
-
-                                            if (receipt == null)
+                                            errorString += "Неопознанный счет " + receiptNumber.ToString() + ". ";
+                                            hasUnrecognizedReceipts = true;
+                                        }
+                                        else if (receipt.StatusId == CorporatorReceipt.CRPaymentStatus.Paid)
+                                        {
+                                            if (multiPaymentType == CorporatorReceiptMultiPayment.CRMPType.CorpClient)
                                             {
-                                                errorString += "Неопознанный счет " + receiptNumber.ToString() + ". ";
-                                                hasUnrecognizedReceipts = true;
-                                            }
-                                            else if (receipt.StatusId == CorporatorReceipt.CRPaymentStatus.Paid)
-                                            {
-                                                errorString += "Счет уже оплачен " + receiptNumber.ToString() + ". ";
-                                                hasUnrecognizedReceipts = true;
+                                                hasPaidReceipts = true;
                                             }
                                             else
-                                            { 
-                                                receiptList.Add(receipt);
+                                            {
+                                                errorString += "Счет " + receiptNumber.ToString() + " уже оплачен. ";
+                                                hasUnrecognizedReceipts = true;
                                             }
+                                        }
+                                        else
+                                        { 
+                                            receiptList.Add(receipt);
                                         }
                                     }
 
@@ -663,11 +668,17 @@ namespace AvibaWeb.Controllers
                                                 CorporatorReceipt.CRPaymentStatus.Partial :
                                                 CorporatorReceipt.CRPaymentStatus.Paid;
                                         receipt.PaidDateTime = operation.OperationDateTime;
-                                        if (corpClient.CorporatorAccount != null)
+                                        if (multiPaymentType == CorporatorReceiptMultiPayment.CRMPType.CorpClient && 
+                                            corpClient.CorporatorAccount != null)
                                         {
                                             corpClient.CorporatorAccount.Balance += paidAmount;
                                             corpClient.CorporatorAccount.LastPaymentDate = operation.OperationDateTime;
                                         }
+                                    }
+
+                                    if (hasPaidReceipts && reminder > 0)
+                                    {
+                                        ProcessCorporatorDeposit(operation, reminder);
                                     }
 
                                     if (hasUnrecognizedReceipts == false && reminder > 0)
@@ -695,8 +706,7 @@ namespace AvibaWeb.Controllers
                             else if ((lowerPaymentDescription.Contains("аванс") || lowerPaymentDescription.Contains("депозит")) &&
                                 (lowerPaymentDescription.Contains("договор") || lowerPaymentDescription.Contains("дог.")))
                             {
-                                corpClient.CorporatorAccount.Balance += operation.Amount;
-                                corpClient.CorporatorAccount.LastPaymentDate = operation.OperationDateTime;
+                                ProcessCorporatorDeposit(operation, operation.Amount);                                
                             }
                             else
                             {
@@ -718,7 +728,7 @@ namespace AvibaWeb.Controllers
                     _db.FinancialAccountOperations.Add(operation);
                     financialAccount.Balance += operation.Amount;
 
-                    if (record.PaymentDescription.ToLower().Contains("заявка на внесение наличных") ||
+                    if (record.PaymentDescription.ToLower().Contains("внесение наличных") ||
                         record.PaymentDescription.ToLower().Contains("поступления от реализации платных услуг"))
                     {
                         var officeRole = _db.Roles.SingleOrDefault(r => r.Name.Contains("Офис"));
@@ -745,6 +755,43 @@ namespace AvibaWeb.Controllers
                 hasMultiPayments ?
                     "hasMultiPayment" : 
                     await _viewRenderService.RenderToStringAsync("Data/RecordsAdded") });
+        }
+
+        private async void ProcessCorporatorDeposit(FinancialAccountOperation operation, decimal amountReminder)
+        {
+            var corpClient = _db.Counterparties.Include(c => c.CorporatorAccount)
+                .FirstOrDefault(c => c.ITN == operation.CounterpartyId && c.Type.Description == "Корпоратор");
+            if (corpClient != null && corpClient.CorporatorAccount != null)
+            {
+                corpClient.CorporatorAccount.Balance += amountReminder;
+                corpClient.CorporatorAccount.LastPaymentDate = operation.OperationDateTime;
+
+                if (corpClient.CorporatorAccount.Balance > 0)
+                {
+                    var unpaidReceipts = _db.CorporatorReceipts
+                        .Where(cr => cr.CorporatorId == corpClient.ITN &&
+                                    cr.StatusId != CorporatorReceipt.CRPaymentStatus.Paid && cr.Amount > 0)
+                        .OrderBy(cr => cr.IssuedDateTime).ToList();
+                    while(unpaidReceipts.Count > 0 && corpClient.CorporatorAccount.Balance > 0)
+                    {
+                        var receipt = unpaidReceipts[0];
+                        unpaidReceipts.RemoveAt(0);
+
+                        var receiptPaymentNeeded = receipt.StatusId == CorporatorReceipt.CRPaymentStatus.Partial ?
+                                            receipt.Amount.GetValueOrDefault(0m) - receipt.PaidAmount.GetValueOrDefault(0m) :
+                                            receipt.Amount.GetValueOrDefault(0m);
+                        var paidAmount = corpClient.CorporatorAccount.Balance >= receiptPaymentNeeded ? receiptPaymentNeeded : corpClient.CorporatorAccount.Balance;
+                        corpClient.CorporatorAccount.Balance -= paidAmount;
+                        receipt.PaidAmount = receipt.PaidAmount.GetValueOrDefault(0m) + paidAmount;
+                        receipt.StatusId = receipt.PaidAmount.GetValueOrDefault(0m) < receipt.Amount.GetValueOrDefault(0m) ?
+                                CorporatorReceipt.CRPaymentStatus.Partial :
+                                CorporatorReceipt.CRPaymentStatus.Paid;
+                        receipt.PaidDateTime = operation.OperationDateTime;
+                    };
+                }
+            }
+
+            await _db.SaveChangesAsync();
         }
 
         [HttpPost]
@@ -1263,8 +1310,11 @@ namespace AvibaWeb.Controllers
                         CorporatorReceipt.CRPaymentStatus.Partial :
                         CorporatorReceipt.CRPaymentStatus.Paid;
                 receipt.PaidDateTime = payment.FinancialAccountOperation.InsertDateTime;
-                payment.FinancialAccountOperation.Counterparty.CorporatorAccount.Balance += item.Amount;
-                payment.FinancialAccountOperation.Counterparty.CorporatorAccount.LastPaymentDate = payment.FinancialAccountOperation.InsertDateTime;
+                if (payment.FinancialAccountOperation.Counterparty.CorporatorAccount != null)
+                {
+                    payment.FinancialAccountOperation.Counterparty.CorporatorAccount.Balance += item.Amount;
+                    payment.FinancialAccountOperation.Counterparty.CorporatorAccount.LastPaymentDate = payment.FinancialAccountOperation.InsertDateTime;
+                }
             }
 
             payment.IsProcessed = true;

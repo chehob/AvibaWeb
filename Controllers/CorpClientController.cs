@@ -924,6 +924,7 @@ namespace AvibaWeb.Controllers
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
+            nfi.NumberDecimalSeparator = ",";
 
             var oldBalance = (from cr in _db.CorporatorReceipts
                     .Include(c => c.PayeeAccount.Organization).ThenInclude(o => o.Counterparty)
@@ -934,14 +935,14 @@ namespace AvibaWeb.Controllers
                     .FirstOrDefault()
                 where cr.PayeeAccount.Organization.OrganizationId == int.Parse(requestData.payeeId) &&
                       cr.Corporator.ITN == requestData.payerId &&
-                      cr.PaidAmount > 0 && cr.PaidAmount != null &&
                       cr.TypeId == CorporatorReceipt.CRType.CorpClient &&
                       cro != null
-                select cr.PaidAmount.Value).Sum() -
+                    select cr.Amount.Value).Sum() -
                 (from cp in _db.FinancialAccountOperations
                  join fa in _db.FinancialAccounts.Include(fa => fa.Organization) on cp.FinancialAccountId equals fa.FinancialAccountId
                  where cp.CounterpartyId == requestData.payerId &&
-                    fa.Organization.OrganizationId == int.Parse(requestData.payeeId)
+                    fa.Organization.OrganizationId == int.Parse(requestData.payeeId) &&
+                    cp.OperationDateTime < DateTime.Parse(requestData.fromDate)
                  select cp.Amount).Sum();
 
             var model = new ReviseReportPDFViewModel
@@ -950,8 +951,8 @@ namespace AvibaWeb.Controllers
                 ToDate = DateTime.Parse(requestData.toDate).ToString("d"),
                 OrgName = requestData.payeeName,
                 PayerName = requestData.payerName,
-                OldDebit = oldBalance >= 0 ? oldBalance.ToString("#,0.00", nfi) : "",
-                OldCredit = oldBalance < 0 ? oldBalance.ToString("#,0.00", nfi) : "",
+                OldDebit = oldBalance >= 0 ? oldBalance.ToString("0.00", nfi) : "",
+                OldCredit = oldBalance < 0 ? (-oldBalance).ToString("0.00", nfi) : "",
                 Items = (from fao in _db.FinancialAccountOperations
                          join fa in _db.FinancialAccounts.Include(fa => fa.Organization) on fao.FinancialAccountId equals fa.FinancialAccountId
                          where fao.CounterpartyId == requestData.payerId &&
@@ -960,32 +961,61 @@ namespace AvibaWeb.Controllers
                             fao.OperationDateTime < DateTime.Parse(requestData.toDate).AddDays(1)
                          select new ReviseReportPDFItem
                          {
-                             Date = fao.OperationDateTime.ToString("d"),
+                             Rank = 2,
+                             Date = fao.OperationDateTime,
+                             DateStr = fao.OperationDateTime.ToString("d"),
                              Label = $"Перевод средств ({fao.OperationDateTime.ToString("d")})",
-                             Amount = fao.Amount.ToString("#,0.00", nfi)
+                             Debit = 0,
+                             Credit = fao.Amount
                          }).ToList()
-                //Items = (from item in _db.CorporatorReceiptItems
-                //    join ti in _db.VReceiptTicketInfo on item.TicketOperationId equals ti.TicketOperationId
-                //    join cr in _db.CorporatorReceipts.Include(c => c.PayeeAccount.Organization) on item
-                //        .CorporatorReceiptId equals cr.CorporatorReceiptId
-                //    let cro = _db.CorporatorReceiptOperations.Where(cro =>
-                //            cro.OperationDateTime >= DateTime.Parse(requestData.fromDate) &&
-                //            cro.OperationDateTime < DateTime.Parse(requestData.toDate).AddDays(1) &&
-                //            cr.CorporatorReceiptId == cro.CorporatorReceiptId)
-                //        .OrderByDescending(o => o.OperationDateTime)
-                //        .FirstOrDefault()
-                //    where cr.PayeeAccount.Organization.Description == requestData.payeeName &&
-                //          cr.PayeeAccount.BankName == requestData.payeeBankName &&
-                //          cr.Corporator.Name == requestData.payerName &&
-                //          cro != null &&
-                //          cr.TypeId == CorporatorReceipt.CRType.CorpClient
-                //    select new ReviseReportPDFItem
-                //    {
-                //        Date = cro.OperationDateTime.ToString("d"),
-                //        ReceiptNumber = cr.ReceiptNumber.ToString(),
-                //        Amount = "0"
-                //    }).ToList()
             };
+
+            model.Items.AddRange((from cr in _db.CorporatorReceipts
+                                  join cri in _db.CorporatorReceiptItems on cr.CorporatorReceiptId equals cri.CorporatorReceiptId
+                                  join ti in _db.VReceiptTicketInfo on cri.TicketOperationId equals ti.TicketOperationId
+                                  where cr.PayeeAccount.OrganizationId == int.Parse(requestData.payeeId) &&
+                                       cr.Corporator.ITN == requestData.payerId &&
+                                       cr.TypeId == CorporatorReceipt.CRType.CorpClient &&
+                                       cr.IssuedDateTime >= DateTime.Parse(requestData.fromDate) &&
+                                       cr.IssuedDateTime < DateTime.Parse(requestData.toDate).AddDays(1)
+                                group new { cr, cri, ti } by cri.CorporatorReceiptId into g
+                                select g)
+                                .SelectMany(r => new ReviseReportPDFItem[]
+                                {
+                                    new ReviseReportPDFItem
+                                    {
+                                        Rank = 1,
+                                        Date = r.FirstOrDefault().cr.IssuedDateTime.Value,
+                                        DateStr = r.FirstOrDefault().cr.IssuedDateTime.Value.ToString("d"),
+                                        Label = $"Принято ({r.FirstOrDefault().cr.ReceiptNumber} от {r.FirstOrDefault().cr.IssuedDateTime.Value.ToString("d")})",
+                                        Credit = 0,
+                                        Debit = r.Sum(a => a.cri.Amount)
+                                    },
+                                    new ReviseReportPDFItem
+                                    {
+                                        Rank = 1,
+                                        Date = r.FirstOrDefault().cr.IssuedDateTime.Value,
+                                        DateStr = r.FirstOrDefault().cr.IssuedDateTime.Value.ToString("d"),
+                                        Label = $"Продажа ({r.FirstOrDefault().cr.ReceiptNumber} от {r.FirstOrDefault().cr.IssuedDateTime.Value.ToString("d")})",
+                                        Credit = 0,
+                                        Debit = r.Sum(a => a.cri.IsPercent ? 
+                                                    a.cri.Amount * a.cri.FeeRate / 100 :
+                                                    a.cri.PerSegment ?
+                                                        a.cri.FeeRate * a.ti.SegCount :
+                                                        a.cri.FeeRate)
+                                    }
+                                }));
+
+            model.Items = model.Items.OrderBy(i => i.Date.Date).ThenBy(i => i.Rank).ToList();
+
+            var debit = model.Items.Sum(i => i.Debit);
+            model.Debit = debit.ToString("0.00", nfi);
+            var credit = model.Items.Sum(i => i.Credit);
+            model.Credit = credit.ToString("0.00", nfi);
+            var balance = oldBalance + debit - credit;
+            model.NewDebit = balance >= 0 ? balance.ToString("0.00", nfi) : "";
+            model.NewCredit = balance < 0 ? (-balance).ToString("0.00", nfi) : "";
+            model.Balance = balance;
 
             return Json(model);
         }
