@@ -107,12 +107,13 @@ namespace AvibaWeb.Controllers
             CorporatorReceipt receipt;
             if (model.ReceiptId != null && model.ReceiptId != 0)
             {
+                var orgId = 0;
                 receipt = _db.CorporatorReceipts.Include(cr => cr.Items)
                     .FirstOrDefault(cr => cr.CorporatorReceiptId == model.ReceiptId);
-                receipt.CorporatorId = model.PayerId;
+                receipt.CorporatorId = string.IsNullOrEmpty(model.PayerId) ? null : model.PayerId;
                 receipt.PayeeAccount = (from fa in _db.FinancialAccounts
                     join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
-                    where o.OrganizationId == int.Parse(model.PayeeId) && fa.BankName == model.PayeeBankName
+                    where o.OrganizationId == (int.TryParse(model.PayeeId, out orgId) ? orgId : 0) && fa.BankName == model.PayeeBankName
                     select fa).FirstOrDefault();
                 receipt.FeeRate = model.FeeRate.Length == 0 ? 0 : decimal.Parse(model.FeeRate);
                 receipt.StatusId = model.StatusId;
@@ -167,12 +168,13 @@ namespace AvibaWeb.Controllers
             }
             else
             {
+                var orgId = 0;
                 receipt = new CorporatorReceipt
                 {
-                    CorporatorId = model.PayerId,
+                    CorporatorId = string.IsNullOrEmpty(model.PayerId) ? null : model.PayerId,
                     PayeeAccount = (from fa in _db.FinancialAccounts
                         join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
-                        where o.OrganizationId == int.Parse(model.PayeeId) && fa.BankName == model.PayeeBankName
+                        where o.OrganizationId == (int.TryParse(model.PayeeId, out orgId) ? orgId : 0) && fa.BankName == model.PayeeBankName
                         select fa).FirstOrDefault(),
                     FeeRate = model.FeeRate.Length == 0 ? 0 : decimal.Parse(model.FeeRate),
                     Amount = 0,

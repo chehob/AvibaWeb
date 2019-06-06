@@ -1166,8 +1166,42 @@ namespace AvibaWeb.Controllers
                 }
                 else
                 {
-                    _db.Counterparties.Update(model.Counterparty);
+                    dbCounterparty.KPP = model.Counterparty.KPP;
+                    dbCounterparty.ManagementName = model.Counterparty.ManagementName;
+                    dbCounterparty.ManagementPosition = model.Counterparty.ManagementPosition;
+                    dbCounterparty.Name = model.Counterparty.Name;
+                    dbCounterparty.OGRN = model.Counterparty.OGRN;
+                    dbCounterparty.Phone = model.Counterparty.Phone;
+                    dbCounterparty.TypeId = model.Counterparty.TypeId;
+                    dbCounterparty.Address = model.Counterparty.Address;
+                    dbCounterparty.BankAccount = model.Counterparty.BankAccount;
+                    dbCounterparty.BankName = model.Counterparty.BankName;
+                    dbCounterparty.BIK = model.Counterparty.BIK;
+                    dbCounterparty.CorrespondentAccount = model.Counterparty.CorrespondentAccount;
+                    dbCounterparty.Email = model.Counterparty.Email;
                 }
+
+                
+                if (model.Counterparty.TypeId == 1)
+                {
+                    var corpAccount = _db.CorporatorAccounts.FirstOrDefault(ca => ca.ITN == model.Counterparty.ITN);
+                    if (corpAccount == null)
+                    {
+                        var account = new CorporatorAccount
+                        {
+                            BankName = model.Counterparty.BankName,
+                            BIK = model.Counterparty.BIK,
+                            CorrespondentAccount = model.Counterparty.CorrespondentAccount,
+                            Description = model.Counterparty.BankAccount,
+                            IsActive = true,
+                            OffBankName = model.Counterparty.BankName,
+                            ITN = model.Counterparty.ITN,                            
+                            Balance = 0
+                        };
+                        _db.CorporatorAccounts.Add(account);
+                    }
+                }
+
                 await _db.SaveChangesAsync();
             }
 

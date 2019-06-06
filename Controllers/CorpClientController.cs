@@ -926,10 +926,32 @@ namespace AvibaWeb.Controllers
             nfi.NumberGroupSeparator = " ";
             nfi.NumberDecimalSeparator = ",";
 
+            var tdebit = (from cr in _db.CorporatorReceipts
+                    .Include(c => c.PayeeAccount.Organization).ThenInclude(o => o.Counterparty)
+                        let cro = _db.CorporatorReceiptOperations.Where(cro =>
+                                cro.OperationDateTime < DateTime.Parse(requestData.fromDate) &&
+                                cro.OperationDateTime >= new DateTime(2018, 1, 1) &&
+                                cr.CorporatorReceiptId == cro.CorporatorReceiptId)
+                            .OrderByDescending(o => o.OperationDateTime)
+                            .FirstOrDefault()
+                        where cr.PayeeAccount.Organization.OrganizationId == int.Parse(requestData.payeeId) &&
+                              cr.Corporator.ITN == requestData.payerId &&
+                              cr.TypeId == CorporatorReceipt.CRType.CorpClient &&
+                              cro != null
+                        select cr.Amount.Value).Sum();
+
+            var tcredit = (from cp in _db.FinancialAccountOperations
+                          join fa in _db.FinancialAccounts.Include(fa => fa.Organization) on cp.FinancialAccountId equals fa.FinancialAccountId
+                          where cp.CounterpartyId == requestData.payerId &&
+                             fa.Organization.OrganizationId == int.Parse(requestData.payeeId) &&
+                             cp.OperationDateTime < DateTime.Parse(requestData.fromDate)
+                          select cp.Amount).Sum();
+
             var oldBalance = (from cr in _db.CorporatorReceipts
                     .Include(c => c.PayeeAccount.Organization).ThenInclude(o => o.Counterparty)
                 let cro = _db.CorporatorReceiptOperations.Where(cro =>
                         cro.OperationDateTime < DateTime.Parse(requestData.fromDate) &&
+                        cro.OperationDateTime >= new DateTime(2018, 1, 1) &&
                         cr.CorporatorReceiptId == cro.CorporatorReceiptId)
                     .OrderByDescending(o => o.OperationDateTime)
                     .FirstOrDefault()
