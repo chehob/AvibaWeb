@@ -102,6 +102,7 @@ namespace AvibaWeb.ViewModels.ReportViewModels
 
     public class AccountOperationsViewModel
     {
+        public bool IsAllOperations { get; set; }
         public string OrgName { get; set; }
         public string BankName { get; set; }
         public List<AccountOperationData> Operations { get; set; }
@@ -115,5 +116,6 @@ namespace AvibaWeb.ViewModels.ReportViewModels
         public decimal Amount { get; set; }
         public string AmountStr { get; set; }
         public string Description { get; set; }
+        public string PayeeName { get; set; }
     }
 }

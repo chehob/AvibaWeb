@@ -325,6 +325,7 @@ namespace AvibaWeb.Controllers
                     .Include(c => c.PayeeAccount.Organization).ThenInclude(o => o.Counterparty)
                 join cro in _db.CorporatorReceiptOperations on cr.CorporatorReceiptId equals cro.CorporatorReceiptId into operations
                 from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
+                let ca = _db.CorporatorAccounts.Where(cai => cr.CorporatorId == cai.ITN).FirstOrDefault()
                 where cr.CorporatorReceiptId == id
                 let org = cr.PayeeAccount.Organization
                 let orgc = org.Counterparty
@@ -337,10 +338,10 @@ namespace AvibaWeb.Controllers
                     PayerNameWithITN = $"{cr.Corporator.Name} ИНН: {cr.Corporator.ITN} ,КПП {cr.Corporator.KPP}",
                     PayerName = cr.Corporator.Name,
                     PayerAddress = cr.Corporator.Address,
-                    PayerCorrAccount = cr.Corporator.CorrespondentAccount,
-                    PayerFinancialAccount = cr.Corporator.BankAccount,
-                    PayerBankName = cr.Corporator.BankName,
-                    PayerBIK = cr.Corporator.BIK,
+                    PayerCorrAccount = ca == null ? cr.Corporator.CorrespondentAccount : ca.CorrespondentAccount,
+                    PayerFinancialAccount = ca == null ? cr.Corporator.BankAccount : ca.Description,
+                    PayerBankName = ca == null ? cr.Corporator.BankName : ca.OffBankName,
+                    PayerBIK = ca == null ? cr.Corporator.BIK : ca.BIK,
                     PayerITN = cr.Corporator.ITN,
                     PayerKPP = cr.Corporator.KPP,
                     PayerHeadTitle = cr.Corporator.ManagementPosition,

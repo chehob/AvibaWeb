@@ -108,11 +108,13 @@ namespace AvibaWeb.Controllers
                                            group o by o.FinancialAccountId
                                             into og
                                            join fa in _db.FinancialAccounts on og.Key equals fa.FinancialAccountId
-                                           let UploadDate = og.OrderByDescending(o => o.InsertDateTime).FirstOrDefault().InsertDateTime
+                                           //let UploadDate = og.OrderByDescending(o => o.InsertDateTime).FirstOrDefault().InsertDateTime
+                                           let UploadDate = fa.LastUploadDate == null ? "Нет даты" : fa.LastUploadDate.Value.Date.Equals(DateTime.Now.Date) ? fa.LastUploadDate.Value.ToString("t") : fa.LastUploadDate.Value.ToString("dd.MM hh:mm")
                                            select new OrganizationAccountBalance
                                            {
                                                Id = fa.FinancialAccountId,
-                                               LatestUpload = UploadDate.Date.Equals(DateTime.Now.Date) ? UploadDate.ToString("t") : UploadDate.ToString("dd.MM hh:mm"),
+                                               //LatestUpload = UploadDate.Date.Equals(DateTime.Now.Date) ? UploadDate.ToString("t") : UploadDate.ToString("dd.MM hh:mm"),
+                                               LatestUpload = UploadDate,
                                                Account = fa.Description,
                                                BankName = fa.BankName,
                                                Balance = fa.Balance.ToString("#,0.00", nfi)
@@ -255,20 +257,21 @@ namespace AvibaWeb.Controllers
         }        
 
         [HttpGet]
-        public ActionResult AccountOperations(int accountId)
+        public ActionResult AccountOperations(int accountId = 0)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
             var model = (from fa in _db.FinancialAccounts
-                where fa.FinancialAccountId == accountId
+                where fa.FinancialAccountId == accountId || accountId == 0
                 select new AccountOperationsViewModel
                 {
-                    OrgName = fa.Organization.Description,
-                    BankName = fa.BankName,
+                    IsAllOperations = accountId == 0,
+                    OrgName = accountId == 0 ? "Все" : fa.Organization.Description,
+                    BankName = accountId == 0 ? "" : fa.BankName,
                     Operations =
                         (from fao in _db.FinancialAccountOperations
-                            where fao.FinancialAccountId == accountId
+                            where fao.FinancialAccountId == accountId || accountId == 0
                             orderby fao.OperationDateTime descending
                             select new AccountOperationData
                             {
@@ -276,10 +279,11 @@ namespace AvibaWeb.Controllers
                                 OrderNumber = fao.OrderNumber,
                                 CounterpartyName =
                                     fao.TransferAccount != null
-                                        ? fao.TransferAccount.Organization.Description
+                                        ? fao.TransferAccount.Organization.Description + " - " + fao.TransferAccount.BankName
                                         : (fao.Counterparty != null
                                             ? fao.Counterparty.Name
                                             : (fao.PayeeUser != null ? fao.PayeeUser.Name : "")),
+                                PayeeName = fa.Organization.Description + " - " + fa.BankName,
                                 Amount = fao.Amount,
                                 AmountStr = fao.Amount.ToString("#,0.00", nfi),
                                 Description = fao.Description

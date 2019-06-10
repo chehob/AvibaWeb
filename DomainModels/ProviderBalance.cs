@@ -19,5 +19,7 @@ namespace AvibaWeb.DomainModels
 
         [Column(TypeName = "Money")]
         public decimal Deposit { get; set; }
+
+        public virtual ICollection<ProviderBalanceTransaction> Transactions { get; set; }
     }
 }

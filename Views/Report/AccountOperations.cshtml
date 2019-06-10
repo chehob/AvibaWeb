@@ -11,6 +11,10 @@
                 <th>Дата</th>
                 <th>№ п/п</th>
                 <th>Контрагент</th>
+                @if (Model.IsAllOperations)
+                {
+                <th>Получатель</th>
+                }
                 <th style="width: 150px;">Сумма</th>
                 <th style="width: 40%;">Назначение платежа</th>
             </tr>
@@ -24,6 +28,10 @@
                     <td>@operation.OperationDateTime</td>
                     <td>@operation.OrderNumber</td>
                     <td style="overflow: hidden; max-width: 50px; text-overflow: ellipsis; white-space: nowrap;">@operation.CounterpartyName</td>
+                    @if (Model.IsAllOperations)
+                    {
+                    <td style="overflow: hidden; max-width: 50px; text-overflow: ellipsis; white-space: nowrap;">@operation.PayeeName</td>
+                    }
                     <td>@operation.AmountStr</td>
                     <td style="overflow: hidden; max-width: 100px; text-overflow: ellipsis; white-space: nowrap;">
                         <span data-toggle="tooltip" title="@operation.Description" class="glyphicon glyphicon-list-alt" style="cursor: pointer;"></span>
@@ -38,12 +46,16 @@
                     <td>@operation.OperationDateTime</td>
                     <td>@operation.OrderNumber</td>
                     <td>@operation.CounterpartyName</td>
+                    @if (Model.IsAllOperations)
+                    {
+                        <td>@operation.PayeeName</td>
+                    }
                     <td>@operation.AmountStr</td>
                     <td style="overflow: hidden; max-width: 100px; text-overflow: ellipsis; white-space: nowrap;">
                         <span data-toggle="tooltip" title="@operation.Description" class="glyphicon glyphicon-list-alt" style="cursor: pointer;"></span>
                         @operation.Description
-                        
-                        </td>
+
+                    </td>
                 </tr>
                 }
             }

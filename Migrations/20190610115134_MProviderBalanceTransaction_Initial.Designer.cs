@@ -4,14 +4,16 @@ using AvibaWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AvibaWeb.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190610115134_MProviderBalanceTransaction_Initial")]
+    partial class MProviderBalanceTransaction_Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -808,7 +810,7 @@ namespace AvibaWeb.Migrations
 
                     b.HasIndex("ProviderId");
 
-                    b.ToTable("ProviderBalanceTransactions");
+                    b.ToTable("ProviderBalanceTransaction");
                 });
 
             modelBuilder.Entity("AvibaWeb.DomainModels.ProviderBinding", b =>

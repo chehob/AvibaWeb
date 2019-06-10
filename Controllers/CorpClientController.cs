@@ -196,14 +196,14 @@ namespace AvibaWeb.Controllers
                 receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Unpaid;
                 receipt.TypeId = CorporatorReceipt.CRType.CorpClient;
 
-                if (model.IssuedDateTime != null)
-                {
-                    receipt.IssuedDateTime = DateTime.Parse(model.IssuedDateTime);
-                }
-                else
-                {
-                    receipt.IssuedDateTime = DateTime.Now;
-                }
+                //if (model.IssuedDateTime != null)
+                //{
+                //    receipt.IssuedDateTime = DateTime.Parse(model.IssuedDateTime);
+                //}
+                //else
+                //{
+                //    receipt.IssuedDateTime = DateTime.Now;
+                //}
 
                 var viewModelItems = new List<CorporatorReceiptItem>();
                 var receiptOldItems = receipt.Items.ToList();
@@ -369,23 +369,29 @@ namespace AvibaWeb.Controllers
             var corporator = _db.Counterparties.Include(c => c.CorporatorAccount).FirstOrDefault(c => c.ITN == receipt.CorporatorId);
             if (corporator != null)
             {
-                if (model.Items.Count > 0)
-                {
-                    corporator.CorporatorAccount.LastReceiptDate = DateTime.Now;
-                    corporator.CorporatorAccount.Balance -= receipt.Amount.Value;
-                }
-
-                if (corporator.CorporatorAccount.Balance >= 0 || receipt.Amount < 0)
+                if (corporator.CorporatorAccount.Balance >= receipt.Amount || receipt.Amount < 0)
                 {
                     receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Paid;
                     receipt.PaidAmount = receipt.Amount;
                     receipt.PaidDateTime = DateTime.Now;
+                }
+                else if (corporator.CorporatorAccount.Balance < receipt.Amount && receipt.Amount > 0)
+                {
+                    receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Partial;
+                    receipt.PaidAmount = corporator.CorporatorAccount.Balance;
+                    receipt.PaidDateTime = null;
                 }
                 else
                 {
                     receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Unpaid;
                     receipt.PaidAmount = null;
                     receipt.PaidDateTime = null;
+                }
+
+                if (model.Items.Count > 0)
+                {
+                    corporator.CorporatorAccount.LastReceiptDate = DateTime.Now;
+                    corporator.CorporatorAccount.Balance -= receipt.Amount.Value;
                 }
             }            
 
@@ -893,7 +899,7 @@ namespace AvibaWeb.Controllers
                     BIK = model.Account.BIK,
                     CorrespondentAccount = model.Account.CorrespondentAccount,
                     IsActive = model.Account.IsActive
-            };
+                };
 
                 _db.CorporatorAccounts.Add(account);
             }
@@ -987,14 +993,14 @@ namespace AvibaWeb.Controllers
                              Date = fao.OperationDateTime,
                              DateStr = fao.OperationDateTime.ToString("d"),
                              Label = $"Перевод средств ({fao.OperationDateTime.ToString("d")})",
-                             Debit = 0,
                              Credit = fao.Amount
                          }).ToList()
             };
 
             model.Items.AddRange((from cr in _db.CorporatorReceipts
                                   join cri in _db.CorporatorReceiptItems on cr.CorporatorReceiptId equals cri.CorporatorReceiptId
-                                  join ti in _db.VReceiptTicketInfo on cri.TicketOperationId equals ti.TicketOperationId
+                                  join ti in _db.VReceiptTicketInfo on cri.TicketOperationId equals ti.TicketOperationId into tis
+                                  from ti in tis.DefaultIfEmpty()
                                   where cr.PayeeAccount.OrganizationId == int.Parse(requestData.payeeId) &&
                                        cr.Corporator.ITN == requestData.payerId &&
                                        cr.TypeId == CorporatorReceipt.CRType.CorpClient &&
@@ -1010,7 +1016,6 @@ namespace AvibaWeb.Controllers
                                         Date = r.FirstOrDefault().cr.IssuedDateTime.Value,
                                         DateStr = r.FirstOrDefault().cr.IssuedDateTime.Value.ToString("d"),
                                         Label = $"Принято ({r.FirstOrDefault().cr.ReceiptNumber} от {r.FirstOrDefault().cr.IssuedDateTime.Value.ToString("d")})",
-                                        Credit = 0,
                                         Debit = r.Sum(a => a.cri.Amount)
                                     },
                                     new ReviseReportPDFItem
@@ -1019,20 +1024,19 @@ namespace AvibaWeb.Controllers
                                         Date = r.FirstOrDefault().cr.IssuedDateTime.Value,
                                         DateStr = r.FirstOrDefault().cr.IssuedDateTime.Value.ToString("d"),
                                         Label = $"Продажа ({r.FirstOrDefault().cr.ReceiptNumber} от {r.FirstOrDefault().cr.IssuedDateTime.Value.ToString("d")})",
-                                        Credit = 0,
                                         Debit = r.Sum(a => a.cri.IsPercent ? 
                                                     a.cri.Amount * a.cri.FeeRate / 100 :
                                                     a.cri.PerSegment ?
-                                                        a.cri.FeeRate * a.ti.SegCount :
+                                                        a.cri.FeeRate * ( a.ti == null ? 1 : a.ti.SegCount ) :
                                                         a.cri.FeeRate)
                                     }
                                 }));
 
             model.Items = model.Items.OrderBy(i => i.Date.Date).ThenBy(i => i.Rank).ToList();
 
-            var debit = model.Items.Sum(i => i.Debit);
+            var debit = model.Items.Sum(i => i.Debit.GetValueOrDefault(0m));
             model.Debit = debit.ToString("0.00", nfi);
-            var credit = model.Items.Sum(i => i.Credit);
+            var credit = model.Items.Sum(i => i.Credit.GetValueOrDefault(0m));
             model.Credit = credit.ToString("0.00", nfi);
             var balance = oldBalance + debit - credit;
             model.NewDebit = balance >= 0 ? balance.ToString("0.00", nfi) : "";

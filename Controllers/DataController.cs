@@ -301,7 +301,7 @@ namespace AvibaWeb.Controllers
                     // Payment description
                     index = firstCsv.IndexOf("НазначениеПлатежа", recordStartIndex, StringComparison.Ordinal);
                     newLineIndex = firstCsv.IndexOf("\n", index, StringComparison.Ordinal);
-                    sl = firstCsv.Substring(index, newLineIndex - index).Split("=");
+                    sl = firstCsv.Substring(index, newLineIndex - index).Split("=", 2);
                     record.PaymentDescription = sl[1].Trim('\r');
 
                     cashlessRecords.Add(record);
@@ -483,13 +483,15 @@ namespace AvibaWeb.Controllers
         {
             if (!ModelState.IsValid) return new BadRequestResult();
 
+            var financialAccount =
+                     _db.FinancialAccounts.Include(a => a.Organization).ThenInclude(o => o.Counterparty)
+                         .FirstOrDefault(a => a.Description == model.Destination.AccountNumber);
+            if (financialAccount == null) return new BadRequestResult();
+
+            financialAccount.LastUploadDate = DateTime.Now;
+
             foreach (var counterpartyGroup in model.CounterpartyGroups)
             {
-                var financialAccount =
-                    _db.FinancialAccounts.Include(a => a.Organization).ThenInclude(o => o.Counterparty)
-                        .FirstOrDefault(a => a.Description == model.Destination.AccountNumber);
-                if (financialAccount == null) continue;
-
                 string userId = null;
                 if (counterpartyGroup.IsUserITN)
                 {
@@ -766,29 +768,27 @@ namespace AvibaWeb.Controllers
                 corpClient.CorporatorAccount.Balance += amountReminder;
                 corpClient.CorporatorAccount.LastPaymentDate = operation.OperationDateTime;
 
-                if (corpClient.CorporatorAccount.Balance > 0)
+                var reminder = amountReminder;
+                var unpaidReceipts = _db.CorporatorReceipts
+                    .Where(cr => cr.CorporatorId == corpClient.ITN &&
+                                cr.StatusId != CorporatorReceipt.CRPaymentStatus.Paid && cr.Amount > 0)
+                    .OrderBy(cr => cr.IssuedDateTime).ToList();
+                while(unpaidReceipts.Count > 0 && reminder > 0)
                 {
-                    var unpaidReceipts = _db.CorporatorReceipts
-                        .Where(cr => cr.CorporatorId == corpClient.ITN &&
-                                    cr.StatusId != CorporatorReceipt.CRPaymentStatus.Paid && cr.Amount > 0)
-                        .OrderBy(cr => cr.IssuedDateTime).ToList();
-                    while(unpaidReceipts.Count > 0 && corpClient.CorporatorAccount.Balance > 0)
-                    {
-                        var receipt = unpaidReceipts[0];
-                        unpaidReceipts.RemoveAt(0);
+                    var receipt = unpaidReceipts[0];
+                    unpaidReceipts.RemoveAt(0);
 
-                        var receiptPaymentNeeded = receipt.StatusId == CorporatorReceipt.CRPaymentStatus.Partial ?
-                                            receipt.Amount.GetValueOrDefault(0m) - receipt.PaidAmount.GetValueOrDefault(0m) :
-                                            receipt.Amount.GetValueOrDefault(0m);
-                        var paidAmount = corpClient.CorporatorAccount.Balance >= receiptPaymentNeeded ? receiptPaymentNeeded : corpClient.CorporatorAccount.Balance;
-                        corpClient.CorporatorAccount.Balance -= paidAmount;
-                        receipt.PaidAmount = receipt.PaidAmount.GetValueOrDefault(0m) + paidAmount;
-                        receipt.StatusId = receipt.PaidAmount.GetValueOrDefault(0m) < receipt.Amount.GetValueOrDefault(0m) ?
-                                CorporatorReceipt.CRPaymentStatus.Partial :
-                                CorporatorReceipt.CRPaymentStatus.Paid;
-                        receipt.PaidDateTime = operation.OperationDateTime;
-                    };
-                }
+                    var receiptPaymentNeeded = receipt.StatusId == CorporatorReceipt.CRPaymentStatus.Partial ?
+                                        receipt.Amount.GetValueOrDefault(0m) - receipt.PaidAmount.GetValueOrDefault(0m) :
+                                        receipt.Amount.GetValueOrDefault(0m);
+                    var paidAmount = reminder >= receiptPaymentNeeded ? receiptPaymentNeeded : reminder;
+                    reminder -= paidAmount;
+                    receipt.PaidAmount = receipt.PaidAmount.GetValueOrDefault(0m) + paidAmount;
+                    receipt.StatusId = receipt.PaidAmount.GetValueOrDefault(0m) < receipt.Amount.GetValueOrDefault(0m) ?
+                            CorporatorReceipt.CRPaymentStatus.Partial :
+                            CorporatorReceipt.CRPaymentStatus.Paid;
+                    receipt.PaidDateTime = operation.OperationDateTime;
+                };
             }
 
             await _db.SaveChangesAsync();

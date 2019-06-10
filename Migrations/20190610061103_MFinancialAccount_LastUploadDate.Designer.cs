@@ -4,14 +4,16 @@ using AvibaWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AvibaWeb.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190610061103_MFinancialAccount_LastUploadDate")]
+    partial class MFinancialAccount_LastUploadDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -784,31 +786,6 @@ namespace AvibaWeb.Migrations
                     b.HasKey("ProviderId");
 
                     b.ToTable("ProviderBalance");
-                });
-
-            modelBuilder.Entity("AvibaWeb.DomainModels.ProviderBalanceTransaction", b =>
-                {
-                    b.Property<int>("ProviderBalanceTransactionId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("Money");
-
-                    b.Property<int>("BookingOperationId");
-
-                    b.Property<decimal>("OldBalance")
-                        .HasColumnType("Money");
-
-                    b.Property<string>("ProviderId");
-
-                    b.Property<int>("TypeId");
-
-                    b.HasKey("ProviderBalanceTransactionId");
-
-                    b.HasIndex("ProviderId");
-
-                    b.ToTable("ProviderBalanceTransactions");
                 });
 
             modelBuilder.Entity("AvibaWeb.DomainModels.ProviderBinding", b =>
@@ -1671,13 +1648,6 @@ namespace AvibaWeb.Migrations
                         .WithOne("ProviderBalance")
                         .HasForeignKey("AvibaWeb.DomainModels.ProviderBalance", "ProviderId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("AvibaWeb.DomainModels.ProviderBalanceTransaction", b =>
-                {
-                    b.HasOne("AvibaWeb.DomainModels.ProviderBalance", "ProviderBalance")
-                        .WithMany("Transactions")
-                        .HasForeignKey("ProviderId");
                 });
 
             modelBuilder.Entity("AvibaWeb.DomainModels.ProviderBinding", b =>

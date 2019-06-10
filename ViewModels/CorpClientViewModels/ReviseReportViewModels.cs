@@ -42,9 +42,9 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
         public DateTime Date { get; set; }
         public string DateStr { get; set; }
         public string Label { get; set; }
-        public decimal Debit { get; set; }
-        public string DebitStr => Debit != 0 ? Debit.ToString("0.00", nfi) : "";
-        public decimal Credit { get; set; }
-        public string CreditStr => Credit != 0 ? Credit.ToString("0.00", nfi) : "";
+        public decimal? Debit { get; set; }
+        public string DebitStr => Debit != null ? Debit.Value.ToString("0.00", nfi) : "";
+        public decimal? Credit { get; set; }
+        public string CreditStr => Credit != null ? Credit.Value.ToString("0.00", nfi) : "";
     }
 }
