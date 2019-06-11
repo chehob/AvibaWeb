@@ -87,6 +87,9 @@ namespace AvibaWeb.Models
 
         public DbSet<VTicketTaxPDFInfo> VTicketTaxPDFInfo { get; set; }
 
+        public DbSet<ProviderBalanceTransaction> ProviderBalanceTransactions { get; set; }
+        public DbSet<OfficeBalanceHistory> OfficeBalanceHistory { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

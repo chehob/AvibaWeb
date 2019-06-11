@@ -1,8 +1,54 @@
 ﻿@using AvibaWeb.ViewModels.ReportViewModels
 @model AccountOperationsViewModel
 
+
+<div class="col-md-12">
+    <input hidden id="accountId" value="@Model.AccountId" />
+    <input type="text" autocomplete="off" id="min" name="min" class="date-range-filter"><input type="text" autocomplete="off" id="max" name="max" class="date-range-filter">
+    <a href="/" id="getReceiptListBtn" class="btn btn-success"></a>
+</div>
+
+<div class="col-md-12" id="operationsListBlock">
+</div>
+
+<script>
+    $("#getReceiptListBtn").click(function (e) {
+        const sendJsonData = {
+            fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+            toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true),
+            accountId: 
+        };
+
+        e.preventDefault();
+        $.ajax({
+            url: "/Report/AccountOperations",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $("#operationsListBlock").html(result.message);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $(function() {
+        $("#min").datepicker();
+        $("#max").datepicker();
+
+        $("#min").val(moment().subtract(30, 'days').format("DD.MM.YYYY"));
+        $("#max").val(moment().format("DD.MM.YYYY"));
+
+        $("#getReceiptListBtn").trigger("click");
+    });
+</script>
+
 <div class="box col-md-10">
-    
+
     <span><h4>@Model.OrgName - @Model.BankName</h4></span>
     <span><h4></h4></span>
     <table class="table table-striped table-bordered bootstrap-datatable datatable responsive" id="dataTable">
@@ -13,7 +59,7 @@
                 <th>Контрагент</th>
                 @if (Model.IsAllOperations)
                 {
-                <th>Получатель</th>
+                    <th>Получатель</th>
                 }
                 <th style="width: 150px;">Сумма</th>
                 <th style="width: 40%;">Назначение платежа</th>
@@ -24,44 +70,44 @@
             {
                 if (operation.Amount < 0)
                 {
-                <tr class="danger">
-                    <td>@operation.OperationDateTime</td>
-                    <td>@operation.OrderNumber</td>
-                    <td style="overflow: hidden; max-width: 50px; text-overflow: ellipsis; white-space: nowrap;">@operation.CounterpartyName</td>
-                    @if (Model.IsAllOperations)
-                    {
-                    <td style="overflow: hidden; max-width: 50px; text-overflow: ellipsis; white-space: nowrap;">@operation.PayeeName</td>
-                    }
-                    <td>@operation.AmountStr</td>
-                    <td style="overflow: hidden; max-width: 100px; text-overflow: ellipsis; white-space: nowrap;">
-                        <span data-toggle="tooltip" title="@operation.Description" class="glyphicon glyphicon-list-alt" style="cursor: pointer;"></span>
-                        
-                        @operation.Description
+                    <tr class="danger">
+                        <td>@operation.OperationDateTime</td>
+                        <td>@operation.OrderNumber</td>
+                        <td style="overflow: hidden; max-width: 50px; text-overflow: ellipsis; white-space: nowrap;">@operation.CounterpartyName</td>
+                        @if (Model.IsAllOperations)
+                        {
+                            <td style="overflow: hidden; max-width: 50px; text-overflow: ellipsis; white-space: nowrap;">@operation.PayeeName</td>
+                        }
+                        <td>@operation.AmountStr</td>
+                        <td style="overflow: hidden; max-width: 100px; text-overflow: ellipsis; white-space: nowrap;">
+                            <span data-toggle="tooltip" title="@operation.Description" class="glyphicon glyphicon-list-alt" style="cursor: pointer;"></span>
+
+                            @operation.Description
                         </td>
-                </tr>
+                    </tr>
                 }
                 else
                 {
-                <tr class="success">
-                    <td>@operation.OperationDateTime</td>
-                    <td>@operation.OrderNumber</td>
-                    <td>@operation.CounterpartyName</td>
-                    @if (Model.IsAllOperations)
-                    {
-                        <td>@operation.PayeeName</td>
-                    }
-                    <td>@operation.AmountStr</td>
-                    <td style="overflow: hidden; max-width: 100px; text-overflow: ellipsis; white-space: nowrap;">
-                        <span data-toggle="tooltip" title="@operation.Description" class="glyphicon glyphicon-list-alt" style="cursor: pointer;"></span>
-                        @operation.Description
+                    <tr class="success">
+                        <td>@operation.OperationDateTime</td>
+                        <td>@operation.OrderNumber</td>
+                        <td>@operation.CounterpartyName</td>
+                        @if (Model.IsAllOperations)
+                        {
+                            <td>@operation.PayeeName</td>
+                        }
+                        <td>@operation.AmountStr</td>
+                        <td style="overflow: hidden; max-width: 100px; text-overflow: ellipsis; white-space: nowrap;">
+                            <span data-toggle="tooltip" title="@operation.Description" class="glyphicon glyphicon-list-alt" style="cursor: pointer;"></span>
+                            @operation.Description
 
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
                 }
             }
         </tbody>
     </table>
- 
+
 </div>
 
 <script>
@@ -72,7 +118,7 @@
             "bStateSave": false,
             "sPaginationType": "full_numbers",
             "bSort": false,
-            "oLanguage": {                
+            "oLanguage": {
                 "sSearch": "Поиск:",
                 "sLengthMenu": "Показать _MENU_ записей",
                 "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
@@ -91,7 +137,7 @@
                         "nnext":     'Next',
                         "nlast":     'Last'
             }
-        }       
+        }
             }
         });
     }

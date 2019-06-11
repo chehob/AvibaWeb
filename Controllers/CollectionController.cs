@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
+using System.Globalization;
 
 namespace AvibaWeb.Controllers
 {
@@ -357,5 +358,52 @@ namespace AvibaWeb.Controllers
             return RedirectToAction("IssuedCustomCollections");
         }
         #endregion
+
+        [HttpGet]
+        public async Task<ActionResult> OfficeBalance(DateTime? fromDate, DateTime? toDate)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var queryToDate = toDate ?? DateTime.Now;
+            var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
+
+            var userId = _userManager.GetUserId(User);
+            var user = await _userManager.GetUserAsync(User);
+
+            var model = new OfficeBalanceViewModel
+            {
+                FromDate = queryFromDate.ToString("d"),
+                ToDate = queryToDate.ToString("d"),
+                CurrentAmount = user.Balance,
+                CurrentAmountStr = user.Balance.ToString("#,0.00", nfi),
+                Records = (from o in _db.OfficeBalanceHistory
+                           where o.SaveDateTime.Date >= queryFromDate && o.SaveDateTime.Date <= queryToDate
+                           orderby o.SaveDateTime descending
+                           select new OfficeBalanceRecord
+                           {
+                               SaveDateTime = o.SaveDateTime.ToString("d"),
+                               Balance = o.Balance.ToString("#,0.00", nfi)
+                           }).ToList()
+            };
+
+            return PartialView(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SaveOfficeBalance(decimal balance)
+        {
+            var officeBalanceRecord = new OfficeBalanceHistory
+            {
+                SaveDateTime = DateTime.Now,
+                Balance = balance
+            };
+
+            _db.OfficeBalanceHistory.Add(officeBalanceRecord);
+
+            await _db.SaveChangesAsync();
+
+            return Json(new { message = "Ok" });
+        }
     }
 }

@@ -80,4 +80,25 @@ namespace AvibaWeb.ViewModels.CollectionViewModels
     {
         public int IncomingCollections { get; set; }
     }
+
+    public class OfficeBalanceViewModel
+    {
+        public string FromDate { get; set; }
+        public string ToDate { get; set; }
+        public decimal CurrentAmount { get; set; }
+        public string CurrentAmountStr { get; set; }
+        public List<OfficeBalanceRecord> Records { get; set; }
+    }
+
+    public class OfficeBalanceRecord
+    {
+        public string SaveDateTime { get; set; }
+        public string Balance { get; set; }
+    }
+
+    public class OfficeHistoryRequest
+    {
+        public string fromDate { get; set; }
+        public string toDate { get; set; }
+    }
 }

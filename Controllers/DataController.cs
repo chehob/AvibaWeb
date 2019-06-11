@@ -678,15 +678,17 @@ namespace AvibaWeb.Controllers
                                         }
                                     }
 
-                                    if (hasPaidReceipts && reminder > 0)
+                                    if (reminder > 0)
                                     {
-                                        ProcessCorporatorDeposit(operation, reminder);
-                                    }
-
-                                    if (hasUnrecognizedReceipts == false && reminder > 0)
-                                    {
-                                        hasUnrecognizedReceipts = true;
-                                        errorString = "Неоплаченный остаток";
+                                        if (hasPaidReceipts)
+                                        {
+                                            ProcessCorporatorDeposit(operation, reminder);
+                                        }
+                                        else if (hasUnrecognizedReceipts == false)
+                                        {
+                                            hasUnrecognizedReceipts = true;
+                                            errorString = "Неоплаченный остаток";
+                                        }
                                     }
 
                                     if (hasUnrecognizedReceipts)

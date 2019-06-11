@@ -369,17 +369,20 @@ namespace AvibaWeb.Controllers
             var corporator = _db.Counterparties.Include(c => c.CorporatorAccount).FirstOrDefault(c => c.ITN == receipt.CorporatorId);
             if (corporator != null)
             {
-                if (corporator.CorporatorAccount.Balance >= receipt.Amount || receipt.Amount < 0)
+                if (corporator.CorporatorAccount.Balance > 0)
                 {
-                    receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Paid;
-                    receipt.PaidAmount = receipt.Amount;
-                    receipt.PaidDateTime = DateTime.Now;
-                }
-                else if (corporator.CorporatorAccount.Balance < receipt.Amount && receipt.Amount > 0)
-                {
-                    receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Partial;
-                    receipt.PaidAmount = corporator.CorporatorAccount.Balance;
-                    receipt.PaidDateTime = null;
+                    if (corporator.CorporatorAccount.Balance >= receipt.Amount || receipt.Amount < 0)
+                    {
+                        receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Paid;
+                        receipt.PaidAmount = receipt.Amount;
+                        receipt.PaidDateTime = DateTime.Now;
+                    }
+                    else if (corporator.CorporatorAccount.Balance < receipt.Amount && receipt.Amount > 0)
+                    {
+                        receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Partial;
+                        receipt.PaidAmount = corporator.CorporatorAccount.Balance;
+                        receipt.PaidDateTime = null;
+                    }
                 }
                 else
                 {

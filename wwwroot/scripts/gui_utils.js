@@ -2171,3 +2171,31 @@ $(document).on('click',
             initPayee();
             initPayer();
         }
+
+        $(document).on('click',
+    '.saveHistoryConfirmBtn[data-toggle=confirmation]',
+    function (e) {
+        e.preventDefault();
+        $(this).confirmation({
+            rootSelector: '[data-toggle=confirmation]',
+            onConfirm: function (e) {
+                var button = $(this);
+
+                $.ajax({
+                    url: "/Collection/SaveOfficeBalance",
+                    type: "POST",
+                    cache: false,
+                    data: {
+                        balance: $("#currentOfficeBalance").val()
+                    },
+                    success: function (result) {
+                        $("#getHistoryListBtn").trigger("click");
+                    },
+                    error: function (error) {
+                        console.log(error.message);
+                    }
+                });
+            }
+        });
+        $(this).confirmation('show');
+    });

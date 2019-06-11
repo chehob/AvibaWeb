@@ -62,7 +62,7 @@
     {
         <a asp-action="IssuedCollections" asp-controller="Collection" asp-route-isAdmin="true"
            data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
-           class="" >
+           class="">
             <div class="col-md-2 col-sm-2 col-xs-6">
                 <span data-toggle="tooltip" title="Всего" class="well top-block">
                     <span class="yellow animated bounceIn">Баланс</span>
@@ -81,19 +81,33 @@
                 <div class="yellow animated bounceIn">@Model.BalanceStr</div>
             </span>
         </div>
-    }
+    }    
 </div>
 <div class="row">
-<a asp-action="CreateCollection" asp-controller="Collection"
-        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
-        class="">
-<div class="col-md-2 col-sm-2 col-xs-12">
-<span data-toggle="tooltip" title="Всего" class="well top-block">
-    <span class="green glyphicon glyphicon-share-alt"></span>
-    <div></div>
-    <div class="green">Передать</div>
-</span>
-</div></a></div>
+    <a asp-action="CreateCollection" asp-controller="Collection"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
+       class="">
+        <div class="col-md-2 col-sm-2 col-xs-6">
+            <span data-toggle="tooltip" title="Всего" class="well top-block">
+                <span class="green glyphicon glyphicon-share-alt"></span>
+                <div></div>
+                <div class="green">Передать</div>
+            </span>
+        </div>
+    </a>
+    @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+    {
+        <a asp-action="OfficeBalance" asp-controller="Collection" asp-route-isAdmin="true"
+           data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
+           class="">
+            <div class="col-md-2 col-sm-2 col-xs-6">
+                <span data-toggle="tooltip" title="Всего" class="well top-block">
+                    <span class="yellow animated bounceIn">История</span>
+                </span>
+            </div>
+        </a>
+    }
+</div>
 
     
     
