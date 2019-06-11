@@ -257,21 +257,28 @@ namespace AvibaWeb.Controllers
         }        
 
         [HttpGet]
-        public ActionResult AccountOperations(int accountId = 0)
+        public ActionResult AccountOperations(DateTime? fromDate, DateTime? toDate, int accountId = 0)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
+
+            var queryToDate = toDate ?? DateTime.Now;
+            var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
 
             var model = (from fa in _db.FinancialAccounts
                 where fa.FinancialAccountId == accountId || accountId == 0
                 select new AccountOperationsViewModel
                 {
+                    AccountId = accountId,
+                    FromDate = queryFromDate.ToString("d"),
+                    ToDate = queryToDate.ToString("d"),
                     IsAllOperations = accountId == 0,
                     OrgName = accountId == 0 ? "Все" : fa.Organization.Description,
                     BankName = accountId == 0 ? "" : fa.BankName,
                     Operations =
                         (from fao in _db.FinancialAccountOperations
-                            where fao.FinancialAccountId == accountId || accountId == 0
+                            where (fao.FinancialAccountId == accountId || accountId == 0) &&
+                                fao.OperationDateTime.Date >= queryFromDate && fao.OperationDateTime.Date <= queryToDate
                             orderby fao.OperationDateTime descending
                             select new AccountOperationData
                             {

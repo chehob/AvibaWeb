@@ -102,6 +102,9 @@ namespace AvibaWeb.ViewModels.ReportViewModels
 
     public class AccountOperationsViewModel
     {
+        public string FromDate { get; set; }
+        public string ToDate { get; set; }
+        public int AccountId { get; set; }
         public bool IsAllOperations { get; set; }
         public string OrgName { get; set; }
         public string BankName { get; set; }

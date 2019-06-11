@@ -1,53 +1,13 @@
 ﻿@using AvibaWeb.ViewModels.ReportViewModels
 @model AccountOperationsViewModel
 
-
-<div class="col-md-12">
-    <input hidden id="accountId" value="@Model.AccountId" />
-    <input type="text" autocomplete="off" id="min" name="min" class="date-range-filter"><input type="text" autocomplete="off" id="max" name="max" class="date-range-filter">
-    <a href="/" id="getReceiptListBtn" class="btn btn-success"></a>
-</div>
-
-<div class="col-md-12" id="operationsListBlock">
-</div>
-
-<script>
-    $("#getReceiptListBtn").click(function (e) {
-        const sendJsonData = {
-            fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
-            toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true),
-            accountId: 
-        };
-
-        e.preventDefault();
-        $.ajax({
-            url: "/Report/AccountOperations",
-            type: "POST",
-            cache: false,
-            dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(sendJsonData),
-            success: function (result) {
-                $("#operationsListBlock").html(result.message);
-            },
-            error: function (error) {
-                console.log(error);
-            }
-        });
-    });
-
-    $(function() {
-        $("#min").datepicker();
-        $("#max").datepicker();
-
-        $("#min").val(moment().subtract(30, 'days').format("DD.MM.YYYY"));
-        $("#max").val(moment().format("DD.MM.YYYY"));
-
-        $("#getReceiptListBtn").trigger("click");
-    });
-</script>
-
 <div class="box col-md-10">
+
+    <div class="col-md-12">
+        <input hidden id="accountId" value="@Model.AccountId" />
+        Выбрать с: <input type="text" autocomplete="off" id="min" name="min" class="date-range-filter"> по: <input type="text" autocomplete="off" id="max" name="max" class="date-range-filter">
+        <a href="/" id="getOpListBtn" class="btn btn-success">Показать</a>
+    </div>
 
     <span><h4>@Model.OrgName - @Model.BankName</h4></span>
     <span><h4></h4></span>
@@ -111,10 +71,10 @@
 </div>
 
 <script>
-    onload = function () {
+    $(function () {
         $('#dataTable').dataTable({
             "iDisplayLength": 100,
-            "aLengthMenu": [[ 10, 20, 50, 100 ,-1],[10,20,50,100,"все"]],
+            "aLengthMenu": [[10, 20, 50, 100, -1], [10, 20, 50, 100, "все"]],
             "bStateSave": false,
             "sPaginationType": "full_numbers",
             "bSort": false,
@@ -125,22 +85,48 @@
                 "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
                 "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
                 "oPaginate": {
-                    "sFirst":    'Первая',
+                    "sFirst": 'Первая',
                     "sPrevious": 'Предыдущая',
-                    "sNext":     'Следующая',
-                    "sLast":     'Последняя'
+                    "sNext": 'Следующая',
+                    "sLast": 'Последняя'
                 },
                 "oaria": {
                     "ipaginate": {
-                        "nfirst":    'Начало',
+                        "nfirst": 'Начало',
                         "nprevious": 'Previous',
-                        "nnext":     'Next',
-                        "nlast":     'Last'
-            }
-        }
+                        "nnext": 'Next',
+                        "nlast": 'Last'
+                    }
+                }
             }
         });
-    }
 
-    onload();
+        $("#min").datepicker();
+        $("#max").datepicker();
+
+        $("#min").val('@Model.FromDate');
+        $("#max").val('@Model.ToDate');
+    });
+
+    $("#getOpListBtn").click(function (e) {
+        const sendJsonData = {
+            fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+            toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true),
+            accountId: $('#accountId').val()
+        };
+
+        e.preventDefault();
+        $.ajax({
+            url: "/Report/AccountOperations",
+            type: "GET",
+            cache: false,
+            data: sendJsonData,
+            success: function (result) {
+                $("#results").html(result);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
 </script>
