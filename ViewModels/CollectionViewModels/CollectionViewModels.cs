@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using AvibaWeb.DomainModels;
 using AvibaWeb.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -85,15 +86,28 @@ namespace AvibaWeb.ViewModels.CollectionViewModels
     {
         public string FromDate { get; set; }
         public string ToDate { get; set; }
-        public decimal CurrentAmount { get; set; }
-        public string CurrentAmountStr { get; set; }
+        public OfficeBalanceRecord CurrentData { get; set; }
         public List<OfficeBalanceRecord> Records { get; set; }
     }
 
     public class OfficeBalanceRecord
     {
+        public OfficeBalanceRecord()
+        {
+            nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+        }
+        private NumberFormatInfo nfi;
+
         public string SaveDateTime { get; set; }
-        public string Balance { get; set; }
+        public decimal Total { get; set; }
+        public string TotalStr => Total.ToString("#,0.00", nfi);
+        public decimal _5kBill { get; set; }
+        public string _5kBillStr => _5kBill.ToString("#,0.00", nfi);
+        public decimal _2kBill { get; set; }
+        public string _2kBillStr => _2kBill.ToString("#,0.00", nfi);
+
+        public string BalanceStr => (Total - _5kBill - _2kBill).ToString("#,0.00", nfi);        
     }
 
     public class OfficeHistoryRequest

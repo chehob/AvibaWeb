@@ -2186,7 +2186,9 @@ $(document).on('click',
                     type: "POST",
                     cache: false,
                     data: {
-                        balance: $("#currentOfficeBalance").val()
+                        total: $("#currentOfficeTotal").val(),
+                        _5kBill: $("#currentOffice5kBill").val(),
+                        _2kBill: $("#currentOffice2kBill").val()
                     },
                     success: function (result) {
                         $("#getHistoryListBtn").trigger("click");

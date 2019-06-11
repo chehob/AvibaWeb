@@ -375,15 +375,21 @@ namespace AvibaWeb.Controllers
             {
                 FromDate = queryFromDate.ToString("d"),
                 ToDate = queryToDate.ToString("d"),
-                CurrentAmount = user.Balance,
-                CurrentAmountStr = user.Balance.ToString("#,0.00", nfi),
+                CurrentData = new OfficeBalanceRecord
+                {
+                    Total = user.Balance,
+                    _5kBill = decimal.Parse(_db.SettingsValues.FirstOrDefault(sv => sv.Key == "5kBillSum").Value.Replace(".", ",").Replace(" ", string.Empty)),
+                    _2kBill = decimal.Parse(_db.SettingsValues.FirstOrDefault(sv => sv.Key == "2kBillSum").Value.Replace(".", ",").Replace(" ", string.Empty)),
+                },
                 Records = (from o in _db.OfficeBalanceHistory
                            where o.SaveDateTime.Date >= queryFromDate && o.SaveDateTime.Date <= queryToDate
                            orderby o.SaveDateTime descending
                            select new OfficeBalanceRecord
                            {
-                               SaveDateTime = o.SaveDateTime.ToString("d"),
-                               Balance = o.Balance.ToString("#,0.00", nfi)
+                               SaveDateTime = o.SaveDateTime.ToString("g"),
+                               Total = o.Balance,
+                               _5kBill = o._5kBill,
+                               _2kBill = o._2kBill
                            }).ToList()
             };
 
@@ -391,12 +397,14 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> SaveOfficeBalance(decimal balance)
+        public async Task<ActionResult> SaveOfficeBalance(decimal total, decimal _5kBill, decimal _2kBill)
         {
             var officeBalanceRecord = new OfficeBalanceHistory
             {
                 SaveDateTime = DateTime.Now,
-                Balance = balance
+                Balance = total,
+                _5kBill = _5kBill,
+                _2kBill = _2kBill
             };
 
             _db.OfficeBalanceHistory.Add(officeBalanceRecord);

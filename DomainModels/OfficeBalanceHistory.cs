@@ -13,6 +13,10 @@ namespace AvibaWeb.DomainModels
 
         public decimal Balance { get; set; }
 
+        public decimal _5kBill { get; set; }
+
+        public decimal _2kBill { get; set; }
+
         public DateTime SaveDateTime { get; set; }
     }
 }
