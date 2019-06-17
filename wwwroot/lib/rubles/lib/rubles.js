@@ -50,14 +50,20 @@
   };
 
   var parseNumber = function(number, count, currCode) {
-    var first;
+    var first = number.substr(0, 1);
     var second;
     var numeral = '';
+	
+	if (first==='-')
+	{
+		numeral = 'минус ';
+		number = number.substr(1, 3);
+	}
 	
     if (number.length === 3) {
       first = number.substr(0, 1);
       number = number.substr(1, 3);
-	  numeral = '' + first==='-'?'минус ':words[2][first] + ' ';
+	  numeral = '' + words[2][first] + ' ';
     }
 
     if (number < 20) {
@@ -153,6 +159,10 @@
         numeral = parseNumber(parts, count, currCode) + numeral;
         parts = '';
         count++;
+      }
+      else if(parts==='-')
+      {
+        numeral = 'минус ' + numeral;
       }
 
       length--;
