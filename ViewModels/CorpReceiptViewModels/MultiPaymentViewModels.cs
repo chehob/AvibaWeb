@@ -29,6 +29,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public string AmountStr { get; set; }
         public int ReceiptNumber { get; set; }
         public int ReceiptId { get; set; }
+        public string CorpName { get; set; }
     }
 
     public class MultiPaymentProcessViewModel

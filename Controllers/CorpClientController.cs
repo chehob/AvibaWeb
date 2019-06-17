@@ -182,7 +182,7 @@ namespace AvibaWeb.Controllers
                 var oldCorp = _db.Counterparties.Include(c => c.CorporatorAccount).FirstOrDefault(c => c.ITN == receipt.CorporatorId);
                 if (receipt.Items.Count > 0 && oldCorp != null)
                 {
-                    oldCorp.CorporatorAccount.Balance += receipt.Amount.Value;
+                    AddCorporatorAccountReceipt(oldCorp, receipt, -receipt.Amount.Value);
                 }
 
                 receipt.CorporatorId = model.PayerId;
@@ -195,15 +195,6 @@ namespace AvibaWeb.Controllers
                 receipt.Amount = 0;
                 receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Unpaid;
                 receipt.TypeId = CorporatorReceipt.CRType.CorpClient;
-
-                //if (model.IssuedDateTime != null)
-                //{
-                //    receipt.IssuedDateTime = DateTime.Parse(model.IssuedDateTime);
-                //}
-                //else
-                //{
-                //    receipt.IssuedDateTime = DateTime.Now;
-                //}
 
                 var viewModelItems = new List<CorporatorReceiptItem>();
                 var receiptOldItems = receipt.Items.ToList();
@@ -369,20 +360,18 @@ namespace AvibaWeb.Controllers
             var corporator = _db.Counterparties.Include(c => c.CorporatorAccount).FirstOrDefault(c => c.ITN == receipt.CorporatorId);
             if (corporator != null)
             {
-                if (corporator.CorporatorAccount.Balance > 0)
+                if ((corporator.CorporatorAccount.Balance > 0 && corporator.CorporatorAccount.Balance >= receipt.Amount) ||
+                    receipt.Amount < 0)
                 {
-                    if (corporator.CorporatorAccount.Balance >= receipt.Amount || receipt.Amount < 0)
-                    {
-                        receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Paid;
-                        receipt.PaidAmount = receipt.Amount;
-                        receipt.PaidDateTime = DateTime.Now;
-                    }
-                    else if (corporator.CorporatorAccount.Balance < receipt.Amount && receipt.Amount > 0)
-                    {
-                        receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Partial;
-                        receipt.PaidAmount = corporator.CorporatorAccount.Balance;
-                        receipt.PaidDateTime = null;
-                    }
+                    receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Paid;
+                    receipt.PaidAmount = receipt.Amount;
+                    receipt.PaidDateTime = DateTime.Now;
+                }
+                else if (corporator.CorporatorAccount.Balance > 0 && corporator.CorporatorAccount.Balance < receipt.Amount && receipt.Amount > 0)
+                {
+                    receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Partial;
+                    receipt.PaidAmount = corporator.CorporatorAccount.Balance;
+                    receipt.PaidDateTime = null;
                 }
                 else
                 {
@@ -393,14 +382,29 @@ namespace AvibaWeb.Controllers
 
                 if (model.Items.Count > 0)
                 {
-                    corporator.CorporatorAccount.LastReceiptDate = DateTime.Now;
-                    corporator.CorporatorAccount.Balance -= receipt.Amount.Value;
+                    AddCorporatorAccountReceipt(corporator, receipt, receipt.Amount.Value);
                 }
             }            
 
             await _db.SaveChangesAsync();
 
             return Json(new { message = "Ok" });
+        }
+
+        private void AddCorporatorAccountReceipt(Counterparty corpClient, CorporatorReceipt receipt, decimal paymentAmount)
+        {
+            var transaction = new CorporatorAccountTransaction
+            {
+                CorporatorAccount = corpClient.CorporatorAccount,
+                OldBalance = corpClient.CorporatorAccount.Balance,
+                Amount = -paymentAmount,
+                TransactionDateTime = DateTime.Now,
+                TransactionItemId = receipt.CorporatorReceiptId,
+                TypeId = CorporatorAccountTransaction.CATType.Receipt
+            };
+            _db.CorporatorAccountTransactions.Add(transaction);
+            corpClient.CorporatorAccount.Balance -= paymentAmount;
+            corpClient.CorporatorAccount.LastReceiptDate = DateTime.Now;
         }
 
         [HttpPost]

@@ -344,7 +344,7 @@ namespace AvibaWeb.Controllers
                     PayerBIK = ca == null ? cr.Corporator.BIK : ca.BIK,
                     PayerITN = cr.Corporator.ITN,
                     PayerKPP = cr.Corporator.KPP,
-                    PayerHeadTitle = cr.Corporator.ManagementPosition,
+                    PayerHeadTitle = string.IsNullOrEmpty(cr.Corporator.ManagementPosition) ? "" : cr.Corporator.ManagementPosition,
                     PayerHeadName = cr.Corporator.ManagementName,
                     Items = (from item in _db.CorporatorReceiptItems
                         join ti in _db.VReceiptTicketInfo on item.TicketOperationId equals ti.TicketOperationId

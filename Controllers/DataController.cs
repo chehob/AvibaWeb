@@ -673,8 +673,7 @@ namespace AvibaWeb.Controllers
                                         if (multiPaymentType == CorporatorReceiptMultiPayment.CRMPType.CorpClient && 
                                             corpClient.CorporatorAccount != null)
                                         {
-                                            corpClient.CorporatorAccount.Balance += paidAmount;
-                                            corpClient.CorporatorAccount.LastPaymentDate = operation.OperationDateTime;
+                                            AddCorporatorAccountPayment(corpClient, operation, paidAmount);
                                         }
                                     }
 
@@ -682,7 +681,7 @@ namespace AvibaWeb.Controllers
                                     {
                                         if (hasPaidReceipts)
                                         {
-                                            ProcessCorporatorDeposit(operation, reminder);
+                                            await ProcessCorporatorDeposit(operation, reminder);
                                         }
                                         else if (hasUnrecognizedReceipts == false)
                                         {
@@ -710,7 +709,7 @@ namespace AvibaWeb.Controllers
                             else if ((lowerPaymentDescription.Contains("аванс") || lowerPaymentDescription.Contains("депозит")) &&
                                 (lowerPaymentDescription.Contains("договор") || lowerPaymentDescription.Contains("дог.")))
                             {
-                                ProcessCorporatorDeposit(operation, operation.Amount);                                
+                                await ProcessCorporatorDeposit(operation, operation.Amount);                                
                             }
                             else
                             {
@@ -732,8 +731,8 @@ namespace AvibaWeb.Controllers
                     _db.FinancialAccountOperations.Add(operation);
                     financialAccount.Balance += operation.Amount;
 
-                    if (record.PaymentDescription.ToLower().Contains("внесение наличных") ||
-                        record.PaymentDescription.ToLower().Contains("поступления от реализации платных услуг"))
+                    if ((record.PaymentDescription.ToLower().Contains("внесение наличных") ||
+                        record.PaymentDescription.ToLower().Contains("поступления от реализации платных услуг")) && operation.Amount > 0)
                     {
                         var officeRole = _db.Roles.SingleOrDefault(r => r.Name.Contains("Офис"));
                         var office = _db.Users.FirstOrDefault(u => u.Roles.Any(r => r.RoleId == officeRole.Id));
@@ -761,14 +760,29 @@ namespace AvibaWeb.Controllers
                     await _viewRenderService.RenderToStringAsync("Data/RecordsAdded") });
         }
 
-        private async void ProcessCorporatorDeposit(FinancialAccountOperation operation, decimal amountReminder)
+        private void AddCorporatorAccountPayment(Counterparty corpClient, FinancialAccountOperation operation, decimal paymentAmount)
+        {
+            var transaction = new CorporatorAccountTransaction
+            {
+                CorporatorAccount = corpClient.CorporatorAccount,
+                OldBalance = corpClient.CorporatorAccount.Balance,
+                Amount = paymentAmount,
+                TransactionDateTime = DateTime.Now,
+                TransactionItemId = operation.FinancialAccountOperationId,
+                TypeId = CorporatorAccountTransaction.CATType.Payment
+            };
+            _db.CorporatorAccountTransactions.Add(transaction);
+            corpClient.CorporatorAccount.Balance += paymentAmount;
+            corpClient.CorporatorAccount.LastPaymentDate = operation.OperationDateTime;
+        }
+
+        private async Task ProcessCorporatorDeposit(FinancialAccountOperation operation, decimal amountReminder)
         {
             var corpClient = _db.Counterparties.Include(c => c.CorporatorAccount)
                 .FirstOrDefault(c => c.ITN == operation.CounterpartyId && c.Type.Description == "Корпоратор");
             if (corpClient != null && corpClient.CorporatorAccount != null)
             {
-                corpClient.CorporatorAccount.Balance += amountReminder;
-                corpClient.CorporatorAccount.LastPaymentDate = operation.OperationDateTime;
+                AddCorporatorAccountPayment(corpClient, operation, amountReminder);
 
                 var reminder = amountReminder;
                 var unpaidReceipts = _db.CorporatorReceipts
@@ -1324,7 +1338,8 @@ namespace AvibaWeb.Controllers
                                   AmountStr = ((r.Amount.GetValueOrDefault(0m)) - (r.PaidAmount.GetValueOrDefault(0m)))
                                     .ToString("#,0.00", nfi),
                                   ReceiptNumber = r.ReceiptNumber.Value,
-                                  ReceiptId = r.CorporatorReceiptId
+                                  ReceiptId = r.CorporatorReceiptId,
+                                  CorpName = r.Corporator.Name
                               }).ToList();
 
             return PartialView(model);
@@ -1334,22 +1349,24 @@ namespace AvibaWeb.Controllers
         public async Task<ActionResult> MultiPaymentProcess([FromBody]MultiPaymentProcessPostViewModel model)
         {
             var payment = _db.CorporatorReceiptMultiPayments.Include(mp => mp.FinancialAccountOperation)
-                .ThenInclude(fao => fao.Counterparty).ThenInclude(c => c.CorporatorAccount)
+                .ThenInclude(fao => fao.Counterparty)
                 .FirstOrDefault(p => p.CorporatorReceiptMultiPaymentId == model.PaymentId);
 
             foreach (var item in model.Receipts)
             {
-                var receipt = _db.CorporatorReceipts.FirstOrDefault(cr => cr.CorporatorReceiptId == item.ReceiptId);
+                var receipt = _db.CorporatorReceipts
+                    .Include(cr => cr.Corporator).ThenInclude(c => c.CorporatorAccount)
+                    .FirstOrDefault(cr => cr.CorporatorReceiptId == item.ReceiptId);
 
                 receipt.PaidAmount = receipt.PaidAmount.GetValueOrDefault(0m) + item.Amount;
                 receipt.StatusId = receipt.PaidAmount.GetValueOrDefault(0m) < receipt.Amount.GetValueOrDefault(0m) ?
                         CorporatorReceipt.CRPaymentStatus.Partial :
                         CorporatorReceipt.CRPaymentStatus.Paid;
                 receipt.PaidDateTime = payment.FinancialAccountOperation.InsertDateTime;
-                if (payment.FinancialAccountOperation.Counterparty.CorporatorAccount != null)
+                if (receipt.Corporator.CorporatorAccount != null)
                 {
-                    payment.FinancialAccountOperation.Counterparty.CorporatorAccount.Balance += item.Amount;
-                    payment.FinancialAccountOperation.Counterparty.CorporatorAccount.LastPaymentDate = payment.FinancialAccountOperation.InsertDateTime;
+                    receipt.Corporator.CorporatorAccount.Balance += item.Amount;
+                    receipt.Corporator.CorporatorAccount.LastPaymentDate = payment.FinancialAccountOperation.InsertDateTime;
                 }
             }
 

@@ -4,14 +4,16 @@ using AvibaWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AvibaWeb.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190611121706_MCorporatorAccountTransaction_Initial")]
+    partial class MCorporatorAccountTransaction_Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -254,8 +256,6 @@ namespace AvibaWeb.Migrations
 
                     b.Property<decimal>("OldBalance")
                         .HasColumnType("Money");
-
-                    b.Property<DateTime>("TransactionDateTime");
 
                     b.Property<int>("TransactionItemId");
 
@@ -847,8 +847,6 @@ namespace AvibaWeb.Migrations
                         .HasColumnType("Money");
 
                     b.Property<string>("ProviderId");
-
-                    b.Property<DateTime>("TransactionDateTime");
 
                     b.Property<int>("TypeId");
 

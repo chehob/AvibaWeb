@@ -90,6 +90,8 @@ namespace AvibaWeb.Models
         public DbSet<ProviderBalanceTransaction> ProviderBalanceTransactions { get; set; }
         public DbSet<OfficeBalanceHistory> OfficeBalanceHistory { get; set; }
 
+        public DbSet<CorporatorAccountTransaction> CorporatorAccountTransactions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

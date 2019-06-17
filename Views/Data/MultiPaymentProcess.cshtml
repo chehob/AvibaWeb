@@ -35,6 +35,7 @@
                         <thead>
                             <tr>
                                 <th>Номер счета</th>
+                                <th>Организация</th>
                                 <th>Сумма</th>
                                 <th>Выбрать</th>
                             </tr>
@@ -47,6 +48,7 @@
                 <thead>
                     <tr>
                         <th>Номер счета</th>
+                        <th>Организация</th>
                         <th>Сумма</th>
                         <th>Выбрать</th>
                     </tr>
@@ -54,16 +56,17 @@
                 <tbody>
                     @foreach (var receipt in Model.Receipts)
                     {
-                        <tr>
-                            <td>
-                                @receipt.ReceiptNumber
-                                <input hidden class="receiptId" value="@receipt.ReceiptId" />
-                            </td>
-                            <td>@receipt.AmountStr</td>
-                            <td>
-                                <button class="btn btn-success addReceiptPayment">Привязать платеж</button>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>
+                            @receipt.ReceiptNumber
+                            <input hidden class="receiptId" value="@receipt.ReceiptId" />
+                        </td>
+                        <td>@receipt.CorpName</td>
+                        <td>@receipt.AmountStr</td>
+                        <td>
+                            <button class="btn btn-success addReceiptPayment">Привязать платеж</button>
+                        </td>
+                    </tr>
                     }
                 </tbody>
             </table>
@@ -157,7 +160,7 @@
             const receipt = {
                 ReceiptNumber: firstTd[0].innerText,
                 ReceiptId: firstInput[0].value,
-                Amount: Number(firstTd[1].innerText.replace(/[^0-9.-]+/g, "")),
+                Amount: Number(firstTd[2].innerText.replace(/[^0-9.-]+/g, "")),
             };
             receiptsPaid.push(receipt);
         });
