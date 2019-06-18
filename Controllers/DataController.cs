@@ -517,7 +517,7 @@ namespace AvibaWeb.Controllers
                         ((isCashRequest || counterpartyGroup.IsTransferAccount && fao.TransferFinancialAccountId == transferAccount.FinancialAccountId) ||
                          (fao.CounterpartyId == record.PayeeITN || (userId != null && fao.UserId == userId))) &&
                         fao.Amount == dAmount &&
-                        fao.OperationDateTime == record.Date.ToLocalTime());
+                        fao.OperationDateTime.Date == record.Date.ToLocalTime().Date);
                     if (operationExists) continue;
 
                     var operation = new FinancialAccountOperation

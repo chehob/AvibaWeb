@@ -371,7 +371,7 @@ namespace AvibaWeb.Controllers
                 {
                     receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Partial;
                     receipt.PaidAmount = corporator.CorporatorAccount.Balance;
-                    receipt.PaidDateTime = null;
+                    receipt.PaidDateTime = DateTime.Now;
                 }
                 else
                 {
@@ -495,7 +495,8 @@ namespace AvibaWeb.Controllers
                     PayeeOrgName = cr.PayeeAccount.Organization.Description,
                     PayeeBankName = cr.PayeeAccount.BankName,
                     PayerOrgName = cr.Corporator.Name,
-                    TotalStr = cr.Amount.Value.ToString("#,0.00", nfi),
+                    TotalStr = cr.Amount.GetValueOrDefault(0).ToString("#,0.00", nfi),
+                    PartialStr = cr.PaidAmount.GetValueOrDefault(0).ToString("#,0.00", nfi),
                     Status = cr.StatusId,
                     TicketsToPDFCount = (from cri in _db.CorporatorReceiptItems
                         join rti in _db.VTicketOperations on cri.TicketOperationId equals rti.TicketOperationId

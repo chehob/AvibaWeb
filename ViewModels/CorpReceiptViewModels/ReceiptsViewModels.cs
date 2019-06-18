@@ -17,6 +17,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public string PayeeOrgName { get; set; }
         public string PayerOrgName { get; set; }
         public string TotalStr { get; set; }
+        public string PartialStr { get; set; }
         public CRPaymentStatus Status { get; set; }
         public int TicketsToPDFCount { get; set; }
     }
