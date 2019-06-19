@@ -151,7 +151,7 @@ namespace AvibaWeb.Controllers
             {
                 Organizations = await (from c in _db.Counterparties
                         .Include(c => c.SubagentData)
-                    where c.Type.Description == "Субагент Р"
+                    where c.Type.Description == "Субагент Р" && c.SubagentData.Balance != 0
                     select new OrganizationCashlessInfo
                     {
                         Name = c.Name,
