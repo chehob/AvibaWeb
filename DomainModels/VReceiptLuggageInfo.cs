@@ -16,5 +16,6 @@ namespace AvibaWeb.DomainModels
         public DateTime ExecutionDateTime { get; set; }
         public VKRSCancelRequest.TOType OperationTypeID { get; set; }
         public string PassengerName { get; set; }
+        public string TicketLabel { get; set; }
     }
 }

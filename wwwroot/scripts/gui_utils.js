@@ -318,7 +318,7 @@ $(document).on('click',
 
                     itemCount++;
                     dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
-                    dataRow.push({ text: 'Сбор за оформление билета', style: 'smallText' });
+                    dataRow.push({ text: item.ticketLabel, style: 'smallText' });
                     dataRow.push({ text: item.segCount, alignment: 'center' });
                     dataRow.push({ text: item.amountLabelStr, alignment: 'center' });
                     dataRow.push({ text: item.feeStr, alignment: 'right' });
@@ -952,7 +952,7 @@ $(document).on('click',
     
                         itemCount++;
                         dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
-                        dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
+                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
                         dataRow.push({ text: item.segCount, alignment: 'center' });
                         dataRow.push({ text: item.amountLabelStr, alignment: 'center' });
                         dataRow.push({ text: item.feeStr, alignment: 'right' });

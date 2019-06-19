@@ -364,12 +364,12 @@ namespace AvibaWeb.Controllers
                                     {
                                         Amount = item.Amount,
                                         AmountStr = item.Amount.ToString("#,0.00", nfi),
-                                        TicketLabel = $"Оформление багажа №{ti.LuggageNumber} к билету {ti.TicketNumber}",
+                                        TicketLabel = $"{ti.TicketLabel} №{ti.LuggageNumber} к билету {ti.TicketNumber}",
                                         SegCount = 1
                                     }).ToList(),
                     Taxes = (from item in _db.CorporatorReceiptItems
                         join ti in _db.VReceiptTicketInfo on item.TicketOperationId equals ti.TicketOperationId
-                        where item.CorporatorReceiptId == cr.CorporatorReceiptId && item.Amount >= 0
+                        where item.CorporatorReceiptId == cr.CorporatorReceiptId && item.Amount >= 0 && item.TypeId == CorporatorReceiptItem.CRIType.Ticket
                         group new { item, ti } by item.FeeRate
                         into groups
                         select new ReceiptTaxItem
@@ -413,6 +413,22 @@ namespace AvibaWeb.Controllers
                         $"Оплата по счету WR-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС" :
                         $"Оплата по счету RS-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС"
                 }).FirstOrDefault();
+
+            model.Taxes.AddRange(
+                (from item in _db.CorporatorReceiptItems
+                join ti in _db.VReceiptLuggageInfo on item.TicketOperationId equals ti.TicketOperationId
+                where item.CorporatorReceiptId == id && item.Amount >= 0 && item.TypeId == CorporatorReceiptItem.CRIType.Luggage
+                group new { item, ti } by item.FeeRate
+                into groups
+                select new ReceiptTaxItem
+                {
+                    FeeStr = (groups.FirstOrDefault().item.IsPercent ? groups.FirstOrDefault().item.Amount * groups.FirstOrDefault().item.FeeRate / 100 : groups.FirstOrDefault().item.FeeRate).ToString("#,0.00", nfi),
+                    Amount = groups.Sum(g => g.item.IsPercent ? g.item.Amount * g.item.FeeRate / 100 : g.item.FeeRate),
+                    AmountStr = groups.Sum(g => g.item.IsPercent ? g.item.Amount * g.item.FeeRate / 100 : g.item.FeeRate).ToString("#,0.00", nfi),
+                    SegCount = 1,
+                    AmountLabelStr = "шт.",
+                    TicketLabel = groups.FirstOrDefault().ti.TicketLabel
+                }).ToList());
 
             model.ItemTotal = model.Items.Sum(i => i.Amount) + model.LuggageItems.Sum(i => i.Amount);
             model.ItemTotalStr = model.ItemTotal.ToString("#,0.00", nfi);

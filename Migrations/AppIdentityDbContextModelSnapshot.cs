@@ -1170,6 +1170,8 @@ namespace AvibaWeb.Migrations
 
                     b.Property<int>("TicketOperationId");
 
+                    b.Property<string>("TicketLabel");
+
                     b.HasKey("Id");
 
                     b.ToTable("VReceiptLuggageInfo");
