@@ -1469,36 +1469,56 @@ $(document).on('click',
                                         margin: [0, 25, 0, 0]
                                     },
                                     {
-                                        columns: [
-                                            [
-                                                {
-                                                    text: 'ИСПОЛНИТЕЛЬ',
-                                                    bold: true,
-                                                },
-                                                {
-                                                    text: `${result.orgHeadTitle} ${result.orgName}`,
-                                                    margin: [0, 10, 0, 0]
-                                                },
-                                                {
-                                                    text: '________________________________________',
-                                                    margin: [0, 15, 0, 0]
-                                                }
-                                            ],
-                                            [
-                                                {
-                                                    text: 'ЗАКАЗЧИК',
-                                                    bold: true,
-                                                },
-                                                {
-                                                    text: `${result.payerName}`,
-                                                    margin: [0, 10, 0, 0]
-                                                },
-                                                {
-                                                    text: '________________________________________',
-                                                    margin: [0, 15, 0, 0]
-                                                }
+                                        table: {
+                                            widths: ['*', '*'],
+                                            heights: [8, 8, 8],
+                                            body: [
+                                                [
+                                                    {
+                                                        text: 'ИСПОЛНИТЕЛЬ',
+                                                        bold: true,
+                                                    },
+                                                    {
+                                                        text: 'ЗАКАЗЧИК',
+                                                        bold: true,
+                                                    }
+                                                ],
+                                                [
+                                                    {
+                                                        text: `${result.orgHeadTitle} ${result.orgName}`,
+                                                        margin: [0, 10, 0, 0]
+                                                    },
+                                                    {
+                                                        text: `${result.payerName}`,
+                                                        margin: [0, 10, 0, 0]
+                                                    }
+                                                ],
+                                                [   
+                                                    [
+                                                        { 
+                                                            image: `${result.signatureImage}`,
+                                                            width: 150,
+                                                            height: 60,
+                                                            margin: [15, 15, 0, 0]
+                                                        },
+                                                        {
+                                                            text: '________________________________________',
+                                                            margin: [0, -30, 0, 0]
+                                                        },
+                                                        {
+                                                            image: `${result.stampImage}`,
+                                                            width: 125,
+                                                            margin: [25, 20, 0, 0]
+                                                        }
+                                                    ],
+                                                    {
+                                                        text: '________________________________________',
+                                                        margin: [0, 45, 0, 0]
+                                                    }                                                 
+                                                ]
                                             ]
-                                        ],
+                                        },
+                                        layout: 'noBorders',                                     
                                         style: 'mediumText',
                                         margin: [0, 25, 0, 0]
                                     }
