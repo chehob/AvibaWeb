@@ -81,14 +81,18 @@
 
             </td>
             <td style="width: 80px;">
-                <a href="/" class="btn btn-info btn-xs createReceiptPDF" style="width: 70px;">Счет PDF</a>
-                <br>
-                <a href="/" class="btn btn-info btn-xs createReportPDF" style="width: 70px;">Акт PDF</a>
-                @if (receipt.TicketsToPDFCount > 0)
-                {
-                    <br>
-                    <a href="/" class="btn btn-info btn-xs createTicketsPDF" style="width: 70px;">Билеты</a>
-                }
+                <div class="btn-group">
+                    <button class="btn btn-default btn-xs">Документы</button>
+                    <button class="btn dropdown-toggle btn-default btn-xs" data-toggle="dropdown">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li style="background-color: lightskyblue"><a href="/" class="createReceiptPDF"><i class="glyphicon glyphicon-list-alt"></i> Счет PDF</a></li>
+                        <li style="background-color: lightskyblue"><a href="/" class="createReportPDF"><i class="glyphicon glyphicon-list-alt"></i> Акт PDF</a></li>
+                        <li style="background-color: lightskyblue"><a href="/" class="createTicketsPDF"><i class="glyphicon glyphicon-list-alt"></i> Билеты</a></li>
+                        <li><a href="/" class="createReportPDF2"><i class="glyphicon glyphicon-envelope"></i> Акт с подписью</a></li>
+                    </ul>
+                </div>
             </td>
         </tr>
         }
