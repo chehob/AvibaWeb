@@ -2417,6 +2417,11 @@ $(document).on('click',
         });
 
         function initPayer() {
+            if( !$("#selectPayer").length )
+            {
+                return;
+            }
+
             // Options for the observer (which mutations to observe)
             var config = { attributes: true, childList: true, subtree: true };
 
@@ -2473,6 +2478,10 @@ $(document).on('click',
         }
 
     function initPayee() {
+        if( !$("#selectPayee").length )
+        {
+            return;
+        }
         // Select the node that will be observed for mutations
         var payeeTargetNode = $("#selectPayee").next().find("a.chosen-single span")[0];
     

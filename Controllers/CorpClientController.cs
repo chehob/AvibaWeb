@@ -77,27 +77,6 @@ namespace AvibaWeb.Controllers
                     Status = cr.StatusId
                 }).ToList();
 
-            //var model = (from cr in _db.CorporatorReceipts.Where(cc => cc.TypeId == CorporatorReceipt.CRType.CorpClient)
-            //        .Include(c => c.PayeeAccount.Organization)
-            //    join operation in _db.CorporatorReceiptOperations.Where(cro => cro.OperationDateTime >= dateTimeLimit) on cr.CorporatorReceiptId
-            //        equals
-            //        operation.CorporatorReceiptId into operations
-            //    from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
-            //    orderby cr.CorporatorReceiptId descending
-            //    select new ReceiptsViewModel
-            //    {
-            //        ReceiptNumber = cr.ReceiptNumber.ToString(),
-            //        ReceiptId = cr.CorporatorReceiptId,
-            //        CreatedDate = operation.OperationDateTime.ToString("d"),
-            //        IssuedDateTime = cr.IssuedDateTime != null ? cr.IssuedDateTime.Value.ToString("d") : "",
-            //        PaidDateTime = cr.PaidDateTime != null ? cr.PaidDateTime.Value.ToString("d") : "",
-            //        PayeeOrgName = cr.PayeeAccount.Organization.Description,
-            //        PayeeBankName = cr.PayeeAccount.BankName,
-            //        PayerOrgName = cr.Corporator.Name,
-            //        TotalStr = cr.Amount.Value.ToString("#,0.00", nfi),
-            //        Status = cr.StatusId
-            //    }).ToList();
-
             return PartialView(model);
         }
 
@@ -944,27 +923,6 @@ namespace AvibaWeb.Controllers
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
             nfi.NumberDecimalSeparator = ",";
-
-            var tdebit = (from cr in _db.CorporatorReceipts
-                    .Include(c => c.PayeeAccount.Organization).ThenInclude(o => o.Counterparty)
-                        let cro = _db.CorporatorReceiptOperations.Where(cro =>
-                                cro.OperationDateTime < DateTime.Parse(requestData.fromDate) &&
-                                cro.OperationDateTime >= new DateTime(2018, 1, 1) &&
-                                cr.CorporatorReceiptId == cro.CorporatorReceiptId)
-                            .OrderByDescending(o => o.OperationDateTime)
-                            .FirstOrDefault()
-                        where cr.PayeeAccount.Organization.OrganizationId == int.Parse(requestData.payeeId) &&
-                              cr.Corporator.ITN == requestData.payerId &&
-                              cr.TypeId == CorporatorReceipt.CRType.CorpClient &&
-                              cro != null
-                        select cr.Amount.Value).Sum();
-
-            var tcredit = (from cp in _db.FinancialAccountOperations
-                          join fa in _db.FinancialAccounts.Include(fa => fa.Organization) on cp.FinancialAccountId equals fa.FinancialAccountId
-                          where cp.CounterpartyId == requestData.payerId &&
-                             fa.Organization.OrganizationId == int.Parse(requestData.payeeId) &&
-                             cp.OperationDateTime < DateTime.Parse(requestData.fromDate)
-                          select cp.Amount).Sum();
 
             var oldBalance = (from cr in _db.CorporatorReceipts
                     .Include(c => c.PayeeAccount.Organization).ThenInclude(o => o.Counterparty)

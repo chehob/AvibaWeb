@@ -37,6 +37,8 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public CRMPType Type { get; set; }
         public CorporatorReceiptMultiPayment Payment { get; set; }
         public List<MultiPaymentReceipt> Receipts { get; set; }
+
+        public List<KeyValuePair<string, string>> Counterparties { get; set; }
     }
 
     public class MultiPaymentProcessPostViewModel

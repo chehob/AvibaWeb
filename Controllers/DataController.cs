@@ -587,9 +587,7 @@ namespace AvibaWeb.Controllers
                         {
                             var isUnrecognizedOperation = false;
                             var multiPaymentType = CorporatorReceiptMultiPayment.CRMPType.CorpClient;
-                            if ((lowerPaymentDescription.Contains("оплата") || lowerPaymentDescription.Contains("за оформление")) &&
-                                (lowerPaymentDescription.Contains("счет") || lowerPaymentDescription.Contains("сч.") || lowerPaymentDescription.Contains("по сч")) &&
-                                lowerPaymentDescription.Contains("от"))
+                            if (lowerPaymentDescription.Contains("wr-") || lowerPaymentDescription.Contains("rs-"))
                             {
                                 var foundIndexes = new List<int>();
 
@@ -675,6 +673,7 @@ namespace AvibaWeb.Controllers
                                         {
                                             AddCorporatorAccountPayment(corpClient, operation, paidAmount);
                                         }
+                                        hasPaidReceipts = true;
                                     }
 
                                     if (reminder > 0)
@@ -808,7 +807,7 @@ namespace AvibaWeb.Controllers
                 };
             }
 
-            await _db.SaveChangesAsync();
+            //await _db.SaveChangesAsync();
         }
 
         [HttpPost]
@@ -1327,7 +1326,10 @@ namespace AvibaWeb.Controllers
 
             var model = new MultiPaymentProcessViewModel
             {
-                Payment = _db.CorporatorReceiptMultiPayments.FirstOrDefault(p => p.CorporatorReceiptMultiPaymentId == paymentId)
+                Payment = _db.CorporatorReceiptMultiPayments.FirstOrDefault(p => p.CorporatorReceiptMultiPaymentId == paymentId),
+                Counterparties = (from c in _db.Counterparties
+                                  where c.Type.Description == "Корпоратор"
+                                  select new KeyValuePair<string, string>(c.ITN, c.Name)).ToList()
             };            
             model.Receipts = (from r in _db.CorporatorReceipts
                               where r.StatusId != CorporatorReceipt.CRPaymentStatus.Paid && r.Amount > 0 &&
@@ -1369,6 +1371,27 @@ namespace AvibaWeb.Controllers
                     receipt.Corporator.CorporatorAccount.Balance += item.Amount;
                     receipt.Corporator.CorporatorAccount.LastPaymentDate = payment.FinancialAccountOperation.InsertDateTime;
                 }
+            }
+
+            payment.IsProcessed = true;
+
+            await _db.SaveChangesAsync();
+
+            return Json(new { message = "Ok" });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> MultiPaymentAddToBalance(int PaymentId, string PayerId, decimal Amount)
+        {
+            var payment = _db.CorporatorReceiptMultiPayments.Include(mp => mp.FinancialAccountOperation)
+                .FirstOrDefault(p => p.CorporatorReceiptMultiPaymentId == PaymentId);
+
+            var corporator = _db.Counterparties.Include(c => c.CorporatorAccount).FirstOrDefault(c => c.ITN == PayerId);
+            
+            if (corporator != null)
+            {
+                corporator.CorporatorAccount.Balance += Amount;
+                corporator.CorporatorAccount.LastPaymentDate = DateTime.Now;
             }
 
             payment.IsProcessed = true;
