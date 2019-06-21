@@ -2458,7 +2458,7 @@ $(document).on('click',
                         data: { corpName: mutation.target.textContent },
                         success: function (result) {
                             $("#payeeSelectDiv").html(result);
-                            $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+                            $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
 
                             initPayee();
                         },
@@ -2498,7 +2498,7 @@ $(document).on('click',
                 data: { orgName: mutation.target.textContent },
                 success: function (result) {
                     $("#payeeOrgFinancialAccountsDiv").html(result);
-                    $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+                    $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
 
                     var editValue = $("#editReceiptBankName").val();
                     if (editValue) {
@@ -2537,7 +2537,7 @@ $(document).on('click',
                     data: { orgName: mutation.target.textContent },
                     success: function (result) {
                         $("#payerSelectDiv").html(result);
-                        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+                        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
 
                         console.log("org init orgCorp");
 

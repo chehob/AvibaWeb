@@ -46,7 +46,7 @@
 
 <script>
     $(function () {
-        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
 
         // Select the node that will be observed for mutations
         const payeeTargetNode = $("#selectPayee").next().find("a.chosen-single span")[0];

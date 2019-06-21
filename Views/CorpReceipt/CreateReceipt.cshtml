@@ -189,7 +189,7 @@
     onload = function () {
         
 
-        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
 
         // Select the node that will be observed for mutations
         const payeeTargetNode = $("#selectPayee").next().find("a.chosen-single span")[0];
@@ -207,7 +207,7 @@
                 data: { orgName: mutation.target.textContent },
                 success: function (result) {
                     $("#payeeOrgFinancialAccountsDiv").html(result);
-                    $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+                    $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
 
                     var editValue = $("#editReceiptBankName").val();
                     if (editValue) {
