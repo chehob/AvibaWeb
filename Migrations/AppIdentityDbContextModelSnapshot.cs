@@ -1260,6 +1260,8 @@ namespace AvibaWeb.Migrations
 
                     b.Property<int?>("TicketTypeId");
 
+                    b.Property<bool>("CorpClientFlag");
+
                     b.HasKey("Id");
 
                     b.ToTable("VTicketOperations");

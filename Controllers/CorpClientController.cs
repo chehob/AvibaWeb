@@ -208,7 +208,14 @@ namespace AvibaWeb.Controllers
                         var ticketOperationId = new SqlParameter("@TicketOperationId",
                             int.Parse(i.TicketOperationId));
                         _db.Database.ExecuteSqlCommand(
-                            @"update pay
+                            @"
+                            update t
+                            set t.CorpClientFlag = 1
+                            from BookingDB.dbo.Tickets t
+                            join BookingDB.dbo.TicketOperations tio on t.ID = tio.TicketID
+                            where tio.ID = @TicketOperationId
+
+                            update pay
 	                        set	pay.PaymentType = 'ПП'
 	                        from BookingDB.dbo.Payments pay
 	                        join BookingDB.dbo.TicketOperations tio on pay.TicketID = tio.TicketID
@@ -246,6 +253,31 @@ namespace AvibaWeb.Controllers
                 {
                     receipt.Items.Remove(i);
                     _db.Entry(i).State = EntityState.Deleted;
+
+                    var ticketOperationId = new SqlParameter("@TicketOperationId",
+                            i.TicketOperationId.GetValueOrDefault(0));
+                    _db.Database.ExecuteSqlCommand(
+                        @"update pay
+	                        set	pay.PaymentType = 'НА'
+	                        from BookingDB.dbo.Payments pay
+	                        join BookingDB.dbo.TicketOperations tio on pay.TicketID = tio.TicketID
+	                        where tio.ID = @TicketOperationId and pay.PaymentType = 'ПП'
+
+                            update k
+	                        set	k.IsCanceled = 0, k.DateCanceled = NULL
+	                        from BookingDB.dbo.KRSs k
+	                        join BookingDB.dbo.TicketOperations tio on k.TicketID = tio.TicketID
+	                        where tio.ID = @TicketOperationId and k.IsCanceled = 1 and
+                            ((tio.OperationTypeID = 1 and k.OperationTypeID = 1) or (tio.OperationTypeID in (2,6) and k.OperationTypeID = 2))
+
+                            update kt
+	                        set	kt.IsCanceled = 0
+	                        from BookingDB.dbo.KRSTaxes kt
+                            join BookingDB.dbo.KRSs k on kt.KRSID = k.ID
+	                        join BookingDB.dbo.TicketOperations tio on k.TicketID = tio.TicketID
+	                        where tio.ID = @TicketOperationId and
+                            ((tio.OperationTypeID = 1 and k.OperationTypeID = 1) or (tio.OperationTypeID in (2,6) and k.OperationTypeID = 2))",
+                        ticketOperationId);
                 }
             }
             else
@@ -298,7 +330,14 @@ namespace AvibaWeb.Controllers
                     var ticketOperationId = new SqlParameter("@TicketOperationId",
                         int.Parse(item.TicketOperationId));
                     _db.Database.ExecuteSqlCommand(
-                        @"update pay
+                        @"
+                        update t
+                        set t.CorpClientFlag = 1
+                        from BookingDB.dbo.Tickets t
+                        join BookingDB.dbo.TicketOperations tio on t.ID = tio.TicketID
+                        where tio.ID = @TicketOperationId
+
+                        update pay
 	                    set	pay.PaymentType = 'ПП'
 	                    from BookingDB.dbo.Payments pay
 	                    join BookingDB.dbo.TicketOperations tio on pay.TicketID = tio.TicketID
@@ -402,12 +441,10 @@ namespace AvibaWeb.Controllers
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
-            //var exceptOperationsId = request.ExceptItems.Select(x => int.Parse(x.TicketOperationId)).ToArray();
             var model = (from tio in _db.VTicketOperations
                          where tio.ExecutionDateTime >= DateTime.Parse(request.fromDate) && tio.ExecutionDateTime < DateTime.Parse(request.toDate).AddDays(1) &&
-                               //!exceptOperationsId.Contains(tio.TicketOperationId) &&
                                !_db.CorporatorReceiptItems.Any(i => i.TicketOperationId == tio.TicketOperationId)
-                               && (isUserAdmin || deskIdList.Any( d => d.DeskId == tio.DeskId))
+                               && (isUserAdmin || deskIdList.Any( d => d.DeskId == tio.DeskId) || tio.CorpClientFlag == true)
                          orderby tio.ExecutionDateTime descending
                          select new TicketListViewModel
                          {

@@ -21,5 +21,6 @@ namespace AvibaWeb.DomainModels
         public string DeskId { get; set; }
         public int? TicketTypeId { get; set; }
         public CorporatorReceiptItem.CRIType ReceiptItemTypeId { get; set; }
+        public bool CorpClientFlag { get; set; }
     }
 }

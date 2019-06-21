@@ -2561,7 +2561,7 @@ $(document).on('click',
     }
 
     function initChosen() {
-            $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%" });
+            $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
     
             initPayee();
             initPayer();
