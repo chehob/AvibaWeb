@@ -522,7 +522,10 @@ namespace AvibaWeb.Controllers
                     TicketsToPDFCount = (from cri in _db.CorporatorReceiptItems
                         join rti in _db.VTicketOperations on cri.TicketOperationId equals rti.TicketOperationId
                         where cr.CorporatorReceiptId == cri.CorporatorReceiptId &&
-                              (rti.TicketTypeId == null || rti.TicketTypeId == 1)
+                              (rti.TicketTypeId == null || rti.TicketTypeId == 1) &&
+                              (rti.OperationTypeID == VKRSCancelRequest.TOType.Sale ||
+                              rti.OperationTypeID == VKRSCancelRequest.TOType.ExchangeNew ||
+                              rti.OperationTypeID == VKRSCancelRequest.TOType.ForcedExchange)
                         select 1).Sum(i => i)
                 }).ToList();
 
