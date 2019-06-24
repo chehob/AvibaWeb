@@ -62,7 +62,6 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public List<ReceiptPDFItem> Items { get; set; }
         public List<ReceiptPDFItem> LuggageItems { get; set; }
         public List<ReceiptTaxItem> Taxes { get; set; }
-        public List<ReceiptTaxItem> RefundTaxes { get; set; }
         public string SignatureImage { get; set; }
         public string StampImage { get; set; }
         public string SignatureFileName { get; set; }

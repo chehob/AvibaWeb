@@ -961,20 +961,6 @@ $(document).on('click',
                         feeData.push(dataRow);
                     });
 
-                    result.refundTaxes.forEach(function(item) {
-                        dataRow = [];
-    
-                        itemCount++;
-                        dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
-                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
-                        dataRow.push({ text: item.segCount, alignment: 'center' });
-                        dataRow.push({ text: item.amountLabelStr, alignment: 'center' });
-                        dataRow.push({ text: item.feeStr, alignment: 'right' });
-                        dataRow.push({ text: item.amountStr, alignment: 'right' });
-    
-                        feeData.push(dataRow);
-                    });
-
                     // dataRow = [];
 
                     // dataRow.push({ text: '1', alignment: 'center' });
@@ -1280,21 +1266,7 @@ $(document).on('click',
     
                         feeData.push(dataRow);
                     });
-
-                    result.refundTaxes.forEach(function(item) {
-                        dataRow = [];
-    
-                        itemCount++;
-                        dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
-                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
-                        dataRow.push({ text: item.segCount, alignment: 'center' });
-                        dataRow.push({ text: item.amountLabelStr, alignment: 'center' });
-                        dataRow.push({ text: item.feeStr, alignment: 'right' });
-                        dataRow.push({ text: item.amountStr, alignment: 'right' });
-    
-                        feeData.push(dataRow);
-                    });
-
+                    
                     // dataRow = [];
 
                     // dataRow.push({ text: '1', alignment: 'center' });

@@ -381,18 +381,6 @@ namespace AvibaWeb.Controllers
                             AmountLabelStr = "шт.",
                             TicketLabel = "Сервисный сбор за оформление билета"
                         }).ToList(),
-                    RefundTaxes = (from item in _db.CorporatorReceiptItems
-                             join ti in _db.VReceiptTicketInfo on item.TicketOperationId equals ti.TicketOperationId
-                             where item.CorporatorReceiptId == cr.CorporatorReceiptId && item.Amount < 0
-                             select new ReceiptTaxItem
-                             {
-                                 FeeStr = (item.IsPercent ? item.Amount * item.FeeRate / 100 : item.FeeRate).ToString("#,0.00", nfi),
-                                 Amount = item.IsPercent ? item.Amount * item.FeeRate / 100 : item.PerSegment ? item.FeeRate * ti.SegCount : item.FeeRate,
-                                 AmountStr = (item.IsPercent ? item.Amount * item.FeeRate / 100 : item.PerSegment ? item.FeeRate * ti.SegCount : item.FeeRate).ToString("#,0.00", nfi),
-                                 SegCount = item.PerSegment ? ti.SegCount : 1,
-                                 AmountLabelStr = "шт.",
-                                 TicketLabel = $"Сервисный сбор за возврат билета\n{item.Route ?? ti.TicketRoute} {ti.BSOLabel}\n{item.PassengerName ?? ti.PassengerName}"
-                             }).ToList(),
                     SignatureFileName = org.SignatureFileName,
                     StampFileName = org.StampFileName,
                     OrgHeadTitle = org.HeadTitle,
@@ -430,10 +418,24 @@ namespace AvibaWeb.Controllers
                     TicketLabel = groups.FirstOrDefault().ti.TicketLabel
                 }).ToList());
 
+            model.Taxes.AddRange(
+                (from item in _db.CorporatorReceiptItems
+                 join ti in _db.VReceiptTicketInfo on item.TicketOperationId equals ti.TicketOperationId
+                 where item.CorporatorReceiptId == id && item.Amount < 0
+                 select new ReceiptTaxItem
+                 {
+                     FeeStr = (item.IsPercent ? item.Amount * item.FeeRate / 100 : item.FeeRate).ToString("#,0.00", nfi),
+                     Amount = item.IsPercent ? item.Amount * item.FeeRate / 100 : item.PerSegment ? item.FeeRate * ti.SegCount : item.FeeRate,
+                     AmountStr = (item.IsPercent ? item.Amount * item.FeeRate / 100 : item.PerSegment ? item.FeeRate * ti.SegCount : item.FeeRate).ToString("#,0.00", nfi),
+                     SegCount = item.PerSegment ? ti.SegCount : 1,
+                     AmountLabelStr = "шт.",
+                     TicketLabel = $"Сервисный сбор за возврат билета\n{item.Route ?? ti.TicketRoute} {ti.BSOLabel}\n{item.PassengerName ?? ti.PassengerName}"
+                 }).ToList());
+
             model.ItemTotal = model.Items.Sum(i => i.Amount) + model.LuggageItems.Sum(i => i.Amount);
             model.ItemTotalStr = model.ItemTotal.ToString("#,0.00", nfi);
             model.SegCountTotal = model.Items.Sum(i => i.SegCount) + model.LuggageItems.Sum(i => i.SegCount);
-            model.FeeTotal = model.Taxes.Sum(t => t.Amount) + model.RefundTaxes.Sum(t => t.Amount);
+            model.FeeTotal = model.Taxes.Sum(t => t.Amount);
             model.FeeTotalStr = model.FeeTotal.ToString("#,0.00", nfi);
             model.TotalAmountStr = model.TotalAmount.ToString("#,0.00", nfi);
             model.SignatureImage = new Func<string>(() =>

@@ -208,7 +208,8 @@ namespace AvibaWeb.Controllers
                     Amount = -f.Amount,
                     AmountStr = (-f.Amount).ToString("#,0.00", nfi),
                     IssuedDateTime = f.OperationDateTime,
-                    Status = 0
+                    Status = 0,
+                    Comment = f.Description
                 }).ToList());
 
             issuedCredits = issuedCredits.OrderByDescending(t => t.IssuedDateTime).ToList();

@@ -444,7 +444,7 @@ namespace AvibaWeb.Controllers
             var model = (from tio in _db.VTicketOperations
                          where tio.ExecutionDateTime >= DateTime.Parse(request.fromDate) && tio.ExecutionDateTime < DateTime.Parse(request.toDate).AddDays(1) &&
                                !_db.CorporatorReceiptItems.Any(i => i.TicketOperationId == tio.TicketOperationId)
-                               && (isUserAdmin || deskIdList.Any( d => d.DeskId == tio.DeskId) || tio.CorpClientFlag == true)
+                               && (isUserAdmin || deskIdList.Any( d => d.DeskId == tio.DeskId) || tio.CorpClientFlag.GetValueOrDefault(0) == 1)
                          orderby tio.ExecutionDateTime descending
                          select new TicketListViewModel
                          {
