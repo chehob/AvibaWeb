@@ -35,10 +35,11 @@ namespace AvibaWeb.ViewModels.RevenueViewModels
         public string Comment { get; set; }
     }
 
-    public class ProviderAgentFeeViewModel
+
+    public class ProviderAgentFeeListModel
     {
         public List<ProviderData> Providers { get; set; }
-    }
+    }   
 
     public class ProviderData
     {
@@ -46,6 +47,13 @@ namespace AvibaWeb.ViewModels.RevenueViewModels
         public string Name { get; set; }
         public string FeeAmount { get; set; }
     }
+
+    public class ProviderAgentFeePostModel
+    {
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+    }
+
 
     public class ProviderAgentFeeTransactionsViewModel
     {

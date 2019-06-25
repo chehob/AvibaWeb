@@ -74,22 +74,38 @@ namespace AvibaWeb.Controllers
         [HttpGet]
         public IActionResult ProviderAgentFees()
         {
+            return PartialView();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ProviderAgentFeeList([FromBody]ProviderAgentFeePostModel postModel)
+        {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
-            var model = new ProviderAgentFeeViewModel
+            var queryToDate = postModel.ToDate ?? DateTime.Now;
+            var queryFromDate = postModel.FromDate ?? queryToDate.AddDays(-30);
+
+            var transactionGroups = from c in _db.Counterparties.Where(c => c.Type.Description == "Провайдер услуг")
+                                    join t in _db.ProviderAgentFeeTransactions
+                                        .Where(t => t.TransactionDateTime.Date >= queryFromDate.Date &&
+                                            t.TransactionDateTime.Date <= queryToDate.Date) on c.ITN equals t.ProviderId into gt
+                                    from st in gt.DefaultIfEmpty()
+                                    group new { c, st } by c.ITN into g
+                                    select g;
+
+            var model = new ProviderAgentFeeListModel
             {
-                Providers = (from c in _db.Counterparties.Include(c => c.ProviderBalance)
-                            where c.Type.Description == "Провайдер услуг"
-                            select new ProviderData
-                            {
-                                ProviderId = c.ITN,
-                                Name = c.Name,
-                                FeeAmount = c.ProviderBalance.AgentFee.ToString("#,0.00", nfi)
-                            }).ToList()
+                Providers = (from tg in transactionGroups
+                             select new ProviderData
+                             {
+                                 ProviderId = tg.FirstOrDefault().c.ITN,
+                                 Name = tg.FirstOrDefault().c.Name,
+                                 FeeAmount = tg.Sum(g => g.st == null ? 0 : g.st.Amount).ToString("#,0.00", nfi)
+                             }).ToList()
             };
 
-            return PartialView(model);
+            return Json(new { message = await _viewRenderService.RenderToStringAsync("Revenue/ProviderAgentFeeList", model) });
         }
 
         [HttpGet]
