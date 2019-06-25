@@ -49,6 +49,12 @@ namespace AvibaWeb.ViewModels.RevenueViewModels
 
     public class ProviderAgentFeeTransactionsViewModel
     {
+        public string ProviderId { get; set; }
+    }
+
+    public class ProviderAgentFeeTransactionListModel
+    {
+        public string TotalAmount { get; set; }
         public List<ProviderAgentFeeTransactionData> Records { get; set; }
     }
 
@@ -57,5 +63,12 @@ namespace AvibaWeb.ViewModels.RevenueViewModels
         public string TransactionDateTime { get; set; }
         public string Amount { get; set; }
         public string Comment { get; set; }
+    }
+
+    public class ProviderAgentFeeTransactionPostModel
+    {
+        public string ProviderId { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
     }
 }

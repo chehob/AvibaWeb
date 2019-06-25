@@ -1,0 +1,80 @@
+﻿@using AvibaWeb.ViewModels.RevenueViewModels
+@model ProviderAgentFeeTransactionListModel
+
+<span>Итого: @Model.TotalAmount</span>
+<br />
+<table class="table table-striped table-bordered bootstrap-datatable datatable" id="dataTable">
+    <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Сумма</th>
+            <th>Комментарий</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Records.Any())
+        {
+            <tr>
+                <td colspan="3" class="text-center">Нет операций</td>
+                <td style="display: none;"></td>
+                <td style="display: none;"></td>
+            </tr>
+        }
+        else
+        {
+            foreach (var record in Model.Records)
+            {
+                <tr>
+                    <td>
+                        <span>@record.TransactionDateTime</span>
+                    </td>
+                    <td>
+                        <span>@record.Amount</span>
+                    </td>
+                    <td>
+                        <span>@record.Comment</span>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script>
+    $(function () {
+        var oTable = $('#dataTable').dataTable({
+    "iDisplayLength": 100,
+            "aLengthMenu": [[10, 20, 50, 100, -1], [10, 20, 50, 100, "все"]],
+            "bStateSave": false,
+            "sPaginationType": "full_numbers",
+            "bSort": false,
+            "aaSorting": [[0, "desc"]],
+            "columnDefs": [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
+            "oLanguage": {
+                "sSearch": "Поиск:",
+                "sLengthMenu": "Показать _MENU_ записей",
+                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
+                "oPaginate": {
+                    "sFirst": 'Первая',
+                    "sPrevious": 'Предыдущая',
+                    "sNext": 'Следующая',
+                    "sLast": 'Последняя'
+                },
+                "oaria": {
+                    "ipaginate": {
+                        "nfirst": 'Начало',
+                        "nprevious": 'Previous',
+                        "nnext": 'Next',
+                        "nlast": 'Last'
+                    }
+                }
+            }
+        });
+    });
+
+</script>

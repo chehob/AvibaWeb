@@ -134,7 +134,7 @@ namespace AvibaWeb.Controllers
                     select new OrganizationCashlessInfo
                     {
                         Name = c.Name,
-                        Balance = c.ProviderBalance.Balance
+                        Balance = c.ProviderBalance.Balance + c.ProviderBalance.AgentFee
                     }).ToListAsync()
             };
 
@@ -229,7 +229,7 @@ namespace AvibaWeb.Controllers
                 ProvidersTotal = await (from c in _db.Counterparties
                         .Include(c => c.ProviderBinding)
                                         where c.Type.Description == "Провайдер услуг"
-                                        select c.ProviderBalance.Balance).SumAsync(v => v),
+                                        select (c.ProviderBalance.Balance + c.ProviderBalance.AgentFee)).SumAsync(v => v),
                 SubagentsTotal = -await (from c in _db.Counterparties
                         .Include(c => c.SubagentData)
                                          where c.Type.Description == "Субагент Р"

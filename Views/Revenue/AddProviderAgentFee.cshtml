@@ -24,13 +24,28 @@
                     <a href="/" id="sendDataBtn" class="btn btn-success">Сохранить</a>
                 </div>
             </div>
-        </div>
+            <br />
+            <div class="row" id="transactions">
+
+            </div>
+        </div>   
     </div>
 </div>
 
 <script>
     $(function() {
-        initChosen();
+        $.ajax({
+            url: "/Revenue/ProviderAgentFeeTransactions",
+            type: "GET",
+            cache: false,
+            data: { id: @Model.ProviderId },
+            success: function (result) {
+                $("#transactions").html(result);
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
     });
 
     $("#sendDataBtn").click(function (e) {

@@ -8,82 +8,52 @@
         </div>
         <div class="box-content">
             <div class="row">
-                <table class="table table-striped table-bordered bootstrap-datatable datatable" id="dataTable">
-                    <thead>
-                        <tr>
-                            <th>Дата</th>
-                            <th>Сумма</th>
-                            <th>Комментарий</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (!Model.Records.Any())
-                        {
-                            <tr>
-                                <td colspan="3" class="text-center">Нет операций</td>
-                                <td style="display: none;"></td>
-                                <td style="display: none;"></td>
-                            </tr>
-                        }
-                        else
-                        {
-                            foreach (var record in Model.Records)
-                            {
-                                <tr>
-                                    <td>
-                                        <span>@record.TransactionDateTime</span>
-                                    </td>
-                                    <td>
-                                        <span>@record.Amount</span>
-                                    </td>
-                                    <td>
-                                        <span>@record.Comment</span>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
+                <input hidden id="providerId" value="@Model.ProviderId" />
+                <div class="col-md-12">
+                    Выбрать с: <input type="text" autocomplete="off" id="min" name="min" class="date-range-filter"> по: <input type="text" autocomplete="off" id="max" name="max" class="date-range-filter">
+                    <button id="getOperationsBtn" class="btn btn-success">Выбрать</button>
+                </div>
+            </div>
+            <div class="row" id="transactionListBlock">
+                
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    $(function() {
-        var oTable = $('#dataTable').dataTable({
-            "iDisplayLength": 100,
-            "aLengthMenu": [[10, 20, 50, 100, -1], [10, 20, 50, 100, "все"]],
-            "bStateSave": false,
-            "sPaginationType": "full_numbers",
-            "bSort": false,
-            "aaSorting": [[0, "desc"]],
-            "columnDefs": [{
-                "defaultContent": "-",
-                "targets": "_all"
-            }],
-            "oLanguage": {
-                "sSearch": "Поиск:",
-                "sLengthMenu": "Показать _MENU_ записей",
-                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
-                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
-                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
-                "oPaginate": {
-                    "sFirst": 'Первая',
-                    "sPrevious": 'Предыдущая',
-                    "sNext": 'Следующая',
-                    "sLast": 'Последняя'
-                },
-                "oaria": {
-                    "ipaginate": {
-                        "nfirst": 'Начало',
-                        "nprevious": 'Previous',
-                        "nnext": 'Next',
-                        "nlast": 'Last'
-                    }
-                }
+    $("#getOperationsBtn").click(function (e) {
+        const sendJsonData = {
+            ProviderId: $('#providerId').val(),
+            FromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+            ToDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true)
+        };
+
+        e.preventDefault();
+        $.ajax({
+            url: "/Revenue/ProviderAgentFeeTransactionList",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $("#transactionListBlock").html(result.message);
+            },
+            error: function (error) {
+                console.log(error);
             }
         });
+    });
+
+    $(function () {
+        $("#min").datepicker();
+        $("#max").datepicker();
+
+        $("#min").val(moment().subtract(30, 'days').format("DD.MM.YYYY"));
+        $("#max").val(moment().format("DD.MM.YYYY"));
+
+        $("#getOperationsBtn").trigger("click");
     });
 
 </script>

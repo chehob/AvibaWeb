@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AvibaWeb.DomainModels;
+using AvibaWeb.Infrastructure;
 using AvibaWeb.Models;
 using AvibaWeb.ViewModels.RevenueViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,13 @@ namespace AvibaWeb.Controllers
     public class RevenueController : Controller
     {
         private readonly AppIdentityDbContext _db;
+        private readonly IViewRenderService _viewRenderService;
         private const int PageSize = 10;
 
-        public RevenueController(AppIdentityDbContext db)
+        public RevenueController(AppIdentityDbContext db, IViewRenderService viewRenderService)
         {
             _db = db;
+            _viewRenderService = viewRenderService;
         }
 
         public IActionResult Index()
@@ -92,13 +95,32 @@ namespace AvibaWeb.Controllers
         [HttpGet]
         public IActionResult ProviderAgentFeeTransactions(string id)
         {
+            var model = new ProviderAgentFeeTransactionsViewModel
+            {
+                ProviderId = id
+            };
+
+            return PartialView(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ProviderAgentFeeTransactionList([FromBody]ProviderAgentFeeTransactionPostModel postModel)
+        {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
-            var model = new ProviderAgentFeeTransactionsViewModel
+            var queryToDate = postModel.ToDate ?? DateTime.Now;
+            var queryFromDate = postModel.FromDate ?? queryToDate.AddDays(-30);
+
+            var transactions = from t in _db.ProviderAgentFeeTransactions
+                               where (string.IsNullOrEmpty(postModel.ProviderId) || t.ProviderId == postModel.ProviderId) &&
+                                t.TransactionDateTime.Date >= queryFromDate.Date && t.TransactionDateTime.Date <= queryToDate.Date
+                               select t;
+
+           var model = new ProviderAgentFeeTransactionListModel
             {
-                Records = (from t in _db.ProviderAgentFeeTransactions
-                           where t.ProviderId == id
+                TotalAmount = transactions.Sum(t => t.Amount).ToString("#,0.00", nfi),
+                Records = (from t in transactions
                            select new ProviderAgentFeeTransactionData
                            {
                                Amount = t.Amount.ToString("#,0.00", nfi),
@@ -107,7 +129,7 @@ namespace AvibaWeb.Controllers
                            }).ToList()
             };
 
-            return PartialView(model);
+            return Json(new { message = await _viewRenderService.RenderToStringAsync("Revenue/ProviderAgentFeeTransactionList", model) });
         }
     }
 }
