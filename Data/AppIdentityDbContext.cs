@@ -92,6 +92,8 @@ namespace AvibaWeb.Models
 
         public DbSet<CorporatorAccountTransaction> CorporatorAccountTransactions { get; set; }
 
+        public DbSet<ProviderAgentFeeTransaction> ProviderAgentFeeTransactions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

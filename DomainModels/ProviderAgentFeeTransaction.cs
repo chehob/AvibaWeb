@@ -7,22 +7,23 @@ using System.Threading.Tasks;
 
 namespace AvibaWeb.DomainModels
 {
-    public class ProviderBalance
+    public class ProviderAgentFeeTransaction
     {
         [Key]
+        public int ProviderAgentFeeTransactionId { get; set; }
+
         public string ProviderId { get; set; }
         [ForeignKey("ProviderId")]
-        public virtual Counterparty Provider { get; set; }
+        public virtual ProviderBalance ProviderBalance { get; set; }
 
         [Column(TypeName = "Money")]
-        public decimal Balance { get; set; }
+        public decimal OldAgentFee { get; set; }
 
         [Column(TypeName = "Money")]
-        public decimal Deposit { get; set; }
+        public decimal Amount { get; set; }
 
-        [Column(TypeName = "Money")]
-        public decimal AgentFee { get; set; }
+        public string Comment { get; set; }
 
-        public virtual ICollection<ProviderBalanceTransaction> Transactions { get; set; }
+        public DateTime TransactionDateTime { get; set; }
     }
 }

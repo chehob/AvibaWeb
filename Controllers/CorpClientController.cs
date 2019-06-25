@@ -204,38 +204,6 @@ namespace AvibaWeb.Controllers
 
                         receipt.Items.Add(item);
                         viewModelItems.Add(item);
-
-                        var ticketOperationId = new SqlParameter("@TicketOperationId",
-                            int.Parse(i.TicketOperationId));
-                        _db.Database.ExecuteSqlCommand(
-                            @"
-                            update t
-                            set t.CorpClientFlag = 1
-                            from BookingDB.dbo.Tickets t
-                            join BookingDB.dbo.TicketOperations tio on t.ID = tio.TicketID
-                            where tio.ID = @TicketOperationId
-
-                            update pay
-	                        set	pay.PaymentType = 'ПП'
-	                        from BookingDB.dbo.Payments pay
-	                        join BookingDB.dbo.TicketOperations tio on pay.TicketID = tio.TicketID
-	                        where tio.ID = @TicketOperationId and pay.PaymentType <> 'ПП'
-
-                            update k
-	                        set	k.IsCanceled = 1, k.DateCanceled = getdate()
-	                        from BookingDB.dbo.KRSs k
-	                        join BookingDB.dbo.TicketOperations tio on k.TicketID = tio.TicketID
-	                        where tio.ID = @TicketOperationId and k.IsCanceled <> 1 and
-                            ((tio.OperationTypeID = 1 and k.OperationTypeID = 1) or (tio.OperationTypeID in (2,6) and k.OperationTypeID = 2))
-
-                            update kt
-	                        set	kt.IsCanceled = 1
-	                        from BookingDB.dbo.KRSTaxes kt
-                            join BookingDB.dbo.KRSs k on kt.KRSID = k.ID
-	                        join BookingDB.dbo.TicketOperations tio on k.TicketID = tio.TicketID
-	                        where tio.ID = @TicketOperationId and
-                            ((tio.OperationTypeID = 1 and k.OperationTypeID = 1) or (tio.OperationTypeID in (2,6) and k.OperationTypeID = 2))",
-                            ticketOperationId);
                     }
 
                     if (model.Items.Count == 0)
@@ -278,6 +246,44 @@ namespace AvibaWeb.Controllers
 	                        where tio.ID = @TicketOperationId and
                             ((tio.OperationTypeID = 1 and k.OperationTypeID = 1) or (tio.OperationTypeID in (2,6) and k.OperationTypeID = 2))",
                         ticketOperationId);
+                }
+
+                if (model.Items != null)
+                {
+                    foreach (var i in model.Items)
+                    {
+                        var ticketOperationId = new SqlParameter("@TicketOperationId",
+                            int.Parse(i.TicketOperationId));
+                        _db.Database.ExecuteSqlCommand(
+                            @"
+                            update t
+                            set t.CorpClientFlag = 1
+                            from BookingDB.dbo.Tickets t
+                            join BookingDB.dbo.TicketOperations tio on t.ID = tio.TicketID
+                            where tio.ID = @TicketOperationId
+
+                            update pay
+	                        set	pay.PaymentType = 'ПП'
+	                        from BookingDB.dbo.Payments pay
+	                        join BookingDB.dbo.TicketOperations tio on pay.TicketID = tio.TicketID
+	                        where tio.ID = @TicketOperationId and pay.PaymentType <> 'ПП'
+
+                            update k
+	                        set	k.IsCanceled = 1, k.DateCanceled = getdate()
+	                        from BookingDB.dbo.KRSs k
+	                        join BookingDB.dbo.TicketOperations tio on k.TicketID = tio.TicketID
+	                        where tio.ID = @TicketOperationId and k.IsCanceled <> 1 and
+                            ((tio.OperationTypeID = 1 and k.OperationTypeID = 1) or (tio.OperationTypeID in (2,6) and k.OperationTypeID = 2))
+
+                            update kt
+	                        set	kt.IsCanceled = 1
+	                        from BookingDB.dbo.KRSTaxes kt
+                            join BookingDB.dbo.KRSs k on kt.KRSID = k.ID
+	                        join BookingDB.dbo.TicketOperations tio on k.TicketID = tio.TicketID
+	                        where tio.ID = @TicketOperationId and
+                            ((tio.OperationTypeID = 1 and k.OperationTypeID = 1) or (tio.OperationTypeID in (2,6) and k.OperationTypeID = 2))",
+                            ticketOperationId);
+                    }
                 }
             }
             else
@@ -1113,8 +1119,8 @@ namespace AvibaWeb.Controllers
                         Origin = segData[0].OriginName + " " + (segData[0].OriginAirportName ?? ""),
                         Destination = segData[0].DestinationName + " " + (segData[0].DestinationAirportName ?? ""),
                         Flight = segData[0].AirlineName + " " + segData[0].FlightNumber,
-                        Departure = segData[0].FlightDate.ToString("dd MMM hh:mm", ruRU),
-                        Arrival = segData[0].ArrivalDate.ToString("dd MMM hh:mm", ruRU),
+                        Departure = segData[0].FlightDate.ToString("dd MMM HH:mm", ruRU),
+                        Arrival = segData[0].ArrivalDate.ToString("dd MMM HH:mm", ruRU),
                     };
 
                     var termStr = "";
@@ -1154,8 +1160,8 @@ namespace AvibaWeb.Controllers
                         Origin = segData[0].OriginName + " " + (segData[0].OriginAirportName ?? ""),
                         Destination = segData[0].DestinationName + " " + (segData[0].DestinationAirportName ?? ""),
                         Flight = segData[0].AirlineName + " " + segData[0].FlightNumber,
-                        Departure = segData[0].FlightDate.ToString("dd MMM hh:mm", ruRU),
-                        Arrival = segData[0].ArrivalDate.ToString("dd MMM hh:mm", ruRU),
+                        Departure = segData[0].FlightDate.ToString("dd MMM HH:mm", ruRU),
+                        Arrival = segData[0].ArrivalDate.ToString("dd MMM HH:mm", ruRU),
                     };
 
                     var termStr = "";
@@ -1186,8 +1192,8 @@ namespace AvibaWeb.Controllers
                         Origin = segData[1].OriginName + " " + (segData[1].OriginAirportName ?? ""),
                         Destination = segData[1].DestinationName + " " + (segData[1].DestinationAirportName ?? ""),
                         Flight = segData[1].AirlineName + " " + segData[1].FlightNumber,
-                        Departure = segData[1].FlightDate.ToString("dd MMM hh:mm", ruRU),
-                        Arrival = segData[1].ArrivalDate.ToString("dd MMM hh:mm", ruRU),
+                        Departure = segData[1].FlightDate.ToString("dd MMM HH:mm", ruRU),
+                        Arrival = segData[1].ArrivalDate.ToString("dd MMM HH:mm", ruRU),
                     };
 
                     var termStr = "";
@@ -1227,8 +1233,8 @@ namespace AvibaWeb.Controllers
                         Origin = segData[1].OriginName + " " + (segData[1].OriginAirportName ?? ""),
                         Destination = segData[1].DestinationName + " " + (segData[1].DestinationAirportName ?? ""),
                         Flight = segData[1].AirlineName + " " + segData[1].FlightNumber,
-                        Departure = segData[1].FlightDate.ToString("dd MMM hh:mm", ruRU),
-                        Arrival = segData[1].ArrivalDate.ToString("dd MMM hh:mm", ruRU),
+                        Departure = segData[1].FlightDate.ToString("dd MMM HH:mm", ruRU),
+                        Arrival = segData[1].ArrivalDate.ToString("dd MMM HH:mm", ruRU),
                     };
 
                     var termStr = "";
@@ -1259,8 +1265,8 @@ namespace AvibaWeb.Controllers
                         Origin = segData[2].OriginName + " " + (segData[2].OriginAirportName ?? ""),
                         Destination = segData[2].DestinationName + " " + (segData[2].DestinationAirportName ?? ""),
                         Flight = segData[2].AirlineName + " " + segData[2].FlightNumber,
-                        Departure = segData[2].FlightDate.ToString("dd MMM hh:mm", ruRU),
-                        Arrival = segData[2].ArrivalDate.ToString("dd MMM hh:mm", ruRU),
+                        Departure = segData[2].FlightDate.ToString("dd MMM HH:mm", ruRU),
+                        Arrival = segData[2].ArrivalDate.ToString("dd MMM HH:mm", ruRU),
                     };
 
                     var termStr = "";
@@ -1300,8 +1306,8 @@ namespace AvibaWeb.Controllers
                         Origin = segData[3].OriginName + " " + (segData[3].OriginAirportName ?? ""),
                         Destination = segData[3].DestinationName + " " + (segData[3].DestinationAirportName ?? ""),
                         Flight = segData[3].AirlineName + " " + segData[3].FlightNumber,
-                        Departure = segData[3].FlightDate.ToString("dd MMM hh:mm", ruRU),
-                        Arrival = segData[3].ArrivalDate.ToString("dd MMM hh:mm", ruRU),
+                        Departure = segData[3].FlightDate.ToString("dd MMM HH:mm", ruRU),
+                        Arrival = segData[3].ArrivalDate.ToString("dd MMM HH:mm", ruRU),
                     };
 
                     var termStr = "";

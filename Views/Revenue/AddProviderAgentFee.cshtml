@@ -1,0 +1,69 @@
+﻿@using AvibaWeb.ViewModels.RevenueViewModels
+@model AddProviderAgentFeeViewModel
+<!-- CONTENT START -->
+<div class="box col-md-12">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="">
+            <h2>Добавление агентского вознаграждение</h2>
+        </div>
+        <div class="box-content">
+            <div class="row">
+                <div class="col-md-6">
+                    <input hidden id="providerId" value="@Model.ProviderId" />
+
+                    <label for="feeAmount">Сумма сбора</label>
+                    <input id="feeAmount" value="" />
+                    <br />
+                    <label for="comment">Комментарий</label>
+                    <input id="comment" value="" />
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="/" id="sendDataBtn" class="btn btn-success">Сохранить</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        initChosen();
+    });
+
+    $("#sendDataBtn").click(function (e) {
+        const sendJsonData = {
+            ProviderId: $("#providerId").val(),
+            FeeAmount: $("#feeAmount").val(),
+            Comment: $("#comment").val()
+        };
+
+        e.preventDefault();
+        $.ajax({
+            url: "/Revenue/AddProviderAgentFee",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $.ajax({
+                    url: "/Revenue/ProviderAgentFees",
+                    type: "GET",
+                    cache: false,
+                    success: function (r) {
+                        $("#results").html(r);
+                    },
+                    error: function (err) {
+                        console.log(err.message);
+                    }
+                });
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+</script>

@@ -4,14 +4,16 @@ using AvibaWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AvibaWeb.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190625071521_MProviderAgentFeeTransaction_Initial")]
+    partial class MProviderAgentFeeTransaction_Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -825,8 +827,6 @@ namespace AvibaWeb.Migrations
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("Money");
-
-                    b.Property<string>("Comment");
 
                     b.Property<decimal>("OldAgentFee")
                         .HasColumnType("Money");
