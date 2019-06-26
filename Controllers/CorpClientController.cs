@@ -260,7 +260,7 @@ namespace AvibaWeb.Controllers
                             set t.CorpClientFlag = 1
                             from BookingDB.dbo.Tickets t
                             join BookingDB.dbo.TicketOperations tio on t.ID = tio.TicketID
-                            where tio.ID = @TicketOperationId
+                            where tio.ID = @TicketOperationId and t.CorpClientFlag <> 1
 
                             update pay
 	                        set	pay.PaymentType = 'ПП'
@@ -269,7 +269,7 @@ namespace AvibaWeb.Controllers
 	                        where tio.ID = @TicketOperationId and pay.PaymentType <> 'ПП'
 
                             update k
-	                        set	k.IsCanceled = 1, k.DateCanceled = getdate()
+	                        set	k.IsCanceled = 1, k.DateCanceled = k.DateCreated
 	                        from BookingDB.dbo.KRSs k
 	                        join BookingDB.dbo.TicketOperations tio on k.TicketID = tio.TicketID
 	                        where tio.ID = @TicketOperationId and k.IsCanceled <> 1 and
@@ -341,7 +341,7 @@ namespace AvibaWeb.Controllers
                         set t.CorpClientFlag = 1
                         from BookingDB.dbo.Tickets t
                         join BookingDB.dbo.TicketOperations tio on t.ID = tio.TicketID
-                        where tio.ID = @TicketOperationId
+                        where tio.ID = @TicketOperationId and t.CorpClientFlag <> 1
 
                         update pay
 	                    set	pay.PaymentType = 'ПП'
@@ -350,7 +350,7 @@ namespace AvibaWeb.Controllers
 	                    where tio.ID = @TicketOperationId and pay.PaymentType <> 'ПП'
 
                         update k
-	                    set	k.IsCanceled = 1, k.DateCanceled = getdate()
+	                    set	k.IsCanceled = 1, k.DateCanceled = k.DateCreated
 	                    from BookingDB.dbo.KRSs k
 	                    join BookingDB.dbo.TicketOperations tio on k.TicketID = tio.TicketID
 	                    where tio.ID = @TicketOperationId and k.IsCanceled <> 1 and

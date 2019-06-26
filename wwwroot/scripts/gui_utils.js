@@ -248,6 +248,9 @@ $(document).on('click',
 $(document).on('click',
         '.createReceiptPDF',
         function (e) {
+
+            var attr = $(this).attr('data-signature');
+
         e.preventDefault();
         $.ajax({
             url: "/CorpReceipt/ReceiptPDFData",
@@ -431,9 +434,9 @@ $(document).on('click',
                                 {
                                     columns: [
                                         { text: 'Руководитель', margin: [0, 40, 0, 0]},
-                                        { image: `${result.signatureImage}`, width: 150, alignment: 'center', margin: [25, 0, 25, 0] },
+                                        (typeof attr == typeof undefined || attr == false || attr == 'true') ? { image: `${result.signatureImage}`, width: 150, alignment: 'center', margin: [25, 0, 25, 0] } : '',
                                         { text: `${result.orgHeadName}`, margin: [0, 40, 0, 0] },
-                                        { image: `${result.stampImage}`, width: 125, alignment: 'center', margin: [25, 0, 45, 0] }
+                                        (typeof attr == typeof undefined || attr == false || attr == 'true') ? { image: `${result.stampImage}`, width: 125, alignment: 'center', margin: [25, 0, 45, 0] } : ''
                                     ],
                                     style: 'mediumText',
                                     margin: [0, 20, 0, 0]
