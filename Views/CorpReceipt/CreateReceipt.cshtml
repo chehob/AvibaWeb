@@ -153,6 +153,9 @@
             <div class="row">
                 <div class="col-md-12">
                     <a href="/" id="sendDataBtn" class="btn btn-success">Сохранить счет</a>
+                    <div id="warningMsg" class="alert alert-danger" style="display: none;">
+                        <strong>Ошибка!</strong> Не выбран счет для организации.
+                    </div>
                 </div>
             </div>
             <hr>
@@ -317,6 +320,13 @@
     onload();
 
     $("#sendDataBtn").click(function (e) {
+        $("#warningMsg").hide();
+
+        if( $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().text() == "Выбрать счет" ) {
+            $("#warningMsg").show();
+            return false;
+        }
+
         var items = new Array();
         if ($("#receiptItemsTable").dataTable().fnSettings().aoData.length) {
             $("#receiptItemsTable tbody").children().each(function () {

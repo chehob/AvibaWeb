@@ -105,6 +105,7 @@ namespace AvibaWeb.Controllers
         public async Task<IActionResult> CreateReceipt([FromBody]CreateReceiptPostViewModel model)
         {
             CorporatorReceipt receipt;
+
             if (model.ReceiptId != null && model.ReceiptId != 0)
             {
                 var orgId = 0;
