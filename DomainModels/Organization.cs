@@ -34,5 +34,7 @@ namespace AvibaWeb.DomainModels
         public virtual Counterparty Counterparty { get; set; }
 
         public virtual ICollection<FinancialAccount> Accounts { get; set; }
+
+        public int ReceiptNumberGroupId { get; set; }
     }
 }
