@@ -36,5 +36,7 @@ namespace AvibaWeb.DomainModels
         public virtual ICollection<FinancialAccount> Accounts { get; set; }
 
         public int ReceiptNumberGroupId { get; set; }
+
+        public string CorpReceiptPrefix { get; set; }
     }
 }

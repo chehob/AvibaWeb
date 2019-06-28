@@ -334,7 +334,7 @@ namespace AvibaWeb.Controllers
                     TotalAmount = cr.Amount.Value,
                     ReceiptNumber = cr.TypeId == CorporatorReceipt.CRType.CorpClient ?
                         "WR-" + cr.ReceiptNumber.ToString() :
-                        "RS-" + cr.ReceiptNumber.ToString(),
+                        cr.PayeeAccount.Organization.CorpReceiptPrefix + "-" + cr.ReceiptNumber.ToString(),
                     PayerNameWithITN = $"{cr.Corporator.Name} ИНН: {cr.Corporator.ITN} ,КПП {cr.Corporator.KPP}",
                     PayerName = cr.Corporator.Name,
                     PayerAddress = cr.Corporator.Address,
