@@ -5,14 +5,6 @@ using AvibaWeb.Models;
 
 namespace AvibaWeb.DomainModels
 {
-    public enum PaymentTypes
-    {
-        [Display(Name = "Наличные")]
-        Cash,
-        [Display(Name = "Безналичный расчет")]
-        Cashless,
-    }
-
     public enum OperationTypes
     {
         [Display(Name = "Инкассация")]

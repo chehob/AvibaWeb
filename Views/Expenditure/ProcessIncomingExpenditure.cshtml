@@ -1,0 +1,150 @@
+﻿@using AvibaWeb.ViewModels.ExpenditureViewModels
+@model ProcessIncomingExpenditureViewModel
+
+<div class="box col-md-12">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="">
+            <h2></h2>
+        </div>
+        <div class="box-content">
+            <input id="expenditureId" type="hidden" value="@Model.Expenditure.IncomingExpenditureId" />
+            <input id="expenditureAmountDiv" type="hidden" value="@Model.Expenditure.Amount" />
+            <div class="row">
+                <style>
+                    .popup {
+                        position: fixed;
+                        top: 150px;
+                        right: 0;
+                        padding: 10px;
+                        text-align: center;
+                        background-color: #eee;
+                        border: 1px solid #ccc;
+                        z-index: 1;
+                    }
+                </style>
+                <div class="popup">
+                    <span>Остаток суммы:</span>
+                    <span id="expenditureReminder"></span><br>
+                    <span>Сумма:</span>
+                    <span id="expenditureTotal"></span><br>
+                </div>
+            </div>
+            <br />
+            <table class="table table-striped table-bordered bootstrap-datatable datatable responsive" id="deskGroupsTable">
+                <thead>
+                    <tr>
+                        <th>Подразделение</th>
+                        <th>Сумма</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var group in Model.DeskGroups)
+                    {
+                        <tr>
+                            <td>
+                                @group.Value
+                                <input hidden class="groupId" value="@group.Key" />
+                            </td>
+                            <td>
+                                <input class="groupAmount" value="" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="warningMsg" class="alert alert-danger" style="display: none;">
+                        <strong>Ошибка!</strong> Имеется нераспределенная сумма.
+                    </div>
+                    <button id="saveBtn" class="btn btn-success">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#deskGroupsTable').dataTable({
+            "sPaginationType": "full_numbers",
+            "bSort": false,
+            "oLanguage": {
+                "sSearch": "Поиск:",
+                "sLengthMenu": "Показать _MENU_ записей",
+                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
+                "oPaginate": {
+                    "sFirst": 'Первая',
+                    "sPrevious": 'Предыдущая',
+                    "sNext": 'Следующая',
+                    "sLast": 'Последняя'
+                },
+                "oaria": {
+                    "ipaginate": {
+                        "nfirst": 'Начало',
+                        "nprevious": 'Previous',
+                        "nnext": 'Next',
+                        "nlast": 'Last'
+                    }
+                }
+            }
+        });
+
+        var expenditureAmount = Number($('#expenditureAmountDiv').val().replace(/[,]+/g, "."));
+
+        $('#expenditureReminder').html(numberWithSpaces(expenditureAmount));
+        $('#expenditureTotal').html(numberWithSpaces(0));
+    });
+
+    $("#saveBtn").click(function (e) {
+        $("#warningMsg").hide();
+
+        if (Number($("#expenditureReminder").text().replace(/[^0-9.-]+/g, "")) != 0) {
+            $("#warningMsg").show();
+            return false;
+        }
+
+        var items = new Array();
+        $("#deskGroupsTable tbody tr").each(function () {
+            const firstInput = $(this).find("input");
+            const item = {
+                GroupId: firstInput[0].value,
+                Amount: Number(firstInput[1].value.replace(/[^0-9.-]+/g, "")),
+            };
+            if (item.Amount !== 0)
+            {
+                items.push(item);
+            }
+        });
+
+        var sendJsonData = {
+            ExpenditureId: $("#expenditureId").val(),
+            Items: items
+        };
+
+        e.preventDefault();
+        $.ajax({
+            url: "/Data/ProcessIncomingExpenditure",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $.ajax({
+                    url: "/Data/IncomingExpenditures",
+                    type: "GET",
+                    cache: false,
+                    success: function (getResult) {
+                        $("#results").html(getResult);
+                    }
+                });
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+</script>

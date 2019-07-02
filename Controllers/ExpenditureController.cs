@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace AvibaWeb.Controllers
 {
@@ -29,30 +30,36 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpGet]
-        public ActionResult IssuedExpenditures(int? page)
+        public ActionResult IssuedExpenditures()
         {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
             var expenditureList = (from expenditure in _db.Expenditures
                     .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
+                    .Where(e => e.PaymentTypeId == PaymentTypes.Cash)
                 join eo in _db.ExpenditureOperations on expenditure.ExpenditureId equals eo.ExpenditureId into operations
                 from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
                 orderby operation.OperationDateTime descending
                 select new { expenditure, operation }).ToList();
 
-            var model = (from e in expenditureList                         
-                select new ExpenditureListViewModel
-                {
-                    ExpenditureId = e.expenditure.ExpenditureId,
-                    Amount = e.expenditure.Amount,
-                    Name = e.expenditure.Name,
-                    DeskGroup = e.expenditure.DeskGroup != null ? e.expenditure.DeskGroup.Name : "",
-                    Type = e.expenditure.Type != null ? e.expenditure.Type.Description : "",
-                    Object = e.expenditure.Object != null ? e.expenditure.Object.Description : "",
-                    IssuedDateTime = e.operation.OperationDateTime,
-                    Status = e.operation.OperationTypeId
-                }).ToList();
-
-            var pageNumber = (page ?? 1);
-            return PartialView(model.ToPagedList(pageNumber, PageSize));
+            var model = new ExpendituresViewModel
+            {
+                Items = (from e in expenditureList
+                         select new ExpenditureViewItem
+                         {
+                             ExpenditureId = e.expenditure.ExpenditureId,
+                             Amount = e.expenditure.Amount.ToString("#,0.00", nfi),
+                             Name = e.expenditure.Name,
+                             DeskGroup = e.expenditure.DeskGroup != null ? e.expenditure.DeskGroup.Name : "",
+                             Type = e.expenditure.Type != null ? e.expenditure.Type.Description : "",
+                             Object = e.expenditure.Object != null ? e.expenditure.Object.Description : "",
+                             IssuedDateTime = e.operation.OperationDateTime,
+                             Status = e.operation.OperationTypeId
+                         }).ToList()
+            };
+            
+            return PartialView(model);
         }
 
         //[HttpGet]
@@ -125,7 +132,8 @@ namespace AvibaWeb.Controllers
                 Amount = model.Amount,
                 DeskGroupId = model.SelectedDeskGroupId,
                 TypeId = model.SelectedTypeId,
-                ObjectId = model.SelectedObjectId
+                ObjectId = model.SelectedObjectId,
+                PaymentTypeId = PaymentTypes.Cash
             };
 
 
@@ -188,6 +196,110 @@ namespace AvibaWeb.Controllers
                              IsProcessed = e.IsProcessed
                          }).ToList()
             });
+        }
+
+        [HttpGet]
+        public ActionResult CashlessExpenditures()
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var expenditureList = (from expenditure in _db.Expenditures
+                                    .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
+                                    .Where(e => e.PaymentTypeId == PaymentTypes.Cashless)
+                                   join eo in _db.ExpenditureOperations on expenditure.ExpenditureId equals eo.ExpenditureId into operations
+                                   from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
+                                   orderby operation.OperationDateTime descending
+                                   select new { expenditure, operation }).ToList();
+
+            var model = new ExpendituresViewModel
+            {
+                Items = (from e in expenditureList
+                         select new ExpenditureViewItem
+                         {
+                             ExpenditureId = e.expenditure.ExpenditureId,
+                             Amount = e.expenditure.Amount.ToString("#,0.00", nfi),
+                             Name = e.expenditure.Name,
+                             DeskGroup = e.expenditure.DeskGroup != null ? e.expenditure.DeskGroup.Name : "",
+                             Type = e.expenditure.Type != null ? e.expenditure.Type.Description : "",
+                             Object = e.expenditure.Object != null ? e.expenditure.Object.Description : "",
+                             IssuedDateTime = e.operation.OperationDateTime,
+                             Status = e.operation.OperationTypeId
+                         }).ToList()
+            };
+
+            return PartialView(model);
+        }
+
+        [HttpGet]
+        public ActionResult ProcessIncomingExpenditure(int id)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var model = new ProcessIncomingExpenditureViewModel
+            {
+                Expenditure = _db.IncomingExpenditures.FirstOrDefault(e => e.IncomingExpenditureId == id),
+                DeskGroups = (from d in _db.DeskGroups
+                              where d.IsActive
+                              select new KeyValuePair<int,string>(d.DeskGroupId, d.Name)).ToList()
+            };
+
+            return PartialView(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ProcessIncomingExpenditure([FromBody]ProcessIncomingExpenditurePostModel model)
+        {
+            var incomingExpenditure = _db.IncomingExpenditures.Include(e => e.FinancialAccountOperation)
+                .ThenInclude(fao => fao.Counterparty)
+                .FirstOrDefault(e => e.IncomingExpenditureId == model.ExpenditureId);
+
+            foreach (var item in model.Items)
+            {
+                var deskGroup = _db.DeskGroups.FirstOrDefault(g => g.DeskGroupId == item.GroupId);
+
+                var expenditure = new Expenditure
+                {
+                    Name = deskGroup.Name,
+                    Amount = item.Amount,
+                    DeskGroupId = item.GroupId,
+                    //TypeId = model.SelectedTypeId,
+                    //ObjectId = model.SelectedObjectId,
+                    PaymentTypeId = PaymentTypes.Cashless
+                };
+
+                var operation = new ExpenditureOperation
+                {
+                    Expenditure = expenditure,
+                    OperationDateTime = DateTime.Now,
+                    OperationTypeId = ExpenditureOperation.EOType.New
+                };
+
+                _db.ExpenditureOperations.Add(operation);
+            }
+
+            incomingExpenditure.IsProcessed = true;
+
+            await _db.SaveChangesAsync();
+
+            return Json(new { message = "Ok" });
+        }
+
+        [HttpGet]
+        public ActionResult ProcessIncomingExpenditures()
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var model = new ProcessIncomingExpenditureViewModel
+            {
+                DeskGroups = (from d in _db.DeskGroups
+                              where d.IsActive
+                              select new KeyValuePair<int, string>(d.DeskGroupId, d.Name)).ToList()
+            };
+
+            return PartialView(model);
         }
     }
 }

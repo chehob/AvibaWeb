@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AvibaWeb.ViewModels.ExpenditureViewModels
 {
-    public class ExpenditureListViewModel
+    public class ExpenditureViewItem
     {
         public int ExpenditureId { get; set; }
 
@@ -17,7 +17,7 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
         public string Name { get; set; }
 
         [Display(Name = "Сумма")]
-        public decimal Amount { get; set; }
+        public string Amount { get; set; }
 
         [Display(Name = "Подразделение")]
         public string DeskGroup { get; set; }
@@ -64,4 +64,8 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
         public IEnumerable<SelectListItem> Objects { get; set; }
     }
 
+    public class ExpendituresViewModel
+    {
+        public List<ExpenditureViewItem> Items { get; set; }
+    }
 }

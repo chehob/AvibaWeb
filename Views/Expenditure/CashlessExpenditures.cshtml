@@ -5,7 +5,7 @@
 <div class="box col-md-12">
     <div class="box-inner">
         <div class="box-header well" data-original-title="">
-            <h2>Оформленные расходные операции</h2>
+            <h2></h2>
         </div>
         <div class="box-content">
             <table class="table table-striped table-bordered bootstrap-datatable datatable" id="dataTable">
@@ -70,31 +70,31 @@
 </div>
 
 <script>
-$(function () {
-    var oTable = $('#dataTable').dataTable({
-                "sPaginationType": "full_numbers",
-        "bSort": false,
-        "oLanguage": {
-                    "sSearch": "Поиск:",
-            "sLengthMenu": "Показать _MENU_ записей",
-            "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
-            "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
-            "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
-            "oPaginate": {
-                        "sFirst":    'Первая',
-                "sPrevious": 'Предыдущая',
-                "sNext":     'Следующая',
-                "sLast":     'Последняя'
-            },
-            "oaria": {
-                        "ipaginate": {
-                            "nfirst":    'Начало',
-                    "nprevious": 'Previous',
-                    "nnext":     'Next',
-                    "nlast":     'Last'
-                }
+    $(function () {
+        var oTable = $('#dataTable').dataTable({
+                    "sPaginationType": "full_numbers",
+            "bSort": false,
+            "oLanguage": {
+                        "sSearch": "Поиск:",
+                "sLengthMenu": "Показать _MENU_ записей",
+                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
+                "oPaginate": {
+                            "sFirst":    'Первая',
+                    "sPrevious": 'Предыдущая',
+                    "sNext":     'Следующая',
+                    "sLast":     'Последняя'
+                },
+                "oaria": {
+                            "ipaginate": {
+                                "nfirst":    'Начало',
+                        "nprevious": 'Previous',
+                        "nnext":     'Next',
+                        "nlast":     'Last'
                     }
-                }
-            });
-});
+                        }
+                    }
+                });
+    });
 </script>

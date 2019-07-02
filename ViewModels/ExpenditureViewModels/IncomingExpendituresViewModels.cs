@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AvibaWeb.DomainModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,5 +20,23 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
     {
         //public CRMPType Type { get; set; }
         public List<IncomingExpenditureItem> Items { get; set; }
+    }
+
+    public class ProcessIncomingExpenditureViewModel
+    {
+        public IncomingExpenditure Expenditure { get; set; }
+        public List<KeyValuePair<int,string>> DeskGroups { get; set; }
+    }
+
+    public class IncomingExpenditurePostItem
+    {
+        public int GroupId { get; set; }
+        public decimal Amount { get; set; }
+    }
+
+    public class ProcessIncomingExpenditurePostModel
+    {
+        public int ExpenditureId { get; set; }
+        public List<IncomingExpenditurePostItem> Items { get; set; }
     }
 }

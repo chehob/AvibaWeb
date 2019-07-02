@@ -42,7 +42,7 @@
                     <td style="width: 300px;">
                         @if (!item.IsProcessed)
                         {
-                            <a asp-action="ProcessIncomingExpenditure" asp-controller="Expenditures" asp-route-paymentId="@item.OperationId"
+                            <a asp-action="ProcessIncomingExpenditure" asp-controller="Expenditure" asp-route-id="@item.OperationId"
                                data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
                                class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-plus">&nbsp;</i>Распределить операцию</a>                                
                         }
