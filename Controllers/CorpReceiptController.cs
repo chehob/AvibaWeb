@@ -403,21 +403,48 @@ namespace AvibaWeb.Controllers
                         $"Оплата по счету RS-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС"
                 }).FirstOrDefault();
 
+            //model.Taxes.AddRange(
+            //    (from item in _db.CorporatorReceiptItems
+            //    join ti in _db.VReceiptLuggageInfo on item.TicketOperationId equals ti.TicketOperationId
+            //    where item.CorporatorReceiptId == id && item.Amount >= 0 && item.TypeId == CorporatorReceiptItem.CRIType.Luggage
+            //    group new { item, ti } by item.FeeRate
+            //    into groups
+            //    select new ReceiptTaxItem
+            //    {
+            //        FeeStr = (groups.FirstOrDefault().item.IsPercent ? groups.FirstOrDefault().item.Amount * groups.FirstOrDefault().item.FeeRate / 100 : groups.FirstOrDefault().item.FeeRate).ToString("#,0.00", nfi),
+            //        Amount = groups.Sum(g => g.item.IsPercent ? g.item.Amount * g.item.FeeRate / 100 : g.item.FeeRate),
+            //        AmountStr = groups.Sum(g => g.item.IsPercent ? g.item.Amount * g.item.FeeRate / 100 : g.item.FeeRate).ToString("#,0.00", nfi),
+            //        SegCount = 1,
+            //        AmountLabelStr = "шт.",
+            //        TicketLabel = groups.FirstOrDefault().ti.TicketLabel
+            //    }).ToList());
+
+            var luggageTaxes = (from item in _db.CorporatorReceiptItems
+                                join ti in _db.VReceiptLuggageInfo on item.TicketOperationId equals ti.TicketOperationId
+                                where item.CorporatorReceiptId == id && item.Amount >= 0 && item.TypeId == CorporatorReceiptItem.CRIType.Luggage
+                                select new ReceiptTaxItem
+                                {
+                                    FeeStr = (item.IsPercent ? item.Amount * item.FeeRate / 100 : item.FeeRate).ToString("#,0.00", nfi),
+                                    Amount = item.IsPercent ? item.Amount * item.FeeRate / 100 : item.FeeRate,
+                                    AmountStr = (item.IsPercent ? item.Amount * item.FeeRate / 100 : item.FeeRate).ToString("#,0.00", nfi),
+                                    SegCount = 1,
+                                    AmountLabelStr = "шт.",
+                                    TicketLabel = ti.TicketLabel
+                                }).ToList();
+
             model.Taxes.AddRange(
-                (from item in _db.CorporatorReceiptItems
-                join ti in _db.VReceiptLuggageInfo on item.TicketOperationId equals ti.TicketOperationId
-                where item.CorporatorReceiptId == id && item.Amount >= 0 && item.TypeId == CorporatorReceiptItem.CRIType.Luggage
-                group new { item, ti } by item.FeeRate
-                into groups
-                select new ReceiptTaxItem
-                {
-                    FeeStr = (groups.FirstOrDefault().item.IsPercent ? groups.FirstOrDefault().item.Amount * groups.FirstOrDefault().item.FeeRate / 100 : groups.FirstOrDefault().item.FeeRate).ToString("#,0.00", nfi),
-                    Amount = groups.Sum(g => g.item.IsPercent ? g.item.Amount * g.item.FeeRate / 100 : g.item.FeeRate),
-                    AmountStr = groups.Sum(g => g.item.IsPercent ? g.item.Amount * g.item.FeeRate / 100 : g.item.FeeRate).ToString("#,0.00", nfi),
-                    SegCount = 1,
-                    AmountLabelStr = "шт.",
-                    TicketLabel = groups.FirstOrDefault().ti.TicketLabel
-                }).ToList());
+                (from tax in luggageTaxes
+                 group tax by tax.FeeStr
+                 into groups
+                 select new ReceiptTaxItem
+                 {
+                     FeeStr = groups.FirstOrDefault().FeeStr,
+                     Amount = groups.Sum(g => g.Amount),
+                     AmountStr = groups.Sum(g => g.Amount).ToString("#,0.00", nfi),
+                     SegCount = groups.Count(),
+                     AmountLabelStr = "шт.",
+                     TicketLabel = groups.FirstOrDefault().TicketLabel
+                 }).ToList());
 
             model.Taxes.AddRange(
                 (from item in _db.CorporatorReceiptItems

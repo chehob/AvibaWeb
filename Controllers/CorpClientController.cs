@@ -1503,7 +1503,7 @@ namespace AvibaWeb.Controllers
                                     if (segData[0].BasicFare.Contains("CL") || segData[0].BasicFare.Contains("OP") ||
                                         segData[0].BasicFare.Contains("TVKO7R"))
                                     {
-                                        number = "23";
+                                        number = "20";
                                     }
                                     else if (segData[0].BasicFare.Contains("DPMOW"))
                                     {

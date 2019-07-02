@@ -1,7 +1,10 @@
 ﻿<p class="btn-group">
     <a asp-action="IssuedExpenditures" asp-controller="Expenditure"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary">Список операций</a>    
+       class="btn btn-primary">Список операций</a>
+    <a asp-action="IncomingExpenditures" asp-controller="Expenditure"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-plus">&nbsp;</i>Поступившие платежи</a>
 </p>
 
 <div class="box col-md-10">
@@ -11,5 +14,7 @@
     <a asp-action="Debit" asp-controller="Transit"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-default">Перечислить на транзитный счет</a>
-    <div id="results"></div>
+    <div class="box col-md-10">
+        <div id="results"></div>
+    </div>
 </div>

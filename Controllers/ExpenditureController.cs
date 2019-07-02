@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
+using System.Globalization;
 
 namespace AvibaWeb.Controllers
 {
@@ -164,6 +165,29 @@ namespace AvibaWeb.Controllers
             await _db.SaveChangesAsync();
 
             return RedirectToAction("IssuedExpenditures");
+        }
+
+        [HttpGet]
+        public ActionResult IncomingExpenditures()
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            return PartialView(new IncomingExpendituresViewModel
+            {
+                Items = (from e in _db.IncomingExpenditures.Include(e => e.FinancialAccountOperation)
+                            .ThenInclude(fao => fao.Counterparty)
+                         orderby e.FinancialAccountOperation.InsertDateTime descending
+                         select new IncomingExpenditureItem
+                         {
+                             Amount = e.Amount.Value.ToString("#,0.00", nfi),
+                             Description = e.FinancialAccountOperation.Description,
+                             OperationId = e.IncomingExpenditureId,
+                             CreatedDateTime = e.FinancialAccountOperation.OperationDateTime,
+                             CounterpartyName = e.FinancialAccountOperation.Counterparty.Name,
+                             IsProcessed = e.IsProcessed
+                         }).ToList()
+            });
         }
     }
 }
