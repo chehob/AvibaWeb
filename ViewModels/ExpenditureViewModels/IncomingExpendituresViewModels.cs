@@ -1,6 +1,8 @@
 ﻿using AvibaWeb.DomainModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,6 +27,10 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
     public class ProcessIncomingExpenditureViewModel
     {
         public IncomingExpenditure Expenditure { get; set; }
+
+        [Display(Name = "Статья расходов")]
+        public SelectList ExpenditureObjects { get; set; }
+
         public List<KeyValuePair<int,string>> DeskGroups { get; set; }
     }
 
@@ -37,6 +43,7 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
     public class ProcessIncomingExpenditurePostModel
     {
         public int ExpenditureId { get; set; }
+        public int ExpenditureObjectId { get; set; }
         public List<IncomingExpenditurePostItem> Items { get; set; }
     }
 }

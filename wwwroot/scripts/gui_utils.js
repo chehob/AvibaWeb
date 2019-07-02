@@ -2571,3 +2571,57 @@ $(document).on('click',
         });
         $(this).confirmation('show');
     });
+
+    $(document).on('click',
+        '.addReceiptPayment',
+        function (e) {
+            e.preventDefault();
+
+            $("#warningMsg").hide();
+
+            var paymentAmount = Big($('#paymentAmountDiv').val().replace(/[,]+/g, "."));
+            var paymentTotal = Big(0);
+            $("#paidReceiptsTable tbody").children().each(function () {
+                if($(this).children().length < 2)
+                {
+                    return false;
+                }
+                paymentTotal = paymentTotal.plus(Big($(this).children()[2].innerText.replace(/[^0-9.-]+/g, "")));
+            });
+            var reminder = paymentAmount.minus(paymentTotal);
+            var receiptAmount = Big($(this).parent().siblings()[2].innerText.replace(/[^0-9.-]+/g, ""));
+            $('#paidReceiptsTable').dataTable().fnAddData([
+                $($(this).parent().siblings()[0]).html(),
+                $($(this).parent().siblings()[1]).html(),
+                (reminder.gt(receiptAmount) ? $(this).parent().siblings()[2].innerText : numberWithSpaces(reminder.toFixed(2))) +
+                `<input hidden class="originalReceiptAmount" value="${$(this).parent().siblings()[2].innerText}" />`,
+                `<button class="btn btn-danger btn-sm removeReceiptPayment"><i class="glyphicon glyphicon-remove"></i></button>`
+            ]);
+
+            $('#receiptsTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
+
+            var addToPayment = reminder.gt(receiptAmount) ? receiptAmount : reminder;
+            paymentTotal = paymentTotal.plus(addToPayment);
+
+            var paymentReminder = paymentAmount.minus(paymentTotal);
+            $('#paymentReminder').html(numberWithSpaces(paymentReminder.toFixed(2)));
+            $('#paymentTotal').html(numberWithSpaces(paymentTotal.toFixed(2)));
+        });
+
+        $(document).on('input',
+        '.groupAmount',
+        function(e) {
+            $("#warningMsg").hide();
+
+            var paymentAmount = Big($('#expenditureAmountDiv').val().replace(/[,]+/g, "."));
+            var paymentTotal = Big(0);
+            $("#deskGroupsTable tbody").children().each(function () {
+                var value = $(this).children().children("input")[1].value.replace(/[^0-9.-]+/g, "").replace(",",".");
+                paymentTotal = paymentTotal.plus(Big(value==="" ? 0 : value));
+            });
+
+            var reminder = paymentAmount.minus(paymentTotal);
+
+            $('#expenditureReminder').html(numberWithSpaces(reminder));
+            $('#expenditureTotal').html(numberWithSpaces(paymentTotal));
+        });

@@ -30,6 +30,11 @@
                 </div>
             </div>
             <br />
+            <div class="row">
+                <label for="expenditureObjectSelect">Статья расходов</label>
+                <select id="expenditureObjectSelect" asp-items="@Model.ExpenditureObjects" class="form-control"></select>
+            </div>
+            <br />
             <table class="table table-striped table-bordered bootstrap-datatable datatable responsive" id="deskGroupsTable">
                 <thead>
                     <tr>
@@ -69,6 +74,9 @@
         $('#deskGroupsTable').dataTable({
             "sPaginationType": "full_numbers",
             "bSort": false,
+            "bPaginate": false,
+            "bInfo": false,
+            "bFilter": false,
             "oLanguage": {
                 "sSearch": "Поиск:",
                 "sLengthMenu": "Показать _MENU_ записей",
@@ -121,12 +129,13 @@
 
         var sendJsonData = {
             ExpenditureId: $("#expenditureId").val(),
+            ExpenditureObjectId: $("#expenditureObjectSelect").children("option:selected").val(),
             Items: items
         };
 
         e.preventDefault();
         $.ajax({
-            url: "/Data/ProcessIncomingExpenditure",
+            url: "/Expenditure/ProcessIncomingExpenditure",
             type: "POST",
             cache: false,
             dataType: "json",
@@ -134,7 +143,7 @@
             data: JSON.stringify(sendJsonData),
             success: function (result) {
                 $.ajax({
-                    url: "/Data/IncomingExpenditures",
+                    url: "/Expenditure/CashlessExpenditures",
                     type: "GET",
                     cache: false,
                     success: function (getResult) {

@@ -509,8 +509,10 @@ namespace AvibaWeb.Controllers
                         transferAccount = _db.FinancialAccounts.FirstOrDefault(a => a.Description == record.PayeeAccount);
                     }
 
-                    var isCashRequest = record.PaymentDescription.ToLower().Contains("заявка на внесение наличных");
                     var dAmount = decimal.Parse(record.Amount.Replace('.', ',').Replace(" ", string.Empty));
+                    var isCashRequest = (record.PaymentDescription.ToLower().Contains("внесение наличных") ||
+                       record.PaymentDescription.ToLower().Contains("поступления от реализации платных услуг")) && dAmount > 0;
+
                     var operationExists = _db.FinancialAccountOperations.Any(fao =>
                         fao.OrderNumber == record.Number &&
                         fao.FinancialAccountId == financialAccount.FinancialAccountId &&
@@ -726,13 +728,22 @@ namespace AvibaWeb.Controllers
                                 };
                             }
                         }
+                        else if(!isCashRequest && operation.Amount < 0)
+                        {
+                            var expenditure = new IncomingExpenditure
+                            {
+                                Amount = -operation.Amount,
+                                IsProcessed = false,
+                                FinancialAccountOperation = operation
+                            };
+                            _db.IncomingExpenditures.Add(expenditure);
+                        }
                     }
 
                     _db.FinancialAccountOperations.Add(operation);
                     financialAccount.Balance += operation.Amount;
 
-                    if ((record.PaymentDescription.ToLower().Contains("внесение наличных") ||
-                        record.PaymentDescription.ToLower().Contains("поступления от реализации платных услуг")) && operation.Amount > 0)
+                    if (isCashRequest)
                     {
                         var officeRole = _db.Roles.SingleOrDefault(r => r.Name.Contains("Офис"));
                         var office = _db.Users.FirstOrDefault(u => u.Roles.Any(r => r.RoleId == officeRole.Id));

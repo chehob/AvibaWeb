@@ -240,9 +240,18 @@ namespace AvibaWeb.Controllers
             var model = new ProcessIncomingExpenditureViewModel
             {
                 Expenditure = _db.IncomingExpenditures.FirstOrDefault(e => e.IncomingExpenditureId == id),
+                ExpenditureObjects = new SelectList(
+                    (from o in _db.ExpenditureObjects.Where(o => o.IsActive).OrderBy(o => o.Description)
+                     select new
+                     {
+                         Id = o.ExpenditureObjectId,
+                         Name = o.Description
+                     }).ToList(),
+                    "Id",
+                    "Name"),
                 DeskGroups = (from d in _db.DeskGroups
                               where d.IsActive
-                              select new KeyValuePair<int,string>(d.DeskGroupId, d.Name)).ToList()
+                              select new KeyValuePair<int, string>(d.DeskGroupId, d.Name)).ToList()
             };
 
             return PartialView(model);
@@ -264,8 +273,8 @@ namespace AvibaWeb.Controllers
                     Name = deskGroup.Name,
                     Amount = item.Amount,
                     DeskGroupId = item.GroupId,
-                    //TypeId = model.SelectedTypeId,
-                    //ObjectId = model.SelectedObjectId,
+                    TypeId = _db.ExpenditureTypes.FirstOrDefault(et => et.Description == "Расход").ExpenditureTypeId,
+                    ObjectId = model.ExpenditureObjectId,
                     PaymentTypeId = PaymentTypes.Cashless
                 };
 
