@@ -276,7 +276,7 @@ namespace AvibaWeb.Controllers
                     OrgName = accountId == 0 ? "Все" : fa.Organization.Description,
                     BankName = accountId == 0 ? "" : fa.BankName,
                     Operations =
-                        (from fao in _db.FinancialAccountOperations
+                        (from fao in _db.FinancialAccountOperations.Include(fao => fao.Account).ThenInclude(a => a.Organization)
                             where (fao.FinancialAccountId == accountId || accountId == 0) &&
                                 fao.OperationDateTime.Date >= queryFromDate && fao.OperationDateTime.Date <= queryToDate
                             orderby fao.OperationDateTime descending
@@ -290,7 +290,7 @@ namespace AvibaWeb.Controllers
                                         : (fao.Counterparty != null
                                             ? fao.Counterparty.Name
                                             : (fao.PayeeUser != null ? fao.PayeeUser.Name : "")),
-                                PayeeName = fa.Organization.Description + " - " + fa.BankName,
+                                PayeeName = fao.Account.Organization.Description + " - " + fao.Account.BankName,
                                 Amount = fao.Amount,
                                 AmountStr = fao.Amount.ToString("#,0.00", nfi),
                                 Description = fao.Description

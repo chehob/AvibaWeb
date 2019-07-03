@@ -23,5 +23,11 @@ namespace AvibaWeb.ViewModels.AdminViewModels
 
         [Display(Name = "Тип")]
         public IEnumerable<SelectListItem> Types { get; set; }
+
+        [Display(Name = "Подразделение")]
+        public SelectList DeskGroups { get; set; }
+
+        [Display(Name = "Статья расходов")]
+        public SelectList ExpenditureObjects { get; set; }
     }
 }

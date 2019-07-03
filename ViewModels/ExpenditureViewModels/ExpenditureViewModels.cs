@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using AvibaWeb.DomainModels;
 using AvibaWeb.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static AvibaWeb.DomainModels.ExpenditureOperation;
 
 namespace AvibaWeb.ViewModels.ExpenditureViewModels
 {
@@ -67,5 +68,17 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
     public class ExpendituresViewModel
     {
         public List<ExpenditureViewItem> Items { get; set; }
+    }
+
+    public class ExpenditureViewItemGroup
+    {
+        public EOType Status { get; set; }
+        public int? IncomingExpenditureId { get; set; }
+        public List<ExpenditureViewItem> Items { get; set; }
+    }
+
+    public class CashlessExpendituresViewModel
+    {
+        public List<ExpenditureViewItemGroup> ItemGroups { get; set; }
     }
 }

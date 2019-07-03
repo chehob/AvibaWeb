@@ -866,7 +866,25 @@ namespace AvibaWeb.Controllers
                     {
                         Value = t.CounterpartyTypeId.ToString(),
                         Text = t.Description
-                    }
+                    },
+                DeskGroups = new SelectList(
+                    (from d in _db.DeskGroups.Where(d => d.IsActive).OrderBy(d => d.Name)
+                     select new
+                     {
+                         Id = d.DeskGroupId,
+                         d.Name
+                     }).ToList(),
+                    "Id",
+                    "Name"),
+                ExpenditureObjects = new SelectList(
+                    (from e in _db.ExpenditureObjects.Where(e => e.IsActive).OrderBy(e => e.Description)
+                     select new
+                     {
+                         Id = e.ExpenditureObjectId,
+                         Name = e.Description
+                     }).ToList(),
+                    "Id",
+                    "Name")
             };
             return PartialView(model);
         }
@@ -891,6 +909,8 @@ namespace AvibaWeb.Controllers
                 counterparty.ManagementName = model.Item.ManagementName;
                 counterparty.ManagementPosition = model.Item.ManagementPosition;
                 counterparty.TypeId = model.Item.TypeId;
+                counterparty.ExpenditureDeskGroupId = model.Item.ExpenditureDeskGroupId;
+                counterparty.ExpenditureObjectId = model.Item.ExpenditureObjectId;
 
                 await _db.SaveChangesAsync();
 

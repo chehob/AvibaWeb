@@ -94,6 +94,22 @@
                         <select asp-for="Item.TypeId" asp-items="@Model.Types" class="form-control"></select>
                     </div>
                 </div>
+                <div class="row">
+                    <label asp-for="Item.ExpenditureDeskGroupId"  class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <select asp-for="Item.ExpenditureDeskGroupId" asp-items="@Model.DeskGroups" class="form-control">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label asp-for="Item.ExpenditureObjectId" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        <select asp-for="Item.ExpenditureObjectId" asp-items="@Model.ExpenditureObjects" class="form-control">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </div>
                 @Html.ValidationSummary(false)
                 <div class="row">
                     <div class="col-md-offset-2 col-md-10">

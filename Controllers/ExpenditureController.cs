@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using X.PagedList;
 using System.Globalization;
 using System.Collections.Generic;
+using AvibaWeb.Infrastructure;
 
 namespace AvibaWeb.Controllers
 {
@@ -210,22 +211,29 @@ namespace AvibaWeb.Controllers
                                    join eo in _db.ExpenditureOperations on expenditure.ExpenditureId equals eo.ExpenditureId into operations
                                    from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
                                    orderby operation.OperationDateTime descending
-                                   select new { expenditure, operation }).ToList();
+                                   select new { expenditure, operation }).ToList()
+                                   .GroupBy(f => f.expenditure.IncomingExpenditureId, new NullableComparer<int>());
 
-            var model = new ExpendituresViewModel
+            var model = new CashlessExpendituresViewModel
             {
-                Items = (from e in expenditureList
-                         select new ExpenditureViewItem
-                         {
-                             ExpenditureId = e.expenditure.ExpenditureId,
-                             Amount = e.expenditure.Amount.ToString("#,0.00", nfi),
-                             Name = e.expenditure.Name,
-                             DeskGroup = e.expenditure.DeskGroup != null ? e.expenditure.DeskGroup.Name : "",
-                             Type = e.expenditure.Type != null ? e.expenditure.Type.Description : "",
-                             Object = e.expenditure.Object != null ? e.expenditure.Object.Description : "",
-                             IssuedDateTime = e.operation.OperationDateTime,
-                             Status = e.operation.OperationTypeId
-                         }).ToList()
+                ItemGroups = (from e in expenditureList
+                              select new ExpenditureViewItemGroup
+                              {
+                                  Status = e.FirstOrDefault().operation.OperationTypeId,
+                                  IncomingExpenditureId = e.FirstOrDefault().expenditure.IncomingExpenditureId,
+                                  Items = (from g in e
+                                           select new ExpenditureViewItem
+                                           {
+                                               ExpenditureId = g.expenditure.ExpenditureId,
+                                               Amount = g.expenditure.Amount.ToString("#,0.00", nfi),
+                                               Name = g.expenditure.Name,
+                                               DeskGroup = g.expenditure.DeskGroup != null ? g.expenditure.DeskGroup.Name : "",
+                                               Type = g.expenditure.Type != null ? g.expenditure.Type.Description : "",
+                                               Object = g.expenditure.Object != null ? g.expenditure.Object.Description : "",
+                                               IssuedDateTime = g.operation.OperationDateTime,
+                                               Status = g.operation.OperationTypeId
+                                           }).ToList()
+                              }).ToList()
             };
 
             return PartialView(model);
@@ -254,6 +262,19 @@ namespace AvibaWeb.Controllers
                               select new KeyValuePair<int, string>(d.DeskGroupId, d.Name)).ToList()
             };
 
+            var counterparty = (from c in _db.Counterparties
+                                join fao in _db.FinancialAccountOperations on c.ITN equals fao.CounterpartyId
+                                where fao.FinancialAccountOperationId == model.Expenditure.FinancialAccountOperationId
+                                select c).FirstOrDefault();
+
+            if (counterparty != null)
+            {
+                if (counterparty.ExpenditureObjectId != null)
+                {
+                    model.ExpenditureObjects.FirstOrDefault(e => e.Value == counterparty.ExpenditureObjectId.ToString()).Selected = true;
+                }
+            }
+
             return PartialView(model);
         }
 
@@ -270,7 +291,8 @@ namespace AvibaWeb.Controllers
 
                 var expenditure = new Expenditure
                 {
-                    Name = deskGroup.Name,
+                    Name = incomingExpenditure.FinancialAccountOperation.Counterparty.Name + " - " +
+                        incomingExpenditure.FinancialAccountOperation.Description,
                     Amount = item.Amount,
                     DeskGroupId = item.GroupId,
                     TypeId = _db.ExpenditureTypes.FirstOrDefault(et => et.Description == "Расход").ExpenditureTypeId,

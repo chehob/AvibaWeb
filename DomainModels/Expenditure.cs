@@ -27,6 +27,10 @@ namespace AvibaWeb.DomainModels
         [ForeignKey("DeskGroupId")]
         public virtual DeskGroup DeskGroup { get; set; }
 
+        public int? IncomingExpenditureId { get; set; }
+        [ForeignKey("IncomingExpenditureId")]
+        public virtual IncomingExpenditure IncomingExpenditure { get; set; }
+
         public PaymentTypes PaymentTypeId { get; set; }
 
         public virtual ICollection<ExpenditureOperation> Operations { get; set; }

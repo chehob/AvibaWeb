@@ -59,6 +59,16 @@ namespace AvibaWeb.DomainModels
         [ForeignKey("LoanGroupId")]
         public virtual LoanGroup LoanGroup { get; set; }
 
+        [Display(Name = "Подразделение")]
+        public int? ExpenditureDeskGroupId { get; set; }
+        [ForeignKey("ExpenditureDeskGroupId")]
+        public virtual DeskGroup ExpenditureDeskGroup { get; set; }
+
+        [Display(Name = "Статья расходов")]
+        public int? ExpenditureObjectId { get; set; }
+        [ForeignKey("ExpenditureObjectId")]
+        public virtual ExpenditureObject ExpenditureObject { get; set; }
+
         public virtual ProviderBinding ProviderBinding { get; set; }
 
         public virtual ProviderBalance ProviderBalance { get; set; }

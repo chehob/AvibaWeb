@@ -4,14 +4,16 @@ using AvibaWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AvibaWeb.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190703065019_MCounterparty_ExpenditureSettings")]
+    partial class MCounterparty_ExpenditureSettings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -543,8 +545,6 @@ namespace AvibaWeb.Migrations
 
                     b.Property<int>("DeskGroupId");
 
-                    b.Property<int?>("IncomingExpenditureId");
-
                     b.Property<string>("Name");
 
                     b.Property<int>("ObjectId");
@@ -556,8 +556,6 @@ namespace AvibaWeb.Migrations
                     b.HasKey("ExpenditureId");
 
                     b.HasIndex("DeskGroupId");
-
-                    b.HasIndex("IncomingExpenditureId");
 
                     b.HasIndex("ObjectId");
 
@@ -1712,10 +1710,6 @@ namespace AvibaWeb.Migrations
                         .WithMany()
                         .HasForeignKey("DeskGroupId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("AvibaWeb.DomainModels.IncomingExpenditure", "IncomingExpenditure")
-                        .WithMany()
-                        .HasForeignKey("IncomingExpenditureId");
 
                     b.HasOne("AvibaWeb.DomainModels.ExpenditureObject", "Object")
                         .WithMany()

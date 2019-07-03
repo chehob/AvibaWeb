@@ -728,7 +728,10 @@ namespace AvibaWeb.Controllers
                                 };
                             }
                         }
-                        else if(!isCashRequest && operation.Amount < 0)
+                        else if(!isCashRequest && counterparty?.ProviderBalance == null &&
+                            counterparty?.SubagentData == null &&
+                            counterparty?.LoanGroup == null &&
+                            operation.Amount < 0)
                         {
                             var expenditure = new IncomingExpenditure
                             {

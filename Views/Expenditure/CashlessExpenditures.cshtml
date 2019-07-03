@@ -1,6 +1,6 @@
 ﻿@using AvibaWeb.DomainModels
 @using AvibaWeb.ViewModels.ExpenditureViewModels
-@model ExpendituresViewModel
+@model CashlessExpendituresViewModel
 
 <div class="box col-md-12">
     <div class="box-inner">
@@ -19,7 +19,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!Model.Items.Any())
+                    @if (!Model.ItemGroups.Any())
                     {
                         <tr>
                             <td colspan="5" class="text-center">Нет операций</td>
@@ -31,36 +31,49 @@
                     }
                     else
                     {
-                        foreach (var item in Model.Items)
+                        foreach (var itemGroup in Model.ItemGroups)
                         {
                             <tr>
-                                <td>
-                                    @item.IssuedDateTime
-                                    <br>
-                                    <span class="blue"><b>@item.DeskGroup</b></span>
-                                    <br>
-                                    <span class="green">@item.Type</span>
+                                <td colspan="4" class="text-center">
+                                    <div style="min-height: 32px;"></div>
                                 </td>
                                 <td>
-                                    @item.Name
-                                    <br>
-                                    <span class="blue"><b>@item.Object</b></span>
-                                </td>
-                                <td>
-                                    <b>@item.Amount</b>
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(i => item.Status)
-                                </td>
-                                <td>
-                                    @if (item.Status != ExpenditureOperation.EOType.Cancelled)
+                                    @if (itemGroup.Status != ExpenditureOperation.EOType.Cancelled)
                                     {
-                                        <form asp-controller="Expenditure" asp-action="CancelExpenditure" asp-route-id="@item.ExpenditureId" data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
+                                        <form asp-controller="Expenditure" asp-action="CancelExpenditureGroup" asp-route-id="@itemGroup.IncomingExpenditureId"
+                                              data-ajax-update="#results" data-ajax="true" data-ajax-method="POST">
                                             <input id="btnCancelExpenditure" type="image" name="picture" src="~/images/del.png" width="32" height="32" />
                                         </form>
                                     }
                                 </td>
+                                <td style="display: none;"></td>
+                                <td style="display: none;"></td>
+                                <td style="display: none;"></td>
                             </tr>
+                            foreach (var item in itemGroup.Items)
+                            {
+                        <tr>
+                            <td>
+                                @item.IssuedDateTime
+                                <br>
+                                <span class="blue"><b>@item.DeskGroup</b></span>
+                                <br>
+                                <span class="green">@item.Type</span>
+                            </td>
+                            <td>
+                                @item.Name
+                                <br>
+                                <span class="blue"><b>@item.Object</b></span>
+                            </td>
+                            <td>
+                                <b>@item.Amount</b>
+                            </td>
+                            <td colspan="2">
+                                @Html.DisplayFor(i => item.Status)
+                            </td>
+                            <td style="display: none;"></td>
+                        </tr>
+                            }
                         }
                     }
                 </tbody>
