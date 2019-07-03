@@ -5,6 +5,12 @@ using System.Threading.Tasks;
 
 namespace AvibaWeb.ViewModels.CorpClientViewModels
 {
+    public class ReceiptsViewModel
+    {
+        public List<KeyValuePair<string, string>> Counterparties { get; set; }
+        public List<KeyValuePair<string, string>> Organizations { get; set; }
+    }
+
     public class TicketPDFViewModel
     {
         public List<TicketPDFData> Tickets { get; set; }   

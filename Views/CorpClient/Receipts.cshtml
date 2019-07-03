@@ -1,4 +1,57 @@
-﻿@using AvibaWeb.ViewModels.CorpReceiptViewModels
+﻿@using AvibaWeb.ViewModels.CorpClientViewModels
+@model ReceiptsViewModel
+
+@if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+{
+<div class="box-content">
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Организация:</h5>
+            <div id="payeeSelectDiv">
+                <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
+                    <option value=""></option>
+                    <optgroup label="Организации">
+                        @foreach (var org in Model.Organizations)
+                        {
+                            <option id=@org.Key>@org.Value</option>
+                        }
+                    </optgroup>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Корпоратор:</h5>
+            <div id="payerSelectDiv">
+                <select data-placeholder="Выбрать корпоратора" id="selectPayer" data-rel="chosen">
+                    <option value=""></option>
+                    <optgroup label="Корпораторы">
+                        @foreach (var counterparty in Model.Counterparties)
+                        {
+                            <option id=@counterparty.Key>@counterparty.Value</option>
+                        }
+                    </optgroup>
+                </select>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-6">
+            <button id="resetOrgDataBtn" class="btn btn-success">Сбросить</button>
+            <input hidden id="withBanks" value="false" />
+            <input hidden id="withFees" value="false" />
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-6">
+            <label for="isOnlyPaid">Только оплаченные</label>
+            <input id="isOnlyPaid" type="checkbox" />
+        </div>
+    </div>
+</div>
+}
 
 <div class="col-md-12">
     Выбрать с: <input type="text" autocomplete="off" id="min" name="min" class="date-range-filter"> по: <input type="text" autocomplete="off" id="max" name="max" class="date-range-filter">
@@ -11,6 +64,9 @@
 <script>
     $("#getReceiptListBtn").click(function (e) {
         const sendJsonData = {
+            payerId: $("#selectPayer").find('option:selected').prop('id'),
+            payeeId: $("#selectPayee").find('option:selected').prop('id'),
+            isOnlyPaid: $("#isOnlyPaid").prop('checked'), 
             fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
             toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true)
         };
@@ -32,7 +88,9 @@
         });
     });
 
-    $(function() {
+    $(function () {
+        initChosen(false, false);
+
         $("#min").datepicker();
         $("#max").datepicker();
 

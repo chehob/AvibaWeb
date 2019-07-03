@@ -93,6 +93,9 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
 
     public class TicketListRequest
     {
+        public string payerId { get; set; }
+        public string payeeId { get; set; }
+        public string isOnlyPaid { get; set; }
         public string fromDate { get; set; }
         public string toDate { get; set; }
         public List<ReceiptItem> ExceptItems { get; set; }

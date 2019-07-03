@@ -56,26 +56,15 @@ namespace AvibaWeb.Controllers
             nfi.NumberGroupSeparator = " ";
             var dateTimeLimit = new DateTime(DateTime.Now.Year - 1, 1, 1);
 
-            var model = (from cr in _db.CorporatorReceipts.Where(cc => cc.TypeId == CorporatorReceipt.CRType.CorpClient)
-                    .Include(c => c.PayeeAccount.Organization)
-                from operation in _db.CorporatorReceiptOperations
-                    .Where(cro =>
-                        cro.OperationDateTime >= dateTimeLimit && cro.CorporatorReceiptId == cr.CorporatorReceiptId)
-                    .OrderByDescending(o => o.OperationDateTime).Take(1)
-                orderby cr.IssuedDateTime descending
-                select new ReceiptsViewModel
-                {
-                    ReceiptNumber = cr.ReceiptNumber.ToString(),
-                    ReceiptId = cr.CorporatorReceiptId,
-                    CreatedDate = operation.OperationDateTime.ToString("d"),
-                    IssuedDateTime = cr.IssuedDateTime != null ? cr.IssuedDateTime.Value.ToString("d") : "",
-                    PaidDateTime = cr.PaidDateTime != null ? cr.PaidDateTime.Value.ToString("d") : "",
-                    PayeeOrgName = cr.PayeeAccount.Organization.Description,
-                    PayeeBankName = cr.PayeeAccount.BankName,
-                    PayerOrgName = cr.Corporator.Name,
-                    TotalStr = cr.Amount.Value.ToString("#,0.00", nfi),
-                    Status = cr.StatusId
-                }).ToList();
+            var model = new ViewModels.CorpClientViewModels.ReceiptsViewModel
+            {
+                Counterparties = (from c in _db.Counterparties
+                                  where c.Type.Description == "Корпоратор"
+                                  select new KeyValuePair<string, string>(c.ITN, c.Name)).ToList(),
+                Organizations = (from org in _db.Organizations
+                                 where org.IsActive
+                                 select new KeyValuePair<string, string>(org.OrganizationId.ToString(), org.Description)).ToList()
+            };
 
             return PartialView(model);
         }
@@ -501,7 +490,6 @@ namespace AvibaWeb.Controllers
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
-            //var dateTimeLimit = new DateTime(DateTime.Now.Year - 1, 1, 1);
 
             var model = (from cr in _db.CorporatorReceipts.Where(cc => cc.TypeId == CorporatorReceipt.CRType.CorpClient)
                     .Include(c => c.PayeeAccount.Organization)
@@ -511,8 +499,11 @@ namespace AvibaWeb.Controllers
                         cro.OperationDateTime < DateTime.Parse(request.toDate).AddDays(1) &&
                         cro.CorporatorReceiptId == cr.CorporatorReceiptId)
                     .OrderByDescending(o => o.OperationDateTime).Take(1)
+                where (string.IsNullOrEmpty(request.payeeId) || cr.PayeeAccount.Organization.OrganizationId == int.Parse(request.payeeId)) &&
+                    (string.IsNullOrEmpty(request.payerId) || cr.CorporatorId == request.payerId) &&
+                    (string.IsNullOrEmpty(request.isOnlyPaid) || request.isOnlyPaid == "false" || cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid)
                 orderby cr.IssuedDateTime descending
-                select new ReceiptsViewModel
+                select new ViewModels.CorpReceiptViewModels.ReceiptsViewModel
                 {
                     ReceiptNumber = cr.ReceiptNumber.ToString(),
                     ReceiptId = cr.CorporatorReceiptId,

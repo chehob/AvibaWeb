@@ -2387,11 +2387,14 @@ $(document).on('click',
             };
     
             $.when(corpOrgAjax(), orgCorpAjax()).done(function() {
-                initChosen();
+                initChosen(
+                    $('#withBanks').val() == 'true',
+                    $('#withFees').val() == 'true'
+                );
             });
         });
 
-        function initPayer() {
+    function initPayer(withFees) {
             if( !$("#selectPayer").length )
             {
                 return;
@@ -2405,7 +2408,8 @@ $(document).on('click',
                 
             // Callback function to execute when mutations are observed
             var payerCallback = function (mutationsList, observer) {
-                //if ($("#selectPayee").next().find("a.chosen-single span").first().html() !== "Выбрать организацию") {
+                if(withFees)
+                {
                     $.ajax({
                         url: "/CorpClient/CorpFeeList",
                         type: "GET",
@@ -2421,7 +2425,7 @@ $(document).on('click',
                             console.log('err4');
                         }
                     });
-                //}
+                }
 
                 const mutation = mutationsList[0];
 
@@ -2452,7 +2456,7 @@ $(document).on('click',
             payerObserver.observe(payerTargetNode, config);
         }
 
-    function initPayee() {
+    function initPayee(withBanks, withFees) {
         if( !$("#selectPayee").length )
         {
             return;
@@ -2466,27 +2470,30 @@ $(document).on('click',
         // Callback function to execute when mutations are observed
         var payeeCallback = function (mutationsList, observer) {
             const mutation = mutationsList[0];
-            $.ajax({
-                url: "/Data/OrganizationFinancialAccounts",
-                type: "GET",
-                cache: false,
-                data: { orgName: mutation.target.textContent },
-                success: function (result) {
-                    $("#payeeOrgFinancialAccountsDiv").html(result);
-                    $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
+            if(withBanks)
+            {
+                $.ajax({
+                    url: "/Data/OrganizationFinancialAccounts",
+                    type: "GET",
+                    cache: false,
+                    data: { orgName: mutation.target.textContent },
+                    success: function (result) {
+                        $("#payeeOrgFinancialAccountsDiv").html(result);
+                        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
 
-                    var editValue = $("#editReceiptBankName").val();
-                    if (editValue) {
-                        $('#selectBank').val(editValue).trigger('chosen:updated');
+                        var editValue = $("#editReceiptBankName").val();
+                        if (editValue) {
+                            $('#selectBank').val(editValue).trigger('chosen:updated');
+                        }
+                    },
+                    error: function (error) {
+                        $("#payeeOrgFinancialAccountsDiv").html();
                     }
-                },
-                error: function (error) {
-                    console.log('err');
-                    $("#payeeOrgFinancialAccountsDiv").html();
-                }
-            });
+                });
+            }
 
-            //if ($("#selectPayer").next().find("a.chosen-single span").first().html() !== "Выбрать корпоратора") {
+            if(withFees)
+            {
                 $.ajax({
                     url: "/CorpClient/CorpFeeList",
                     type: "GET",
@@ -2502,7 +2509,7 @@ $(document).on('click',
                         console.log('err2');
                     }
                 });
-            //}
+            }
 
             if ($("#selectPayer").next().find("a.chosen-single span").first().html() === "Выбрать корпоратора") {
                 $.when($.ajax({
@@ -2514,12 +2521,9 @@ $(document).on('click',
                         $("#payerSelectDiv").html(result);
                         $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
 
-                        console.log("org init orgCorp");
-
                         initPayer();
                     },
                     error: function (error) {
-                        console.log('err3');
                         $("#payerSelectDiv").html();
                     }
                 })).done(function(){
@@ -2535,11 +2539,11 @@ $(document).on('click',
         payeeObserver.observe(payeeTargetNode, config);
     }
 
-    function initChosen() {
+    function initChosen(withBanks = true, withFees = true) {
             $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
     
-            initPayee();
-            initPayer();
+            initPayee(withBanks, withFees);
+            initPayer(withFees);
         }
 
         $(document).on('click',
