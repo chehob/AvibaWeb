@@ -990,6 +990,8 @@ namespace AvibaWeb.Controllers
                     cp.OperationDateTime < DateTime.Parse(requestData.fromDate)
                  select cp.Amount).Sum();
 
+            var org = _db.Organizations.FirstOrDefault(o => o.OrganizationId == int.Parse(requestData.payeeId));
+
             var model = new ReviseReportPDFViewModel
             {
                 FromDate = DateTime.Parse(requestData.fromDate).ToString("d"),
@@ -1011,7 +1013,9 @@ namespace AvibaWeb.Controllers
                              DateStr = fao.OperationDateTime.ToString("d"),
                              Label = $"Перевод средств ({fao.OperationDateTime.ToString("d")})",
                              Credit = fao.Amount
-                         }).ToList()
+                         }).ToList(),
+                SignatureFileName = org.SignatureFileName,
+                StampFileName = org.StampFileName
             };
 
             model.Items.AddRange((from cr in _db.CorporatorReceipts
@@ -1059,6 +1063,22 @@ namespace AvibaWeb.Controllers
             model.NewDebit = balance >= 0 ? balance.ToString("0.00", nfi) : "";
             model.NewCredit = balance < 0 ? (-balance).ToString("0.00", nfi) : "";
             model.Balance = balance;
+            model.SignatureImage = new Func<string>(() =>
+            {
+                if (model.SignatureFileName == null) return "";
+
+                var path = _hostingEnvironment.WebRootPath + "/img/corpImages/" + model.SignatureFileName;
+                var b = System.IO.File.ReadAllBytes(path);
+                return "data:image/png;base64," + Convert.ToBase64String(b);
+            })();
+            model.StampImage = new Func<string>(() =>
+            {
+                if (model.StampFileName == null) return "";
+
+                var path = _hostingEnvironment.WebRootPath + "/img/corpImages/" + model.StampFileName;
+                var b = System.IO.File.ReadAllBytes(path);
+                return "data:image/png;base64," + Convert.ToBase64String(b);
+            })();
 
             return Json(model);
         }

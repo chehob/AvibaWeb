@@ -73,5 +73,6 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
         public string payeeId { get; set; }
         public string payeeName { get; set; }
         public string payeeBankName { get; set; }
+        public bool isSigned { get; set; }
     }
 }

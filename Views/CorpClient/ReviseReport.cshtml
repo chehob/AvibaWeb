@@ -51,6 +51,8 @@
                 <div class="col-md-12">
                     За период с: <input type="text" autocomplete="off" id="min" name="min" class="date-range-filter"> по: <input type="text" autocomplete="off" id="max" name="max" class="date-range-filter">
                     <a href="/" id="createReviseReportBtn" class="btn btn-success">Создать акт</a>
+                    <input id="isSigned" type="checkbox" />
+                    <label for="isSigned">с подписью</label>
                 </div>
             </div>
         </div>
@@ -80,7 +82,8 @@
             payerName: $("#selectPayer").find('option:selected').text(),
             payeeId: $("#selectPayee").find('option:selected').prop('id'),
             payeeName: $("#selectPayee").find('option:selected').text(),
-            payeeBankName: $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html()
+            payeeBankName: $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html(),
+            isSigned: $("#isSigned").checked
         };
 
         console.log(sendJsonData);
@@ -94,7 +97,7 @@
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(sendJsonData),
             success: function (result) {
-                console.log(result);
+                var isSigned = $("#isSigned").prop('checked');
 
                 const bodyData = [];
 
@@ -246,34 +249,58 @@
                             margin: [0, 0, 0, 20]
                         },
                         {
-                            columns: [
-                                [
-                                    {
-                                        text: `От ${result.orgName}`,
-                                        margin: [0, 0, 0, 15]
-                                    },
-                                    {
-                                        text: '________________________________(__________________)'
-                                    },
-                                    {
-                                        text: 'М.П.'
-                                    }
-                                ],
-                                [
-                                    {
-                                        text: `От ${result.payerName}`,
-                                        margin: [10, 0, 0, 15]
-                                    },
-                                    {
-                                        text: '________________________________(__________________)',
-                                        margin: [10, 0, 0, 0]
-                                    },
-                                    {
-                                        text: 'М.П.',
-                                        margin: [10, 0, 0, 0]
-                                    }
+                            table: {
+                                widths: ['*', '*'],
+                                body: [
+                                    [
+                                        {
+                                            text: `От ${result.orgName}`,
+                                            margin: [0, 0, 0, 15]
+                                        },
+                                        {
+                                            text: `От ${result.payerName}`,
+                                            margin: [10, 0, 0, 15]
+                                        }
+                                    ],
+                                    [
+                                        [
+                                            (typeof isSigned == typeof undefined || isSigned == false || isSigned == 'false') ? '' :                        
+                                            {
+                                                image: `${result.signatureImage}`,
+                                                width: 150,
+                                                height: 60,
+                                                margin: [0, 0, 0, 0]
+                                            },
+                                            {
+                                                text: '____________________________________(__________________)',
+                                                margin: [0, -30, 0, 0]
+                                            },
+                                        ],
+                                        {
+                                            text: '____________________________________(__________________)',
+                                            margin: [0, 30, 0, 0]
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            text: 'М.П.'
+                                        },                                  
+                                        {
+                                            text: 'М.П.'
+                                        }
+                                    ],
+                                    [
+                                        (typeof isSigned == typeof undefined || isSigned == false || isSigned == 'false') ? '' :
+                                        {
+                                            image: `${result.stampImage}`,
+                                            width: 125,
+                                            alignment: 'center', margin: [25, 0, 45, 0]
+                                        },
+                                        {}
+                                    ]
                                 ]
-                            ],
+                            },
+                            layout: 'noBorders',
                             style: 'normalText'
                         }
                     ],

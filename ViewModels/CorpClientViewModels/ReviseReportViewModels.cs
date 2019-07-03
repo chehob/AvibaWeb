@@ -26,6 +26,10 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
         public decimal Balance { get; set; }
         public string NewDebit { get; set; }
         public string NewCredit { get; set; }
+        public string SignatureFileName { get; set; }
+        public string StampFileName { get; set; }
+        public string SignatureImage { get; set; }
+        public string StampImage { get; set; }
     }
 
     public class ReviseReportPDFItem
