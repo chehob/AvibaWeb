@@ -2629,3 +2629,9 @@ $(document).on('click',
             $('#expenditureReminder').html(numberWithSpaces(reminder));
             $('#expenditureTotal').html(numberWithSpaces(paymentTotal));
         });
+
+    $(document).on('click',
+        '#toggleSumPopupBtn',
+        function(e) {
+            $('#sumPopup').slideToggle();
+        });
