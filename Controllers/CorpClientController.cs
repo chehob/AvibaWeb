@@ -492,7 +492,7 @@ namespace AvibaWeb.Controllers
             nfi.NumberGroupSeparator = " ";
 
             var receipts = (from cr in _db.CorporatorReceipts.Where(cc => cc.TypeId == CorporatorReceipt.CRType.CorpClient)
-                    .Include(c => c.PayeeAccount.Organization)
+                    .Include(c => c.PayeeAccount.Organization).Include(c => c.Corporator)
                             from operation in _db.CorporatorReceiptOperations
                                 .Where(cro =>
                                     cro.OperationDateTime >= DateTime.Parse(request.fromDate) &&

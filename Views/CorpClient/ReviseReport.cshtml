@@ -251,6 +251,7 @@
                         {
                             table: {
                                 widths: ['*', '*'],
+                                heights: [15,60,60,60],
                                 body: [
                                     [
                                         {
@@ -264,7 +265,7 @@
                                     ],
                                     [
                                         [
-                                            (typeof isSigned == typeof undefined || isSigned == false || isSigned == 'false') ? '' :                        
+                                            (typeof isSigned == typeof undefined || isSigned == false || isSigned == 'false') ? '' : 
                                             {
                                                 image: `${result.signatureImage}`,
                                                 width: 150,
@@ -273,7 +274,9 @@
                                             },
                                             {
                                                 text: '____________________________________(__________________)',
-                                                margin: [0, -30, 0, 0]
+                                                margin: [0,
+                                                    (typeof isSigned == typeof undefined || isSigned == false || isSigned == 'false') ? 30 : -30,
+                                                    0, 0]
                                             },
                                         ],
                                         {
