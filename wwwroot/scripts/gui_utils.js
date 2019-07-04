@@ -2394,7 +2394,7 @@ $(document).on('click',
             });
         });
 
-    function initPayer(withFees) {
+    function initPayer(withBanks, withFees) {
             if( !$("#selectPayer").length )
             {
                 return;
@@ -2439,7 +2439,7 @@ $(document).on('click',
                             $("#payeeSelectDiv").html(result);
                             $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
 
-                            initPayee();
+                            initPayee(withBanks, withFees);
                         },
                         error: function (error) {
                             $("#payeeSelectDiv").html();
@@ -2521,7 +2521,7 @@ $(document).on('click',
                         $("#payerSelectDiv").html(result);
                         $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
 
-                        initPayer();
+                        initPayer(withBanks, withFees);
                     },
                     error: function (error) {
                         $("#payerSelectDiv").html();
@@ -2543,7 +2543,7 @@ $(document).on('click',
             $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
     
             initPayee(withBanks, withFees);
-            initPayer(withFees);
+            initPayer(withBanks, withFees);
         }
 
         $(document).on('click',
