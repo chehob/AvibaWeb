@@ -11,33 +11,65 @@
                 top: 150px;
                 right: 0;
                 padding: 10px;
-                text-align: center;
+                text-align: left;
                 background-color: #eee;
                 border: 1px solid #ccc;
                 z-index: 1;
             }
+            .popup > div {
+                display: table-row;
+                width: 100%;
+            }
+            .popup > div > div {
+                display: table-cell;
+                width: 50%;
+            }
+            .popup > div > div + div {
+                width: 50%;
+                padding-left: 10px;
+            }
         </style>
         <div class="popup" id="sumPopup" style="display:none;">
-            <span>Кол-во авиабилетов:</span>
-            <span id="segTotal"></span><br>
-            <span>Кол-во ж/д билетов:</span>
-            <span id="feeTotal"></span><br>
-            <span>Кол-во доп. услуг:</span>
-            <span id="feeTotal"></span><br>
-            <span>Сумма авиабилетов:</span>
-            <span id="ticketTotal"></span><br>
-            <span>Сумма ж/д билетов:</span>
-            <span id="ticketTotal"></span><br>
-            <span>Сумма доп. услуг:</span>
-            <span id="ticketTotal"></span><br>
-            <label class="red">Сумма сборов:</label>
-            <b><span class="red" id="finalTotal"></span></b><br>
-            <span>Сборы авиабилетов:</span>
-            <span id="ticketTotal"></span><br>
-            <span>Сборы ж/д билетов:</span>
-            <span id="ticketTotal"></span><br>
-            <span>Сборы доп. услуг:</span>
-            <span id="ticketTotal"></span><br>
+            <div>
+                <div>Кол-во авиабилетов:</div>
+                <div id="aviaSegTotal"></div>
+            </div>
+            <div>
+                <div>Кол-во ж/д билетов:</div>
+                <div id="zdSegTotal"></div>
+            </div>
+            <div>
+                <div>Кол-во доп. услуг:</div>
+                <div id="luggageSegTotal"></div>
+            </div>
+            <div>
+                <div>Сумма авиабилетов:</div>
+                <div id="aviaCostTotal"></div>
+            </div>
+            <div>
+                <div>Сумма ж/д билетов:</div>
+                <div id="zdCostTotal"></div>
+            </div>
+            <div>
+                <div>Сумма доп. услуг:</div>
+                <div id="luggageCostTotal"></div>
+            </div>
+            <div>
+                <div class="red"><b>Сумма сборов:</b></div>
+                <div class="red" id="taxTotal"><b></b></div>
+            </div>
+            <div>
+                <div>Сборы авиабилетов:</div>
+                <div id="aviaTaxTotal"></div>
+            </div>
+            <div>
+                <div>Сборы ж/д билетов:</div>
+                <div id="zdTaxTotal"></div>
+            </div>
+            <div>
+                <div>Сборы доп. услуг:</div>
+                <div id="luggageTaxTotal"></div>
+            </div>            
         </div>
         <div class="popup" style="top: 109px;" id="toggleSumPopupBtn">
             <span>Показать суммы</span>

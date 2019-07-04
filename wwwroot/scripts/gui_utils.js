@@ -2630,8 +2630,24 @@ $(document).on('click',
             $('#expenditureTotal').html(numberWithSpaces(paymentTotal));
         });
 
+    $(document).mouseup(function(e) 
+    {
+        var container = $("#sumPopup");
+        var toggleButton = $('#toggleSumPopupBtn');
+
+        // if the target of the click isn't the container nor a descendant of the container
+        if (!(toggleButton.is(e.target) || container.is(e.target)) && 
+            container.has(e.target).length === 0 &&
+            toggleButton.has(e.target).length === 0) 
+        {
+            container.slideUp();
+        }
+    });
+
     $(document).on('click',
         '#toggleSumPopupBtn',
         function(e) {
             $('#sumPopup').slideToggle();
-        });
+    });
+
+    

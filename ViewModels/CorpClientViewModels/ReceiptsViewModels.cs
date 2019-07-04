@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static AvibaWeb.DomainModels.CorporatorReceipt;
 
 namespace AvibaWeb.ViewModels.CorpClientViewModels
 {
@@ -9,6 +10,38 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
     {
         public List<KeyValuePair<string, string>> Counterparties { get; set; }
         public List<KeyValuePair<string, string>> Organizations { get; set; }
+    }
+
+    public class ReceiptListItem
+    {
+        public int ReceiptId { get; set; }
+        public string ReceiptNumber { get; set; }
+        public string CreatedDate { get; set; }
+        public string IssuedDateTime { get; set; }
+        public string PaidDateTime { get; set; }
+        public string PayeeBankName { get; set; }
+        public string PayeeOrgName { get; set; }
+        public string PayerOrgName { get; set; }
+        public string TotalStr { get; set; }
+        public string PartialStr { get; set; }
+        public CRPaymentStatus Status { get; set; }
+        public int TicketsToPDFCount { get; set; }
+    }
+
+    public class ReceiptListViewModel
+    {
+        public string AviaSegTotal { get; set; }
+        public string ZdSegTotal { get; set; }
+        public string LuggageSegTotal { get; set; }
+        public string AviaCostTotal { get; set; }
+        public string ZdCostTotal { get; set; }
+        public string LuggageCostTotal { get; set; }
+        public string TaxTotal { get; set; }
+        public string AviaTaxTotal { get; set; }
+        public string ZdTaxTotal { get; set; }
+        public string LuggageTaxTotal { get; set; }
+
+        public List<ReceiptListItem> Items { get; set; }
     }
 
     public class TicketPDFViewModel

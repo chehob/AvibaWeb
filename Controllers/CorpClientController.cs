@@ -491,40 +491,53 @@ namespace AvibaWeb.Controllers
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
-            var model = (from cr in _db.CorporatorReceipts.Where(cc => cc.TypeId == CorporatorReceipt.CRType.CorpClient)
+            var receipts = (from cr in _db.CorporatorReceipts.Where(cc => cc.TypeId == CorporatorReceipt.CRType.CorpClient)
                     .Include(c => c.PayeeAccount.Organization)
-                from operation in _db.CorporatorReceiptOperations
-                    .Where(cro =>
-                        cro.OperationDateTime >= DateTime.Parse(request.fromDate) &&
-                        cro.OperationDateTime < DateTime.Parse(request.toDate).AddDays(1) &&
-                        cro.CorporatorReceiptId == cr.CorporatorReceiptId)
-                    .OrderByDescending(o => o.OperationDateTime).Take(1)
-                where (string.IsNullOrEmpty(request.payeeId) || cr.PayeeAccount.Organization.OrganizationId == int.Parse(request.payeeId)) &&
-                    (string.IsNullOrEmpty(request.payerId) || cr.CorporatorId == request.payerId) &&
-                    (string.IsNullOrEmpty(request.isOnlyPaid) || request.isOnlyPaid == "false" || cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid)
-                orderby cr.IssuedDateTime descending
-                select new ViewModels.CorpReceiptViewModels.ReceiptsViewModel
-                {
-                    ReceiptNumber = cr.ReceiptNumber.ToString(),
-                    ReceiptId = cr.CorporatorReceiptId,
-                    CreatedDate = operation.OperationDateTime.ToString("d"),
-                    IssuedDateTime = cr.IssuedDateTime != null ? cr.IssuedDateTime.Value.ToString("d") : "",
-                    PaidDateTime = cr.PaidDateTime != null ? cr.PaidDateTime.Value.ToString("d") : "",
-                    PayeeOrgName = cr.PayeeAccount.Organization.Description,
-                    PayeeBankName = cr.PayeeAccount.BankName,
-                    PayerOrgName = cr.Corporator.Name,
-                    TotalStr = cr.Amount.GetValueOrDefault(0).ToString("#,0.00", nfi),
-                    PartialStr = cr.PaidAmount.GetValueOrDefault(0).ToString("#,0.00", nfi),
-                    Status = cr.StatusId,
-                    TicketsToPDFCount = (from cri in _db.CorporatorReceiptItems
-                        join rti in _db.VTicketOperations on cri.TicketOperationId equals rti.TicketOperationId
-                        where cr.CorporatorReceiptId == cri.CorporatorReceiptId &&
-                              (rti.TicketTypeId == null || rti.TicketTypeId == 1) &&
-                              (rti.OperationTypeID == VKRSCancelRequest.TOType.Sale ||
-                              rti.OperationTypeID == VKRSCancelRequest.TOType.ExchangeNew ||
-                              rti.OperationTypeID == VKRSCancelRequest.TOType.ForcedExchange)
-                        select 1).Sum(i => i)
-                }).ToList();
+                            from operation in _db.CorporatorReceiptOperations
+                                .Where(cro =>
+                                    cro.OperationDateTime >= DateTime.Parse(request.fromDate) &&
+                                    cro.OperationDateTime < DateTime.Parse(request.toDate).AddDays(1) &&
+                                    cro.CorporatorReceiptId == cr.CorporatorReceiptId)
+                                .OrderByDescending(o => o.OperationDateTime).Take(1)
+                            where (string.IsNullOrEmpty(request.payeeId) || cr.PayeeAccount.Organization.OrganizationId == int.Parse(request.payeeId)) &&
+                                (string.IsNullOrEmpty(request.payerId) || cr.CorporatorId == request.payerId) &&
+                                (string.IsNullOrEmpty(request.isOnlyPaid) || request.isOnlyPaid == "false" || cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid)
+                            orderby cr.IssuedDateTime descending
+                            select new { cr, operation }).ToList();
+
+            var receiptItems = from cri in _db.CorporatorReceiptItems
+                                join ti in _db.VReceiptTicketInfo on cri.TicketOperationId equals ti.TicketOperationId
+                                where receipts.Select(r => r.cr.CorporatorReceiptId).Contains(cri.CorporatorReceiptId) &&
+                                    cri.TypeId == CorporatorReceiptItem.CRIType.Ticket
+                                group new { cri, ti } by ti.TicketType.Value == 3 ? 3 : 1 into g
+                                select g;
+
+            var model = new ReceiptListViewModel
+            {
+                Items = (from r in receipts
+                         select new ReceiptListItem
+                         {
+                             ReceiptNumber = r.cr.ReceiptNumber.ToString(),
+                             ReceiptId = r.cr.CorporatorReceiptId,
+                             CreatedDate = r.operation.OperationDateTime.ToString("d"),
+                             IssuedDateTime = r.cr.IssuedDateTime != null ? r.cr.IssuedDateTime.Value.ToString("d") : "",
+                             PaidDateTime = r.cr.PaidDateTime != null ? r.cr.PaidDateTime.Value.ToString("d") : "",
+                             PayeeOrgName = r.cr.PayeeAccount.Organization.Description,
+                             PayeeBankName = r.cr.PayeeAccount.BankName,
+                             PayerOrgName = r.cr.Corporator.Name,
+                             TotalStr = r.cr.Amount.GetValueOrDefault(0).ToString("#,0.00", nfi),
+                             PartialStr = r.cr.PaidAmount.GetValueOrDefault(0).ToString("#,0.00", nfi),
+                             Status = r.cr.StatusId,
+                             TicketsToPDFCount = (from cri in _db.CorporatorReceiptItems
+                                                  join rti in _db.VTicketOperations on cri.TicketOperationId equals rti.TicketOperationId
+                                                  where r.cr.CorporatorReceiptId == cri.CorporatorReceiptId &&
+                                                        (rti.TicketTypeId == null || rti.TicketTypeId == 1) &&
+                                                        (rti.OperationTypeID == VKRSCancelRequest.TOType.Sale ||
+                                                        rti.OperationTypeID == VKRSCancelRequest.TOType.ExchangeNew ||
+                                                        rti.OperationTypeID == VKRSCancelRequest.TOType.ForcedExchange)
+                                                  select 1).Sum(i => i)
+                         }).ToList()
+            };
 
             return Json(new { message = await _viewRenderService.RenderToStringAsync("CorpClient/ReceiptList", model) });
         }
