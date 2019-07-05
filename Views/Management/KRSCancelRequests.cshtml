@@ -131,10 +131,10 @@
 
 <script>
     $.fn.dataTableExt.afnFiltering.push(
-        function (oSettings, aData, iDataIndex) {
+        function (oSettings, textData, iDataIndex, aData) {
             var iMin = document.getElementById('min').value;
             var iMax = document.getElementById('max').value;
-
+            
             var df = document.createDocumentFragment();
             var el = document.createElement('body');
             el.innerHTML = aData[0];
