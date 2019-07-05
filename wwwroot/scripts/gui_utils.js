@@ -433,10 +433,27 @@ $(document).on('click',
                                 },
                                 {
                                     columns: [
-                                        { text: 'Руководитель', margin: [0, 40, 0, 0]},
-                                        (typeof attr == typeof undefined || attr == false || attr == 'true') ? { image: `${result.signatureImage}`, width: 150, alignment: 'center', margin: [25, 0, 25, 0] } : '',
-                                        { text: `${result.orgHeadName}`, margin: [0, 40, 0, 0] },
-                                        (typeof attr == typeof undefined || attr == false || attr == 'true') ? { image: `${result.stampImage}`, width: 125, alignment: 'center', margin: [25, 0, 45, 0] } : ''
+                                        { 
+                                            text: 'Руководитель',
+                                            margin: [0, 40, 0, 0]
+                                        },
+                                        (typeof attr == typeof undefined || attr == false || attr == 'true') ? 
+                                            { 
+                                                image: `${result.signatureImage}`,
+                                                width: 150,
+                                                alignment: 'center',
+                                                margin: [25, 0, 25, 0]
+                                            } : '',                                                                        
+                                        (typeof attr == typeof undefined || attr == false || attr == 'true') ?
+                                            {
+                                                image: `${result.stampImage}`,
+                                                width: 125,
+                                                margin: [70, 50, 0, 0]
+                                            } : '',
+                                        { 
+                                            text: `${result.orgHeadName}`,
+                                            margin: [-100, 40, 0, 0]
+                                        }                                      
                                     ],
                                     style: 'mediumText',
                                     margin: [0, 20, 0, 0]
@@ -2652,10 +2669,12 @@ $(document).on('click',
 
 function initCleave()
 {
-    new Cleave('.input-numeral', {
-        numeral: true,
-        numeralDecimalMark: '.',
-        delimiter: ' '
-    });
+    $('.input-numeral').toArray().forEach(function(field){
+        new Cleave(field, {
+            numeral: true,
+            numeralDecimalMark: ['.', ','],
+            delimiter: ' '
+        })
+     });    
 }
-    
+

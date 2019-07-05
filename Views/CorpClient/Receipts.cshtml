@@ -128,6 +128,10 @@
 <div class="col-md-12">
     Выбрать с: <input type="text" autocomplete="off" id="min" name="min" class="date-range-filter"> по: <input type="text" autocomplete="off" id="max" name="max" class="date-range-filter">
     <a href="/" id="getReceiptListBtn" class="btn btn-success">Список счетов</a>
+    @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+    {
+    <button id="createReportListPDF" class="btn btn-primary">Пакетное формирование&#13;&#10;документов</button>
+    }
 </div>
 
 <div class="col-md-12" id="receiptListBlock">
@@ -146,6 +150,31 @@
         e.preventDefault();
         $.ajax({
             url: "/CorpClient/ReceiptList",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $("#receiptListBlock").html(result.message);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $("#createReportListPDF").click(function (e) {
+        const sendJsonData = {
+            payerId: $("#selectPayer").find('option:selected').prop('id'),
+            payeeId: $("#selectPayee").find('option:selected').prop('id'),
+            isOnlyPaid: $("#isOnlyPaid").prop('checked'), 
+            fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+            toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true)
+        };
+
+        $.ajax({
+            url: "/CorpClient/ReceiptListPDFData",
             type: "POST",
             cache: false,
             dataType: "json",
