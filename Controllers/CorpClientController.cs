@@ -505,15 +505,69 @@ namespace AvibaWeb.Controllers
                             orderby cr.IssuedDateTime descending
                             select new { cr, operation }).ToList();
 
-            var receiptItems = from cri in _db.CorporatorReceiptItems
+            var ids = receipts.Select(r => r.cr.CorporatorReceiptId).ToArray();
+
+            var receiptItems = (from cri in _db.CorporatorReceiptItems
                                 join ti in _db.VReceiptTicketInfo on cri.TicketOperationId equals ti.TicketOperationId
-                                where receipts.Select(r => r.cr.CorporatorReceiptId).Contains(cri.CorporatorReceiptId) &&
+                                where ids.Contains(cri.CorporatorReceiptId) &&
                                     cri.TypeId == CorporatorReceiptItem.CRIType.Ticket
-                                group new { cri, ti } by ti.TicketType.Value == 3 ? 3 : 1 into g
-                                select g;
+                                group new { cri, ti } by ti.TicketType.Value into g
+                                select new
+                                {
+                                    g.Key,
+                                    SegTotal = g.Sum(sg => sg.ti.SegCount),
+                                    AmountTotal = g.Sum(sg => sg.cri.Amount),
+                                    FeeTotal = g.Sum(sg => sg.cri.IsPercent ? sg.cri.Amount * sg.cri.FeeRate / 100 : sg.cri.PerSegment ? sg.cri.FeeRate * sg.ti.SegCount : sg.cri.FeeRate)
+                                }).ToList();
+
+            var luggageItems = (from cri in _db.CorporatorReceiptItems
+                                join ti in _db.VReceiptLuggageInfo on cri.TicketOperationId equals ti.TicketOperationId
+                                where ids.Contains(cri.CorporatorReceiptId) &&
+                                    cri.TypeId == CorporatorReceiptItem.CRIType.Luggage
+                                group new { cri, ti } by 1 into g
+                                select new
+                                {
+                                    SegTotal = g.Sum(sg => 1),
+                                    AmountTotal = g.Sum(sg => sg.cri.Amount),
+                                    FeeTotal = g.Sum(sg => sg.cri.IsPercent ? sg.cri.Amount * sg.cri.FeeRate / 100 : sg.cri.FeeRate),
+                                }).ToList();
+
+            var aviaTotals = (from ri in receiptItems.Where(ri => ri.Key == 1)
+                              select new
+                              {
+                                  ri.SegTotal,
+                                  ri.AmountTotal,
+                                  ri.FeeTotal
+                              }).FirstOrDefault();
+
+            var zdTotals = (from ri in receiptItems.Where(ri => ri.Key == 3)
+                            select new
+                            {
+                                ri.SegTotal,
+                                ri.AmountTotal,
+                                ri.FeeTotal
+                            }).FirstOrDefault();
+
+            var luggageTotals = (from ri in luggageItems
+                                 select new
+                                 {
+                                     ri.SegTotal,
+                                     ri.AmountTotal,
+                                     ri.FeeTotal
+                                 }).FirstOrDefault();
 
             var model = new ReceiptListViewModel
             {
+                AviaSegTotal = aviaTotals.SegTotal.ToString(),
+                ZdSegTotal = zdTotals.SegTotal.ToString(),
+                LuggageSegTotal = luggageTotals.SegTotal.ToString(),
+                AviaCostTotal = aviaTotals.AmountTotal.ToString("#,0.00", nfi),
+                ZdCostTotal = zdTotals.AmountTotal.ToString("#,0.00", nfi),
+                LuggageCostTotal = luggageTotals.AmountTotal.ToString("#,0.00", nfi),
+                FeeTotal = (aviaTotals.FeeTotal + zdTotals.FeeTotal + luggageTotals.FeeTotal).ToString("#,0.00", nfi),
+                AviaFeeTotal = aviaTotals.FeeTotal.ToString("#,0.00", nfi),
+                ZdFeeTotal = zdTotals.FeeTotal.ToString("#,0.00", nfi),
+                LuggageFeeTotal = luggageTotals.FeeTotal.ToString("#,0.00", nfi),
                 Items = (from r in receipts
                          select new ReceiptListItem
                          {
@@ -989,7 +1043,8 @@ namespace AvibaWeb.Controllers
                     select cr.Amount.Value).Sum() -
                 (from cp in _db.FinancialAccountOperations
                  join fa in _db.FinancialAccounts.Include(fa => fa.Organization) on cp.FinancialAccountId equals fa.FinancialAccountId
-                 where cp.CounterpartyId == requestData.payerId &&
+                 where ((string.IsNullOrEmpty(cp.FactualCounterpartyId) && cp.CounterpartyId == requestData.payerId) ||
+                        cp.FactualCounterpartyId == requestData.payerId) &&
                     fa.Organization.OrganizationId == int.Parse(requestData.payeeId) &&
                     cp.OperationDateTime < DateTime.Parse(requestData.fromDate)
                  select cp.Amount).Sum();
@@ -1006,7 +1061,8 @@ namespace AvibaWeb.Controllers
                 OldCredit = oldBalance < 0 ? (-oldBalance).ToString("0.00", nfi) : "",
                 Items = (from fao in _db.FinancialAccountOperations
                          join fa in _db.FinancialAccounts.Include(fa => fa.Organization) on fao.FinancialAccountId equals fa.FinancialAccountId
-                         where fao.CounterpartyId == requestData.payerId &&
+                         where ((string.IsNullOrEmpty(fao.FactualCounterpartyId) && fao.CounterpartyId == requestData.payerId) ||
+                                fao.FactualCounterpartyId == requestData.payerId) &&
                             fa.Organization.OrganizationId == int.Parse(requestData.payeeId) &&
                             fao.OperationDateTime >= DateTime.Parse(requestData.fromDate) &&
                             fao.OperationDateTime < DateTime.Parse(requestData.toDate).AddDays(1)

@@ -37,5 +37,9 @@ namespace AvibaWeb.DomainModels
         public string Description { get; set; }
 
         public string OrderNumber { get; set; }
+
+        public string FactualCounterpartyId { get; set; }
+        [ForeignKey("FactualCounterpartyId")]
+        public virtual Counterparty FactualCounterparty { get; set; }
     }
 }

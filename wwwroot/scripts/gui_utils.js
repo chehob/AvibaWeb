@@ -2650,4 +2650,12 @@ $(document).on('click',
             $('#sumPopup').slideToggle();
     });
 
+function initCleave()
+{
+    new Cleave('.input-numeral', {
+        numeral: true,
+        numeralDecimalMark: '.',
+        delimiter: ' '
+    });
+}
     

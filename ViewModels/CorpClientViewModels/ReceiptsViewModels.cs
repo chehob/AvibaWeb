@@ -36,10 +36,10 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
         public string AviaCostTotal { get; set; }
         public string ZdCostTotal { get; set; }
         public string LuggageCostTotal { get; set; }
-        public string TaxTotal { get; set; }
-        public string AviaTaxTotal { get; set; }
-        public string ZdTaxTotal { get; set; }
-        public string LuggageTaxTotal { get; set; }
+        public string FeeTotal { get; set; }
+        public string AviaFeeTotal { get; set; }
+        public string ZdFeeTotal { get; set; }
+        public string LuggageFeeTotal { get; set; }
 
         public List<ReceiptListItem> Items { get; set; }
     }
