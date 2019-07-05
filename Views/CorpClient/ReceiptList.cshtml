@@ -140,16 +140,19 @@ $(function () {
         }
     });
 
-    $("#aviaSegTotal")[0].innerText = "@Model.AviaSegTotal";
-    $("#zdSegTotal")[0].innerText = "@Model.ZdSegTotal";
-    $("#luggageSegTotal")[0].innerText = "@Model.LuggageSegTotal";
-    $("#aviaCostTotal")[0].innerText = "@Model.AviaCostTotal";
-    $("#zdCostTotal")[0].innerText = "@Model.ZdCostTotal";
-    $("#luggageCostTotal")[0].innerText = "@Model.LuggageCostTotal";
-    $("#feeTotal")[0].innerText = "@Model.FeeTotal";
-    $("#aviaFeeTotal")[0].innerText = "@Model.AviaFeeTotal";
-    $("#zdFeeTotal")[0].innerText = "@Model.ZdFeeTotal";
-    $("#luggageFeeTotal")[0].innerText = "@Model.LuggageFeeTotal";
+@if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+{
+    @:$("#aviaSegTotal")[0].innerText = "@Model.AviaSegTotal";
+    @:$("#zdSegTotal")[0].innerText = "@Model.ZdSegTotal";
+    @:$("#luggageSegTotal")[0].innerText = "@Model.LuggageSegTotal";
+    @:$("#aviaCostTotal")[0].innerText = "@Model.AviaCostTotal";
+    @:$("#zdCostTotal")[0].innerText = "@Model.ZdCostTotal";
+    @:$("#luggageCostTotal")[0].innerText = "@Model.LuggageCostTotal";
+    @:$("#feeTotal")[0].innerText = "@Model.FeeTotal";
+    @:$("#aviaFeeTotal")[0].innerText = "@Model.AviaFeeTotal";
+    @:$("#zdFeeTotal")[0].innerText = "@Model.ZdFeeTotal";
+    @:$("#luggageFeeTotal")[0].innerText = "@Model.LuggageFeeTotal";
+}
 });
 
     $('[data-toggle=confirmation]').confirmation({
