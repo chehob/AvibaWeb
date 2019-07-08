@@ -1,4 +1,5 @@
-﻿using AvibaWeb.Models;
+﻿using System;
+using AvibaWeb.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -1055,8 +1056,17 @@ namespace AvibaWeb.Controllers
             if (!ModelState.IsValid) return PartialView(account);
 
             account.Organization = _db.Organizations.FirstOrDefault(o => o.OrganizationId == account.OrganizationId);
-
             _db.FinancialAccounts.Add(account);
+
+            var initialOperation = new FinancialAccountOperation
+            {
+                Account = account,
+                Amount = 0,
+                OperationDateTime = DateTime.Now,
+                InsertDateTime = DateTime.Now
+            };
+
+            _db.FinancialAccountOperations.Add(initialOperation);
             await _db.SaveChangesAsync();
 
             return RedirectToAction("Organizations");

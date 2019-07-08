@@ -60,7 +60,7 @@ namespace AvibaWeb.Controllers
                     },
                 CollectorsBalanceInfo = _db.Users
                     .Where(u => u.Roles.Any(r => r.RoleId == collectorRole.Id && u.Balance != 0) &&
-                                u.Roles.All(r => r.RoleId != officeRole.Id) &&
+                                //u.Roles.All(r => r.RoleId != officeRole.Id) &&
                                 (u.Name != "Инкассатор" || (u.Name == "Инкассатор" && isUserAdmin)) )
                     .Select(u => new OnlineInfoModel.BalanceInfoElement
                     {

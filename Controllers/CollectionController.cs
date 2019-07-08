@@ -148,15 +148,24 @@ namespace AvibaWeb.Controllers
         [HttpPost]
         public async Task<ActionResult> AcceptCollection(int id)
         {
-            var collection = await _db.Collections.Include(c => c.Provider).Include(c => c.Collector)
+            var collection = await _db.Collections.Include(c => c.Operations).Include(c => c.Provider)
+                .Include(c => c.Collector)
                 .FirstOrDefaultAsync(c => c.CollectionId == id);
             if (collection == null) return PartialView("Error", new [] { "Инкассация не найдена" });
+
+            var acceptedOperation = collection.Operations
+                .OrderByDescending(o => o.OperationDateTime).Take(1)
+                .FirstOrDefault();
+
+            if (acceptedOperation == null || acceptedOperation.OperationTypeId == CollectionOperationType.COType.Accepted)
+                return RedirectToAction("IncomingCollections");
 
             var collectionAmount = collection.Amount;
             if (collection.Provider != null)
             {
                 collection.Provider.Balance -= collectionAmount;
             }
+
             collection.Collector.Balance += collectionAmount;
 
             var operation = new CollectionOperation

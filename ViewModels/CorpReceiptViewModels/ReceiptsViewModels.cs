@@ -43,6 +43,8 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
 
     public class ReceiptPDFViewModel
     {
+        public int ReceiptId { get; set; }
+
         public decimal TotalAmount { get; set; }
         public string TotalAmountStr { get; set; }
         public decimal ItemTotal { get; set; }
