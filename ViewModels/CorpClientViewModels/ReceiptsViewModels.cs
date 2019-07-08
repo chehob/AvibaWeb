@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AvibaWeb.ViewModels.CorpReceiptViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -85,5 +86,10 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
         public string Flight { get; set; }
         public string Departure { get; set; }
         public string Arrival { get; set; }
+    }
+
+    public class ReceiptListPDFViewModel
+    {
+        public List<ReceiptPDFViewModel> Items { get; set; }
     }
 }

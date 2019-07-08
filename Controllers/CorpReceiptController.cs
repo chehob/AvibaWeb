@@ -400,7 +400,7 @@ namespace AvibaWeb.Controllers
                     PaymentTemplateLabelStr = "Образец заполнения назначения платежа:",
                     PaymentTemplateStr = cr.TypeId == CorporatorReceipt.CRType.CorpClient ?
                         $"Оплата по счету WR-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС" :
-                        $"Оплата по счету RS-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС"
+                        $"Оплата по счету {cr.PayeeAccount.Organization.CorpReceiptPrefix}-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС"
                 }).FirstOrDefault();
 
             //model.Taxes.AddRange(

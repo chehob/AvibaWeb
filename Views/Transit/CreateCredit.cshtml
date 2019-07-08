@@ -22,7 +22,7 @@
                 <div class="row">
                     @Html.LabelFor(m => m.Credit.AccountAmount, new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
-                        <input asp-for="@Model.Credit.AccountAmount" class="form-control" value="" />
+                        <input asp-for="@Model.Credit.AccountAmount" class="form-control input-numeral" value="" />
                     </div>
                 </div>
                 <div class="row">
@@ -46,3 +46,8 @@
 </div>
 
 
+<script>
+    $(function() {
+        initCleave();
+    });
+</script>

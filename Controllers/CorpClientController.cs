@@ -1690,5 +1690,180 @@ namespace AvibaWeb.Controllers
 
             return Json(model);
         }
+
+        //[HttpPost]
+        //public IActionResult ReceiptListPDFData([FromBody]TicketListRequest request)
+        //{
+        //    return 
+        //    //var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+        //    //nfi.NumberGroupSeparator = " ";
+
+        //    //var receipts = (from cr in _db.CorporatorReceipts.Where(cc => cc.TypeId == CorporatorReceipt.CRType.CorpClient)
+        //    //        .Include(c => c.PayeeAccount.Organization).ThenInclude(o => o.Counterparty)
+        //    //        .Include(c => c.Corporator)
+        //    //                from operation in _db.CorporatorReceiptOperations
+        //    //                    .Where(cro =>
+        //    //                        cro.OperationDateTime >= DateTime.Parse(request.fromDate) &&
+        //    //                        cro.OperationDateTime < DateTime.Parse(request.toDate).AddDays(1) &&
+        //    //                        cro.CorporatorReceiptId == cr.CorporatorReceiptId)
+        //    //                    .OrderByDescending(o => o.OperationDateTime).Take(1)
+        //    //                where (string.IsNullOrEmpty(request.payeeId) || cr.PayeeAccount.Organization.OrganizationId == int.Parse(request.payeeId)) &&
+        //    //                    (string.IsNullOrEmpty(request.payerId) || cr.CorporatorId == request.payerId) &&
+        //    //                    (string.IsNullOrEmpty(request.isOnlyPaid) || request.isOnlyPaid == "false" || cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid)
+        //    //                orderby cr.IssuedDateTime descending
+        //    //                select new { cr, operation }).ToList();
+
+        //    //var ids = receipts.Select(r => r.cr.CorporatorReceiptId).ToArray();
+
+        //    //var model = new ReceiptListPDFViewModel
+        //    //{
+        //    //    Items = (from cr in _db.CorporatorReceipts
+        //    //        .Include(c => c.PayeeAccount.Organization).ThenInclude(o => o.Counterparty)
+        //    //             join cro in _db.CorporatorReceiptOperations on cr.CorporatorReceiptId equals cro.CorporatorReceiptId into operations
+        //    //             from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
+        //    //             let ca = _db.CorporatorAccounts.Where(cai => cr.CorporatorId == cai.ITN).FirstOrDefault()
+        //    //             where cr.CorporatorReceiptId == id
+        //    //             let org = cr.PayeeAccount.Organization
+        //    //             let orgc = org.Counterparty
+        //    //             select new ReceiptPDFViewModel
+        //    //             {
+        //    //                 TotalAmount = cr.Amount.Value,
+        //    //                 ReceiptNumber = cr.TypeId == CorporatorReceipt.CRType.CorpClient ?
+        //    //                     "WR-" + cr.ReceiptNumber.ToString() :
+        //    //                     cr.PayeeAccount.Organization.CorpReceiptPrefix + "-" + cr.ReceiptNumber.ToString(),
+        //    //                 PayerNameWithITN = $"{cr.Corporator.Name} ИНН: {cr.Corporator.ITN} ,КПП {cr.Corporator.KPP}",
+        //    //                 PayerName = cr.Corporator.Name,
+        //    //                 PayerAddress = cr.Corporator.Address,
+        //    //                 PayerCorrAccount = ca == null ? cr.Corporator.CorrespondentAccount : ca.CorrespondentAccount,
+        //    //                 PayerFinancialAccount = ca == null ? cr.Corporator.BankAccount : ca.Description,
+        //    //                 PayerBankName = ca == null ? cr.Corporator.BankName : ca.OffBankName,
+        //    //                 PayerBIK = ca == null ? cr.Corporator.BIK : ca.BIK,
+        //    //                 PayerITN = cr.Corporator.ITN,
+        //    //                 PayerKPP = cr.Corporator.KPP,
+        //    //                 PayerHeadTitle = string.IsNullOrEmpty(cr.Corporator.ManagementPosition) ? "" : cr.Corporator.ManagementPosition,
+        //    //                 PayerHeadName = cr.Corporator.ManagementName,
+        //    //                 Items = (from item in _db.CorporatorReceiptItems
+        //    //                          join ti in _db.VReceiptTicketInfo on item.TicketOperationId equals ti.TicketOperationId
+        //    //                          where item.CorporatorReceiptId == cr.CorporatorReceiptId && item.TypeId == CorporatorReceiptItem.CRIType.Ticket
+        //    //                          select new ReceiptPDFItem
+        //    //                          {
+        //    //                              Amount = item.Amount,
+        //    //                              AmountStr = item.Amount.ToString("#,0.00", nfi),
+        //    //                              TicketLabel = $"{ti.TicketLabel} {item.Route ?? ti.TicketRoute} {ti.BSOLabel}\n{item.PassengerName ?? ti.PassengerName}",
+        //    //                              SegCount = ti.SegCount,
+        //    //                              AmountLabelStr = (ti.TicketType == null || ti.TicketType != 3) ? "полетный\nсегмент" : "шт."
+        //    //                          }).ToList(),
+        //    //                 LuggageItems = (from item in _db.CorporatorReceiptItems
+        //    //                                 join ti in _db.VReceiptLuggageInfo on item.TicketOperationId equals ti.TicketOperationId
+        //    //                                 where item.CorporatorReceiptId == cr.CorporatorReceiptId && item.TypeId == CorporatorReceiptItem.CRIType.Luggage
+        //    //                                 select new ReceiptPDFItem
+        //    //                                 {
+        //    //                                     Amount = item.Amount,
+        //    //                                     AmountStr = item.Amount.ToString("#,0.00", nfi),
+        //    //                                     TicketLabel = $"{ti.TicketLabel} №{ti.LuggageNumber} к билету {ti.TicketNumber}",
+        //    //                                     SegCount = 1
+        //    //                                 }).ToList(),
+        //    //                 Taxes = (from item in _db.CorporatorReceiptItems
+        //    //                          join ti in _db.VReceiptTicketInfo on item.TicketOperationId equals ti.TicketOperationId
+        //    //                          where item.CorporatorReceiptId == cr.CorporatorReceiptId && item.Amount >= 0 && item.TypeId == CorporatorReceiptItem.CRIType.Ticket
+        //    //                          group new { item, ti } by item.FeeRate
+        //    //                     into groups
+        //    //                          select new ReceiptTaxItem
+        //    //                          {
+        //    //                              FeeStr = (groups.FirstOrDefault().item.IsPercent ? groups.FirstOrDefault().item.Amount * groups.FirstOrDefault().item.FeeRate / 100 : groups.FirstOrDefault().item.FeeRate).ToString("#,0.00", nfi),
+        //    //                              Amount = groups.Sum(g => g.item.IsPercent ? g.item.Amount * g.item.FeeRate / 100 : g.item.PerSegment ? g.item.FeeRate * g.ti.SegCount : g.item.FeeRate),
+        //    //                              AmountStr = groups.Sum(g => g.item.IsPercent ? g.item.Amount * g.item.FeeRate / 100 : g.item.PerSegment ? g.item.FeeRate * g.ti.SegCount : g.item.FeeRate).ToString("#,0.00", nfi),
+        //    //                              SegCount = groups.Sum(g => g.item.PerSegment ? g.ti.SegCount : 1),
+        //    //                              AmountLabelStr = "шт.",
+        //    //                              TicketLabel = "Сервисный сбор за оформление билета"
+        //    //                          }).ToList(),
+        //    //                 SignatureFileName = org.SignatureFileName,
+        //    //                 StampFileName = org.StampFileName,
+        //    //                 OrgHeadTitle = org.HeadTitle,
+        //    //                 OrgHeadName = org.HeadName,
+        //    //                 OrgITN = orgc.ITN,
+        //    //                 OrgKPP = orgc.KPP,
+        //    //                 OrgName = org.Description,
+        //    //                 OrgCorrAccount = cr.PayeeAccount.CorrespondentAccount,
+        //    //                 OrgFinancialAccount = cr.PayeeAccount.Description,
+        //    //                 OrgBankName = cr.PayeeAccount.OffBankName,
+        //    //                 OrgBIK = cr.PayeeAccount.BIK,
+        //    //                 OrgAddress = orgc.Address,
+        //    //                 FeeRate = cr.FeeRate.Value,
+        //    //                 FeeRateStr = cr.FeeRate.Value.ToString("#,0.00", nfi),
+        //    //                 IssuedDateTime = operation.OperationDateTime.ToShortDateString(),
+        //    //                 PaymentTemplateLabelStr = "Образец заполнения назначения платежа:",
+        //    //                 PaymentTemplateStr = cr.TypeId == CorporatorReceipt.CRType.CorpClient ?
+        //    //                     $"Оплата по счету WR-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС" :
+        //    //                     $"Оплата по счету RS-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС"
+        //    //             }).FirstOrDefault()
+        //    //};
+
+        //    //var luggageTaxes = (from item in _db.CorporatorReceiptItems
+        //    //                    join ti in _db.VReceiptLuggageInfo on item.TicketOperationId equals ti.TicketOperationId
+        //    //                    where item.CorporatorReceiptId == id && item.Amount >= 0 && item.TypeId == CorporatorReceiptItem.CRIType.Luggage
+        //    //                    select new ReceiptTaxItem
+        //    //                    {
+        //    //                        FeeStr = (item.IsPercent ? item.Amount * item.FeeRate / 100 : item.FeeRate).ToString("#,0.00", nfi),
+        //    //                        Amount = item.IsPercent ? item.Amount * item.FeeRate / 100 : item.FeeRate,
+        //    //                        AmountStr = (item.IsPercent ? item.Amount * item.FeeRate / 100 : item.FeeRate).ToString("#,0.00", nfi),
+        //    //                        SegCount = 1,
+        //    //                        AmountLabelStr = "шт.",
+        //    //                        TicketLabel = ti.TicketLabel
+        //    //                    }).ToList();
+
+        //    //model.Taxes.AddRange(
+        //    //    (from tax in luggageTaxes
+        //    //     group tax by tax.FeeStr
+        //    //     into groups
+        //    //     select new ReceiptTaxItem
+        //    //     {
+        //    //         FeeStr = groups.FirstOrDefault().FeeStr,
+        //    //         Amount = groups.Sum(g => g.Amount),
+        //    //         AmountStr = groups.Sum(g => g.Amount).ToString("#,0.00", nfi),
+        //    //         SegCount = groups.Count(),
+        //    //         AmountLabelStr = "шт.",
+        //    //         TicketLabel = groups.FirstOrDefault().TicketLabel
+        //    //     }).ToList());
+
+        //    //model.Taxes.AddRange(
+        //    //    (from item in _db.CorporatorReceiptItems
+        //    //     join ti in _db.VReceiptTicketInfo on item.TicketOperationId equals ti.TicketOperationId
+        //    //     where item.CorporatorReceiptId == id && item.Amount < 0
+        //    //     select new ReceiptTaxItem
+        //    //     {
+        //    //         FeeStr = (item.IsPercent ? item.Amount * item.FeeRate / 100 : item.FeeRate).ToString("#,0.00", nfi),
+        //    //         Amount = item.IsPercent ? item.Amount * item.FeeRate / 100 : item.PerSegment ? item.FeeRate * ti.SegCount : item.FeeRate,
+        //    //         AmountStr = (item.IsPercent ? item.Amount * item.FeeRate / 100 : item.PerSegment ? item.FeeRate * ti.SegCount : item.FeeRate).ToString("#,0.00", nfi),
+        //    //         SegCount = item.PerSegment ? ti.SegCount : 1,
+        //    //         AmountLabelStr = "шт.",
+        //    //         TicketLabel = $"Сервисный сбор за возврат билета\n{item.Route ?? ti.TicketRoute} {ti.BSOLabel}\n{item.PassengerName ?? ti.PassengerName}"
+        //    //     }).ToList());
+
+        //    //model.ItemTotal = model.Items.Sum(i => i.Amount) + model.LuggageItems.Sum(i => i.Amount);
+        //    //model.ItemTotalStr = model.ItemTotal.ToString("#,0.00", nfi);
+        //    //model.SegCountTotal = model.Items.Sum(i => i.SegCount) + model.LuggageItems.Sum(i => i.SegCount);
+        //    //model.FeeTotal = model.Taxes.Sum(t => t.Amount);
+        //    //model.FeeTotalStr = model.FeeTotal.ToString("#,0.00", nfi);
+        //    //model.TotalAmountStr = model.TotalAmount.ToString("#,0.00", nfi);
+        //    //model.SignatureImage = new Func<string>(() =>
+        //    //{
+        //    //    if (model.SignatureFileName == null) return "";
+
+        //    //    var path = _hostingEnvironment.WebRootPath + "/img/corpImages/" + model.SignatureFileName;
+        //    //    var b = System.IO.File.ReadAllBytes(path);
+        //    //    return "data:image/png;base64," + Convert.ToBase64String(b);
+        //    //})();
+        //    //model.StampImage = new Func<string>(() =>
+        //    //{
+        //    //    if (model.StampFileName == null) return "";
+
+        //    //    var path = _hostingEnvironment.WebRootPath + "/img/corpImages/" + model.StampFileName;
+        //    //    var b = System.IO.File.ReadAllBytes(path);
+        //    //    return "data:image/png;base64," + Convert.ToBase64String(b);
+        //    //})();
+
+        //    //return Json(model);
+        //}
     }
 }
