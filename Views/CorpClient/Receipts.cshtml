@@ -181,7 +181,7 @@
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(sendJsonData),
             success: function (result) {
-                $("#receiptListBlock").html(result.message);
+                getReceiptListPDF(result);
             },
             error: function (error) {
                 console.log(error);
