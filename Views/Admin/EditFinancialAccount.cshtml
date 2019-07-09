@@ -14,9 +14,9 @@
                 @Html.HiddenFor(m => m.FinancialAccountId)
 
                 <div class="row">
-                    @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
+                    <label asp-for="@Model.Description" class="col-md-2 control-label">Р/c</label>
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.Description, new {@class = "form-control"})
                     </div>
                 </div>
                 <div class="row">
