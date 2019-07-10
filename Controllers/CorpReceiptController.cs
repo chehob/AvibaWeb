@@ -37,7 +37,7 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpGet]
-        public IActionResult CreateReceipt(int? id)
+        public IActionResult CreateReceipt(int? id, int subGroupId)
         {
             var model = new CreateReceiptViewModel
             {
@@ -45,8 +45,9 @@ namespace AvibaWeb.Controllers
                     where c.Type.Description == "Корпоратор"
                     select new KeyValuePair<string,string>(c.ITN, c.Name)).ToList(),
                 Organizations = (from org in _db.Organizations
-                    where org.IsActive
-                    select new KeyValuePair<string,string>(org.OrganizationId.ToString(), org.Description)).ToList()
+                    where org.IsActive && org.ReceiptNumberGroupId == subGroupId
+                    select new KeyValuePair<string,string>(org.OrganizationId.ToString(), org.Description)).ToList(),
+                SubGroupId = subGroupId
             };
 
             if (id != null)
@@ -84,7 +85,7 @@ namespace AvibaWeb.Controllers
                         CreatedDateTime = operation.OperationDateTime.ToString("d"),
                         IssuedDateTime = cr.IssuedDateTime != null ? cr.IssuedDateTime.Value.ToString("d") : "",
                         PaidDateTime = cr.PaidDateTime != null ? cr.PaidDateTime.Value.ToString("d") : "",
-                        ReceiptNumber = cr.ReceiptNumber.Value.ToString(),
+                        ReceiptNumber = cr.ReceiptNumber != null ? cr.ReceiptNumber.ToString() : "",
                         StatusId = cr.StatusId
                     }).FirstOrDefault();
             }
@@ -124,6 +125,7 @@ namespace AvibaWeb.Controllers
                 }
                 receipt.Amount = 0;
                 receipt.TypeId = CorporatorReceipt.CRType.WebSite;
+                receipt.WebSiteSubGroupId = model.SubGroupId;
 
                 if (model.IssuedDateTime != null)
                 {
@@ -174,13 +176,14 @@ namespace AvibaWeb.Controllers
                 {
                     CorporatorId = string.IsNullOrEmpty(model.PayerId) ? null : model.PayerId,
                     PayeeAccount = (from fa in _db.FinancialAccounts
-                        join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
-                        where o.OrganizationId == (int.TryParse(model.PayeeId, out orgId) ? orgId : 0) && fa.BankName == model.PayeeBankName
-                        select fa).FirstOrDefault(),
+                                    join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
+                                    where o.OrganizationId == (int.TryParse(model.PayeeId, out orgId) ? orgId : 0) && fa.BankName == model.PayeeBankName
+                                    select fa).FirstOrDefault(),
                     FeeRate = model.FeeRate.Length == 0 ? 0 : decimal.Parse(model.FeeRate),
                     Amount = 0,
                     StatusId = model.StatusId,
-                    TypeId = CorporatorReceipt.CRType.WebSite
+                    TypeId = CorporatorReceipt.CRType.WebSite,
+                    WebSiteSubGroupId = model.SubGroupId
                 };
 
                 if (model.IssuedDateTime != null)
@@ -264,54 +267,64 @@ namespace AvibaWeb.Controllers
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
-            var model = (from cr in _db.CorporatorReceipts
-                    .Include(c => c.PayeeAccount.Organization)
-                         join operation in _db.CorporatorReceiptOperations on cr.CorporatorReceiptId equals operation.CorporatorReceiptId into operations
-                        from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
-                         orderby cr.CorporatorReceiptId descending
-                         where cr.TypeId == CorporatorReceipt.CRType.WebSite
-                         select new ReceiptsViewModel
-                         {
-                             ReceiptNumber = cr.ReceiptNumber.ToString(),
-                             ReceiptId = cr.CorporatorReceiptId,
-                             CreatedDate = operation.OperationDateTime.ToString("d"),
-                             IssuedDateTime = cr.IssuedDateTime != null ? cr.IssuedDateTime.Value.ToString("d") : "",
-                             PaidDateTime = cr.PaidDateTime != null ? cr.PaidDateTime.Value.ToString("d") : "",
-                             PayeeOrgName = cr.PayeeAccount.Organization.Description,
-                             PayeeBankName = cr.PayeeAccount.BankName,
-                             PayerOrgName = cr.Corporator.Name,
-                             TotalStr = cr.Amount.Value.ToString("#,0.00", nfi),
-                             Status = cr.StatusId
-                         }).ToList();
+            var model = new CorpReceiptsViewModel
+            {
+                Items = (from cr in _db.CorporatorReceipts
+                        .Include(c => c.PayeeAccount.Organization)
+                    join operation in _db.CorporatorReceiptOperations on cr.CorporatorReceiptId equals operation
+                        .CorporatorReceiptId into operations
+                    from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
+                    orderby cr.CorporatorReceiptId descending
+                    where cr.TypeId == CorporatorReceipt.CRType.WebSite
+                    select new CorpReceiptsItem
+                    {
+                        ReceiptNumber = cr.ReceiptNumber.ToString(),
+                        ReceiptId = cr.CorporatorReceiptId,
+                        CreatedDate = operation.OperationDateTime.ToString("d"),
+                        IssuedDateTime = cr.IssuedDateTime != null ? cr.IssuedDateTime.Value.ToString("d") : "",
+                        PaidDateTime = cr.PaidDateTime != null ? cr.PaidDateTime.Value.ToString("d") : "",
+                        PayeeOrgName = cr.PayeeAccount.Organization.Description,
+                        PayeeBankName = cr.PayeeAccount.BankName,
+                        PayerOrgName = cr.Corporator.Name,
+                        TotalStr = cr.Amount.Value.ToString("#,0.00", nfi),
+                        Status = cr.StatusId
+                    }).ToList()
+            };
 
             return PartialView(model);
         }
 
         [HttpGet]
-        public IActionResult Receipts1()
+        public IActionResult Receipts1(int subGroupId)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
-            var model = (from cr in _db.CorporatorReceipts
-                    .Include(c => c.PayeeAccount.Organization)
-                join operation in _db.CorporatorReceiptOperations on cr.CorporatorReceiptId equals operation.CorporatorReceiptId into operations
-                from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
-                orderby cr.CorporatorReceiptId descending
-                where cr.TypeId == CorporatorReceipt.CRType.WebSite
-                select new ReceiptsViewModel
-                {
-                    ReceiptNumber = cr.ReceiptNumber.ToString(),
-                    ReceiptId = cr.CorporatorReceiptId,
-                    CreatedDate = operation.OperationDateTime.ToString("d"),
-                    IssuedDateTime = cr.IssuedDateTime != null ? cr.IssuedDateTime.Value.ToString("d") : "",
-                    PaidDateTime = cr.PaidDateTime != null ? cr.PaidDateTime.Value.ToString("d") : "",
-                    PayeeOrgName = cr.PayeeAccount.Organization.Description,
-                    PayeeBankName = cr.PayeeAccount.BankName,
-                    PayerOrgName = cr.Corporator.Name,
-                    TotalStr = cr.Amount.Value.ToString("#,0.00", nfi),
-                    Status = cr.StatusId
-                }).ToList();
+            var model = new CorpReceiptsViewModel
+            {
+                Items = (from cr in _db.CorporatorReceipts
+                        .Include(c => c.PayeeAccount.Organization)
+                    join operation in _db.CorporatorReceiptOperations on cr.CorporatorReceiptId equals operation
+                        .CorporatorReceiptId into operations
+                    from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
+                    orderby cr.CorporatorReceiptId descending
+                    where cr.TypeId == CorporatorReceipt.CRType.WebSite && cr.WebSiteSubGroupId == subGroupId
+                    select new CorpReceiptsItem
+                    {
+
+                        ReceiptNumber = cr.ReceiptNumber.ToString(),
+                        ReceiptId = cr.CorporatorReceiptId,
+                        CreatedDate = operation.OperationDateTime.ToString("d"),
+                        IssuedDateTime = cr.IssuedDateTime != null ? cr.IssuedDateTime.Value.ToString("d") : "",
+                        PaidDateTime = cr.PaidDateTime != null ? cr.PaidDateTime.Value.ToString("d") : "",
+                        PayeeOrgName = cr.PayeeAccount.Organization.Description,
+                        PayeeBankName = cr.PayeeAccount.BankName,
+                        PayerOrgName = cr.Corporator.Name,
+                        TotalStr = cr.Amount.Value.ToString("#,0.00", nfi),
+                        Status = cr.StatusId
+                    }).ToList(),
+                SubGroupId = subGroupId
+            };
 
             return PartialView(model);
         }

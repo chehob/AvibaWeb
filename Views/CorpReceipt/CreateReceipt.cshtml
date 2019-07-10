@@ -355,6 +355,7 @@
             Items: items,
             StatusId: $("#receiptStatus option:selected").val(),
             IssuedDateTime: moment($('#issuedDateTime').val(), "DD.MM.YYYY").toISOString(true),
+            SubGroupId: @Model.SubGroupId
         };
 
         console.log(sendJsonData);
@@ -372,6 +373,9 @@
                     url: "/CorpReceipt/Receipts1",
                     type: "GET",
                     cache: false,
+                    data: {
+                        subGroupId: @Model.SubGroupId
+                    },
                     success: function (r) {
                         $("#results").html(r);
                     },

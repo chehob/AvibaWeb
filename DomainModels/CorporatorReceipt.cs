@@ -22,7 +22,7 @@ namespace AvibaWeb.DomainModels
         public enum CRType
         {
             WebSite = 0,
-            CorpClient
+            CorpClient = 1
         }
 
         [Key]
@@ -51,6 +51,8 @@ namespace AvibaWeb.DomainModels
         public DateTime? PaidDateTime { get; set; }
 
         public CRType TypeId { get; set; }
+
+        public int? WebSiteSubGroupId { get; set; }
 
         public virtual ICollection<CorporatorReceiptItem> Items { get; set; }
 

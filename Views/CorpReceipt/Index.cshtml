@@ -1,17 +1,16 @@
-﻿@using static AvibaWeb.DomainModels.CorporatorReceiptMultiPayment
+﻿@using AvibaWeb.DomainModels
 
 <p class="btn-group">
-    <a asp-action="CreateReceipt" asp-controller="CorpReceipt"
+    <a asp-action="Receipts1" asp-controller="CorpReceipt" asp-route-subGroupId="1"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary"><i class="glyphicon glyphicon-plus">&nbsp;</i>Создать счет</a>
-
-    <a asp-action="Receipts1" asp-controller="CorpReceipt"
+       class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-list-alt">&nbsp;</i>Список счетов 1</a>
+    <a asp-action="Receipts1" asp-controller="CorpReceipt" asp-route-subGroupId="2"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-list-alt">&nbsp;</i>Список счетов</a>
+       class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-list-alt">&nbsp;</i>Список счетов 2</a>
     <a asp-action="CreateCounterparty" asp-controller="Data"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary"><i class="glyphicon glyphicon-edit">&nbsp;</i>Новый клиент</a>
-    <a asp-action="MultiPayment" asp-controller="Data" asp-route-type="@CRMPType.CorpReceipt"
+    <a asp-action="MultiPayment" asp-controller="Data" asp-route-type="@CorporatorReceiptMultiPayment.CRMPType.CorpReceipt"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-plus">&nbsp;</i>Поступившие платежи</a>
 </p>

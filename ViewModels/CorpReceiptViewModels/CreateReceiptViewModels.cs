@@ -15,6 +15,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public List<KeyValuePair<string,string>> Counterparties { get; set; }
         public List<KeyValuePair<string,string>> Organizations { get; set; }
         public ReceiptEditData Receipt { get; set; }
+        public int SubGroupId { get; set; }
     }
 
     public class ReceiptEditData
@@ -58,7 +59,8 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public CRPaymentStatus StatusId { get; set; }
         public string IssuedDateTime { get; set; }
         public string PaidDateTime { get; set; }
-        public decimal ReceiptTotal { get; set; }        
+        public decimal ReceiptTotal { get; set; }  
+        public int SubGroupId { get; set; }
     }
 
     public class TicketListViewModel

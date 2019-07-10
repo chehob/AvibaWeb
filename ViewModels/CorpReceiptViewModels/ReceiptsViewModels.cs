@@ -6,7 +6,13 @@ using static AvibaWeb.DomainModels.CorporatorReceipt;
 
 namespace AvibaWeb.ViewModels.CorpReceiptViewModels
 {
-    public class ReceiptsViewModel
+    public class CorpReceiptsViewModel
+    {
+        public int SubGroupId { get; set; }
+        public List<CorpReceiptsItem> Items { get; set; }
+    }
+
+    public class CorpReceiptsItem
     {
         public int ReceiptId { get; set; }
         public string ReceiptNumber { get; set; }

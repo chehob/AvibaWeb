@@ -1,7 +1,11 @@
 ﻿@using AvibaWeb.DomainModels
 @using AvibaWeb.ViewModels.CorpReceiptViewModels
 @using static AvibaWeb.DomainModels.CorporatorReceipt
-@model List<ReceiptsViewModel>
+@model CorpReceiptsViewModel
+
+<a asp-action="CreateReceipt" asp-controller="CorpReceipt" asp-route-subGroupId="@Model.SubGroupId"
+   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+   class="btn btn-primary"><i class="glyphicon glyphicon-plus">&nbsp;</i>Создать счет</a>
 
 <table class="table table-bordered bootstrap-datatable datatable" id="dataTable">
     <thead>
@@ -12,13 +16,13 @@
         </tr>
     </thead>
     <tbody>
-    @if (!Model.Any())
+    @if (!Model.Items.Any())
     {
         <tr><td colspan="3" class="text-center">Нет счетов</td></tr>
     }
     else
     {
-        foreach (var receipt in Model)
+        foreach (var receipt in Model.Items)
         {
             <tr style="background-color:
                 @switch (receipt.Status)
@@ -38,6 +42,7 @@
                 <td style="width: 70px;">
                     @Html.HiddenFor(m => receipt.ReceiptId, new {@class = "receiptId"})
                     <a asp-action="CreateReceipt" asp-controller="CorpReceipt" asp-route-id="@receipt.ReceiptId"
+                       asp-route-subGroupId="@Model.SubGroupId"
                        data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
                        class="btn btn-xs btn-success"><i class="glyphicon glyphicon-pencil"></i></a>
                     <span id="myId">@receipt.ReceiptNumber</span>
