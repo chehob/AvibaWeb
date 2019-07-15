@@ -589,7 +589,8 @@ namespace AvibaWeb.Controllers
                         {
                             var isUnrecognizedOperation = false;
                             var multiPaymentType = CorporatorReceiptMultiPayment.CRMPType.CorpClient;
-                            if (lowerPaymentDescription.Contains("wr-") || lowerPaymentDescription.Contains("rs-"))
+                            if (lowerPaymentDescription.Contains("wr-") || lowerPaymentDescription.Contains("rs-") ||
+                                lowerPaymentDescription.Contains("rg-"))
                             {
                                 var foundIndexes = new List<int>();
 
@@ -600,10 +601,21 @@ namespace AvibaWeb.Controllers
                                     foundIndexes.Add(match.Index);
                                 }
 
+                                var subGroupId = 1;
                                 if (foundIndexes.Count == 0)
                                 {
                                     multiPaymentType = CorporatorReceiptMultiPayment.CRMPType.CorpReceipt;
                                     matches = Regex.Matches(lowerPaymentDescription, "rs-");
+                                    foreach (Match match in matches)
+                                    {
+                                        foundIndexes.Add(match.Index);
+                                    }
+                                }
+
+                                if (foundIndexes.Count == 0)
+                                {
+                                    subGroupId = 2;
+                                    matches = Regex.Matches(lowerPaymentDescription, "rg-");
                                     foreach (Match match in matches)
                                     {
                                         foundIndexes.Add(match.Index);
@@ -620,7 +632,7 @@ namespace AvibaWeb.Controllers
                                     {
                                         var beginStr = new string(lowerPaymentDescription.Skip(index + offset).ToArray());
                                         var endIndex = 6;
-                                        var receiptStr = beginStr.Substring(0, endIndex);
+                                        var receiptStr = beginStr.Substring(0, endIndex).Split(' ')[0];
                                         var receiptNumber =
                                             int.Parse(new string(receiptStr.Where(char.IsDigit).Take(7).ToArray()));
 
@@ -630,7 +642,7 @@ namespace AvibaWeb.Controllers
                                                             ((multiPaymentType == CorporatorReceiptMultiPayment.CRMPType.CorpClient &&
                                                                 cr.TypeId == CorporatorReceipt.CRType.CorpClient) ||
                                                                 (multiPaymentType == CorporatorReceiptMultiPayment.CRMPType.CorpReceipt &&
-                                                                cr.TypeId == CorporatorReceipt.CRType.WebSite)));
+                                                                cr.TypeId == CorporatorReceipt.CRType.WebSite && cr.WebSiteSubGroupId == subGroupId)));
 
                                         if (receipt == null)
                                         {
@@ -764,9 +776,8 @@ namespace AvibaWeb.Controllers
 
             await _db.SaveChangesAsync();
 
-            var hasMultiPayments = _db.CorporatorReceiptMultiPayments
-                .Where(mp => mp.TypeId == CorporatorReceiptMultiPayment.CRMPType.CorpClient && mp.IsProcessed == false)
-                .Count() > 0;
+            var hasMultiPayments = _db.CorporatorReceiptMultiPayments.Any(mp =>
+                mp.TypeId == CorporatorReceiptMultiPayment.CRMPType.CorpClient && mp.IsProcessed == false);
 
             return Json(new { message = 
                 hasMultiPayments ?

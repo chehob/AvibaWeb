@@ -181,7 +181,8 @@
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(sendJsonData),
             success: function (result) {
-                getReceiptListPDF(result);
+                var myWorker = new Worker("scripts/createReportListPDF.js");
+                myWorker.postMessage({ "args": result });
             },
             error: function (error) {
                 console.log(error);

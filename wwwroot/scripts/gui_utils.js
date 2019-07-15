@@ -2712,7 +2712,9 @@ function getReceiptListPDF(model)
     };
 
     var index = 0;
-
+    var maxItems = model.items.length;
+    //$('#mWaitingProgress').show();
+    //$('#mWaitingProgress')[0].innerHTML = "1";
     model.items.forEach(function(receiptItem) {
 
         const itemData = [];
@@ -2973,7 +2975,11 @@ function getReceiptListPDF(model)
         ]);
 
         index++;
+        $('#mWaitingProgress')[0].innerHTML = 100*index/maxItems;
+        alert('123');
     });
+
+    //$('#mWaitingProgress').hide();
 
     console.log(docDefinition);
 

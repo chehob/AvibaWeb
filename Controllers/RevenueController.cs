@@ -63,6 +63,7 @@ namespace AvibaWeb.Controllers
             };
 
             provider.ProviderBalance.AgentFee += feeAmount;
+            provider.ProviderBalance.Balance += feeAmount;
 
             _db.ProviderAgentFeeTransactions.Add(record);
 
