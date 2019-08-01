@@ -140,7 +140,7 @@ $(function () {
         }
     });
 
-@if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+@if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Корпоративные менеджеры"))
 {
     @:$("#aviaSegTotal")[0].innerText = "@Model.AviaSegTotal";
     @:$("#zdSegTotal")[0].innerText = "@Model.ZdSegTotal";

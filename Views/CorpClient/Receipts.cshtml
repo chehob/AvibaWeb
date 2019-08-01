@@ -1,7 +1,7 @@
 ﻿@using AvibaWeb.ViewModels.CorpClientViewModels
 @model ReceiptsViewModel
 
-@if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+@if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Корпоративные менеджеры"))
 {
 <div class="box-content">
     <div class="row">
@@ -128,7 +128,7 @@
 <div class="col-md-12">
     Выбрать с: <input type="text" autocomplete="off" id="min" name="min" class="date-range-filter"> по: <input type="text" autocomplete="off" id="max" name="max" class="date-range-filter">
     <a href="/" id="getReceiptListBtn" class="btn btn-success">Список счетов</a>
-    @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+    @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Корпоративные менеджеры"))
     {
     <button id="createReportListPDF" class="btn btn-primary">Пакетное формирование&#13;&#10;документов</button>
     }

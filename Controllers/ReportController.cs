@@ -38,8 +38,8 @@ namespace AvibaWeb.Controllers
             var isUserAdmin = User.IsInRole("Administrators");
             var officeRole = _db.Roles.FirstOrDefault(r => r.Name.Contains("Офис"));
             var collectorRole = _db.Roles.FirstOrDefault(r => r.Name.Contains("Инкассаторы"));
-            var avibaDeskFilter = new[] { "ГРБЕ53", "ГРБЕ06", "ГРБЕ07", "ГРБЕ21", "ГРБЕ22", "ГРБЕ35", "ГРБЕ33" };
-            var aviaTourDeskFilter = new[] { "ГРБЕ11", "ГРБЕ12", "ГРБЕ13", "ГРБЕ14", "ГРБЕ15", "ГРБЕ16", "ГРБЕ17", "ГРБЕ18", "ГРБЕ41" };
+            var avibaDeskFilter = new[] { "ГРБЕ53", "ГРБЕ54", "ГРБЕ55", "ГРБЕ21", "ГРБЕ22", "ГРБЕ35", "ГРБЕ33" };
+            var aviaTourDeskFilter = new[] { "ГРБЕ56", "ГРБЕ12", "ГРБЕ58", "ГРБЕ57", "ГРБЕ59", "ГРБЕ16", "ГРБЕ61", "ГРБЕ60", "ГРБЕ41" };
             var model = new OnlineInfoModel
             {
                 AvibaBalanceInfo = from v in _db.VDeskBalances

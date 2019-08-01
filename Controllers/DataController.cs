@@ -511,7 +511,10 @@ namespace AvibaWeb.Controllers
 
                     var dAmount = decimal.Parse(record.Amount.Replace('.', ',').Replace(" ", string.Empty));
                     var isCashRequest = (record.PaymentDescription.ToLower().Contains("внесение наличных") ||
-                       record.PaymentDescription.ToLower().Contains("поступления от реализации платных услуг")) && dAmount > 0;
+                                         record.PaymentDescription.ToLower()
+                                             .Contains("поступления от реализации платных услуг") ||
+                                         record.PaymentDescription.ToLower()
+                                             .Contains("поступление выручки")) && dAmount > 0;
 
                     var operationExists = _db.FinancialAccountOperations.Any(fao =>
                         fao.OrderNumber == record.Number &&
@@ -632,7 +635,7 @@ namespace AvibaWeb.Controllers
                                     {
                                         var beginStr = new string(lowerPaymentDescription.Skip(index + offset).ToArray());
                                         var endIndex = 6;
-                                        var receiptStr = beginStr.Substring(0, endIndex).Split(' ')[0];
+                                        var receiptStr = beginStr.Substring(0, endIndex).Trim().Split(' ')[0];
                                         var receiptNumber =
                                             int.Parse(new string(receiptStr.Where(char.IsDigit).Take(7).ToArray()));
 
@@ -864,7 +867,8 @@ namespace AvibaWeb.Controllers
                     var dataRecord = counterpartyGroup.Records.FirstOrDefault();
                     if (dataRecord == null) continue;
 
-                    var transferAccount = _db.FinancialAccounts.FirstOrDefault(a => a.Description == dataRecord.PayeeAccount);
+                    var transferAccount = _db.FinancialAccounts.FirstOrDefault(a =>
+                        a.BIK == dataRecord.PayeeBankBIC && a.Organization.CounterpartyId == dataRecord.PayeeITN);
                     if (transferAccount != null)
                     {
                         counterpartyGroup.IsKnownCounterparty = true;
