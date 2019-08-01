@@ -2975,8 +2975,8 @@ function getReceiptListPDF(model)
         ]);
 
         index++;
-        $('#mWaitingProgress')[0].innerHTML = 100*index/maxItems;
-        alert('123');
+        //$('#mWaitingProgress')[0].innerHTML = 100*index/maxItems;
+        //alert('123');
     });
 
     //$('#mWaitingProgress').hide();
