@@ -1,0 +1,188 @@
+﻿@using AvibaWeb.DomainModels
+@using AvibaWeb.ViewModels.CorpReceiptViewModels
+@using static AvibaWeb.DomainModels.CorporatorReceipt
+@model CorpReceiptsViewModel
+
+<a asp-action="CreateReceipt" asp-controller="CorpReceipt" asp-route-subGroupId="@Model.SubGroupId"
+   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+   class="btn btn-primary"><i class="glyphicon glyphicon-plus">&nbsp;</i>Создать счет</a>
+
+<table class="table table-bordered bootstrap-datatable datatable" id="dataTable">
+    <thead>
+        <tr>
+            <th>№ счета</th>
+            <th>Дата</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @if (!Model.Items.Any())
+    {
+        <tr><td colspan="3" class="text-center">Нет счетов</td></tr>
+    }
+    else
+    {
+        foreach (var receipt in Model.Items)
+        {
+            <tr style="background-color:
+                @switch (receipt.Status)
+                {
+                    case CorporatorReceipt.CRPaymentStatus.Unpaid:
+                        @:none
+                        break;
+
+                    case CorporatorReceipt.CRPaymentStatus.Partial:
+                        @:lightsalmon
+                        break;
+
+                    case CorporatorReceipt.CRPaymentStatus.Paid:
+                        @: #dfefd8
+                        break;
+                }">
+                <td style="width: 70px;">
+                    @Html.HiddenFor(m => receipt.ReceiptId, new {@class = "receiptId"})
+                    <a asp-action="CreateReceipt" asp-controller="CorpReceipt" asp-route-id="@receipt.ReceiptId"
+                       asp-route-subGroupId="@Model.SubGroupId"
+                       data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
+                       class="btn btn-xs btn-success"><i class="glyphicon glyphicon-pencil"></i></a>
+                    <span id="myId">@receipt.ReceiptNumber</span>
+
+                    <br>
+                    @if (receipt.PayeeOrgName != null && receipt.PayeeBankName != null)
+                    {
+                        switch (receipt.Status)
+                        {
+                            case CorporatorReceipt.CRPaymentStatus.Unpaid:
+
+                                <button class="btn btn-danger btn-xs" data-toggle="confirmation"
+                                        data-btn-ok-label="Продолжить" data-btn-ok-class="btn-success"
+                                        data-btn-ok-icon-class="material-icons" data-btn-ok-icon-content="check"
+                                        data-btn-cancel-label="Отмена" data-btn-cancel-class="btn-danger"
+                                        data-btn-cancel-icon-class="material-icons" data-btn-cancel-icon-content="close"
+                                        data-title="Очистить" data-content="Очистить счет?">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                                break;
+
+                            case CorporatorReceipt.CRPaymentStatus.Partial:
+                                
+                                break;
+
+                            case CorporatorReceipt.CRPaymentStatus.Paid:
+                                
+                                <span>@receipt.PaidDateTime</span>
+                                break;
+                        }
+                    }
+
+                </td>
+                <td style="width: 70px;">
+                    <span>@receipt.CreatedDate</span><br>
+                    <span class="green"><b>@receipt.IssuedDateTime</b></span>
+
+                </td>
+
+                <td>
+                    <div class="col-md-4">
+                        <span class="blue"><b>@receipt.PayeeOrgName @receipt.PayeeBankName</b></span><br>
+                    </div>
+                    <div class="col-md-4">
+                        <span><b>@receipt.PayerOrgName </b></span><br><br>
+                    </div>
+                    <div class="col-md-2">
+                        <span style="color: chocolate"><b>@receipt.TotalStr</b></span>
+                    </div>
+                    <div class="col-md-2">
+                        @if (receipt.PayeeOrgName != null && receipt.PayeeBankName != null)
+                        {
+                            <div class="btn-group">
+                                <button class="btn btn-default btn-xs">Документы</button>
+                                <button class="btn dropdown-toggle btn-default btn-xs" data-toggle="dropdown">
+                                    <span
+                                        class="caret"></span></button>
+                                <ul class="dropdown-menu">
+
+                                    <li style="background-color: lightskyblue"><a href="/" class="createReceiptPDF"><i class="glyphicon glyphicon-list-alt"></i> Счет PDF</a></li>
+                                    <li style="background-color: lightskyblue"><a href="/" class="createReportPDF"><i class="glyphicon glyphicon-list-alt"></i> Акт PDF</a></li>
+                                    <li><a href="/" class="createReceiptPDF2"><i class="glyphicon glyphicon-envelope"></i> Счет постоплата</a></li>
+                                    <li style="background-color: lightsalmon"><a href="/" class="createReceiptPDF3"><i class="glyphicon glyphicon-envelope"></i> Счет предоплата</a></li>
+                                    <li style="background-color: lightskyblue"><a href="/" class="createReceiptText"><i class="glyphicon glyphicon-list-alt"></i> Text</a></li>
+
+                                </ul>
+                            </div>
+
+                        }
+                    </div>
+
+
+
+                </td>
+
+
+            </tr>
+        }
+    }
+    </tbody>
+</table>
+
+<script>
+    $(function () {
+        var oTable = $('#dataTable').dataTable({
+            "iDisplayLength": 100,
+            "aLengthMenu": [[ 10, 20, 50, 100 ,-1],[10,20,50,100,"все"]],
+            "bStateSave": false,
+            "sPaginationType": "full_numbers",
+            "bSort": false,
+            "aaSorting": [[ 0, "desc" ]],
+            "oLanguage": {
+                "sSearch": "Поиск:",
+                "sLengthMenu": "Показать _MENU_ записей",
+                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
+                "oPaginate": {
+                    "sFirst":    'Первая',
+                    "sPrevious": 'Предыдущая',
+                    "sNext":     'Следующая',
+                    "sLast":     'Последняя'
+                },
+                "oaria": {
+                    "ipaginate": {
+                        "nfirst":    'Начало',
+                        "nprevious": 'Previous',
+                        "nnext":     'Next',
+                        "nlast":     'Last'
+                    }
+                }
+            }
+        });
+    });
+
+    $('[data-toggle=confirmation]').confirmation({
+        rootSelector: '[data-toggle=confirmation]',
+        onConfirm: function (e) {
+            var button = $(this);
+
+            $.ajax({
+                url: "/CorpReceipt/ClearReceipt",
+                type: "POST",
+                cache: false,
+                data: { id: $(this).closest('tr').find('.receiptId').val() },
+                success: function (result) {
+                    button.closest('tr').children()[2].innerHTML = 
+                        `<div class="col-md-4">                        
+                        </div>
+                        <div class="col-md-4">                        
+                        </div>
+                        <div class="col-md-2">
+                            <span style="color: chocolate"><b>0.00</b></span>
+                        </div>`;
+                    button.remove();
+                },
+                error: function (error) {
+                    console.log(error.message);
+                }
+            });
+        }
+    });
+</script>

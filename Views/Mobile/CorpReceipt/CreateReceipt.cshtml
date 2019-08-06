@@ -1,0 +1,431 @@
+﻿@using AvibaWeb.ViewModels.CorpReceiptViewModels
+@using static AvibaWeb.DomainModels.CorporatorReceipt
+@model CreateReceiptViewModel
+
+<!-- CONTENT START -->
+<div class="box col-md-12">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="">
+            <h2>Создание счета</h2>
+        </div>
+        <input id="editReceiptId" type="hidden" value="@Model.Receipt.ReceiptId" />
+        <div class="box-content">
+            <div class="row">
+                <div class="col-md-6">
+                    <input id="editReceiptCreatedDate" type="hidden" value="@Model.Receipt.CreatedDateTime" />
+                    <h5>Счет № <b>@Model.Receipt.ReceiptNumber</b> от <b><span id="receiptCreatedDate">@Model.Receipt.CreatedDateTime</span></b></h5>
+                    <span></span>
+                </div>
+                <div class="col-md-6">
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Поставщик:</h5>
+                    <div id="payeeSelectDiv">
+                        <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
+                            <option value=""></option>
+                            <optgroup label="Организации">
+                                @foreach (var org in Model.Organizations)
+                                {
+                                    <option id=@org.Key>@org.Value</option>
+                                }
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div id="payeeOrgFinancialAccountsDiv"></div>
+                    <input id="editReceiptOrgName" type="hidden" value="@Model.Receipt.OrganizationName" />
+                    <input id="editReceiptBankName" type="hidden" value="@Model.Receipt.BankName" />
+                </div>
+
+                <div class="col-md-6">
+                    <h5>Покупатель:</h5>
+                    <div id="payerSelectDiv">
+                        <select data-placeholder="Выбрать корпоратора" id="selectPayer" data-rel="chosen">
+                            <option value=""></option>
+                            <optgroup label="Корпораторы">
+                                @foreach (var counterparty in Model.Counterparties)
+                                {
+                                    <option id=@counterparty.Key>@counterparty.Value</option>
+                                }
+                            </optgroup>
+                        </select>
+                     </div>
+                    <input id="editReceiptCorpName" type="hidden" value="@Model.Receipt.CorporatorName" />
+                </div>
+            </div>
+            <br>
+
+            <br>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="feeRate">Сбор за сегмент:</label>
+                    <input type="text" id="feeRate" value="@Model.Receipt.FeeRate" />
+                    
+                </div>
+
+                <div class="col-md-6">
+                    <label for="receiptStatus">Статус оплаты:</label>
+                    
+                        <select 
+                            asp-for="@Model.Receipt.StatusId"
+                            asp-items="Html.GetEnumSelectList(typeof (CRPaymentStatus))"
+                            class="form-control" id="receiptStatus"></select>
+                    
+                </div>
+                <div class="col-md-6">
+                    <label for="feeRate">Дата оформления счета:</label>
+                    <input type="text" id="issuedDateTime" name="min" class="date-range-filter" autocomplete="off" value="@Model.Receipt.IssuedDateTime" />
+                    
+                </div>
+               <hr> 
+<style>
+    .popup {
+    position: fixed;
+    top: 150px;
+    right: 0;
+    padding: 10px;
+    text-align: center;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    z-index: 1;
+}
+</style>
+<div class="popup">
+    <span>Кол-во сегментов:</span>
+    <span id="segTotal"></span><br>
+    <span>Сумма сборов:</span>
+    <span id="feeTotal"></span><br>
+    <span>Сумма билетов:</span>
+    <span id="ticketTotal"></span><br>
+    <label class="red">Сумма счета:</label>
+    <b><span class="red" id="finalTotal"></span></b>
+</div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    
+                        <table class="table table-striped table-bordered bootstrap-datatable datatable" id="receiptItemsTable">
+                        <thead>
+                            <tr>
+                                <th>Дата операции</th>
+                                <th>Билет</th>
+                                <th>Маршрут</th>
+                                <th>Пассажир</th>
+                                <th>Сумма</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Receipt.Items != null)
+                            {
+                                foreach (var item in Model.Receipt.Items)
+                                {
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" value="@item.TicketOperationId" />
+                                            <span id="myId">@item.ExecutionDateTime</span><br>
+                                            <span>@Html.DisplayFor(c => item.OperationType)</span>
+                                            <a href="/" class="btn btn-danger btn-sm removeTicketBtn"><i class="glyphicon glyphicon-remove"></i></a>
+                                        </td>
+                                        <td>
+                                            <b>@item.TicketNumber</b>
+                                        </td>
+                                        <td>
+                                            <input type="hidden" value="@item.SegCount" />
+                                            <input class="ticketRoute" type="text" value="@item.Route" size="100" />
+                                        </td>
+                                        <td>
+                                            <input class="ticketPassenger" type="text" value="@item.PassengerName" />
+                                        </td>
+                                        <td>
+                                            <input class="ticketPayment" type="text" value="@item.Payment" />
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="/" id="sendDataBtn" class="btn btn-success">Сохранить счет</a>
+                    <div id="warningMsg" class="alert alert-danger" style="display: none;">
+                        <strong>Ошибка!</strong> Не выбран счет для организации.
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <h3>Добавить билеты</h3>
+                    <div class="col-md-12">
+                        Выбрать с: <input type="text" id="min" name="min" class="date-range-filter"> по: <input type="text" id="max" name="max" class="date-range-filter">
+                        <a href="/" id="getTicketListBtn" class="btn btn-success">Список билетов</a>
+                    </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12" id="ticketListBlock">
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dialog" title="Basic dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Новая фирма</span>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    onload = function () {
+        
+
+        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
+
+        // Select the node that will be observed for mutations
+        const payeeTargetNode = $("#selectPayee").next().find("a.chosen-single span")[0];
+
+        // Options for the observer (which mutations to observe)
+        const config = { attributes: true, childList: true, subtree: true };
+
+        // Callback function to execute when mutations are observed
+        const payeeCallback = function (mutationsList, observer) {
+            const mutation = mutationsList[0];
+            $.ajax({
+                url: "/Data/OrganizationFinancialAccounts",
+                type: "GET",
+                cache: false,
+                data: { orgName: mutation.target.textContent },
+                success: function (result) {
+                    $("#payeeOrgFinancialAccountsDiv").html(result);
+                    $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
+
+                    var editValue = $("#editReceiptBankName").val();
+                    if (editValue) {
+                        $('#selectBank').val(editValue).trigger('chosen:updated');
+                    }
+                },
+                error: function (error) {
+                    $("#payeeOrgFinancialAccountsDiv").html();
+                }
+            });
+        };
+
+        // Create an observer instance linked to the callback function
+        const payeeObserver = new MutationObserver(payeeCallback);
+
+        // Start observing the target node for configured mutations
+        payeeObserver.observe(payeeTargetNode, config);
+
+        // Select the node that will be observed for mutations
+        const payerTargetNode = $("#selectPayer").next().find("a.chosen-single span")[0];
+
+        // Callback function to execute when mutations are observed
+        const payerCallback = function (mutationsList, observer) {
+            const mutation = mutationsList[0];
+        };
+
+        // Create an observer instance linked to the callback function
+        const payerObserver = new MutationObserver(payerCallback);
+
+        // Start observing the target node for configured mutations
+        payerObserver.observe(payerTargetNode, config);
+
+        $("#issuedDateTime").datepicker();
+        $("#min").datepicker();
+        $("#max").datepicker();
+
+        var editValue = $("#editReceiptCorpName").val();
+        if (editValue) {
+            $('#selectPayer').val(editValue).trigger('chosen:updated'); 
+        }
+
+        editValue = $("#editReceiptCreatedDate").val();
+        if (editValue) {
+            $("#min").val(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").subtract(5, 'days').format("DD.MM.YYYY"));
+            $("#max").val(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").format("DD.MM.YYYY"));
+        }
+        else {
+            $("#min").val(moment().subtract(5, 'days').format("DD.MM.YYYY"));
+            $("#max").val(moment().format("DD.MM.YYYY"));
+        }
+
+        editValue = $("#editReceiptOrgName").val();
+        if (editValue) {
+            $('#selectPayee').val(editValue).trigger('chosen:updated');
+        }
+
+        var oTable = $('#receiptItemsTable').dataTable({
+            "bStateSave": true,
+            "sPaginationType": "full_numbers",
+            "bPaginate": false,
+            "bFilter": false,
+            "bSort": false,
+            "bInfo": false,
+            "oLanguage": {                
+                "sSearch": "Поиск:",
+                "sLengthMenu": "Показать _MENU_ записей",
+                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
+                "oPaginate": {
+                    "sFirst":    'Первая',
+                    "sPrevious": 'Предыдущая',
+                    "sNext":     'Следующая',
+                    "sLast":     'Последняя'
+                },
+                "oaria": {
+                    "ipaginate": {
+                        "nfirst":    'Начало',
+                        "nprevious": 'Previous',
+                        "nnext":     'Next',
+                        "nlast":     'Last'
+                    }
+                }
+            }
+        });
+
+        if ($("#receiptItemsTable").dataTable().fnSettings().aoData.length) {
+            var segTotal = 0;
+            var ticketTotal = 0;
+            var feeRate = Number($('#feeRate').val().replace(',', '.'));
+            console.log(feeRate);
+            $("#receiptItemsTable tbody").children().each(function () {
+                const firstDiv = $(this).find("input");
+                if (firstDiv.length) {
+                    segTotal += Number(firstDiv[1].value);
+                    ticketTotal += Number(firstDiv[4].value.replace(/[^0-9.-]+/g, ""));
+                }
+            });
+
+            $('#segTotal').html(numberWithSpaces(segTotal));
+            $('#feeTotal').html(numberWithSpaces(segTotal * feeRate));
+            $('#ticketTotal').html(numberWithSpaces(ticketTotal));
+            $('#finalTotal').html(numberWithSpaces(segTotal * feeRate + ticketTotal));
+        }
+    }
+
+    onload();
+
+    $("#sendDataBtn").click(function (e) {
+        $("#warningMsg").hide();
+
+        if( $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().text() == "Выбрать счет" ) {
+            $("#warningMsg").show();
+            return false;
+        }
+
+        var items = new Array();
+        if ($("#receiptItemsTable").dataTable().fnSettings().aoData.length) {
+            $("#receiptItemsTable tbody").children().each(function () {
+                const firstDiv = $(this).find("input");
+                if (firstDiv.length) {
+                    const receiptItem = {
+                        TicketOperationId: firstDiv.val(),
+                        Amount: Number(firstDiv[4].value.replace(/[^0-9.-]+/g, "")),
+                        PassengerName: firstDiv[3].value,
+                        Route: firstDiv[2].value,
+                        SegCount: firstDiv[1].value
+                    };
+                    items.push(receiptItem);
+                }
+            });
+        }
+
+        const sendJsonData = {
+            ReceiptId: $('#editReceiptId').val(),
+            PayerId: $("#selectPayer").find('option:selected').prop('id'),
+            PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
+            PayeeId: $("#selectPayee").find('option:selected').prop('id'),
+            PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html(),
+            PayeeBankName: $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html(),
+            FeeRate: $("#feeRate").val(),
+            Items: items,
+            StatusId: $("#receiptStatus option:selected").val(),
+            IssuedDateTime: moment($('#issuedDateTime').val(), "DD.MM.YYYY").toISOString(true),
+            SubGroupId: @Model.SubGroupId
+        };
+
+        console.log(sendJsonData);
+
+        e.preventDefault();
+        $.ajax({
+            url: "/CorpReceipt/CreateReceipt",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $.ajax({
+                    url: "/CorpReceipt/Receipts1",
+                    type: "GET",
+                    cache: false,
+                    data: {
+                        subGroupId: @Model.SubGroupId,
+                        isMobile: new Boolean(true)
+                    },
+                    success: function (r) {
+                        $("#results").html(r);
+                    },
+                    error: function (err) {
+                        console.log(err.message);
+                    }
+                });
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+
+    $("#getTicketListBtn").click(function (e) {
+        var exceptItems = new Array();
+        if ($("#receiptItemsTable").dataTable().fnSettings().aoData.length) {
+            $("#receiptItemsTable tbody").children().each(function () {
+                const firstDiv = $(this).find("input");
+                const receiptItem = {
+                    TicketOperationId: firstDiv.val()
+                };
+                exceptItems.push(receiptItem);
+            });
+        }
+
+        const sendJsonData = {
+            fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+            toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true),
+            ExceptItems: exceptItems,
+            isMobile: new Boolean(true)
+        };
+
+        //console.log(sendJsonData);
+
+        e.preventDefault();
+        $.ajax({
+            url: "/CorpReceipt/TicketList",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $("#ticketListBlock").html(result.message);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });   
+</script>

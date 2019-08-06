@@ -101,6 +101,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public string fromDate { get; set; }
         public string toDate { get; set; }
         public List<ReceiptItem> ExceptItems { get; set; }
+        public bool isMobile { get; set; }
     }
 
     public class CorpFeeListViewModel

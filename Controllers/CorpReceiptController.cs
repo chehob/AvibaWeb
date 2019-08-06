@@ -31,13 +31,20 @@ namespace AvibaWeb.Controllers
         }
 
         // GET: /<controller>/
-        public IActionResult Index()
+        public IActionResult Index(bool isMobile = false)
         {
-            return PartialView();
+            if (isMobile)
+            {
+                return PartialView("../Mobile/CorpReceipt/Index");
+            }
+            else
+            {
+                return PartialView();
+            }
         }
 
         [HttpGet]
-        public IActionResult CreateReceipt(int? id, int subGroupId)
+        public IActionResult CreateReceipt(int? id, int subGroupId, bool isMobile = false)
         {
             var model = new CreateReceiptViewModel
             {
@@ -99,7 +106,14 @@ namespace AvibaWeb.Controllers
                 };
             }
 
-            return PartialView(model);
+            if (isMobile)
+            {
+                return PartialView("../Mobile/CorpReceipt/CreateReceipt", model);
+            }
+            else
+            {
+                return PartialView(model);
+            }
         }
 
         [HttpPost]
@@ -258,11 +272,19 @@ namespace AvibaWeb.Controllers
                              SegCount = tio.SegCount
                          }).ToList();
 
-            return Json(new { message = await _viewRenderService.RenderToStringAsync("CorpReceipt/TicketList", model) });
+            if (request.isMobile)
+            {
+                return Json(new { message = await _viewRenderService.RenderToStringAsync("../Mobile/CorpReceipt/TicketList", model) });
+            }
+            else
+            {
+                return Json(new { message = await _viewRenderService.RenderToStringAsync("CorpReceipt/TicketList", model) });
+            }
+            
         }
 
         [HttpGet]
-        public IActionResult Receipts()
+        public IActionResult Receipts(bool isMobile = false)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
@@ -291,11 +313,18 @@ namespace AvibaWeb.Controllers
                     }).ToList()
             };
 
-            return PartialView(model);
+            if (isMobile)
+            {
+                return PartialView("../Mobile/CorpReceipt/Receipts", model);
+            }
+            else
+            {
+                return PartialView(model);
+            }
         }
 
         [HttpGet]
-        public IActionResult Receipts1(int subGroupId)
+        public IActionResult Receipts1(int subGroupId, bool isMobile = false)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
@@ -326,7 +355,14 @@ namespace AvibaWeb.Controllers
                 SubGroupId = subGroupId
             };
 
-            return PartialView(model);
+            if (isMobile)
+            {
+                return PartialView("../Mobile/CorpReceipt/Receipts1", model);
+            }
+            else
+            {
+                return PartialView(model);
+            }
         }
 
         [HttpPost]
@@ -525,7 +561,7 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpGet]
-        public IActionResult OrganizationCorporators(string orgName)
+        public IActionResult OrganizationCorporators(string orgName, bool isMobile = false)
         {
             var model = new OrganizationFinancialAccountsViewModel
             {
@@ -540,11 +576,18 @@ namespace AvibaWeb.Controllers
                         select new KeyValuePair<string, string>(c.ITN, c.Name)).Distinct().ToList()
             };
 
-            return PartialView(model);
+            if (isMobile)
+            {
+                return PartialView("../Mobile/CorpReceipt/OrganizationCorporators", model);
+            }
+            else
+            {
+                return PartialView(model);
+            }
         }
 
         [HttpGet]
-        public IActionResult CorporatorOrganizations(string corpName)
+        public IActionResult CorporatorOrganizations(string corpName, bool isMobile = false)
         {
             var model = new OrganizationFinancialAccountsViewModel
             {
@@ -559,7 +602,14 @@ namespace AvibaWeb.Controllers
                         select new KeyValuePair<string, string>(o.OrganizationId.ToString(), o.Description)).Distinct().ToList()
             };
 
-            return PartialView(model);
+            if (isMobile)
+            {
+                return PartialView("../Mobile/CorpReceipt/CorporatorOrganizations", model);
+            }
+            else
+            {
+                return PartialView(model);
+            }
         }
     }
 }
