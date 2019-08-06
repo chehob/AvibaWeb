@@ -1,0 +1,94 @@
+﻿<div class="col-md-12">
+    Выбрать с: <input type="text" autocomplete="off" id="min" name="min" class="date-range-filter"> по: <input type="text" autocomplete="off" id="max" name="max" class="date-range-filter">
+    <button id="getCorporatorsReportBtn" class="btn btn-success">Создать отчет</button>
+</div>
+
+<script>
+    $("#getCorporatorsReportBtn").click(function (e) {
+        const sendJsonData = {
+            fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+            toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true)
+        };
+
+        e.preventDefault();
+        $.ajax({
+            url: "/CorpClient/CorporatorsReport",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                var receiptText = '<table>';
+                result.data.forEach(function(item) {
+                    receiptText +=
+                        `<tr>
+                            <td>
+                                ${item.key}
+                            </td>
+                            <td>
+                                <div>
+                                    <div>
+                                        <div>Кол-во авиабилетов:</div>
+                                        <div>${item.value.aviaSegTotal}</div>
+                                    </div>
+                                    <div>
+                                        <div>Кол-во ж/д билетов:</div>
+                                        <div>${item.value.zdSegTotal}</div>
+                                    </div>
+                                    <div>
+                                        <div>Кол-во доп. услуг:</div>
+                                        <div>${item.value.luggageSegTotal}</div>
+                                    </div>
+                                    <div>
+                                        <div>Сумма авиабилетов:</div>
+                                        <div>${item.value.aviaCostTotal}</div>
+                                    </div>
+                                    <div>
+                                        <div>Сумма ж/д билетов:</div>
+                                        <div>${item.value.zdCostTotal}</div>
+                                    </div>
+                                    <div>
+                                        <div>Сумма доп. услуг:</div>
+                                        <div>${item.value.luggageCostTotal}</div>
+                                    </div>
+                                    <div>
+                                        <div>Сумма сборов:</div>
+                                        <div>${item.value.feeTotal}</div>
+                                    </div>
+                                    <div>
+                                        <div>Сборы авиабилетов:</div>
+                                        <div>${item.value.aviaFeeTotal}</div>
+                                    </div>
+                                    <div>
+                                        <div>Сборы ж/д билетов:</div>
+                                        <div>${item.value.zdFeeTotal}</div>
+                                    </div>
+                                    <div>
+                                        <div>Сборы доп. услуг:</div>
+                                        <div>${item.value.luggageFeeTotal}</div>
+                                    </div>            
+                                </div>
+                            </td>
+                         </tr>
+                        `;
+
+                });
+                receiptText += '</table>';
+                var win = window.open('', '_blank');
+                win.document.write(receiptText);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $(function () {
+        $("#min").datepicker();
+        $("#max").datepicker();
+
+        $("#min").val(moment().subtract(30, 'days').format("DD.MM.YYYY"));
+        $("#max").val(moment().format("DD.MM.YYYY"));
+    });
+</script>

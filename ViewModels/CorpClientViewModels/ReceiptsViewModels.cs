@@ -29,7 +29,7 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
         public int TicketsToPDFCount { get; set; }
     }
 
-    public class ReceiptListViewModel
+    public class ReceiptTotals
     {
         public string AviaSegTotal { get; set; }
         public string ZdSegTotal { get; set; }
@@ -41,6 +41,11 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
         public string AviaFeeTotal { get; set; }
         public string ZdFeeTotal { get; set; }
         public string LuggageFeeTotal { get; set; }
+    }
+
+    public class ReceiptListViewModel
+    {
+        public ReceiptTotals Totals { get; set; }
 
         public List<ReceiptListItem> Items { get; set; }
     }

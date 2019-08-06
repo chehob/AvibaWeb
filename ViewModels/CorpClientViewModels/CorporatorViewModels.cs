@@ -75,4 +75,15 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
         public string payeeBankName { get; set; }
         public bool isSigned { get; set; }
     }
+
+    public class CorporatorsReportViewModel
+    {
+        public List<KeyValuePair<string,ReceiptTotals>> Data { get; set; }
+    }
+
+    public class DateRangeRequest
+    {
+        public string fromDate { get; set; }
+        public string toDate { get; set; }
+    }
 }

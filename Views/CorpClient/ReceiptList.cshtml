@@ -142,16 +142,16 @@ $(function () {
 
 @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Корпоративные менеджеры"))
 {
-    @:$("#aviaSegTotal")[0].innerText = "@Model.AviaSegTotal";
-    @:$("#zdSegTotal")[0].innerText = "@Model.ZdSegTotal";
-    @:$("#luggageSegTotal")[0].innerText = "@Model.LuggageSegTotal";
-    @:$("#aviaCostTotal")[0].innerText = "@Model.AviaCostTotal";
-    @:$("#zdCostTotal")[0].innerText = "@Model.ZdCostTotal";
-    @:$("#luggageCostTotal")[0].innerText = "@Model.LuggageCostTotal";
-    @:$("#feeTotal")[0].innerText = "@Model.FeeTotal";
-    @:$("#aviaFeeTotal")[0].innerText = "@Model.AviaFeeTotal";
-    @:$("#zdFeeTotal")[0].innerText = "@Model.ZdFeeTotal";
-    @:$("#luggageFeeTotal")[0].innerText = "@Model.LuggageFeeTotal";
+    @:$("#aviaSegTotal")[0].innerText = "@Model.Totals.AviaSegTotal";
+    @:$("#zdSegTotal")[0].innerText = "@Model.Totals.ZdSegTotal";
+    @:$("#luggageSegTotal")[0].innerText = "@Model.Totals.LuggageSegTotal";
+    @:$("#aviaCostTotal")[0].innerText = "@Model.Totals.AviaCostTotal";
+    @:$("#zdCostTotal")[0].innerText = "@Model.Totals.ZdCostTotal";
+    @:$("#luggageCostTotal")[0].innerText = "@Model.Totals.LuggageCostTotal";
+    @:$("#feeTotal")[0].innerText = "@Model.Totals.FeeTotal";
+    @:$("#aviaFeeTotal")[0].innerText = "@Model.Totals.AviaFeeTotal";
+    @:$("#zdFeeTotal")[0].innerText = "@Model.Totals.ZdFeeTotal";
+    @:$("#luggageFeeTotal")[0].innerText = "@Model.Totals.LuggageFeeTotal";
 }
 });
 
