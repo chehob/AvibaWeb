@@ -1,0 +1,269 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>AVIBA MANAGER SYSTEM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Charisma, a fully featured, responsive, HTML5, Bootstrap admin template.">
+    <meta name="author" content="Muhammad Usman">
+    <!-- The styles -->
+    <link href="~/lib/charisma-master/css/bootstrap-cerulean.min.css" rel="stylesheet">
+    <link href="~/lib/charisma-master/css/charisma-app.css" rel="stylesheet">
+    <link href='~/lib/charisma-master/bower_components/fullcalendar/dist/fullcalendar.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/bower_components/fullcalendar/dist/fullcalendar.print.css' rel='stylesheet' media='print'>
+    <link href='~/lib/charisma-master/bower_components/chosen/chosen.min.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/bower_components/colorbox/example3/colorbox.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/bower_components/responsive-tables/responsive-tables.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/bower_components/bootstrap-tour/build/css/bootstrap-tour.min.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/css/jquery.noty.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/css/noty_theme_default.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/css/elfinder.min.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/css/elfinder.theme.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/css/jquery.iphone.toggle.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/css/uploadify.css' rel='stylesheet'>
+    <link href='~/lib/charisma-master/css/animate.min.css' rel='stylesheet'>
+    <link href="~/lib/charisma-master/bower_components/DataTables/datatables.min.css" rel='stylesheet' />
+
+    <script src="~/lib/charisma-master/bower_components/jquery/jquery.min.js"></script>
+    <script src="~/lib/charisma-master/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/lib/charisma-master/bower_components/moment/min/moment.min.js"></script>
+    <script src="~/lib/charisma-master/bower_components/fullcalendar/dist/fullcalendar.min.js"></script>
+    <script src="~/lib/charisma-master/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/lib/charisma-master/bower_components/colorbox/jquery.colorbox-min.js"></script>
+    <script src="~/lib/charisma-master/bower_components/responsive-tables/responsive-tables.js"></script>
+    <script src="~/lib/charisma-master/bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.cookie.js"></script>
+    @*<script src="~/lib/charisma-master/js/jquery.dataTables.min.js"></script>*@
+    <script src="~/lib/charisma-master/bower_components/DataTables/datatables.min.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.noty.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.raty.min.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.iphone.toggle.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.autogrow-textarea.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.uploadify-3.1.min.js"></script>
+    <script src="~/lib/charisma-master/js/jquery.history.js"></script>
+    <script src="~/lib/charisma-master/js/charisma.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="~/css/util.css">
+    <link rel="stylesheet" type="text/css" href="~/css/multi-select.css">
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <!--<script src="~/Scripts/jquery-1.10.2.js"></script>-->
+    <script src="~/lib/jquery-ajax-unobtrusive/src/jquery.unobtrusive-ajax-file-upload.js"></script>
+    <script src="~/scripts/jquery.multi-select.js"></script>
+    <script src="~/scripts/gui_utils.js"></script>
+    <script src="~/lib/signalr/signalr.js"></script>
+    <script src="~/lib/signalr/signalr-protocol-msgpack.js"></script>
+    <script src="~/scripts/messaging.js"></script>
+    <script src="~/scripts/image-ui.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/jquery.validate.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.6/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/lib/moment/moment.js"></script>
+    <script src="~/lib/jquery-ui/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/lib/jquery-ui/themes/base/jquery-ui.min.css" />
+    <script src="~/lib/jquery-ui/ui/i18n/datepicker-ru.js"></script>
+
+    <script src='~/lib/pdfmake/pdfmake.min.js'></script>
+    <script src='~/lib/pdfmake/vfs_fonts.js'></script>
+    <script src="~/lib/rubles/lib/rubles.js"></script>
+    <script src="~/scripts/bootstrap-confirmation.min.js"></script>
+    <script src="~/lib/big.js/big.min.js"></script>
+    <script src="~/lib/cleave.js/cleave.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/af-2.3.2/b-1.5.4/r-2.2.2/datatables.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/switch.css">
+
+</head>
+<body style="position: relative;">
+<!-- topbar starts -->
+<div class="navbar navbar-default" role="navigation">
+
+    <div class="navbar-inner">
+        <button type="button" class="navbar-toggle pull-left animated flip">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="@Url.Action("Index", "Home")"><img src="~/img/logo20.png" style="width:155px; height:40px; margin-top:-10px;" alt="AVIBA-MS"></img></a>
+        <!-- user dropdown starts -->
+        @Html.Partial("_LoginPartial")
+        <!-- user dropdown ends -->
+        <!-- theme selector ends -->
+        <!--
+        <ul class="collapse navbar-collapse nav navbar-nav top-menu">
+
+            <li class="dropdown">
+                <a href="#" data-toggle="dropdown"><i class="glyphicon glyphicon glyphicon-th-large"></i> МЕНЮ <span
+                                                                                                                   class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="@Url.Action("Index", "Collection")" class="main"><span class="outer"><span class="inner content">Инкассация</span></span></a></li>
+                    <li class="divider"></li>
+                    <li><a href="@Url.Action("Index", "Report")" class="main"><span class="outer"><span class="inner users">Отчеты</span></span></a></li>
+
+                    <li class="divider"></li>
+                    <li><a href="@Url.Action("Index", "Admin")" class="main"><span class="outer"><span class="inner users">Админка</span></span></a></li>
+                </ul>
+            </li>
+        </ul>
+        -->
+    </div>
+</div>
+<!-- left menu starts -->
+<div class="col-md-2">
+    <div class="sidebar-nav">
+        <div class="nav-canvas">
+
+            <ul class="nav nav-pills nav-stacked main-menu">
+                <li class="nav-header">Меню</li>
+                <li>
+                    <ul class="nav nav-pills nav-stacked">
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+                        {
+                            <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
+                                <a asp-action="Index" asp-controller="ManagementAccounting"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults" data-ajax-begin="disableLoader"
+                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Управленческий учет</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Инкассаторы"))
+                        {
+                            <li>
+                                <a asp-action="Index" asp-controller="Collection"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults" data-ajax-success="updateBalance"
+                                   class="main"><i class="glyphicon glyphicon-share"></i>&nbsp;Инкассация</a>
+
+                            </li>
+                        }
+                        @if (User.IsInRole("Administrators"))
+                        {
+                            <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
+                                <a asp-action="Index" asp-controller="Transit"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Транзитный счет</a>
+                            </li>
+                            
+                        }
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Кассиры") || User.IsInRole("Офис"))
+                        {
+                        <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
+                            <a asp-action="Index" asp-controller="CorpClient"
+                               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                               class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;CorpClient</a>
+                        </li>
+                        }
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+                        {
+                            <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
+                                <a asp-action="Index" asp-controller="CorpReceipt"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Счета корпораторам</a>
+                            </li>
+                            
+                        }
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Кассиры"))
+                        {
+                            <li>
+                                <a asp-action="Index" asp-controller="Report"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Отчеты</a>
+                            </li>
+                        }
+
+
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+                        {
+                            <li class="nav-header hidden-md"><hr></li>
+                            <li>
+                                <a asp-action="Index" asp-controller="Revenue"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-circle-arrow-down"> </i>&nbsp;Поступления</a>
+                            </li>
+                            <li>
+                                <a asp-action="Index" asp-controller="Expenditure"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-circle-arrow-up"></i>&nbsp;Расходы</a>
+                            </li>
+
+                            <li>
+                                <a asp-action="Index" asp-controller="Data"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-retweet"></i>&nbsp;Безнал</a>
+                            </li>
+
+                        }
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Менеджеры"))
+                        {
+                            <li>
+                                <a asp-action="Index" asp-controller="Management"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-briefcase"></i>&nbsp;Менеджмент</a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Administrators"))
+                        {
+
+
+                            <li>
+                                <a asp-action="Index" asp-controller="Admin"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-cog"></i>&nbsp;Админка</a>
+                            </li>
+                        }
+                        <li>
+                            <a asp-action="Index" asp-controller="Directory"
+                               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                               class="main"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Справочники</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div id="contentResults"></div>
+@RenderBody()
+
+<div class="mWaiting"></div>
+</body>
+
+@if (IsSectionDefined("Scripts"))
+{
+    @RenderSection("Scripts", required: false)
+}
+
+</html>
+
+<script>
+    $(function() {
+        pdfMake.fonts = {
+            Roboto: {
+                normal: 'Roboto-Regular.ttf',
+                bold: 'Roboto-Medium.ttf',
+                italics: 'Roboto-Italic.ttf',
+                bolditalics: 'Roboto-MediumItalic.ttf'
+            },
+            Helios: {
+                normal: 'Helios.otf',
+                bold: 'Helios Bold.otf',
+                italics: 'HeliosLight.otf'
+            }
+        };
+    });
+
+    function disableLoader() {
+        clearTimeout(showLoader);
+        $('.mWaiting').fadeOut(500);
+    }
+
+    $(document).on({
+        ajaxStart: function () {
+            showLoader = setTimeout("$('.mWaiting').fadeIn(500);", 1000);
+        },
+        ajaxStop: function() { 
+            clearTimeout(showLoader);
+            $('.mWaiting').fadeOut(500);
+        }
+    });
+</script>
