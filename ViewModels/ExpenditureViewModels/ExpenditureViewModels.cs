@@ -108,6 +108,8 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
 
     public class CashlessExpenditureSummaryViewModel
     {
+        public string FromDate { get; set; }
+        public string ToDate { get; set; }
         public string Amount { get; set; }
         public List<ExpenditureSummaryViewItemGroup> ItemGroups { get; set; }
     }

@@ -17,6 +17,6 @@ namespace AvibaWeb.DomainModels
         public VKRSCancelRequest.TOType OperationTypeID { get; set; }
         public string PassengerName { get; set; }
         public string TicketLabel { get; set; }
-        public string Session { get; set; }
+        public string InfoSession { get; set; }
     }
 }

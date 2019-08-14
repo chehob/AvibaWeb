@@ -1310,7 +1310,7 @@ namespace AvibaWeb.Migrations
 
                     b.Property<string>("PassengerName");
 
-                    b.Property<string>("Session");
+                    b.Property<string>("InfoSession");
 
                     b.Property<string>("TicketLabel");
 
@@ -1334,7 +1334,7 @@ namespace AvibaWeb.Migrations
 
                     b.Property<int>("SegCount");
 
-                    b.Property<string>("Session");
+                    b.Property<string>("InfoSession");
 
                     b.Property<string>("TicketLabel");
 

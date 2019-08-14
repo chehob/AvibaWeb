@@ -260,6 +260,8 @@ namespace AvibaWeb.Controllers
                     
             var model = new CashlessExpenditureSummaryViewModel
             {
+                FromDate = queryFromDate.ToString("d"),
+                ToDate = queryToDate.ToString("d"),
                 ItemGroups = (from expenditure in _db.Expenditures
                                     .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
                                    join eo in _db.ExpenditureOperations on expenditure.ExpenditureId equals eo.ExpenditureId
