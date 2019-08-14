@@ -207,6 +207,7 @@ namespace AvibaWeb.Controllers
 
             var expenditureList = (from expenditure in _db.Expenditures
                                     .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
+                                    .Include(e => e.IncomingExpenditure).ThenInclude(ie => ie.FinancialAccountOperation)
                                     .Where(e => e.PaymentTypeId == PaymentTypes.Cashless)
                                    join eo in _db.ExpenditureOperations on expenditure.ExpenditureId equals eo.ExpenditureId into operations
                                    from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
@@ -221,6 +222,7 @@ namespace AvibaWeb.Controllers
                               {
                                   Status = e.FirstOrDefault().operation.OperationTypeId,
                                   IncomingExpenditureId = e.FirstOrDefault().expenditure.IncomingExpenditureId,
+                                  Description = e.FirstOrDefault().expenditure.IncomingExpenditure?.FinancialAccountOperation.Description,
                                   Items = (from g in e
                                            select new ExpenditureViewItem
                                            {

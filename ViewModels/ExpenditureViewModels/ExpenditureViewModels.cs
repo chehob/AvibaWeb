@@ -74,6 +74,7 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
     {
         public EOType Status { get; set; }
         public int? IncomingExpenditureId { get; set; }
+        public string Description { get; set; }
         public List<ExpenditureViewItem> Items { get; set; }
     }
 

@@ -35,7 +35,7 @@
                         {
                             <tr>
                                 <td colspan="4" class="text-center">
-                                    <div style="min-height: 32px;"></div>
+                                    <div style="min-height: 32px;">@itemGroup.Description</div>
                                 </td>
                                 <td>
                                     @if (itemGroup.Status != ExpenditureOperation.EOType.Cancelled)
@@ -61,8 +61,6 @@
                                 <span class="green">@item.Type</span>
                             </td>
                             <td>
-                                @item.Name
-                                <br>
                                 <span class="blue"><b>@item.Object</b></span>
                             </td>
                             <td>
