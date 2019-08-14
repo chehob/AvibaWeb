@@ -249,14 +249,6 @@ namespace AvibaWeb.Controllers
 
             var queryToDate = toDate ?? DateTime.Now;
             var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
-
-            var t = from expenditure in _db.Expenditures
-                                    .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
-                    join eo in _db.ExpenditureOperations on expenditure.ExpenditureId equals eo.ExpenditureId
-                    where eo.OperationDateTime >= queryFromDate && eo.OperationDateTime <= queryToDate &&
-                     expenditure.PaymentTypeId == PaymentTypes.Cashless
-                    group expenditure by new { expenditure.ObjectId, expenditure.DeskGroupId } into g
-                    select g;
                     
             var model = new CashlessExpenditureSummaryViewModel
             {
@@ -264,24 +256,27 @@ namespace AvibaWeb.Controllers
                 ToDate = queryToDate.ToString("d"),
                 ItemGroups = (from expenditure in _db.Expenditures
                                     .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
-                                   join eo in _db.ExpenditureOperations on expenditure.ExpenditureId equals eo.ExpenditureId
-                                   where eo.OperationDateTime >= queryFromDate && eo.OperationDateTime <= queryToDate &&
-                                    expenditure.PaymentTypeId == PaymentTypes.Cashless
+                              let eo = _db.ExpenditureOperations.Where(eo => expenditure.ExpenditureId == eo.ExpenditureId).OrderByDescending(eo => eo.OperationDateTime).FirstOrDefault()
+                              where eo.OperationDateTime >= queryFromDate && eo.OperationDateTime <= queryToDate.AddDays(1) &&
+                                    eo.OperationTypeId == ExpenditureOperation.EOType.New
                                    group expenditure by new { groupField = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? expenditure.DeskGroupId : expenditure.ObjectId) } into g
                                    select new ExpenditureSummaryViewItemGroup
                               {
                                   Name = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? g.FirstOrDefault().DeskGroup.Name : g.FirstOrDefault().Object.Description),
-                                  Amount = g.Sum(ig => ig.Amount),
-                                  AmountStr = g.Sum(ig => ig.Amount).ToString("#,0.00", nfi),
-                                  Items = (from item in g
+                                    AmountCash = g.Where(ig => ig.PaymentTypeId == PaymentTypes.Cash).Sum(ig => ig.Amount),
+                                    AmountCashless = g.Where(ig => ig.PaymentTypeId == PaymentTypes.Cashless).Sum(ig => ig.Amount),                                    
+                                       Items = (from item in g
                                            group item by new { groupField = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? item.ObjectId : item.DeskGroupId) } into sg
                                            select new ExpenditureSummaryViewItem
                                            {
-                                               Amount = sg.Sum(isg => isg.Amount).ToString("#,0.00", nfi),
+                                               AmountCash = sg.Where(isg => isg.PaymentTypeId == PaymentTypes.Cash).Sum(isg => isg.Amount),
+                                               AmountCashless = sg.Where(isg => isg.PaymentTypeId == PaymentTypes.Cashless).Sum(isg => isg.Amount),
                                                Name = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? sg.FirstOrDefault().Object.Description : sg.FirstOrDefault().DeskGroup.Name)
                                            }).ToList()
                               }).ToList()
             };
+            model.AmountCash = model.ItemGroups.Sum(ig => ig.AmountCash).ToString("#,0.00", nfi);
+            model.AmountCashless = model.ItemGroups.Sum(ig => ig.AmountCashless).ToString("#,0.00", nfi);
             model.Amount = model.ItemGroups.Sum(ig => ig.Amount).ToString("#,0.00", nfi);
 
             return PartialView(model);
@@ -345,7 +340,8 @@ namespace AvibaWeb.Controllers
                     DeskGroupId = item.GroupId,
                     TypeId = _db.ExpenditureTypes.FirstOrDefault(et => et.Description == "Расход").ExpenditureTypeId,
                     ObjectId = model.ExpenditureObjectId,
-                    PaymentTypeId = PaymentTypes.Cashless
+                    PaymentTypeId = PaymentTypes.Cashless,
+                    IncomingExpenditure = incomingExpenditure
                 };
 
                 var operation = new ExpenditureOperation
@@ -379,6 +375,35 @@ namespace AvibaWeb.Controllers
             };
 
             return PartialView(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CancelExpenditureGroup(int id)
+        {
+            List<Expenditure> expenditureList = (from e in _db.Expenditures.Include(e => e.IncomingExpenditure)
+                                                 where e.IncomingExpenditureId == id
+                                                 select e).ToList();
+
+            foreach (Expenditure e in expenditureList)
+            {
+                var operation = new ExpenditureOperation
+                {
+                    Expenditure = e,
+                    OperationDateTime = DateTime.Now,
+                    OperationTypeId = ExpenditureOperation.EOType.Cancelled
+                };
+
+                _db.ExpenditureOperations.Add(operation);
+            }
+
+            if (expenditureList.Count() > 0)
+            {
+                expenditureList.FirstOrDefault().IncomingExpenditure.IsProcessed = false;
+            }
+
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("CashlessExpenditures");
         }
     }
 }

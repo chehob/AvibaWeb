@@ -11,7 +11,7 @@
 <div class="box col-md-12">
     <div class="box-inner">
         <div class="box-header well" data-original-title="">
-            <h2>Итого: @Model.Amount</h2>
+            <h2>Итого: @Model.Amount (Нал: @Model.AmountCash, Безнал: @Model.AmountCashless)</h2>
         </div>
         <div class="box-content">
             <table class="table table-striped table-bordered bootstrap-datatable datatable" id="dataTable">
@@ -19,38 +19,54 @@
                     <tr>
                         <th>Наименование</th>
                         <th>Сумма</th>
+                        <th>Сумма нал</th>
+                        <th>Сумма безнал</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (!Model.ItemGroups.Any())
                     {
-                        <tr>
-                            <td colspan="2" class="text-center">Нет операций</td>
-                            <td style="display: none;"></td>
-                        </tr>
+                    <tr>
+                        <td colspan="4" class="text-center">Нет операций</td>
+                        <td style="display: none;"></td>
+                        <td style="display: none;"></td>
+                        <td style="display: none;"></td>
+                    </tr>
                     }
                     else
                     {
                         foreach (var itemGroup in Model.ItemGroups)
                         {
-                            <tr>
-                                <td class="text-center">
-                                    <div style="min-height: 32px;">@itemGroup.Name</div>
-                                </td>
-                                <td>
-                                    <b>@itemGroup.AmountStr</b>
-                                </td>
-                            </tr>
+                    <tr>
+                        <td class="text-center">
+                            <div style="min-height: 32px;">@itemGroup.Name</div>
+                        </td>
+                        <td>
+                            <b>@itemGroup.AmountStr</b>
+                        </td>
+                        <td>
+                            @itemGroup.AmountCashStr
+                        </td>
+                        <td>
+                            @itemGroup.AmountCashlessStr
+                        </td>
+                    </tr>
                             foreach (var item in itemGroup.Items)
                             {
-                        <tr>
-                            <td>
-                                @item.Name
-                            </td>
-                            <td>
-                                <b>@item.Amount</b>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>
+                            @item.Name
+                        </td>
+                        <td>
+                            <b>@item.Amount</b>
+                        </td>
+                        <td>
+                            @item.AmountCashStr
+                        </td>
+                        <td>
+                            @item.AmountCashlessStr
+                        </td>
+                    </tr>
                             }
                         }
                     }
