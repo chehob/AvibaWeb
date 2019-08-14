@@ -4,11 +4,20 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using static AvibaWeb.DomainModels.CorporatorReceipt;
 
 namespace AvibaWeb.DomainModels
 {
     public class Counterparty
     {
+        public enum CEntityType
+        {
+            [Display(Name = "Физическое лицо")]
+            Individual = 0,
+            [Display(Name = "Юридическое лицо")]
+            Entity = 1
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Display(Name = "ИНН")]
@@ -49,6 +58,10 @@ namespace AvibaWeb.DomainModels
 
         [Display(Name = "Должность представителя")]
         public string ManagementPosition { get; set; }
+
+        public CEntityType EntityType { get; set; } = CEntityType.Entity;
+
+        public CR1CStatus _1CStatus { get; set; }
 
         [Display(Name = "Тип")]
         public int? TypeId { get; set; }

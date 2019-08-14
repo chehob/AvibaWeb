@@ -240,6 +240,50 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpGet]
+        public ActionResult CashlessExpenditureSummary(ExpenditureSummaryGrouping grouping, DateTime? fromDate, DateTime? toDate)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var queryToDate = toDate ?? DateTime.Now;
+            var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
+
+            var t = from expenditure in _db.Expenditures
+                                    .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
+                    join eo in _db.ExpenditureOperations on expenditure.ExpenditureId equals eo.ExpenditureId
+                    where eo.OperationDateTime >= queryFromDate && eo.OperationDateTime <= queryToDate &&
+                     expenditure.PaymentTypeId == PaymentTypes.Cashless
+                    group expenditure by new { expenditure.ObjectId, expenditure.DeskGroupId } into g
+                    select g;
+                    
+            var model = new CashlessExpenditureSummaryViewModel
+            {
+                ItemGroups = (from expenditure in _db.Expenditures
+                                    .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
+                                   join eo in _db.ExpenditureOperations on expenditure.ExpenditureId equals eo.ExpenditureId
+                                   where eo.OperationDateTime >= queryFromDate && eo.OperationDateTime <= queryToDate &&
+                                    expenditure.PaymentTypeId == PaymentTypes.Cashless
+                                   group expenditure by new { groupField = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? expenditure.DeskGroupId : expenditure.ObjectId) } into g
+                                   select new ExpenditureSummaryViewItemGroup
+                              {
+                                  Name = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? g.FirstOrDefault().DeskGroup.Name : g.FirstOrDefault().Object.Description),
+                                  Amount = g.Sum(ig => ig.Amount),
+                                  AmountStr = g.Sum(ig => ig.Amount).ToString("#,0.00", nfi),
+                                  Items = (from item in g
+                                           group item by new { groupField = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? item.ObjectId : item.DeskGroupId) } into sg
+                                           select new ExpenditureSummaryViewItem
+                                           {
+                                               Amount = sg.Sum(isg => isg.Amount).ToString("#,0.00", nfi),
+                                               Name = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? sg.FirstOrDefault().Object.Description : sg.FirstOrDefault().DeskGroup.Name)
+                                           }).ToList()
+                              }).ToList()
+            };
+            model.Amount = model.ItemGroups.Sum(ig => ig.Amount).ToString("#,0.00", nfi);
+
+            return PartialView(model);
+        }
+
+        [HttpGet]
         public ActionResult ProcessIncomingExpenditure(int id)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();

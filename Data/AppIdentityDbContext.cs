@@ -96,6 +96,12 @@ namespace AvibaWeb.Models
 
         public DbSet<IncomingExpenditure> IncomingExpenditures { get; set; }
 
+        public DbSet<_1CUpload> _1CUploads { get; set; }
+
+        public DbSet<_1CUploadData> _1CUploadData { get; set; }
+
+        public DbSet<_1СProviderDocument> _1СProviderDocuments { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

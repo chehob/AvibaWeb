@@ -38,5 +38,9 @@ namespace AvibaWeb.DomainModels
         public int ReceiptNumberGroupId { get; set; }
 
         public string CorpReceiptPrefix { get; set; }
+
+        public int? _1CUploadDataId { get; set; }
+        [ForeignKey("_1CUploadDataId")]
+        public virtual _1CUploadData _1CUploadBinding { get; set; }
     }
 }

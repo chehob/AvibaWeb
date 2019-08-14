@@ -4,14 +4,16 @@ using AvibaWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AvibaWeb.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190809090156_MCounterparty_1CStatus")]
+    partial class MCounterparty_1CStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,35 +49,6 @@ namespace AvibaWeb.Migrations
                     b.HasIndex("CounterpartyId");
 
                     b.ToTable("_1CUploadData");
-                });
-
-            modelBuilder.Entity("AvibaWeb.DomainModels._1СProviderDocument", b =>
-                {
-                    b.Property<int>("_1СProviderDocumentId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("DocumentDate");
-
-                    b.Property<string>("DocumentName");
-
-                    b.Property<string>("DocumentNumber");
-
-                    b.Property<bool>("IsActive");
-
-                    b.Property<int>("OrganizationId");
-
-                    b.Property<string>("ProviderId");
-
-                    b.Property<string>("_1CId");
-
-                    b.HasKey("_1СProviderDocumentId");
-
-                    b.HasIndex("OrganizationId");
-
-                    b.HasIndex("ProviderId");
-
-                    b.ToTable("_1СProviderDocuments");
                 });
 
             modelBuilder.Entity("AvibaWeb.DomainModels.AcceptedCollector", b =>
@@ -1646,18 +1619,6 @@ namespace AvibaWeb.Migrations
                     b.HasOne("AvibaWeb.DomainModels.Counterparty", "Principal")
                         .WithMany()
                         .HasForeignKey("CounterpartyId");
-                });
-
-            modelBuilder.Entity("AvibaWeb.DomainModels._1СProviderDocument", b =>
-                {
-                    b.HasOne("AvibaWeb.DomainModels.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("AvibaWeb.DomainModels.Counterparty", "Provider")
-                        .WithMany()
-                        .HasForeignKey("ProviderId");
                 });
 
             modelBuilder.Entity("AvibaWeb.DomainModels.AcceptedCollector", b =>

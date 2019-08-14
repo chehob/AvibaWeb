@@ -17,5 +17,6 @@ namespace AvibaWeb.DomainModels
         public string PassengerName { get; set; }
         public int SegCount { get; set; }
         public int? TicketType { get; set; }
+        public string Session { get; set; }
     }
 }

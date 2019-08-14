@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using static AvibaWeb.DomainModels.CorporatorReceipt;
 
 namespace AvibaWeb.DomainModels
 {
@@ -37,6 +38,8 @@ namespace AvibaWeb.DomainModels
         public string Description { get; set; }
 
         public string OrderNumber { get; set; }
+
+        public CR1CStatus _1CStatus { get; set; }
 
         public string FactualCounterpartyId { get; set; }
         [ForeignKey("FactualCounterpartyId")]

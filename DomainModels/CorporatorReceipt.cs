@@ -25,6 +25,13 @@ namespace AvibaWeb.DomainModels
             CorpClient = 1
         }
 
+        public enum CR1CStatus
+        {
+            New = 0,
+            Pending = 1,
+            Processed = 2
+        }
+
         [Key]
         public int CorporatorReceiptId { get; set; }
 
@@ -53,6 +60,8 @@ namespace AvibaWeb.DomainModels
         public CRType TypeId { get; set; }
 
         public int? WebSiteSubGroupId { get; set; }
+
+        public CR1CStatus _1CStatus { get; set; }
 
         public virtual ICollection<CorporatorReceiptItem> Items { get; set; }
 

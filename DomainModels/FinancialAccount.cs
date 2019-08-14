@@ -25,6 +25,9 @@ namespace AvibaWeb.DomainModels
         [Display(Name = "Корр счет")]
         public string CorrespondentAccount { get; set; }
 
+        [Display(Name = "СВИФТБИК")]
+        public string SWIFTBIK { get; set; }
+
         [Display(Name = "Баланс")]
         [Column(TypeName = "Money")]
         public decimal Balance { get; set; }

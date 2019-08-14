@@ -81,4 +81,33 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
     {
         public List<ExpenditureViewItemGroup> ItemGroups { get; set; }
     }
+
+    public enum ExpenditureSummaryGrouping
+    {
+        ByObject = 1,
+        ByDeskGroup = 2
+    }
+
+    public class ExpenditureSummaryViewItem
+    {
+        [Display(Name = "Наименование")]
+        public string Name { get; set; }
+
+        [Display(Name = "Сумма")]
+        public string Amount { get; set; }
+    }
+
+    public class ExpenditureSummaryViewItemGroup
+    {
+        public string Name { get; set; }
+        public decimal Amount { get; set; }
+        public string AmountStr { get; set; }
+        public List<ExpenditureSummaryViewItem> Items { get; set; }
+    }
+
+    public class CashlessExpenditureSummaryViewModel
+    {
+        public string Amount { get; set; }
+        public List<ExpenditureSummaryViewItemGroup> ItemGroups { get; set; }
+    }
 }
