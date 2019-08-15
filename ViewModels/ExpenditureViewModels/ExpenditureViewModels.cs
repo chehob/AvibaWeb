@@ -99,6 +99,9 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
         }
         private NumberFormatInfo nfi;
 
+        public int DeskGroupId { get; set; }
+        public int ObjectId { get; set; }
+
         [Display(Name = "Наименование")]
         public string Name { get; set; }
 
@@ -120,7 +123,7 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
             nfi.NumberGroupSeparator = " ";
         }
         private NumberFormatInfo nfi;
-
+        
         public string Name { get; set; }
         public decimal Amount => AmountCash + AmountCashless;
         public decimal AmountCash { get; set; }

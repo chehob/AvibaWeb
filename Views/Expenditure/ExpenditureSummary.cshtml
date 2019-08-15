@@ -39,7 +39,7 @@
                         {
                     <tr>
                         <td class="text-center">
-                            <div style="min-height: 32px;">@itemGroup.Name</div>
+                            <div style="min-height: 32px;">@itemGroup.Name</div>                            
                         </td>
                         <td>
                             <b>@itemGroup.AmountStr</b>
@@ -56,6 +56,8 @@
                     <tr>
                         <td>
                             <span class="showOperationsBtn btn-setting">@item.Name</span>
+                            <input hidden class="deskGroupId" value="@item.DeskGroupId" />
+                            <input hidden class="objectId" value="@item.ObjectId" />
                         </td>
                         <td>
                             <b>@item.Amount</b>
@@ -171,11 +173,12 @@
         });
     });
 
-    $("#showOperationsBtn").click(function (e) {
+    $(".showOperationsBtn").click(function (e) {
         e.preventDefault();
 
         const sendJsonData = {
-            grouping: 1,
+            deskGroupId: $(this).siblings(".deskGroupId")[0].value,
+            objectId: $(this).siblings(".objectId")[0].value,
             fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
             toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true)
         };

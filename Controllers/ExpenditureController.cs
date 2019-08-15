@@ -256,13 +256,13 @@ namespace AvibaWeb.Controllers
                 ToDate = queryToDate.ToString("d"),
                 ItemGroups = (from expenditure in _db.Expenditures
                                     .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
-                              let eo = _db.ExpenditureOperations.Where(eo => expenditure.ExpenditureId == eo.ExpenditureId).OrderByDescending(eo => eo.OperationDateTime).FirstOrDefault()
+                              from eo in _db.ExpenditureOperations.Where(eo => expenditure.ExpenditureId == eo.ExpenditureId).OrderByDescending(eo => eo.OperationDateTime).Take(1).DefaultIfEmpty()
                               where eo.OperationDateTime >= queryFromDate && eo.OperationDateTime <= queryToDate.AddDays(1) &&
                                     eo.OperationTypeId == ExpenditureOperation.EOType.New
                                    group expenditure by new { groupField = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? expenditure.DeskGroupId : expenditure.ObjectId) } into g
                                    select new ExpenditureSummaryViewItemGroup
-                              {
-                                  Name = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? g.FirstOrDefault().DeskGroup.Name : g.FirstOrDefault().Object.Description),
+                              {        
+                                       Name = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? g.FirstOrDefault().DeskGroup.Name : g.FirstOrDefault().Object.Description),
                                     AmountCash = g.Where(ig => ig.PaymentTypeId == PaymentTypes.Cash).Sum(ig => ig.Amount),
                                     AmountCashless = g.Where(ig => ig.PaymentTypeId == PaymentTypes.Cashless).Sum(ig => ig.Amount),                                    
                                        Items = (from item in g
@@ -271,7 +271,9 @@ namespace AvibaWeb.Controllers
                                            {
                                                AmountCash = sg.Where(isg => isg.PaymentTypeId == PaymentTypes.Cash).Sum(isg => isg.Amount),
                                                AmountCashless = sg.Where(isg => isg.PaymentTypeId == PaymentTypes.Cashless).Sum(isg => isg.Amount),
-                                               Name = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? sg.FirstOrDefault().Object.Description : sg.FirstOrDefault().DeskGroup.Name)
+                                               Name = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? sg.FirstOrDefault().Object.Description : sg.FirstOrDefault().DeskGroup.Name),
+                                               DeskGroupId = sg.FirstOrDefault().DeskGroupId,
+                                               ObjectId = sg.FirstOrDefault().ObjectId
                                            }).ToList()
                               }).ToList()
             };
@@ -416,7 +418,7 @@ namespace AvibaWeb.Controllers
             {
                 Items = (from expenditure in _db.Expenditures
                                     .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
-                         let eo = _db.ExpenditureOperations.Where(eo => expenditure.ExpenditureId == eo.ExpenditureId).OrderByDescending(eo => eo.OperationDateTime).FirstOrDefault()
+                         from eo in _db.ExpenditureOperations.Where(eo => expenditure.ExpenditureId == eo.ExpenditureId).OrderByDescending(eo => eo.OperationDateTime).Take(1).DefaultIfEmpty()
                          where eo.OperationDateTime >= fromDate && eo.OperationDateTime <= toDate.AddDays(1) &&
                                eo.OperationTypeId == ExpenditureOperation.EOType.New &&
                                expenditure.DeskGroupId == deskGroupId && expenditure.ObjectId == objectId
@@ -424,7 +426,7 @@ namespace AvibaWeb.Controllers
                          {
                              OperationDateTime = eo.OperationDateTime.ToString("dd.MM.yyyy HH:mm"),
                              Amount = expenditure.Amount.ToString("#,0.00", nfi),
-                             PaymentType = expenditure.PaymentTypeId.ToString()
+                             PaymentType = expenditure.PaymentTypeId == PaymentTypes.Cash ? "Нал" : "Безнал"
                          }).ToList()
             };
 
