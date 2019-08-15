@@ -298,5 +298,73 @@ namespace AvibaWeb.Controllers
                 }).FirstOrDefault();
             return PartialView(model);
         }
+
+        [HttpGet]
+        public ActionResult ExpenditureSummary(ExpenditureSummaryGrouping grouping, DateTime? fromDate, DateTime? toDate)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var queryToDate = toDate ?? DateTime.Now;
+            var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
+
+            var model = new ExpenditureSummaryViewModel
+            {
+                FromDate = queryFromDate.ToString("d"),
+                ToDate = queryToDate.ToString("d"),
+                ItemGroups = (from expenditure in _db.Expenditures
+                                    .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
+                              from eo in _db.ExpenditureOperations.Where(eo => expenditure.ExpenditureId == eo.ExpenditureId).OrderByDescending(eo => eo.OperationDateTime).Take(1).DefaultIfEmpty()
+                              where eo.OperationDateTime >= queryFromDate && eo.OperationDateTime <= queryToDate.AddDays(1) &&
+                                    eo.OperationTypeId == ExpenditureOperation.EOType.New
+                              group expenditure by new { groupField = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? expenditure.DeskGroupId : expenditure.ObjectId) } into g
+                              select new ExpenditureSummaryViewItemGroup
+                              {
+                                  Name = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? g.FirstOrDefault().DeskGroup.Name : g.FirstOrDefault().Object.Description),
+                                  AmountCash = g.Where(ig => ig.PaymentTypeId == PaymentTypes.Cash).Sum(ig => ig.Amount),
+                                  AmountCashless = g.Where(ig => ig.PaymentTypeId == PaymentTypes.Cashless).Sum(ig => ig.Amount),
+                                  Items = (from item in g
+                                           group item by new { groupField = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? item.ObjectId : item.DeskGroupId) } into sg
+                                           select new ExpenditureSummaryViewItem
+                                           {
+                                               AmountCash = sg.Where(isg => isg.PaymentTypeId == PaymentTypes.Cash).Sum(isg => isg.Amount),
+                                               AmountCashless = sg.Where(isg => isg.PaymentTypeId == PaymentTypes.Cashless).Sum(isg => isg.Amount),
+                                               Name = (grouping == ExpenditureSummaryGrouping.ByDeskGroup ? sg.FirstOrDefault().Object.Description : sg.FirstOrDefault().DeskGroup.Name),
+                                               DeskGroupId = sg.FirstOrDefault().DeskGroupId,
+                                               ObjectId = sg.FirstOrDefault().ObjectId
+                                           }).ToList()
+                              }).ToList()
+            };
+            model.AmountCash = model.ItemGroups.Sum(ig => ig.AmountCash).ToString("#,0.00", nfi);
+            model.AmountCashless = model.ItemGroups.Sum(ig => ig.AmountCashless).ToString("#,0.00", nfi);
+            model.Amount = model.ItemGroups.Sum(ig => ig.Amount).ToString("#,0.00", nfi);
+
+            return PartialView(model);
+        }
+
+        [HttpGet]
+        public ActionResult ExpenditureSummaryOperations(int deskGroupId, int objectId, DateTime fromDate, DateTime toDate)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var model = new ExpenditureSummaryOperationsViewModel
+            {
+                Items = (from expenditure in _db.Expenditures
+                                    .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
+                         from eo in _db.ExpenditureOperations.Where(eo => expenditure.ExpenditureId == eo.ExpenditureId).OrderByDescending(eo => eo.OperationDateTime).Take(1).DefaultIfEmpty()
+                         where eo.OperationDateTime >= fromDate && eo.OperationDateTime <= toDate.AddDays(1) &&
+                               eo.OperationTypeId == ExpenditureOperation.EOType.New &&
+                               expenditure.DeskGroupId == deskGroupId && expenditure.ObjectId == objectId
+                         select new ExpenditureSummaryOperationsItem
+                         {
+                             OperationDateTime = eo.OperationDateTime.ToString("dd.MM.yyyy HH:mm"),
+                             Amount = expenditure.Amount.ToString("#,0.00", nfi),
+                             PaymentType = expenditure.PaymentTypeId == PaymentTypes.Cash ? "Нал" : "Безнал"
+                         }).ToList()
+            };
+
+            return PartialView(model);
+        }
     }
 }

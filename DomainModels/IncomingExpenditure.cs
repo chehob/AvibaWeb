@@ -18,6 +18,8 @@ namespace AvibaWeb.DomainModels
         [ForeignKey("FinancialAccountOperationId")]
         public virtual FinancialAccountOperation FinancialAccountOperation { get; set; }
 
+        public virtual ICollection<Expenditure> Expenditures { get; set; }
+
         public bool IsProcessed { get; set; }
     }
 }

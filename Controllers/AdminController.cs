@@ -913,6 +913,11 @@ namespace AvibaWeb.Controllers
                 counterparty.ExpenditureDeskGroupId = model.Item.ExpenditureDeskGroupId;
                 counterparty.ExpenditureObjectId = model.Item.ExpenditureObjectId;
 
+                if(counterparty.ExpenditureDeskGroupId != null && counterparty.ExpenditureObjectId != null)
+                {
+                    UpdateIncomingExpenditures(counterparty);
+                }
+
                 await _db.SaveChangesAsync();
 
                 return RedirectToAction("Counterparties");
@@ -921,6 +926,52 @@ namespace AvibaWeb.Controllers
             ModelState.AddModelError("", "Контрагент не найден");
 
             return PartialView(model);
+        }
+
+        private void UpdateIncomingExpenditures(Counterparty counterparty)
+        {
+            var incomingExpendituresList = (from ie in _db.IncomingExpenditures
+                                            .Include(ie => ie.FinancialAccountOperation).Include(ie => ie.Expenditures)
+                     where ie.FinancialAccountOperation.CounterpartyId == counterparty.ITN
+                     select ie).ToList();
+
+            var unprocessedList = incomingExpendituresList.Where(ie => ie.IsProcessed == false).ToList();
+            var processedList = incomingExpendituresList
+                .Where(ie => ie.IsProcessed && ie.Expenditures
+                    .Any(iee => iee.ObjectId != counterparty.ExpenditureObjectId.Value ||
+                        iee.DeskGroupId != counterparty.ExpenditureDeskGroupId.Value))
+                .ToList();
+            foreach (var incomingExpenditure in unprocessedList)
+            {
+                var expenditure = new Expenditure
+                {
+                    Name = incomingExpenditure.FinancialAccountOperation.Description,
+                    Amount = incomingExpenditure.Amount.Value,
+                    DeskGroupId = counterparty.ExpenditureDeskGroupId.Value,
+                    TypeId = _db.ExpenditureTypes.FirstOrDefault(et => et.Description == "Расход").ExpenditureTypeId,
+                    ObjectId = counterparty.ExpenditureObjectId.Value,
+                    PaymentTypeId = PaymentTypes.Cashless,
+                    IncomingExpenditure = incomingExpenditure
+                };
+
+                var operation = new ExpenditureOperation
+                {
+                    Expenditure = expenditure,
+                    OperationDateTime = DateTime.Now,
+                    OperationTypeId = ExpenditureOperation.EOType.New
+                };
+
+                incomingExpenditure.IsProcessed = true;
+
+                _db.ExpenditureOperations.Add(operation);
+            }
+
+            foreach (var incomingExpenditure in processedList)
+            foreach (var expenditure in incomingExpenditure.Expenditures)
+            {
+                expenditure.DeskGroupId = counterparty.ExpenditureDeskGroupId.Value;
+                expenditure.ObjectId = counterparty.ExpenditureObjectId.Value;
+            }
         }
         #endregion
 
