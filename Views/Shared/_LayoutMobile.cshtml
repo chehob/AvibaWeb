@@ -76,6 +76,12 @@
 </head>
 <body style="position: relative;">
 <!-- topbar starts -->
+
+
+    
+    
+</div>
+
 <div class="navbar navbar-default" role="navigation">
 
     <div class="navbar-inner">
@@ -114,8 +120,8 @@
     <div class="sidebar-nav">
         <div class="nav-canvas">
 
-            <ul class="nav nav-pills nav-stacked main-menu">
-                <li class="nav-header">Меню</li>
+            <ul class="nav nav-pills main-menu">
+                
                 <li>
                     <ul class="nav nav-pills nav-stacked">
                         @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
@@ -222,6 +228,7 @@
         </div>
     </div>
 </div>
+ 
 <div id="contentResults"></div>
 @RenderBody()
 
