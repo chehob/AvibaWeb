@@ -131,7 +131,7 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
         public List<ExpenditureSummaryViewItem> Items { get; set; }
     }
 
-    public class CashlessExpenditureSummaryViewModel
+    public class ExpenditureSummaryViewModel
     {
         public string FromDate { get; set; }
         public string ToDate { get; set; }
@@ -139,5 +139,17 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
         public string AmountCash { get; set; }
         public string AmountCashless { get; set; }
         public List<ExpenditureSummaryViewItemGroup> ItemGroups { get; set; }
+    }
+
+    public class ExpenditureSummaryOperationsItem
+    {
+        public string OperationDateTime { get; set; }
+        public string Amount { get; set; }
+        public string PaymentType { get; set; }
+    }
+
+    public class ExpenditureSummaryOperationsViewModel
+    {
+        public List<ExpenditureSummaryOperationsItem> Items { get; set; }
     }
 }

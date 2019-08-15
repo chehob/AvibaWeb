@@ -242,7 +242,7 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpGet]
-        public ActionResult CashlessExpenditureSummary(ExpenditureSummaryGrouping grouping, DateTime? fromDate, DateTime? toDate)
+        public ActionResult ExpenditureSummary(ExpenditureSummaryGrouping grouping, DateTime? fromDate, DateTime? toDate)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
@@ -250,7 +250,7 @@ namespace AvibaWeb.Controllers
             var queryToDate = toDate ?? DateTime.Now;
             var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
                     
-            var model = new CashlessExpenditureSummaryViewModel
+            var model = new ExpenditureSummaryViewModel
             {
                 FromDate = queryFromDate.ToString("d"),
                 ToDate = queryToDate.ToString("d"),
@@ -404,6 +404,31 @@ namespace AvibaWeb.Controllers
             await _db.SaveChangesAsync();
 
             return RedirectToAction("CashlessExpenditures");
+        }
+
+        [HttpGet]
+        public ActionResult ExpenditureSummaryOperations(int deskGroupId, int objectId, DateTime fromDate, DateTime toDate)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var model = new ExpenditureSummaryOperationsViewModel
+            {
+                Items = (from expenditure in _db.Expenditures
+                                    .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
+                         let eo = _db.ExpenditureOperations.Where(eo => expenditure.ExpenditureId == eo.ExpenditureId).OrderByDescending(eo => eo.OperationDateTime).FirstOrDefault()
+                         where eo.OperationDateTime >= fromDate && eo.OperationDateTime <= toDate.AddDays(1) &&
+                               eo.OperationTypeId == ExpenditureOperation.EOType.New &&
+                               expenditure.DeskGroupId == deskGroupId && expenditure.ObjectId == objectId
+                         select new ExpenditureSummaryOperationsItem
+                         {
+                             OperationDateTime = eo.OperationDateTime.ToString("dd.MM.yyyy HH:mm"),
+                             Amount = expenditure.Amount.ToString("#,0.00", nfi),
+                             PaymentType = expenditure.PaymentTypeId.ToString()
+                         }).ToList()
+            };
+
+            return PartialView(model);
         }
     }
 }

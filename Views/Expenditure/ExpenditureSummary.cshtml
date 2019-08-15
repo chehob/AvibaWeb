@@ -1,6 +1,6 @@
 ﻿@using AvibaWeb.DomainModels
 @using AvibaWeb.ViewModels.ExpenditureViewModels
-@model CashlessExpenditureSummaryViewModel
+@model ExpenditureSummaryViewModel
 
 <div class="col-md-12">
     Выбрать с: <input type="text" autocomplete="off" id="min" name="min" class="date-range-filter"> по: <input type="text" autocomplete="off" id="max" name="max" class="date-range-filter">
@@ -55,7 +55,7 @@
                             {
                     <tr>
                         <td>
-                            @item.Name
+                            <span class="showOperationsBtn btn-setting">@item.Name</span>
                         </td>
                         <td>
                             <b>@item.Amount</b>
@@ -72,6 +72,19 @@
                     }
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dialog" title="Basic dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Операции</span>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer"></div>
         </div>
     </div>
 </div>
@@ -123,7 +136,7 @@
 
         e.preventDefault();
         $.ajax({
-            url: "/Expenditure/CashlessExpenditureSummary",
+            url: "/Expenditure/ExpenditureSummary",
             type: "GET",
             cache: false,
             data: sendJsonData,
@@ -145,12 +158,35 @@
 
         e.preventDefault();
         $.ajax({
-            url: "/Expenditure/CashlessExpenditureSummary",
+            url: "/Expenditure/ExpenditureSummary",
             type: "GET",
             cache: false,
             data: sendJsonData,
             success: function (result) {
                 $("#results").html(result);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $("#showOperationsBtn").click(function (e) {
+        e.preventDefault();
+
+        const sendJsonData = {
+            grouping: 1,
+            fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+            toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true)
+        };
+
+        $.ajax({
+            url: "/Expenditure/ExpenditureSummaryOperations",
+            type: "GET",
+            cache: false,
+            data: sendJsonData,
+            success: function (result) {
+                $(".modal-body").html(result);
             },
             error: function (error) {
                 console.log(error);
