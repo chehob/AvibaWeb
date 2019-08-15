@@ -118,6 +118,12 @@
                 <li class="nav-header">Меню</li>
                 <li>
                     <ul class="nav nav-pills nav-stacked">
+                             @if (User.IsInRole("Administrators"))
+                        {
+                            <li>
+                                <a href="https://ams.aviba.ru/Mobile"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Мобильная</a>
+                            </li>
+                        }
                         @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
                         {
                             <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
