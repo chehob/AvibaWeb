@@ -366,5 +366,43 @@ namespace AvibaWeb.Controllers
 
             return PartialView(model);
         }
+
+        [HttpGet]
+        public ActionResult IncomeSummary(DateTime? fromDate, DateTime? toDate)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var queryToDate = toDate ?? DateTime.Now;
+            var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
+
+            var q = (from income in _db.VIncomeKRS
+                     from d in _db.Desks.Include(id => id.Group).Where(id => income.DeskID == id.DeskId).DefaultIfEmpty()
+                     where income.OperationDate >= queryFromDate && income.OperationDate < queryToDate.AddDays(1)
+                     group new { income, d } by d.GroupId into g
+                     select new IncomeSummaryViewItemGroup
+                     {
+                         Name = g.FirstOrDefault().d.Group.Name,
+                         AmountKRS = g.Sum(ig => ig.income.Amount)
+                     }).ToList();
+
+            var model = new IncomeSummaryViewModel
+            {
+                FromDate = queryFromDate.ToString("d"),
+                ToDate = queryToDate.ToString("d"),
+                ItemGroups = (from income in _db.VIncomeKRS
+                              from d in _db.Desks.Include(id => id.Group).Where(id => income.DeskID == id.DeskId).DefaultIfEmpty()
+                              where income.OperationDate >= queryFromDate && income.OperationDate < queryToDate.AddDays(1)
+                              group new { income, d } by d.GroupId into g
+                              select new IncomeSummaryViewItemGroup
+                              {
+                                  Name = g.FirstOrDefault().d.Group.Name,
+                                  AmountKRS = g.Sum(ig => ig.income.Amount)
+                              }).ToList()
+            };
+            model.AmountKRS = model.ItemGroups.Sum(ig => ig.AmountKRS).ToString("#,0.00", nfi);
+
+            return PartialView(model);
+        }
     }
 }

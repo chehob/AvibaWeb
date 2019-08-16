@@ -1297,6 +1297,34 @@ namespace AvibaWeb.Migrations
                     b.ToTable("VKRSCancelRequests");
                 });
 
+            modelBuilder.Entity("AvibaWeb.DomainModels.VIncomeKRS", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
+
+                b.Property<int>("OperationTypeID");
+
+                b.Property<decimal>("Amount");
+
+                b.Property<int>("KRSID");
+
+                b.Property<int?>("TicketID");
+
+                b.Property<DateTime>("OperationDate");
+
+                b.Property<bool>("IsCanceled");
+
+                b.Property<int>("KRSNumber");
+
+                b.Property<int>("KRSType");
+
+                b.Property<string>("DeskID");
+
+                b.HasKey("Id");
+
+                b.ToTable("VIncomeKRS");
+            });
+
             modelBuilder.Entity("AvibaWeb.DomainModels.VReceiptLuggageInfo", b =>
                 {
                     b.Property<Guid>("Id")

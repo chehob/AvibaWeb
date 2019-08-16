@@ -747,14 +747,42 @@ namespace AvibaWeb.Controllers
                             counterparty?.SubagentData == null &&
                             counterparty?.LoanGroup == null &&
                             operation.Amount < 0)
-                        {
-                            var expenditure = new IncomingExpenditure
+                        {   
+                            var incomingExpenditure = new IncomingExpenditure
                             {
                                 Amount = -operation.Amount,
                                 IsProcessed = false,
                                 FinancialAccountOperation = operation
                             };
-                            _db.IncomingExpenditures.Add(expenditure);
+
+                            if (counterparty?.ExpenditureDeskGroupId != null && counterparty?.ExpenditureObjectId != null)
+                            {
+                                var expenditure = new Expenditure
+                                {
+                                    Name = incomingExpenditure.FinancialAccountOperation.Description,
+                                    Amount = incomingExpenditure.Amount.Value,
+                                    DeskGroupId = counterparty.ExpenditureDeskGroupId.Value,
+                                    TypeId = _db.ExpenditureTypes.FirstOrDefault(et => et.Description == "Расход").ExpenditureTypeId,
+                                    ObjectId = counterparty.ExpenditureObjectId.Value,
+                                    PaymentTypeId = PaymentTypes.Cashless,
+                                    IncomingExpenditure = incomingExpenditure
+                                };
+
+                                var expenditureOperation = new ExpenditureOperation
+                                {
+                                    Expenditure = expenditure,
+                                    OperationDateTime = DateTime.Now,
+                                    OperationTypeId = ExpenditureOperation.EOType.New
+                                };
+
+                                incomingExpenditure.IsProcessed = true;
+
+                                _db.ExpenditureOperations.Add(expenditureOperation);
+                            }
+                            else
+                            {
+                                _db.IncomingExpenditures.Add(incomingExpenditure);
+                            }
                         }
                     }
 

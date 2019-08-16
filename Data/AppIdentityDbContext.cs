@@ -102,6 +102,8 @@ namespace AvibaWeb.Models
 
         public DbSet<_1СProviderDocument> _1СProviderDocuments { get; set; }
 
+        public DbSet<VIncomeKRS> VIncomeKRS { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
