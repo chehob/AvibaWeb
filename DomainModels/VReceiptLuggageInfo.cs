@@ -18,5 +18,6 @@ namespace AvibaWeb.DomainModels
         public string PassengerName { get; set; }
         public string TicketLabel { get; set; }
         public string InfoSession { get; set; }
+        public string DeskID { get; set; }
     }
 }

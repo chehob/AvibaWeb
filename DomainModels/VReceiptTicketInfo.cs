@@ -18,5 +18,6 @@ namespace AvibaWeb.DomainModels
         public int SegCount { get; set; }
         public int? TicketType { get; set; }
         public string InfoSession { get; set; }
+        public string DeskID { get; set; }
     }
 }

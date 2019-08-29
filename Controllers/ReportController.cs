@@ -305,7 +305,7 @@ namespace AvibaWeb.Controllers
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
-            var queryToDate = toDate ?? DateTime.Now;
+            var queryToDate = toDate ?? DateTime.Now.Date;
             var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
 
             var model = new ExpenditureSummaryViewModel
@@ -366,38 +366,53 @@ namespace AvibaWeb.Controllers
 
             return PartialView(model);
         }
-
+        
         [HttpGet]
         public ActionResult IncomeSummary(DateTime? fromDate, DateTime? toDate)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
-            var queryToDate = toDate ?? DateTime.Now;
+            var queryToDate = toDate ?? DateTime.Now.Date;
             var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
 
-            var q = (from income in _db.VIncomeKRS
-                     from d in _db.Desks.Include(id => id.Group).Where(id => income.DeskID == id.DeskId).DefaultIfEmpty()
-                     where income.OperationDate >= queryFromDate && income.OperationDate < queryToDate.AddDays(1)
-                     group new { income, d } by d.GroupId into g
-                     select new IncomeSummaryViewItemGroup
-                     {
-                         Name = g.FirstOrDefault().d.Group.Name,
-                         AmountKRS = g.Sum(ig => ig.income.Amount)
-                     }).ToList();
+            //var KRSList = (from dg in _db.DeskGroups
+            //               join d in _db.Desks on dg.DeskGroupId equals d.GroupId
+            //               join info in _db.VServiceReceiptIncomeInfo on d.DeskId equals info.DeskIssuedId
+            //               where info.DateTime >= queryFromDate && info.DateTime < queryToDate.AddDays(1)
+            //               group new { info, dg } by dg.DeskGroupId into g
+            //               select new IncomeSummaryViewItemGroup
+            //               {
+            //                   Name = g.FirstOrDefault().dg.Name,
+            //                   AmountKRS = g.Sum(ig => ig.info.Amount)
+            //               }).ToList();
+
+            //var a = (from dg in _db.DeskGroups
+            //         join d in _db.Desks on dg.DeskGroupId equals d.GroupId
+            //         join ti in _db.VReceiptTicketInfo on d.DeskId equals ti.DeskID
+            //         join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
+            //         join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
+            //         where cr.IssuedDateTime >= queryFromDate && cr.IssuedDateTime < queryToDate.AddDays(1)
+            //         group new { dg, cri } by dg.DeskGroupId into g
+            //         select new IncomeSummaryViewItemGroup
+            //         {
+            //             Name = g.FirstOrDefault().dg.Name,
+            //             AmountKRS = g.Sum(ig => ig.info.Amount)
+            //         }).ToList();
 
             var model = new IncomeSummaryViewModel
             {
                 FromDate = queryFromDate.ToString("d"),
                 ToDate = queryToDate.ToString("d"),
-                ItemGroups = (from income in _db.VIncomeKRS
-                              from d in _db.Desks.Include(id => id.Group).Where(id => income.DeskID == id.DeskId).DefaultIfEmpty()
-                              where income.OperationDate >= queryFromDate && income.OperationDate < queryToDate.AddDays(1)
-                              group new { income, d } by d.GroupId into g
+                ItemGroups = (from info in _db.VServiceReceiptIncomeInfo
+                              join d in _db.Desks on info.DeskIssuedId equals d.DeskId
+                              join dg in _db.DeskGroups on d.GroupId equals dg.DeskGroupId
+                              where info.DateTime >= queryFromDate && info.DateTime < queryToDate.AddDays(1)
+                              group new { info, dg } by dg.DeskGroupId into g
                               select new IncomeSummaryViewItemGroup
                               {
-                                  Name = g.FirstOrDefault().d.Group.Name,
-                                  AmountKRS = g.Sum(ig => ig.income.Amount)
+                                  Name = g.FirstOrDefault().dg.Name,
+                                  AmountKRS = g.Sum(ig => ig.info.Amount)
                               }).ToList()
             };
             model.AmountKRS = model.ItemGroups.Sum(ig => ig.AmountKRS).ToString("#,0.00", nfi);

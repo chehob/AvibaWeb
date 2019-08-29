@@ -235,6 +235,19 @@ namespace AvibaWeb.Controllers
 	                        where tio.ID = @TicketOperationId and
                             ((tio.OperationTypeID = 1 and k.OperationTypeID = 1) or (tio.OperationTypeID in (2,6) and k.OperationTypeID = 2))",
                         ticketOperationId);
+
+                    var rList = (from sr in _db.ServiceReceipts.Include(sr => sr.Items)
+                             where sr.ServiceOperationId == i.TicketOperationId.GetValueOrDefault(0) && sr.IsCanceled == true
+                             select sr);
+
+                    foreach(var r in rList)
+                    {
+                        r.IsCanceled = false;
+                        foreach(var item in r.Items)
+                        {
+                            item.IsCanceled = false;
+                        }
+                    }
                 }
 
                 if (model.Items != null)
@@ -272,6 +285,19 @@ namespace AvibaWeb.Controllers
 	                        where tio.ID = @TicketOperationId and
                             ((tio.OperationTypeID = 1 and k.OperationTypeID = 1) or (tio.OperationTypeID in (2,6) and k.OperationTypeID = 2))",
                             ticketOperationId);
+
+                        var rList = (from sr in _db.ServiceReceipts.Include(sr => sr.Items)
+                                     where sr.ServiceOperationId == int.Parse(i.TicketOperationId) && sr.IsCanceled == false
+                                     select sr);
+
+                        foreach (var r in rList)
+                        {
+                            r.IsCanceled = true;
+                            foreach (var item in r.Items)
+                            {
+                                item.IsCanceled = true;
+                            }
+                        }
                     }
                 }
             }

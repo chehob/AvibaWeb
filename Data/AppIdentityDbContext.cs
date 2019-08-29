@@ -104,6 +104,12 @@ namespace AvibaWeb.Models
 
         public DbSet<VIncomeKRS> VIncomeKRS { get; set; }
 
+        public DbSet<ServiceReceipt> ServiceReceipts { get; set; }
+        public DbSet<ServiceReceiptItem> ServiceReceiptItems { get; set; }
+        public DbSet<ServiceReceiptOperation> ServiceReceiptOperations { get; set; }
+
+        public DbSet<VServiceReceiptIncomeInfo> VServiceReceiptIncomeInfo { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -4,14 +4,16 @@ using AvibaWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AvibaWeb.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190819084017_MTicketReceipt_Initial")]
+    partial class MTicketReceipt_Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1022,77 +1024,6 @@ namespace AvibaWeb.Migrations
                     b.ToTable("ProviderBinding");
                 });
 
-            modelBuilder.Entity("AvibaWeb.DomainModels.ServiceReceipt", b =>
-                {
-                    b.Property<int>("ServiceReceiptId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("CustomOperationType");
-
-                    b.Property<string>("DelayedInsertBSONumber");
-
-                    b.Property<string>("EMDNumber");
-
-                    b.Property<bool>("IsCanceled");
-
-                    b.Property<int>("Number");
-
-                    b.Property<string>("Serie");
-
-                    b.Property<int?>("ServiceOperationId");
-
-                    b.Property<int>("Type");
-
-                    b.HasKey("ServiceReceiptId");
-
-                    b.ToTable("ServiceReceipts");
-                });
-
-            modelBuilder.Entity("AvibaWeb.DomainModels.ServiceReceiptItem", b =>
-                {
-                    b.Property<int>("ServiceReceiptItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<decimal>("Amount");
-
-                    b.Property<bool>("IsCanceled");
-
-                    b.Property<int?>("SegmentId");
-
-                    b.Property<int>("ServiceReceiptId");
-
-                    b.HasKey("ServiceReceiptItemId");
-
-                    b.HasIndex("ServiceReceiptId");
-
-                    b.ToTable("ServiceReceiptItems");
-                });
-
-            modelBuilder.Entity("AvibaWeb.DomainModels.ServiceReceiptOperation", b =>
-                {
-                    b.Property<int>("ServiceReceiptOperationId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("DateTime");
-
-                    b.Property<string>("DeskIssuedId");
-
-                    b.Property<int>("ServiceReceiptId");
-
-                    b.Property<int>("Type");
-
-                    b.HasKey("ServiceReceiptOperationId");
-
-                    b.HasIndex("DeskIssuedId");
-
-                    b.HasIndex("ServiceReceiptId");
-
-                    b.ToTable("ServiceReceiptOperations");
-                });
-
             modelBuilder.Entity("AvibaWeb.DomainModels.SettingsValue", b =>
                 {
                     b.Property<string>("Key")
@@ -1161,6 +1092,25 @@ namespace AvibaWeb.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("TicketCancelOperations");
+                });
+
+            modelBuilder.Entity("AvibaWeb.DomainModels.TicketReceipt", b =>
+                {
+                    b.Property<int>("TicketReceiptId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Number");
+
+                    b.Property<string>("Serie");
+
+                    b.Property<int?>("TicketOperationId");
+
+                    b.Property<int>("Type");
+
+                    b.HasKey("TicketReceiptId");
+
+                    b.ToTable("TicketReceipts");
                 });
 
             modelBuilder.Entity("AvibaWeb.DomainModels.TransitAccount", b =>
@@ -1417,8 +1367,6 @@ namespace AvibaWeb.Migrations
 
                     b.Property<int>("TicketOperationId");
 
-                    b.Property<string>("DeskID");
-
                     b.HasKey("Id");
 
                     b.ToTable("VReceiptLuggageInfo");
@@ -1444,8 +1392,6 @@ namespace AvibaWeb.Migrations
                     b.Property<string>("TicketRoute");
 
                     b.Property<int?>("TicketType");
-
-                    b.Property<string>("DeskID");
 
                     b.HasKey("Id");
 
@@ -1657,22 +1603,6 @@ namespace AvibaWeb.Migrations
 
                     b.ToTable("VTicketTaxPDFInfo");
                 });
-
-            modelBuilder.Entity("AvibaWeb.DomainModels.VServiceReceiptIncomeInfo", b =>
-            {
-                b.Property<Guid>("Id")
-                    .ValueGeneratedOnAdd();
-
-                b.Property<decimal>("Amount");
-
-                b.Property<DateTime>("DateTime");
-
-                b.Property<string>("DeskIssuedId");
-
-                b.HasKey("Id");
-
-                b.ToTable("VServiceReceiptIncomeInfo");
-            });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
@@ -2066,26 +1996,6 @@ namespace AvibaWeb.Migrations
                     b.HasOne("AvibaWeb.DomainModels.Counterparty", "Provider")
                         .WithOne("ProviderBinding")
                         .HasForeignKey("AvibaWeb.DomainModels.ProviderBinding", "ProviderId");
-                });
-
-            modelBuilder.Entity("AvibaWeb.DomainModels.ServiceReceiptItem", b =>
-                {
-                    b.HasOne("AvibaWeb.DomainModels.ServiceReceipt", "Receipt")
-                        .WithMany()
-                        .HasForeignKey("ServiceReceiptId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("AvibaWeb.DomainModels.ServiceReceiptOperation", b =>
-                {
-                    b.HasOne("AvibaWeb.DomainModels.Desk", "DeskIssued")
-                        .WithMany()
-                        .HasForeignKey("DeskIssuedId");
-
-                    b.HasOne("AvibaWeb.DomainModels.ServiceReceipt", "Receipt")
-                        .WithMany()
-                        .HasForeignKey("ServiceReceiptId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("AvibaWeb.DomainModels.SubagentData", b =>

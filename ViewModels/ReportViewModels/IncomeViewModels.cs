@@ -31,6 +31,9 @@ namespace AvibaWeb.ViewModels.ReportViewModels
         public string FromDate { get; set; }
         public string ToDate { get; set; }
         public string AmountKRS { get; set; }
+        public string AmountSubagent { get; set; }
+        public string AmountAgentFee { get; set; }
+        public string AmountCorp { get; set; }
         public List<IncomeSummaryViewItemGroup> ItemGroups { get; set; }
     }
 }

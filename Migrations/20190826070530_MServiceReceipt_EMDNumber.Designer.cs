@@ -4,14 +4,16 @@ using AvibaWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AvibaWeb.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190826070530_MServiceReceipt_EMDNumber")]
+    partial class MServiceReceipt_EMDNumber
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1040,7 +1042,7 @@ namespace AvibaWeb.Migrations
 
                     b.Property<string>("Serie");
 
-                    b.Property<int?>("ServiceOperationId");
+                    b.Property<int?>("TicketOperationId");
 
                     b.Property<int>("Type");
 
@@ -1417,8 +1419,6 @@ namespace AvibaWeb.Migrations
 
                     b.Property<int>("TicketOperationId");
 
-                    b.Property<string>("DeskID");
-
                     b.HasKey("Id");
 
                     b.ToTable("VReceiptLuggageInfo");
@@ -1444,8 +1444,6 @@ namespace AvibaWeb.Migrations
                     b.Property<string>("TicketRoute");
 
                     b.Property<int?>("TicketType");
-
-                    b.Property<string>("DeskID");
 
                     b.HasKey("Id");
 
@@ -1657,22 +1655,6 @@ namespace AvibaWeb.Migrations
 
                     b.ToTable("VTicketTaxPDFInfo");
                 });
-
-            modelBuilder.Entity("AvibaWeb.DomainModels.VServiceReceiptIncomeInfo", b =>
-            {
-                b.Property<Guid>("Id")
-                    .ValueGeneratedOnAdd();
-
-                b.Property<decimal>("Amount");
-
-                b.Property<DateTime>("DateTime");
-
-                b.Property<string>("DeskIssuedId");
-
-                b.HasKey("Id");
-
-                b.ToTable("VServiceReceiptIncomeInfo");
-            });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {

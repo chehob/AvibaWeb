@@ -724,7 +724,7 @@ namespace AvibaWeb.Controllers
                             }
                             else if ((lowerPaymentDescription.Contains("аванс") || lowerPaymentDescription.Contains("депозит")) &&
                                 (lowerPaymentDescription.Contains("договор") || lowerPaymentDescription.Contains("дог.")) &&
-                                (lowerPaymentDescription.Contains("предоплата")))
+                                (lowerPaymentDescription.Contains("предоплата") || lowerPaymentDescription.Contains("оплата")))
                             {
                                 await ProcessCorporatorDeposit(operation, operation.Amount);                                
                             }
