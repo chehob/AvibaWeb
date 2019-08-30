@@ -110,6 +110,8 @@ namespace AvibaWeb.Models
 
         public DbSet<VServiceReceiptIncomeInfo> VServiceReceiptIncomeInfo { get; set; }
 
+        public DbSet<SubagentFeeTransaction> SubagentFeeTransactions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

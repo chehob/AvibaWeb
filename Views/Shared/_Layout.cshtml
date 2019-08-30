@@ -118,7 +118,7 @@
                 <li class="nav-header">Меню</li>
                 <li>
                     <ul class="nav nav-pills nav-stacked">
-                             @if (User.IsInRole("Administrators"))
+                        @if (User.IsInRole("Administrators"))
                         {
                             <li>
                                 <a href="https://ams.aviba.ru/Mobile"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Мобильная</a>
@@ -148,15 +148,15 @@
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
                                    class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Транзитный счет</a>
                             </li>
-                            
+
                         }
                         @if (User.IsInRole("Administrators") || User.IsInRole("Кассиры") || User.IsInRole("Офис"))
                         {
-                        <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
-                            <a asp-action="Index" asp-controller="CorpClient"
-                               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                               class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;CorpClient</a>
-                        </li>
+                            <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
+                                <a asp-action="Index" asp-controller="CorpClient"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;CorpClient</a>
+                            </li>
                         }
                         @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
                         {
@@ -165,7 +165,16 @@
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
                                    class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Счета корпораторам</a>
                             </li>
-                            
+
+                        }
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+                        {
+                            <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
+                                <a asp-action="Index" asp-controller="BookingManagement"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;BookingManagement</a>
+                            </li>
+
                         }
                         @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Кассиры"))
                         {

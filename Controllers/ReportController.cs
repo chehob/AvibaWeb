@@ -376,46 +376,71 @@ namespace AvibaWeb.Controllers
             var queryToDate = toDate ?? DateTime.Now.Date;
             var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
 
-            //var KRSList = (from dg in _db.DeskGroups
-            //               join d in _db.Desks on dg.DeskGroupId equals d.GroupId
-            //               join info in _db.VServiceReceiptIncomeInfo on d.DeskId equals info.DeskIssuedId
-            //               where info.DateTime >= queryFromDate && info.DateTime < queryToDate.AddDays(1)
-            //               group new { info, dg } by dg.DeskGroupId into g
-            //               select new IncomeSummaryViewItemGroup
-            //               {
-            //                   Name = g.FirstOrDefault().dg.Name,
-            //                   AmountKRS = g.Sum(ig => ig.info.Amount)
-            //               }).ToList();
+            var KRSList = (from dg in _db.DeskGroups
+                           join d in _db.Desks on dg.DeskGroupId equals d.GroupId
+                           join info in _db.VServiceReceiptIncomeInfo on d.DeskId equals info.DeskIssuedId
+                           where info.DateTime >= queryFromDate && info.DateTime < queryToDate.AddDays(1)
+                           group new { info, dg } by dg.DeskGroupId into g
+                           select new IncomeSummaryViewItemGroup
+                           {
+                               Name = g.FirstOrDefault().dg.Name,
+                               AmountKRS = g.Sum(ig => ig.info.Amount)
+                           });
 
-            //var a = (from dg in _db.DeskGroups
-            //         join d in _db.Desks on dg.DeskGroupId equals d.GroupId
-            //         join ti in _db.VReceiptTicketInfo on d.DeskId equals ti.DeskID
-            //         join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
-            //         join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
-            //         where cr.IssuedDateTime >= queryFromDate && cr.IssuedDateTime < queryToDate.AddDays(1)
-            //         group new { dg, cri } by dg.DeskGroupId into g
-            //         select new IncomeSummaryViewItemGroup
-            //         {
-            //             Name = g.FirstOrDefault().dg.Name,
-            //             AmountKRS = g.Sum(ig => ig.info.Amount)
-            //         }).ToList();
+            var CorpTicketList = (from dg in _db.DeskGroups
+                     join d in _db.Desks on dg.DeskGroupId equals d.GroupId
+                     join ti in _db.VReceiptTicketInfo on d.DeskId equals ti.DeskID
+                     join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
+                     join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
+                     where cr.PaidDateTime >= queryFromDate && cr.PaidDateTime < queryToDate.AddDays(1) &&
+                        cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid &&
+                        cr.TypeId == CorporatorReceipt.CRType.CorpClient && cri.TypeId == CorporatorReceiptItem.CRIType.Ticket
+                     group new { dg, cri, ti } by dg.DeskGroupId into g
+                     select new IncomeSummaryViewItemGroup
+                     {
+                         Name = g.FirstOrDefault().dg.Name,
+                         AmountCorp = g.Sum(sg => sg.cri.IsPercent ? sg.cri.Amount * sg.cri.FeeRate / 100 : sg.cri.PerSegment ? sg.cri.FeeRate * sg.ti.SegCount : sg.cri.FeeRate)
+                     });
+
+            var CorpLuggageList = (from dg in _db.DeskGroups
+                                  join d in _db.Desks on dg.DeskGroupId equals d.GroupId
+                                  join ti in _db.VReceiptLuggageInfo on d.DeskId equals ti.DeskID
+                                  join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
+                                  join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
+                                  where cr.PaidDateTime >= queryFromDate && cr.PaidDateTime < queryToDate.AddDays(1) && 
+                                    cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid &&
+                                    cr.TypeId == CorporatorReceipt.CRType.CorpClient && cri.TypeId == CorporatorReceiptItem.CRIType.Luggage
+                                  group new { dg, cri, ti } by dg.DeskGroupId into g
+                                  select new IncomeSummaryViewItemGroup
+                                  {
+                                      Name = g.FirstOrDefault().dg.Name,
+                                      AmountCorp = g.Sum(sg => sg.cri.IsPercent ? sg.cri.Amount * sg.cri.FeeRate / 100 : sg.cri.FeeRate),
+                                  });
 
             var model = new IncomeSummaryViewModel
             {
                 FromDate = queryFromDate.ToString("d"),
                 ToDate = queryToDate.ToString("d"),
-                ItemGroups = (from info in _db.VServiceReceiptIncomeInfo
-                              join d in _db.Desks on info.DeskIssuedId equals d.DeskId
-                              join dg in _db.DeskGroups on d.GroupId equals dg.DeskGroupId
-                              where info.DateTime >= queryFromDate && info.DateTime < queryToDate.AddDays(1)
-                              group new { info, dg } by dg.DeskGroupId into g
+                ItemGroups = (from k in KRSList
+                              from ct in CorpTicketList.Where(c => c.Name == k.Name).DefaultIfEmpty()
+                              from cl in CorpLuggageList.Where(c => c.Name == k.Name).DefaultIfEmpty()
                               select new IncomeSummaryViewItemGroup
                               {
-                                  Name = g.FirstOrDefault().dg.Name,
-                                  AmountKRS = g.Sum(ig => ig.info.Amount)
+                                  Name = k.Name,
+                                  AmountKRS = k.AmountKRS,
+                                  AmountCorp = (ct == null ? 0 : ct.AmountCorp) + (cl == null ? 0 : cl.AmountCorp)                                  
                               }).ToList()
             };
             model.AmountKRS = model.ItemGroups.Sum(ig => ig.AmountKRS).ToString("#,0.00", nfi);
+            model.AmountCorp = model.ItemGroups.Sum(ig => ig.AmountCorp).ToString("#,0.00", nfi);
+            model.AmountAgentFee = (from c in _db.Counterparties.Where(c => c.Type.Description == "Провайдер услуг")
+                                    from t in _db.ProviderAgentFeeTransactions
+                                        .Where(t => t.TransactionDateTime >= queryFromDate &&
+                                            t.TransactionDateTime < queryToDate.AddDays(1) && c.ITN == t.ProviderId).DefaultIfEmpty()
+                                    select t).Sum(t => t.Amount).ToString("#,0.00", nfi);
+            model.AmountSubagent = (from s in _db.SubagentFeeTransactions
+                                    where s.TransactionDateTime >= queryFromDate && s.TransactionDateTime < queryToDate.AddDays(1)
+                                    select s).Sum(s => s.Amount).ToString("#,0.00", nfi);
 
             return PartialView(model);
         }

@@ -12,12 +12,14 @@ namespace AvibaWeb.DomainModels
         {
             [Display(Name = "Багаж")]
             Luggage,
-            [Display(Name = "Билет")]
-            Ticket,
+            [Display(Name = "Билет аэро")]
+            AeroTicket,
             [Display(Name = "Билет сайта")]
             WebSiteTicket,
             [Display(Name = "Доп.услуги")]
-            Custom
+            Custom,
+            [Display(Name = "Билет ж/д")]
+            RailwayTicket
         }
 
         public enum SRCustomOperationType

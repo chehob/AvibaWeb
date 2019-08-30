@@ -697,7 +697,7 @@ namespace AvibaWeb.Controllers
                                     {
                                         if (hasPaidReceipts)
                                         {
-                                            await ProcessCorporatorDeposit(operation, reminder);
+                                            ProcessCorporatorDeposit(operation, reminder);
                                         }
                                         else if (hasUnrecognizedReceipts == false)
                                         {
@@ -706,7 +706,7 @@ namespace AvibaWeb.Controllers
                                         }
                                     }
 
-                                    if (hasUnrecognizedReceipts)
+                                    if (hasUnrecognizedReceipts && reminder >= 0)
                                     {
                                         multiPaymentData = new CorporatorReceiptMultiPayment
                                         {
@@ -726,7 +726,7 @@ namespace AvibaWeb.Controllers
                                 (lowerPaymentDescription.Contains("договор") || lowerPaymentDescription.Contains("дог.")) &&
                                 (lowerPaymentDescription.Contains("предоплата") || lowerPaymentDescription.Contains("оплата")))
                             {
-                                await ProcessCorporatorDeposit(operation, operation.Amount);                                
+                                ProcessCorporatorDeposit(operation, operation.Amount);                                
                             }
                             else
                             {
@@ -832,7 +832,7 @@ namespace AvibaWeb.Controllers
             corpClient.CorporatorAccount.LastPaymentDate = operation.OperationDateTime;
         }
 
-        private async Task ProcessCorporatorDeposit(FinancialAccountOperation operation, decimal amountReminder)
+        private void ProcessCorporatorDeposit(FinancialAccountOperation operation, decimal amountReminder)
         {
             var corpClient = _db.Counterparties.Include(c => c.CorporatorAccount)
                 .FirstOrDefault(c => c.ITN == operation.CounterpartyId && c.Type.Description == "Корпоратор");
@@ -862,8 +862,6 @@ namespace AvibaWeb.Controllers
                     receipt.PaidDateTime = operation.OperationDateTime;
                 };
             }
-
-            //await _db.SaveChangesAsync();
         }
 
         [HttpPost]
