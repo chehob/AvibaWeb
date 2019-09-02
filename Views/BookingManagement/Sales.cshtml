@@ -1,29 +1,28 @@
-﻿
+﻿@using AvibaWeb.ViewModels.BookingManagement
+@model SalesViewModel
 
-<div class="row" id="dvFilter" data-url='@(Url.Action("Filter", "BookingManagement", null))'>
-</div>
-
-<table>
-
-</table>
-
-<script type="text/javascript">
-    onload = function () {
-        if (window.attachEvent) {
-            window.attachEvent('onload', loadBookingManagementFilter);
-        } else {
-            if (window.onload) {
-                var curronload = window.onload;
-                var newonload = function (evt) {
-                    curronload(evt);
-                    loadBookingManagementFilter(evt);
-                };
-                window.onload = newonload;
-            } else {
-                window.onload = loadBookingManagementFilter;
-            }
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Сегменты</th>
+            <th>Сумма (нал)</th>
+            <th>Сумма (пк)</th>
+            <th>Сумма (бн)</th>
+            <th>Общая сумма</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+        <tr>
+            <td>@item.Description</td>
+            <td style="@item.SegCountCustomStyle">@item.SegCountStr</td>
+            <td style="@item.AmountCashCustomStyle">@item.AmountCashStr</td>
+            <td style="@item.AmountPKCustomStyle">@item.AmountPKStr</td>
+            <td style="@item.AmountBNCustomStyle">@item.AmountBNStr</td>
+            <td style="@item.AmountTotalCustomStyle">@item.Total</td>
+        </tr>
         }
-    };
-
-    onload();
-</script>
+    </tbody>
+</table>

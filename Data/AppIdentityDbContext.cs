@@ -115,6 +115,8 @@ namespace AvibaWeb.Models
         public DbSet<BMDeskGroup> BMDeskGroups { get; set; }
 
         public DbSet<VSessionTypes> VSessionTypes { get; set; }
+        public DbSet<VCities> VCities { get; set; }
+        public DbSet<VAirlines> VAirlines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

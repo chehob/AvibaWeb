@@ -1,9 +1,37 @@
-﻿<div class="btn-group">
-    <a asp-action="Sales" asp-controller="BookingManagement" asp-route-isCustom="true"
-       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="loadBookingManagementFilter"
-       class="btn btn-primary">Продажи</a>
+﻿<div class="col-md-10">
+    <div class="row">
+        <p id="dvFilter" data-url='@(Url.Action("Filter", "BookingManagement", null))'>
+        </p>
+    </div>
+    <div class="row">
+        <p class="btn-group">
+            <a asp-action="Sales" asp-controller="BookingManagement" asp-route-isCustom="true"
+                data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+                class="btn btn-primary">Продажи</a>
+        </p>
+
+        <div id="results"></div>
+    </div>
 </div>
 
-<div class="box col-md-10">
-    <div id="results"></div>
-</div>
+
+<script type="text/javascript">
+    onload = function () {
+        if (window.attachEvent) {
+            window.attachEvent('onload', loadBookingManagementFilter);
+        } else {
+            if (window.onload) {
+                var curronload = window.onload;
+                var newonload = function (evt) {
+                    curronload(evt);
+                    loadBookingManagementFilter(evt);
+                };
+                window.onload = newonload;
+            } else {
+                window.onload = loadBookingManagementFilter;
+            }
+        }
+    };
+
+    onload();
+</script>

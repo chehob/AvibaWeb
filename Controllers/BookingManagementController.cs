@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AvibaWeb.DomainModels;
 using AvibaWeb.ViewModels.BookingManagement;
+using System.Globalization;
 
 namespace AvibaWeb.Controllers
 {
@@ -26,12 +27,147 @@ namespace AvibaWeb.Controllers
 
         public IActionResult Sales()
         {
-            return PartialView();
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var airItems = new List<SalesViewItem>
+            {
+                new SalesViewItem
+                {
+                    Description = "Продажи",
+                    AmountCash = 0,
+                    AmountPK = 0,
+                    AmountBN = 0,
+                    SegCount = 0
+                },
+                new SalesViewItem
+                {
+                    Description = "Штрафы",
+                    AmountCash = 0,
+                    AmountPK = 0,
+                    AmountBN = 0,
+                    SegCount = 0
+                },
+                new SalesViewItem
+                {
+                    Description = "Добровольные обмены",
+                    AmountCash = 0,
+                    AmountPK = 0,
+                    AmountBN = 0,
+                    SegCount = 0
+                },
+                new SalesViewItem
+                {
+                    Description = "Добровольные возвраты",
+                    AmountCash = 0,
+                    AmountPK = 0,
+                    AmountBN = 0,
+                    SegCount = 0,
+                    SegCountCustomStyle = "color:red;",
+                    AmountCashCustomStyle = "color:red;",
+                    AmountPKCustomStyle = "color:red;",
+                    AmountBNCustomStyle = "color:red;"
+                },
+                new SalesViewItem
+                {
+                    Description = "Вынужденные обмены",
+                    AmountCash = 0,
+                    AmountPK = 0,
+                    AmountBN = 0,
+                    SegCount = 0
+                },
+                new SalesViewItem
+                {
+                    Description = "Вынужденные возвраты",
+                    AmountCash = 0,
+                    AmountPK = 0,
+                    AmountBN = 0,
+                    SegCount = 0,
+                    AmountCashCustomStyle = "color:red;",
+                    AmountPKCustomStyle = "color:red;",
+                    AmountBNCustomStyle = "color:red;"
+                }
+            };
+
+            var airTotalItem = airItems.GroupBy(i => 1).Select(i => new SalesViewItem
+            {
+                Description = "Итого",
+                AmountCash = i.Sum(x => x.AmountCash),
+                AmountPK = i.Sum(x => x.AmountPK),
+                AmountBN = i.Sum(x => x.AmountBN),
+                SegCount = i.Sum(x => x.SegCount),
+                SegCountCustomStyle = "font-weight:bold;",
+                AmountCashCustomStyle = "font-weight:bold;",
+                AmountPKCustomStyle = "font-weight:bold;",
+                AmountBNCustomStyle = "font-weight:bold;",
+                AmountTotalCustomStyle = "font-weight:bold;"
+            }).FirstOrDefault();
+
+            var railItems = new List<SalesViewItem>
+            {
+                new SalesViewItem
+                {
+                    Description = "Продажи ж/д",
+                    AmountCash = 0,
+                    AmountPK = 0,
+                    AmountBN = 0,
+                    SegCount = 0,
+                    SegCountCustomStyle = "font-weight:bold;",
+                    AmountCashCustomStyle = "font-weight:bold;",
+                    AmountPKCustomStyle = "font-weight:bold;",
+                    AmountBNCustomStyle = "font-weight:bold;",
+                    AmountTotalCustomStyle = "font-weight:bold;"
+                },
+                new SalesViewItem
+                {
+                    Description = "Возвраты ж/д",
+                    AmountCash = 0,
+                    AmountPK = 0,
+                    AmountBN = 0,
+                    SegCount = 0,
+                    SegCountCustomStyle = "font-weight:bold;",
+                    AmountCashCustomStyle = "font-weight:bold;",
+                    AmountPKCustomStyle = "font-weight:bold;",
+                    AmountBNCustomStyle = "font-weight:bold;",
+                    AmountTotalCustomStyle = "font-weight:bold;"
+                }
+            };
+
+            var totalItem = new SalesViewItem
+            {
+                Description = "Общий итог",
+                AmountCash = airTotalItem.AmountCash + railItems.Sum(i => i.AmountCash),
+                AmountPK = airTotalItem.AmountPK + railItems.Sum(i => i.AmountPK),
+                AmountBN = airTotalItem.AmountBN + railItems.Sum(i => i.AmountBN),
+                SegCount = airTotalItem.SegCount + railItems.Sum(i => i.SegCount),
+                SegCountCustomStyle = "font-weight:bold;",
+                AmountCashCustomStyle = "font-weight:bold;",
+                AmountPKCustomStyle = "font-weight:bold;",
+                AmountBNCustomStyle = "font-weight:bold;",
+                AmountTotalCustomStyle = "font-weight:bold;"
+            };
+
+            airItems.Add(airTotalItem);
+            airItems.Add(new SalesViewItem(true));
+            airItems.AddRange(railItems);
+            airItems.Add(new SalesViewItem(true));
+            airItems.Add(totalItem);
+
+            var model = new SalesViewModel
+            {
+                Items = airItems
+            };
+            return PartialView(model);
         }
 
         public IActionResult Filter()
         {
-            return PartialView();
+            var model = new FilterViewModel
+            {
+                Cities = _db.VCities.Select(c => c.Name).ToList(),
+                Airlines = _db.VAirlines.Select(a => new KeyValuePair<string, string>(a.Code, a.FullName)).ToList()
+            };
+            return PartialView(model);
         }
 
         public JsonResult GetDeskFilter(string query)

@@ -1,11 +1,14 @@
-﻿<div class="btn-group">
+﻿@using AvibaWeb.ViewModels.BookingManagement
+@model FilterViewModel
+
+<p class="btn-group">
     <button class="btn btn-primary" data-toggle="collapse" href="#filterBlock" role="button" aria-expanded="false" aria-controls="filterBlock">
         Фильтры
     </button>
     <button class="btn btn-primary" role="button">
         Сбросить
     </button>
-</div>
+</p>
 
 <div class="container-fluid collapse" id="filterBlock" style="height: 0px;">
     <div class="row">
@@ -30,12 +33,42 @@
                 <div class="box-header well" data-original-title="" style="overflow: hidden;">
                     <h2>Авиакомпании</h2>
                 </div>
+                <div class="box-content">
+                    <select data-placeholder="Авиакомпания" id="selectAirline" data-rel="chosen" multiple>
+                        <option value=""></option>
+                        @foreach (var airline in Model.Airlines)
+                        {
+                            <option id=@airline.Key>@airline.Value</option>
+                        }
+                    </select>
+                </div>
             </div>
         </div>
         <div class="box col-sm-3">
             <div class="box-inner">
                 <div class="box-header well" data-original-title="" style="overflow: hidden;">
                     <h2>Направления</h2>
+                </div>
+                <div class="box-content">
+                    <div id="fromRouteDiv">
+                        <select data-placeholder="Пункт отправления" id="selectFromRoute" data-rel="chosen">
+                            <option value=""></option>
+                            @foreach (var city in Model.Cities)
+                            {
+                                <option>@city</option>
+                            }
+                        </select>
+                    </div>
+                    <br />
+                    <div id="toRouteDiv">
+                        <select data-placeholder="Пункт назначения" id="selectToRoute" data-rel="chosen">
+                            <option value=""></option>
+                            @foreach (var city in Model.Cities)
+                            {
+                                <option>@city</option>
+                            }
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -56,5 +89,7 @@
                     dataSource: '/BookingManagement/GetSessionFilter',
                     checkboxes: true
                 });
+
+                $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
             });
 </script>

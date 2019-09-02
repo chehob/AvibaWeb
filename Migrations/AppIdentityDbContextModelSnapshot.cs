@@ -1727,6 +1727,32 @@ namespace AvibaWeb.Migrations
                 b.ToTable("VSessionTypes");
             });
 
+            modelBuilder.Entity("AvibaWeb.DomainModels.VCities", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();                
+
+                b.Property<string>("Name");
+
+                b.HasKey("Id");
+
+                b.ToTable("VCities");
+            });
+
+            modelBuilder.Entity("AvibaWeb.DomainModels.VAirlines", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
+
+                b.Property<string>("Code");
+
+                b.Property<string>("FullName");
+
+                b.HasKey("Id");
+
+                b.ToTable("VAirlines");
+            });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")

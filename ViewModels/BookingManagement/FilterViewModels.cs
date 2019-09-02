@@ -5,6 +5,12 @@ using System.Threading.Tasks;
 
 namespace AvibaWeb.ViewModels.BookingManagement
 {
+    public class FilterViewModel
+    {
+        public List<string> Cities { get; set; }
+        public List<KeyValuePair<string,string>> Airlines { get; set; }
+    }
+
     public class DeskFilterItem
     {
         public string id { get; set; }
