@@ -72,5 +72,33 @@ namespace AvibaWeb.Controllers
                     @checked = false
                 }).ToList();
         }
+
+        public JsonResult GetSessionFilter(string query)
+        {
+            var sessions = _db.VSessionTypes.ToList();
+
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                sessions = sessions.Where(q => q.Name.Contains(query)).ToList();
+            }
+
+            var records = new List<DeskFilterItem> {
+                new DeskFilterItem
+                {
+                    id = "0",
+                    text = "Все",
+                    @checked = false,
+                    children = sessions.OrderBy(s => s.Name)
+                        .Select(s => new DeskFilterItem
+                        {
+                            id = s.SessionId.ToString(),
+                            text = s.Name,
+                            @checked = false
+                        }).ToList()
+                }
+            };
+
+            return this.Json(records);
+        }
     }
 }

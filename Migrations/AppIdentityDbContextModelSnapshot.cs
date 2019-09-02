@@ -1713,6 +1713,20 @@ namespace AvibaWeb.Migrations
                     b.ToTable("VTicketTaxPDFInfo");
                 });
 
+            modelBuilder.Entity("AvibaWeb.DomainModels.VSessionTypes", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
+
+                b.Property<int>("SessionId");
+
+                b.Property<string>("Name");
+
+                b.HasKey("Id");
+
+                b.ToTable("VSessionTypes");
+            });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")

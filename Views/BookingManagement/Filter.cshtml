@@ -14,7 +14,7 @@
                 <div class="box-header well" data-original-title="" style="overflow: hidden;">
                     <h2>Пульты</h2>
                 </div>
-                <div id="tree"></div>
+                <div id="deskTree"></div>
             </div>
         </div>
         <div class="box col-sm-3">
@@ -22,6 +22,7 @@
                 <div class="box-header well" data-original-title="" style="overflow: hidden;">
                     <h2>Сеансы</h2>
                 </div>
+                <div id="sessionTree"></div>
             </div>
         </div>
         <div class="box col-sm-3">
@@ -43,10 +44,16 @@
 
 <script type="text/javascript">
             $(document).ready(function () {
-                var tree = $('#tree').tree({
+                $('#deskTree').tree({
                     primaryKey: 'id',
                     uiLibrary: 'bootstrap',
                     dataSource: '/BookingManagement/GetDeskFilter',
+                    checkboxes: true
+                });
+                $('#sessionTree').tree({
+                    primaryKey: 'id',
+                    uiLibrary: 'bootstrap',
+                    dataSource: '/BookingManagement/GetSessionFilter',
                     checkboxes: true
                 });
             });

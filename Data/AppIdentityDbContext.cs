@@ -114,6 +114,8 @@ namespace AvibaWeb.Models
 
         public DbSet<BMDeskGroup> BMDeskGroups { get; set; }
 
+        public DbSet<VSessionTypes> VSessionTypes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
