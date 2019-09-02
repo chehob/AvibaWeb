@@ -25,6 +25,10 @@ namespace AvibaWeb.DomainModels
         [ForeignKey("GroupId")]
         public virtual DeskGroup Group { get; set; }
 
+        public int? BMDeskGroupId { get; set; }
+        [ForeignKey("BMDeskGroupId")]
+        public virtual BMDeskGroup BMDeskGroup { get; set; }
+
         public ICollection<SubagentDesk> SubagentDesks { get; set; }
     }
 }

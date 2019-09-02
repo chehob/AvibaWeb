@@ -112,6 +112,8 @@ namespace AvibaWeb.Models
 
         public DbSet<SubagentFeeTransaction> SubagentFeeTransactions { get; set; }
 
+        public DbSet<BMDeskGroup> BMDeskGroups { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

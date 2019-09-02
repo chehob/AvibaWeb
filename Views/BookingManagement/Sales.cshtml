@@ -1,4 +1,29 @@
 ﻿
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+
+<div class="row" id="dvFilter" data-url='@(Url.Action("Filter", "BookingManagement", null))'>
+</div>
+
+<table>
+
+</table>
+
+<script type="text/javascript">
+    onload = function () {
+        if (window.attachEvent) {
+            window.attachEvent('onload', loadBookingManagementFilter);
+        } else {
+            if (window.onload) {
+                var curronload = window.onload;
+                var newonload = function (evt) {
+                    curronload(evt);
+                    loadBookingManagementFilter(evt);
+                };
+                window.onload = newonload;
+            } else {
+                window.onload = loadBookingManagementFilter;
+            }
+        }
+    };
+
+    onload();
+</script>

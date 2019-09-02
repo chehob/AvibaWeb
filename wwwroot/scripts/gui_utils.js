@@ -122,6 +122,12 @@ function updateBalance(ajaxContext) {
     $div.load($div.data("url"));
 }
 
+function loadBookingManagementFilter(ajaxContent) {
+    console.log('loadBM');
+    const $div = $("#dvFilter");
+    $div.load($div.data("url"));
+}
+
 function numberWithSpaces(x) {
 	var parts = x.toString().split(".");
 	parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");

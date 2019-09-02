@@ -1,0 +1,19 @@
+﻿<div class="btn btn-primary" data-toggle="collapse" href="#filterBlock" role="button" aria-expanded="false" aria-controls="filterBlock">
+</div>
+
+<div class="container-fluid" id="filterBlock">
+    <div class="row">
+        <div id="tree"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+            $(document).ready(function () {
+                var tree = $('#tree').tree({
+                    primaryKey: 'id',
+                    uiLibrary: 'bootstrap',
+                    dataSource: '/BookingManagement/GetDeskFilter',
+                    checkboxes: true
+                });
+            });
+</script>
