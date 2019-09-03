@@ -123,9 +123,10 @@ function updateBalance(ajaxContext) {
 }
 
 function loadBookingManagementFilter(ajaxContent) {
-    console.log('loadBM');
     const $div = $("#dvFilter");
-    $div.load($div.data("url"));
+    $div.load($div.data("url"), function() {
+        $("#saleButton").click();
+    });
 }
 
 function numberWithSpaces(x) {

@@ -40,8 +40,16 @@
     });
 
     $(function () {
-        $("#min").datepicker();
-        $("#max").datepicker();
+        $("#min").datepicker({
+                    locale: 'ru-ru',
+                    uiLibrary: 'bootstrap',
+                    format: 'dd.mm.yyyy'
+                });
+        $("#max").datepicker({
+                    locale: 'ru-ru',
+                    uiLibrary: 'bootstrap',
+                    format: 'dd.mm.yyyy'
+                });
 
         $("#min").val(moment().startOf('day').format("DD.MM.YYYY"));
         $("#max").val(moment().endOf('day').format("DD.MM.YYYY"));

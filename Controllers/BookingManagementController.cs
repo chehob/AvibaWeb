@@ -164,7 +164,6 @@ namespace AvibaWeb.Controllers
         {
             var model = new FilterViewModel
             {
-                Cities = _db.VCities.Select(c => c.Name).ToList(),
                 Airlines = _db.VAirlines.Select(a => new KeyValuePair<string, string>(a.Code, a.FullName)).ToList()
             };
             return PartialView(model);
@@ -211,6 +210,36 @@ namespace AvibaWeb.Controllers
 
         public JsonResult GetSessionFilter(string query)
         {
+            var sessions = _db.VSessionTypes.ToList();
+
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                sessions = sessions.Where(q => q.Name.Contains(query)).ToList();
+            }
+
+            var records = new List<DeskFilterItem> {
+                new DeskFilterItem
+                {
+                    id = "0",
+                    text = "Все",
+                    @checked = false,
+                    children = sessions.OrderBy(s => s.Name)
+                        .Select(s => new DeskFilterItem
+                        {
+                            id = s.SessionId.ToString(),
+                            text = s.Name,
+                            @checked = false
+                        }).ToList()
+                }
+            };
+
+            return this.Json(records);
+        }
+
+        public JsonResult SearchCity(string query)
+        {
+            if (string.IsNullOrEmpty(query)) return this.Json(new object());
+
             var sessions = _db.VSessionTypes.ToList();
 
             if (!string.IsNullOrWhiteSpace(query))

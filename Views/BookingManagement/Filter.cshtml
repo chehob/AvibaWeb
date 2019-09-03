@@ -15,6 +15,17 @@
         <div class="box col-sm-3">
             <div class="box-inner">
                 <div class="box-header well" data-original-title="" style="overflow: hidden;">
+                    <h2>Дата</h2>
+                </div>
+                <div class="box-content">
+                    Выбрать с: <input type="text" id="min" name="min" class="date-range-filter">
+                    по: <input type="text" id="max" name="max" class="date-range-filter">
+                </div>
+            </div>
+        </div>
+        <div class="box col-sm-3">
+            <div class="box-inner">
+                <div class="box-header well" data-original-title="" style="overflow: hidden;">
                     <h2>Пульты</h2>
                 </div>
                 <div id="deskTree"></div>
@@ -51,22 +62,12 @@
                 </div>
                 <div class="box-content">
                     <div id="fromRouteDiv">
-                        <select data-placeholder="Пункт отправления" id="selectFromRoute" data-rel="chosen">
-                            <option value=""></option>
-                            @foreach (var city in Model.Cities)
-                            {
-                                <option>@city</option>
-                            }
+                        <select data-placeholder="Пункт отправления" id="selectFromRoute" data-rel="chosen" data-remote>
                         </select>
                     </div>
                     <br />
                     <div id="toRouteDiv">
-                        <select data-placeholder="Пункт назначения" id="selectToRoute" data-rel="chosen">
-                            <option value=""></option>
-                            @foreach (var city in Model.Cities)
-                            {
-                                <option>@city</option>
-                            }
+                        <select data-placeholder="Пункт назначения" id="selectToRoute" data-rel="chosen" data-remote>
                         </select>
                     </div>
                 </div>
@@ -90,6 +91,27 @@
                     checkboxes: true
                 });
 
-                $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
+                $('#selectAirline').select2({ width: "100%" });
+                $('[data-remote]').select2({
+                    width: "100%",
+                    ajax: {
+                        url: '/BookingManagement/SearchCity',
+                        dataType: 'json'
+                    }
+                });
+                //$('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
+
+                $("#min").datepicker({
+                    locale: 'ru-ru',
+                    uiLibrary: 'bootstrap',
+                    format: 'dd.mm.yyyy'
+                });
+                $("#max").datepicker({
+                    locale: 'ru-ru',
+                    uiLibrary: 'bootstrap',
+                    format: 'dd.mm.yyyy'
+                });
+                $("#min").val(moment().format("DD.MM.YYYY"));
+                $("#max").val(moment().format("DD.MM.YYYY"));
             });
 </script>

@@ -154,8 +154,16 @@
     );
 
     onload = function () {
-        $("#min").datepicker();
-        $("#max").datepicker();
+        $("#min").datepicker({
+                    locale: 'ru-ru',
+                    uiLibrary: 'bootstrap',
+                    format: 'dd.mm.yyyy'
+                });
+        $("#max").datepicker({
+                    locale: 'ru-ru',
+                    uiLibrary: 'bootstrap',
+                    format: 'dd.mm.yyyy'
+                });
 
         var oTable = $('#dataTable').dataTable({
             "bSort": false,

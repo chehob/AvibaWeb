@@ -219,9 +219,21 @@
     $(function() {
         initChosen();
 
-        $("#issuedDateTime").datepicker();
-        $("#min").datepicker();
-        $("#max").datepicker();
+        $("#issuedDateTime").datepicker({
+            locale: 'ru-ru',
+            uiLibrary: 'bootstrap',
+            format: 'dd.mm.yyyy'
+        });
+        $("#min").datepicker({
+            locale: 'ru-ru',
+            uiLibrary: 'bootstrap',
+            format: 'dd.mm.yyyy'
+        });
+        $("#max").datepicker({
+            locale: 'ru-ru',
+            uiLibrary: 'bootstrap',
+            format: 'dd.mm.yyyy'
+        });
 
         var editValue = $("#editReceiptCorpName").val();
         if (editValue) {
