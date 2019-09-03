@@ -96,8 +96,14 @@
                     width: "100%",
                     ajax: {
                         url: '/BookingManagement/SearchCity',
-                        dataType: 'json'
-                    }
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                query: params.term
+                            };
+                        }
+                    }                    
                 });
                 //$('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
 

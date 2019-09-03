@@ -17,4 +17,20 @@ namespace AvibaWeb.ViewModels.BookingManagement
         public bool @checked { get; set; }
         public List<DeskFilterItem> children { get; set; }
     }
+
+    public class SelectResultItem
+    {
+        public string id { get; set; }
+        public string text { get; set; }
+    }
+
+    public class SelectResult
+    {
+        public SelectResult()
+        {
+            results = new List<SelectResultItem>();
+        }
+
+        public List<SelectResultItem> results { get; set; }
+    }
 }

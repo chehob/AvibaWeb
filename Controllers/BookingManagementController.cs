@@ -238,32 +238,22 @@ namespace AvibaWeb.Controllers
 
         public JsonResult SearchCity(string query)
         {
-            if (string.IsNullOrEmpty(query)) return this.Json(new object());
-
-            var sessions = _db.VSessionTypes.ToList();
-
-            if (!string.IsNullOrWhiteSpace(query))
+            SelectResult result = new SelectResult();
+            if (!string.IsNullOrEmpty(query))
             {
-                sessions = sessions.Where(q => q.Name.Contains(query)).ToList();
+                result = new SelectResult
+                {
+                    results = (from c in _db.VCities
+                               where c.Name.ToLower().Contains(query.ToLower())
+                               select new SelectResultItem
+                               {
+                                   id = c.Name,
+                                   text = c.Name
+                               }).Take(10).ToList()
+                };
             }
 
-            var records = new List<DeskFilterItem> {
-                new DeskFilterItem
-                {
-                    id = "0",
-                    text = "Все",
-                    @checked = false,
-                    children = sessions.OrderBy(s => s.Name)
-                        .Select(s => new DeskFilterItem
-                        {
-                            id = s.SessionId.ToString(),
-                            text = s.Name,
-                            @checked = false
-                        }).ToList()
-                }
-            };
-
-            return this.Json(records);
-        }
+            return this.Json(result);
+        }        
     }
 }
