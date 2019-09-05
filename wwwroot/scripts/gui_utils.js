@@ -2425,7 +2425,8 @@ $(document).on('click',
             $('#selectPayee').select2({
                 placeholder: "Выбрать организацию",
                 width: "100%",
-                data: data.results
+                data: data.results,
+                language: "ru"
             });
 
             $('#selectPayee').val(null).trigger('change');
@@ -2442,7 +2443,8 @@ $(document).on('click',
             $('#selectPayer').select2({
                 placeholder: "Выбрать корпоратора",
                 width: "100%",
-                data: data.results
+                data: data.results,
+                language: "ru"
             });
 
             $('#selectPayer').val(null).trigger('change');
@@ -2620,7 +2622,8 @@ $(document).on('click',
                 $('#selectBank').select2({
                     placeholder: "Выбрать счет",
                     width: "100%",
-                    data: data.results
+                    data: data.results,
+                    language: "ru"
                 });
 
                 $('#selectBank').val(null).trigger('change');

@@ -28,6 +28,7 @@
                             <option value=""></option>
                         </select>
                     </div>
+                    <br />
                     <div id="payeeOrgFinancialAccountsDiv">
                         <select data-placeholder="Выбрать счет" data-rel="chosen" id="selectBank">
                             <option></option>
@@ -224,7 +225,8 @@
                         $('#selectPayer').select2({
                             placeholder: "Выбрать корпоратора",
                             width: "100%",
-                            data: data.results
+                            data: data.results,
+                            language: "ru"
                         });
 
                         $('#selectPayer').val(null).trigger('change');
@@ -243,7 +245,8 @@
                         $('#selectPayee').select2({
                             placeholder: "Выбрать организацию",
                             width: "100%",
-                            data: data.results
+                            data: data.results,
+                            language: "ru"
                         });
 
                         $('#selectPayee').val(null).trigger('change');

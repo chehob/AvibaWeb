@@ -182,13 +182,13 @@ namespace AvibaWeb.Controllers
                 {
                     id = m.BMDeskGroupId.ToString(),
                     text = m.Name,
-                    @checked = false,
+                    icon = "false",
                     children = deskGroups.Where(dg => dg.Name != "Все").OrderBy(dg => dg.Name)
                         .Select(dg => new DeskFilterItem
                         {
                             id = dg.BMDeskGroupId.ToString(),
                             text = dg.Name,
-                            @checked = false,
+                            icon = "false",
                             children = GetGroupDesks(dg.Desks)
                         }).ToList()
                 }).ToList();
@@ -202,8 +202,8 @@ namespace AvibaWeb.Controllers
                 .Select(d => new DeskFilterItem
                 {
                     id = d.DeskId,
-                    text = d.Description ?? d.DeskId,
-                    @checked = false
+                    text = d.Description + $"({d.DeskId})" ?? d.DeskId,
+                    icon = "false",
                 }).ToList();
         }
 
@@ -221,13 +221,13 @@ namespace AvibaWeb.Controllers
                 {
                     id = "0",
                     text = "Все",
-                    @checked = false,
+                    icon = "false",
                     children = sessions.OrderBy(s => s.Name)
                         .Select(s => new DeskFilterItem
                         {
                             id = s.SessionId.ToString(),
                             text = s.Name,
-                            @checked = false
+                            icon = "false"
                         }).ToList()
                 }
             };

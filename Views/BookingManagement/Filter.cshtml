@@ -5,7 +5,10 @@
     <button class="btn btn-primary" data-toggle="collapse" href="#filterBlock" role="button" aria-expanded="false" aria-controls="filterBlock">
         Фильтры
     </button>
-    <button class="btn btn-primary" role="button">
+    <button class="btn btn-primary" role="button" id="saveFilterBtn">
+        Сохранить
+    </button>
+    <button class="btn btn-primary" role="button" id="clearFilterBtn">
         Сбросить
     </button>
 </p>
@@ -69,59 +72,100 @@
 </div>
 
 <script type="text/javascript">
-            $(document).ready(function () {
-                $('#deskTree').tree({
-                    primaryKey: 'id',
-                    uiLibrary: 'bootstrap',
-                    dataSource: '/BookingManagement/GetDeskFilter',
-                    checkboxes: true
-                });
-                $('#sessionTree').tree({
-                    primaryKey: 'id',
-                    uiLibrary: 'bootstrap',
-                    dataSource: '/BookingManagement/GetSessionFilter',
-                    checkboxes: true
-                });
-                
-                $('#selectAirline').select2({
-                    width: "100%",
-                    ajax: {
-                        url: '/BookingManagement/SearchAirline',
-                        dataType: 'json',
-                        delay: 250,
-                        data: function (params) {
-                            return {
-                                query: params.term
-                            };
-                        }
+    $(document).ready(function () {
+        $('#deskTree').jstree({
+            'core': {
+                'themes': {
+                    'name': 'proton',
+                    'responsive': true
+                },
+                'data': {
+                    'url': function () {
+                        return '/BookingManagement/GetDeskFilter';
+                    },
+                    'data': function (node) {
+                        return { 'id': node.id };
                     }
-                });
-                $('[data-remote]').select2({
-                    width: "100%",
-                    ajax: {
-                        url: '/BookingManagement/SearchCity',
-                        dataType: 'json',
-                        delay: 250,
-                        data: function (params) {
-                            return {
-                                query: params.term
-                            };
-                        }
-                    }                    
-                });
-                //$('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
+                }
+            },
+            "checkbox": {
+                "keep_selected_style": false
+            },
+            "plugins": ["checkbox"]
+        });
 
-                $("#min").datepicker({
-                    locale: 'ru-ru',
-                    uiLibrary: 'bootstrap',
-                    format: 'dd.mm.yyyy'
-                });
-                $("#max").datepicker({
-                    locale: 'ru-ru',
-                    uiLibrary: 'bootstrap',
-                    format: 'dd.mm.yyyy'
-                });
-                $("#min").val(moment().format("DD.MM.YYYY"));
-                $("#max").val(moment().format("DD.MM.YYYY"));
-            });
+        $('#sessionTree').jstree({
+            'core': {
+                'themes': {
+                    'name': 'proton',
+                    'responsive': true
+                },
+                'data': {
+                    'url': function () {
+                        return '/BookingManagement/GetSessionFilter';
+                    },
+                    'data': function (node) {
+                        return { 'id': node.id };
+                    }
+                }
+            },
+            "checkbox": {
+                "keep_selected_style": false
+            },
+            "plugins": ["checkbox"]
+        });
+                
+        $('#selectAirline').select2({
+            width: "100%",
+            ajax: {
+                url: '/BookingManagement/SearchAirline',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        query: params.term
+                    };
+                }
+            },
+            language: "ru"
+        });
+        $('[data-remote]').select2({
+            width: "100%",
+            ajax: {
+                url: '/BookingManagement/SearchCity',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        query: params.term
+                    };
+                }
+            },
+            language: "ru"                   
+        });
+
+        $("#min").datepicker({
+            locale: 'ru-ru',
+            uiLibrary: 'bootstrap',
+            format: 'dd.mm.yyyy'
+        });
+        $("#max").datepicker({
+            locale: 'ru-ru',
+            uiLibrary: 'bootstrap',
+            format: 'dd.mm.yyyy'
+        });
+        $("#min").val(moment().format("DD.MM.YYYY"));
+        $("#max").val(moment().format("DD.MM.YYYY"));
+    });
+
+    $("#clearFilterBtn").click(function (e) {
+        $("#min").val(moment().format("DD.MM.YYYY"));
+        $("#max").val(moment().format("DD.MM.YYYY"));
+
+        $('[data-remote]').val(null).trigger('change');
+        $('#selectAirline').val(null).trigger('change');
+
+        $('#deskTree').jstree('deselect_all', 'true');
+        $('#sessionTree').jstree('deselect_all', 'true');
+    });
 </script>
