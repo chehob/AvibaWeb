@@ -45,13 +45,7 @@
                     <h2>Авиакомпании</h2>
                 </div>
                 <div class="box-content">
-                    <select data-placeholder="Авиакомпания" id="selectAirline" data-rel="chosen" multiple>
-                        <option value=""></option>
-                        @foreach (var airline in Model.Airlines)
-                        {
-                            <option id=@airline.Key>@airline.Value</option>
-                        }
-                    </select>
+                    <select data-placeholder="Авиакомпания" id="selectAirline" data-rel="chosen" multiple></select>
                 </div>
             </div>
         </div>
@@ -62,13 +56,11 @@
                 </div>
                 <div class="box-content">
                     <div id="fromRouteDiv">
-                        <select data-placeholder="Пункт отправления" id="selectFromRoute" data-rel="chosen" data-remote>
-                        </select>
+                        <select data-placeholder="Пункт отправления" id="selectFromRoute" data-rel="chosen" data-remote></select>
                     </div>
                     <br />
                     <div id="toRouteDiv">
-                        <select data-placeholder="Пункт назначения" id="selectToRoute" data-rel="chosen" data-remote>
-                        </select>
+                        <select data-placeholder="Пункт назначения" id="selectToRoute" data-rel="chosen" data-remote></select>
                     </div>
                 </div>
             </div>
@@ -90,8 +82,20 @@
                     dataSource: '/BookingManagement/GetSessionFilter',
                     checkboxes: true
                 });
-
-                $('#selectAirline').select2({ width: "100%" });
+                
+                $('#selectAirline').select2({
+                    width: "100%",
+                    ajax: {
+                        url: '/BookingManagement/SearchAirline',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                query: params.term
+                            };
+                        }
+                    }
+                });
                 $('[data-remote]').select2({
                     width: "100%",
                     ajax: {

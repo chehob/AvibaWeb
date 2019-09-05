@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AvibaWeb.DomainModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static AvibaWeb.DomainModels.CorporatorReceipt;
 using static AvibaWeb.DomainModels.CorporatorReceiptItem;
@@ -12,8 +13,9 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
 {
     public class CreateReceiptViewModel
     {
+        public string Organizations { get; set; }
         public List<KeyValuePair<string,string>> Counterparties { get; set; }
-        public List<KeyValuePair<string,string>> Organizations { get; set; }
+        //public List<KeyValuePair<string,string>> Organizations { get; set; }
         public ReceiptEditData Receipt { get; set; }
         public int SubGroupId { get; set; }
     }
@@ -21,8 +23,11 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
     public class ReceiptEditData
     {
         public int ReceiptId { get; set; }
+        public string CorporatorId { get; set; }
         public string CorporatorName { get; set; }
+        public int OrganizationId { get; set; }
         public string OrganizationName { get; set; }
+        public int BankId { get; set; }
         public string BankName { get; set; }
         public decimal FeeRate { get; set; }
         public List<TicketListViewModel> Items { get; set; }

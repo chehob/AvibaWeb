@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +8,6 @@ namespace AvibaWeb.ViewModels.BookingManagement
 {
     public class FilterViewModel
     {
-        public List<KeyValuePair<string,string>> Airlines { get; set; }
     }
 
     public class DeskFilterItem
@@ -22,6 +22,7 @@ namespace AvibaWeb.ViewModels.BookingManagement
     {
         public string id { get; set; }
         public string text { get; set; }
+        public List<SelectResultItem> children { get; set; }
     }
 
     public class SelectResult

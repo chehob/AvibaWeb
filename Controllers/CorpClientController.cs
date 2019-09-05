@@ -9,6 +9,7 @@ using AvibaWeb.DomainModels;
 using AvibaWeb.Infrastructure;
 using AvibaWeb.Models;
 using AvibaWeb.ViewModels.AdminViewModels;
+using AvibaWeb.ViewModels.BookingManagement;
 using AvibaWeb.ViewModels.CorpClientViewModels;
 using AvibaWeb.ViewModels.CorpReceiptViewModels;
 using Microsoft.AspNetCore.Hosting;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace AvibaWeb.Controllers
 {
@@ -74,12 +76,6 @@ namespace AvibaWeb.Controllers
         {
             var model = new CreateReceiptViewModel
             {
-                Counterparties = (from c in _db.Counterparties
-                                  where c.Type.Description == "Корпоратор"
-                                  select new KeyValuePair<string,string>(c.ITN, c.Name)).ToList(),
-                Organizations = (from org in _db.Organizations
-                                 where org.IsActive
-                                 select new KeyValuePair<string,string>(org.OrganizationId.ToString(),org.Description)).ToList()
             };
 
             if (id != null)
@@ -94,10 +90,15 @@ namespace AvibaWeb.Controllers
                                  select new ReceiptEditData
                                  {
                                      ReceiptId = cr.CorporatorReceiptId,
+                                     CorporatorId = cr.Corporator == null ? "" : cr.Corporator.ITN,
                                      CorporatorName = cr.Corporator == null ? "" : cr.Corporator.Name,
+                                     OrganizationId = cr.PayeeAccount == null || cr.PayeeAccount.Organization == null
+                                        ? 0
+                                        : cr.PayeeAccount.Organization.OrganizationId,
                                      OrganizationName = cr.PayeeAccount == null || cr.PayeeAccount.Organization == null
                                          ? ""
                                          : cr.PayeeAccount.Organization.Description,
+                                     BankId = cr.PayeeAccount == null ? 0 : cr.PayeeAccount.FinancialAccountId,
                                      BankName = cr.PayeeAccount == null ? "" : cr.PayeeAccount.BankName,
                                      FeeRate = cr.FeeRate.Value,
                                      Items = (from item in _db.CorporatorReceiptItems

@@ -2376,46 +2376,94 @@ $(document).on('click',
             }
         });
 
-    $(document).on('click',
+    // $(document).on('click',
+    //     '#resetOrgDataBtn',
+    //     function(e) {
+    //         e.preventDefault();
+    
+    //         var corpOrgAjax = function() {
+    //             return $.ajax({
+    //                 url: "/CorpReceipt/CorporatorOrganizations",
+    //                 type: "GET",
+    //                 cache: false,
+    //                 success: function(result) {
+    //                     $("#payeeSelectDiv").html(result);
+    //                     $("#selectBank").val('').trigger("chosen:updated");
+    //                 },
+    //                 error: function(error) {
+    //                     $("#payeeSelectDiv").html();
+    //                 }
+    //             });
+    //         };
+    
+    //         var orgCorpAjax = function() {
+    //             return $.ajax({
+    //                 url: "/CorpReceipt/OrganizationCorporators",
+    //                 type: "GET",
+    //                 cache: false,
+    //                 success: function(result) {
+    //                     $("#payerSelectDiv").html(result);
+    //                 },
+    //                 error: function(error) {
+    //                     $("#payerSelectDiv").html();
+    //                 }
+    //             });
+    //         };
+    
+    //         $.when(corpOrgAjax(), orgCorpAjax()).done(function() {
+    //             initChosen(
+    //                 $('#withBanks').val() == 'true',
+    //                 $('#withFees').val() == 'true'
+    //             );
+    //         });
+    //     });
+
+    function loadOrgCorpSelect() {
+        $('#selectBank').hide();
+
+        $.get("/CorpReceipt/OrganizationSelect", function (data) {
+            $('#selectPayee').select2({
+                placeholder: "Выбрать организацию",
+                width: "100%",
+                data: data.results
+            });
+
+            $('#selectPayee').val(null).trigger('change');
+
+            editValueId = $("#editReceiptOrgId").val();
+            editValueName = $("#editReceiptOrgName").val();
+            if (editValueId) {
+                $('#selectPayee').val(editValueId).trigger('change');
+                loadOrganizationBank(editValueName, true);
+            }
+        });
+
+        $.get("/CorpReceipt/CounterpartySelect", function (data) {
+            $('#selectPayer').select2({
+                placeholder: "Выбрать корпоратора",
+                width: "100%",
+                data: data.results
+            });
+
+            $('#selectPayer').val(null).trigger('change');
+
+            var editValue = $("#editReceiptCorpName").val();
+            if (editValue) {
+                console.log('editValue');
+                $('#selectPayer').val(editValue).trigger('change');
+            }
+        });
+    }
+
+        $(document).on('click',
         '#resetOrgDataBtn',
         function(e) {
             e.preventDefault();
     
-            var corpOrgAjax = function() {
-                return $.ajax({
-                    url: "/CorpReceipt/CorporatorOrganizations",
-                    type: "GET",
-                    cache: false,
-                    success: function(result) {
-                        $("#payeeSelectDiv").html(result);
-                        $("#selectBank").val('').trigger("chosen:updated");
-                    },
-                    error: function(error) {
-                        $("#payeeSelectDiv").html();
-                    }
-                });
-            };
-    
-            var orgCorpAjax = function() {
-                return $.ajax({
-                    url: "/CorpReceipt/OrganizationCorporators",
-                    type: "GET",
-                    cache: false,
-                    success: function(result) {
-                        $("#payerSelectDiv").html(result);
-                    },
-                    error: function(error) {
-                        $("#payerSelectDiv").html();
-                    }
-                });
-            };
-    
-            $.when(corpOrgAjax(), orgCorpAjax()).done(function() {
-                initChosen(
-                    $('#withBanks').val() == 'true',
-                    $('#withFees').val() == 'true'
-                );
-            });
+            $('#selectPayee').empty();
+            $('#selectPayer').empty();
+            $('#selectBank').empty();
+            loadOrgCorpSelect();
         });
 
     function initPayer(withBanks, withFees) {
@@ -2561,6 +2609,33 @@ $(document).on('click',
 
         // Start observing the target node for configured mutations
         payeeObserver.observe(payeeTargetNode, config);
+    }
+
+    function loadOrganizationBank(orgName, withEdit = false) {
+        $.get("/CorpReceipt/OrganizationFinancialAccountSelect",
+            { orgName: orgName },
+            function (data) {
+                $('#selectBank').empty();
+
+                $('#selectBank').select2({
+                    placeholder: "Выбрать счет",
+                    width: "100%",
+                    data: data.results
+                });
+
+                $('#selectBank').val(null).trigger('change');
+
+                if (withEdit)
+                {
+                    var editValue = $("#editReceiptBankName").val();
+                    if (editValue) {
+                        $('#selectBank').val(editValue).trigger('change');
+                    }
+                }
+
+                $('#selectBank').show();
+            }
+        );
     }
 
     function initChosen(withBanks = true, withFees = true) {

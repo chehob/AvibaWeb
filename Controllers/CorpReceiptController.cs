@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using AvibaWeb.DomainModels;
 using AvibaWeb.Infrastructure;
 using AvibaWeb.Models;
+using AvibaWeb.ViewModels.BookingManagement;
 using AvibaWeb.ViewModels.CorpReceiptViewModels;
 using AvibaWeb.ViewModels.DataViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -43,17 +45,150 @@ namespace AvibaWeb.Controllers
             }
         }
 
+        public JsonResult OrganizationSelect(int? subGroupId = null)
+        {
+            SelectResult result = new SelectResult
+            {
+                results = new List<SelectResultItem>
+                {
+                    new SelectResultItem
+                    {
+                        id = "0",
+                        text = "Организации",
+                        children = (from org in _db.Organizations
+                                where org.IsActive && (subGroupId == null || org.ReceiptNumberGroupId == subGroupId)
+                                select new SelectResultItem
+                                {
+                                    id = org.OrganizationId.ToString(),
+                                    text = org.Description
+                                }).ToList()
+                    }
+                }
+            };
+
+            return this.Json(result);
+        }
+
+        public JsonResult CounterpartySelect()
+        {
+            SelectResult result = new SelectResult
+            {
+                results = new List<SelectResultItem>
+                {
+                    new SelectResultItem
+                    {
+                        id = "0",
+                        text = "Корпораторы",
+                        children = (from c in _db.Counterparties
+                                  where c.Type.Description == "Корпоратор"
+                                select new SelectResultItem
+                                {
+                                    id = c.ITN,
+                                    text = c.Name
+                                }).ToList()
+                    }
+                }
+            };
+
+            return this.Json(result);
+        }
+
+        public JsonResult OrganizationFinancialAccountSelect(string orgName)
+        {
+            SelectResult result = new SelectResult();
+            var org = _db.Organizations.Include(o => o.Accounts).FirstOrDefault(o => o.Description == orgName);
+            if (org != null)
+            {
+                result = new SelectResult
+                {
+                    results = (from a in org.Accounts
+                               where a.IsActive
+                               select new SelectResultItem
+                               {
+                                   id = a.FinancialAccountId.ToString(),
+                                   text = a.BankName
+                               }).ToList()
+                };
+            }
+
+            return this.Json(result);
+        }
+
+        [HttpGet]
+        public JsonResult OrganizationCorporatorsSelect(string orgName, bool isMobile = false)
+        {
+            SelectResult result = new SelectResult
+            {
+                results = new List<SelectResultItem>
+                {
+                    new SelectResultItem
+                    {
+                        id = "0",
+                        text = "Корпораторы",
+                        children = orgName == null
+                            ? (from c in _db.Counterparties
+                               where c.Type.Description == "Корпоратор"
+                               select new SelectResultItem
+                                {
+                                    id = c.ITN,
+                                    text = c.Name
+                                }).ToList()
+                            : (from o in _db.Organizations
+                               join cd in _db.CorporatorDocuments on o.OrganizationId equals cd.OrganizationId
+                               join c in _db.Counterparties on cd.ITN equals c.ITN
+                               where o.Description == orgName
+                               select new SelectResultItem
+                                {
+                                    id = c.ITN,
+                                    text = c.Name
+                                }).Distinct().ToList()
+                    }
+                }
+            };
+
+            return this.Json(result);
+        }
+
+        [HttpGet]
+        public JsonResult CorporatorOrganizationsSelect(string corpName, bool isMobile = false)
+        {
+            SelectResult result = new SelectResult
+            {
+                results = new List<SelectResultItem>
+                {
+                    new SelectResultItem
+                    {
+                        id = "0",
+                        text = "Корпораторы",
+                        children = corpName == null
+                            ? (from org in _db.Organizations
+                               where org.IsActive
+                               select new SelectResultItem
+                                        {
+                                            id = org.OrganizationId.ToString(),
+                                            text = org.Description
+                                        }).ToList()
+                            : (from c in _db.Counterparties
+                               join cd in _db.CorporatorDocuments on c.ITN equals cd.ITN
+                               join org in _db.Organizations on cd.OrganizationId equals org.OrganizationId
+                               where c.Name == corpName
+                               select new SelectResultItem
+                                        {
+                                            id = org.OrganizationId.ToString(),
+                                            text = org.Description
+                                        }).Distinct().ToList()
+                    }
+                }
+            };
+
+            return this.Json(result);
+        }
+
         [HttpGet]
         public IActionResult CreateReceipt(int? id, int subGroupId, bool isMobile = false)
         {
             var model = new CreateReceiptViewModel
             {
-                Counterparties = (from c in _db.Counterparties
-                    where c.Type.Description == "Корпоратор"
-                    select new KeyValuePair<string,string>(c.ITN, c.Name)).ToList(),
-                Organizations = (from org in _db.Organizations
-                    where org.IsActive && org.ReceiptNumberGroupId == subGroupId
-                    select new KeyValuePair<string,string>(org.OrganizationId.ToString(), org.Description)).ToList(),
                 SubGroupId = subGroupId
             };
 
@@ -69,10 +204,15 @@ namespace AvibaWeb.Controllers
                     select new ReceiptEditData
                     {
                         ReceiptId = cr.CorporatorReceiptId,
+                        CorporatorId = cr.Corporator == null ? "" : cr.Corporator.ITN,
                         CorporatorName = cr.Corporator == null ? "" : cr.Corporator.Name,
+                        OrganizationId = cr.PayeeAccount == null || cr.PayeeAccount.Organization == null
+                            ? 0
+                            : cr.PayeeAccount.Organization.OrganizationId,
                         OrganizationName = cr.PayeeAccount == null || cr.PayeeAccount.Organization == null
                             ? ""
                             : cr.PayeeAccount.Organization.Description,
+                        BankId = cr.PayeeAccount == null ? 0 : cr.PayeeAccount.FinancialAccountId,
                         BankName = cr.PayeeAccount == null ? "" : cr.PayeeAccount.BankName,
                         FeeRate = cr.FeeRate.Value,
                         Items = (from item in _db.CorporatorReceiptItems

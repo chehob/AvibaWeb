@@ -164,7 +164,6 @@ namespace AvibaWeb.Controllers
         {
             var model = new FilterViewModel
             {
-                Airlines = _db.VAirlines.Select(a => new KeyValuePair<string, string>(a.Code, a.FullName)).ToList()
             };
             return PartialView(model);
         }
@@ -254,6 +253,26 @@ namespace AvibaWeb.Controllers
             }
 
             return this.Json(result);
-        }        
+        }
+
+        public JsonResult SearchAirline(string query)
+        {
+            SelectResult result = new SelectResult();
+            if (!string.IsNullOrEmpty(query))
+            {
+                result = new SelectResult
+                {
+                    results = (from a in _db.VAirlines
+                               where a.FullName.ToLower().Contains(query.ToLower())
+                               select new SelectResultItem
+                               {
+                                   id = a.Code,
+                                   text = a.FullName + " - " + a.Code
+                               }).Take(10).ToList()
+                };
+            }
+
+            return this.Json(result);
+        }
     }
 }

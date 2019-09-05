@@ -25,34 +25,27 @@
                     <h5>Поставщик:</h5>
                     <div id="payeeSelectDiv">
                         <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
-                            <option value=""></option>
-                            <optgroup label="Организации">
-                                @foreach (var org in Model.Organizations)
-                                {
-                                    <option id=@org.Key>@org.Value</option>
-                                }
-                            </optgroup>
+                            <option></option>
                         </select>
                     </div>
-                    <div id="payeeOrgFinancialAccountsDiv"></div>
+                    <div id="payeeOrgFinancialAccountsDiv">
+                        <select data-placeholder="Выбрать счет" data-rel="chosen" id="selectBank">
+                            <option></option>
+                        </select>
+                    </div>
+                    <input id="editReceiptOrgId" type="hidden" value="@Model.Receipt.OrganizationId" />
                     <input id="editReceiptOrgName" type="hidden" value="@Model.Receipt.OrganizationName" />
-                    <input id="editReceiptBankName" type="hidden" value="@Model.Receipt.BankName" />
+                    <input id="editReceiptBankName" type="hidden" value="@Model.Receipt.BankId" />
                 </div>
 
                 <div class="col-md-6">
                     <h5>Покупатель:</h5>
                     <div id="payerSelectDiv">
                         <select data-placeholder="Выбрать корпоратора" id="selectPayer" data-rel="chosen">
-                            <option value=""></option>
-                            <optgroup label="Корпораторы">
-                                @foreach (var counterparty in Model.Counterparties)
-                                {
-                                    <option id=@counterparty.Key>@counterparty.Value</option>
-                                }
-                            </optgroup>
+                            <option></option>
                         </select>
                      </div>
-                    <input id="editReceiptCorpName" type="hidden" value="@Model.Receipt.CorporatorName" />
+                    <input id="editReceiptCorpName" type="hidden" value="@Model.Receipt.CorporatorId" />
                 </div>
             </div>
             <br>
@@ -190,58 +183,68 @@
 
 <script>
     onload = function () {
-        
+        $('#selectBank').hide();
 
-        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
-
-        // Select the node that will be observed for mutations
-        const payeeTargetNode = $("#selectPayee").next().find("a.chosen-single span")[0];
-
-        // Options for the observer (which mutations to observe)
-        const config = { attributes: true, childList: true, subtree: true };
-
-        // Callback function to execute when mutations are observed
-        const payeeCallback = function (mutationsList, observer) {
-            const mutation = mutationsList[0];
-            $.ajax({
-                url: "/Data/OrganizationFinancialAccounts",
-                type: "GET",
-                cache: false,
-                data: { orgName: mutation.target.textContent },
-                success: function (result) {
-                    $("#payeeOrgFinancialAccountsDiv").html(result);
-                    $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
-
-                    var editValue = $("#editReceiptBankName").val();
-                    if (editValue) {
-                        $('#selectBank').val(editValue).trigger('chosen:updated');
-                    }
-                },
-                error: function (error) {
-                    $("#payeeOrgFinancialAccountsDiv").html();
-                }
+        $.get("/CorpReceipt/OrganizationSelect", { subGroupId: @Model.SubGroupId }, function (data) {
+            $('#selectPayee').select2({
+                placeholder: "Выбрать организацию",
+                allowClear: true,
+                width: "100%",
+                data: data.results
             });
-        };
 
-        // Create an observer instance linked to the callback function
-        const payeeObserver = new MutationObserver(payeeCallback);
+            $('#selectPayee').on('select2:select', function (e) {
+                $.get("/CorpReceipt/OrganizationFinancialAccountSelect",
+                    { orgName: e.params.data.text },
+                    function (data) {
+                        $('#selectBank').html('').select2({ data: [{ id: '', text: '' }] });
 
-        // Start observing the target node for configured mutations
-        payeeObserver.observe(payeeTargetNode, config);
+                        $('#selectBank').select2({
+                            placeholder: "Выбрать счет",
+                            allowClear: true,
+                            width: "100%",
+                            data: data.results
+                        });
 
-        // Select the node that will be observed for mutations
-        const payerTargetNode = $("#selectPayer").next().find("a.chosen-single span")[0];
+                        var editValue = $("#editReceiptBankName").val();
+                        if (editValue) {
+                            $('#selectBank').val(editValue).trigger('change');
+                        }
 
-        // Callback function to execute when mutations are observed
-        const payerCallback = function (mutationsList, observer) {
-            const mutation = mutationsList[0];
-        };
+                        $('#selectBank').show();
+                    }
+                );
+            });
 
-        // Create an observer instance linked to the callback function
-        const payerObserver = new MutationObserver(payerCallback);
+            editValueId = $("#editReceiptOrgId").val();
+            editValueName = $("#editReceiptOrgName").val();
+            if (editValueId) {
+                $('#selectPayee').val(editValueId).trigger('change');
+                $('#selectPayee').trigger({
+                    type: 'select2:select',
+                    params: {
+                        data: {
+                            id: editValueId,
+                            text: editValueName
+                        }
+                    }
+                });
+            }
+        });
 
-        // Start observing the target node for configured mutations
-        payerObserver.observe(payerTargetNode, config);
+        $.get("/CorpReceipt/CounterpartySelect", function (data) {
+            $('#selectPayer').select2({
+                placeholder: "Выбрать корпоратора",
+                allowClear: true,
+                width: "100%",
+                data: data.results
+            });
+
+            var editValue = $("#editReceiptCorpName").val();
+            if (editValue) {
+                $('#selectPayer').val(editValue).trigger('change');
+            }
+        });
 
         $("#issuedDateTime").datepicker({
                     locale: 'ru-ru',
@@ -259,11 +262,6 @@
                     format: 'dd.mm.yyyy'
                 });
 
-        var editValue = $("#editReceiptCorpName").val();
-        if (editValue) {
-            $('#selectPayer').val(editValue).trigger('chosen:updated'); 
-        }
-
         editValue = $("#editReceiptCreatedDate").val();
         if (editValue) {
             $("#min").val(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").subtract(5, 'days').format("DD.MM.YYYY"));
@@ -272,11 +270,6 @@
         else {
             $("#min").val(moment().subtract(5, 'days').format("DD.MM.YYYY"));
             $("#max").val(moment().format("DD.MM.YYYY"));
-        }
-
-        editValue = $("#editReceiptOrgName").val();
-        if (editValue) {
-            $('#selectPayee').val(editValue).trigger('chosen:updated');
         }
 
         var oTable = $('#receiptItemsTable').dataTable({
@@ -358,11 +351,11 @@
 
         const sendJsonData = {
             ReceiptId: $('#editReceiptId').val(),
-            PayerId: $("#selectPayer").find('option:selected').prop('id'),
-            PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
-            PayeeId: $("#selectPayee").find('option:selected').prop('id'),
-            PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html(),
-            PayeeBankName: $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html(),
+            PayerId: $("#selectPayer").select2('data')[0].id,
+            PayerName: $("#selectPayer").select2('data')[0].text,
+            PayeeId: $("#selectPayee").select2('data')[0].id,
+            PayeeName: $("#selectPayee").select2('data')[0].text,
+            PayeeBankName: $("#selectBank").select2('data')[0].text,
             FeeRate: $("#feeRate").val(),
             Items: items,
             StatusId: $("#receiptStatus option:selected").val(),
@@ -419,8 +412,6 @@
             toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true),
             ExceptItems: exceptItems
         };
-
-        //console.log(sendJsonData);
 
         e.preventDefault();
         $.ajax({

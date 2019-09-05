@@ -26,17 +26,16 @@
                     <div id="payeeSelectDiv">
                         <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
                             <option value=""></option>
-                            <optgroup label="Организации">
-                                @foreach (var org in Model.Organizations)
-                                {
-                                    <option id=@org.Key>@org.Value</option>
-                                }
-                            </optgroup>
                         </select>
                     </div>
-                    <div id="payeeOrgFinancialAccountsDiv"></div>
+                    <div id="payeeOrgFinancialAccountsDiv">
+                        <select data-placeholder="Выбрать счет" data-rel="chosen" id="selectBank">
+                            <option></option>
+                        </select>
+                    </div>
+                    <input id="editReceiptOrgId" type="hidden" value="@Model.Receipt.OrganizationId" />
                     <input id="editReceiptOrgName" type="hidden" value="@Model.Receipt.OrganizationName" />
-                    <input id="editReceiptBankName" type="hidden" value="@Model.Receipt.BankName" />
+                    <input id="editReceiptBankName" type="hidden" value="@Model.Receipt.BankId" />
                 </div>
 
                 <div class="col-md-6">
@@ -44,15 +43,9 @@
                     <div id="payerSelectDiv">
                         <select data-placeholder="Выбрать корпоратора" id="selectPayer" data-rel="chosen">
                             <option value=""></option>
-                            <optgroup label="Корпораторы">
-                                @foreach (var counterparty in Model.Counterparties)
-                                {
-                                    <option id=@counterparty.Key>@counterparty.Value</option>
-                                }
-                            </optgroup>
                         </select>
                     </div>
-                    <input id="editReceiptCorpName" type="hidden" value="@Model.Receipt.CorporatorName" />
+                    <input id="editReceiptCorpName" type="hidden" value="@Model.Receipt.CorporatorId" />
                 </div>
             </div>
             <br>
@@ -217,7 +210,47 @@
 
 <script>
     $(function() {
-        initChosen();
+        loadOrgCorpSelect();
+
+        $('#selectPayee').on('select2:select', function (e) {
+            loadOrganizationBank(e.params.data.text);
+
+            if ($('#selectPayer').select2('data').length === 0) {
+                $.get("/CorpReceipt/OrganizationCorporatorsSelect",
+                    { orgName: e.params.data.text },
+                    function (data) {
+                        $('#selectPayer').empty();
+
+                        $('#selectPayer').select2({
+                            placeholder: "Выбрать корпоратора",
+                            width: "100%",
+                            data: data.results
+                        });
+
+                        $('#selectPayer').val(null).trigger('change');
+                    }
+                );
+            }
+        });
+
+        $('#selectPayer').on('select2:select', function (e) {
+            if ($('#selectPayee').select2('data').length === 0) {
+                $.get("/CorpReceipt/CorporatorOrganizationsSelect",
+                    { corpName: e.params.data.text },
+                    function (data) {
+                        $('#selectPayee').empty();
+
+                        $('#selectPayee').select2({
+                            placeholder: "Выбрать организацию",
+                            width: "100%",
+                            data: data.results
+                        });
+
+                        $('#selectPayee').val(null).trigger('change');
+                    }
+                );
+            }
+        });
 
         $("#issuedDateTime").datepicker({
             locale: 'ru-ru',
@@ -235,11 +268,6 @@
             format: 'dd.mm.yyyy'
         });
 
-        var editValue = $("#editReceiptCorpName").val();
-        if (editValue) {
-            $('#selectPayer').val(editValue).trigger('chosen:updated');
-        }
-
         editValue = $("#editReceiptCreatedDate").val();
         if (editValue) {
             $("#min").val(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").format("DD.MM.YYYY"));
@@ -247,11 +275,6 @@
         } else {
             $("#min").val(moment().format("DD.MM.YYYY"));
             $("#max").val(moment().format("DD.MM.YYYY"));
-        }
-
-        editValue = $("#editReceiptOrgName").val();
-        if (editValue) {
-            $('#selectPayee').val(editValue).trigger('chosen:updated');
         }
 
         $.ajax({
@@ -351,11 +374,11 @@
 
         const sendJsonData = {
             ReceiptId: $('#editReceiptId').val(),
-            PayerId: $("#selectPayer").find('option:selected').prop('id'),
-            PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
-            PayeeId: $("#selectPayee").find('option:selected').prop('id'),
-            PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html(),
-            PayeeBankName: $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html(),
+            PayerId: $("#selectPayer").select2('data')[0].id,
+            PayerName: $("#selectPayer").select2('data')[0].text,
+            PayeeId: $("#selectPayee").select2('data')[0].id,
+            PayeeName: $("#selectPayee").select2('data')[0].text,
+            PayeeBankName: $("#selectBank").select2('data')[0].text,
             FeeRate: $("#feeRate").val(),
             Items: items,
             StatusId: $("#receiptStatus option:selected").val(),
