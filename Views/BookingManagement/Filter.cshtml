@@ -5,9 +5,6 @@
     <button class="btn btn-primary" data-toggle="collapse" href="#filterBlock" role="button" aria-expanded="false" aria-controls="filterBlock">
         Фильтры
     </button>
-    <button class="btn btn-primary" role="button" id="saveFilterBtn">
-        Сохранить
-    </button>
     <button class="btn btn-primary" role="button" id="clearFilterBtn">
         Сбросить
     </button>
@@ -83,7 +80,11 @@
                     'url': function () {
                         return '/BookingManagement/GetDeskFilter';
                     },
+                    'success': function(result) {
+                        console.log(result);
+                    },
                     'data': function (node) {
+                        console.log(node);
                         return { 'id': node.id };
                     }
                 }
@@ -147,15 +148,21 @@
         $("#min").datepicker({
             locale: 'ru-ru',
             uiLibrary: 'bootstrap',
-            format: 'dd.mm.yyyy'
+            format: 'dd.mm.yyyy',
+            weekStartDay: 1
         });
         $("#max").datepicker({
             locale: 'ru-ru',
             uiLibrary: 'bootstrap',
-            format: 'dd.mm.yyyy'
+            format: 'dd.mm.yyyy',
+            weekStartDay: 1
         });
         $("#min").val(moment().format("DD.MM.YYYY"));
         $("#max").val(moment().format("DD.MM.YYYY"));
+
+        $('#deskTree').jstree('hide_icons');
+        $('#sessionTree').jstree('hide_icons');
+        console.log($('#deskTree').jstree('get_selected'));
     });
 
     $("#clearFilterBtn").click(function (e) {

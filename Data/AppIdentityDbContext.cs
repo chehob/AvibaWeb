@@ -118,6 +118,8 @@ namespace AvibaWeb.Models
         public DbSet<VCities> VCities { get; set; }
         public DbSet<VAirlines> VAirlines { get; set; }
 
+        public DbSet<VBookingManagementSales> VBookingManagementSales { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

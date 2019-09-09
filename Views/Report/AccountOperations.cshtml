@@ -102,15 +102,17 @@
         });
 
         $("#min").datepicker({
-                    locale: 'ru-ru',
-                    uiLibrary: 'bootstrap',
-                    format: 'dd.mm.yyyy'
-                });
+            locale: 'ru-ru',
+            uiLibrary: 'bootstrap',
+            format: 'dd.mm.yyyy',
+            weekStartDay: 1
+        });
         $("#max").datepicker({
-                    locale: 'ru-ru',
-                    uiLibrary: 'bootstrap',
-                    format: 'dd.mm.yyyy'
-                });
+            locale: 'ru-ru',
+            uiLibrary: 'bootstrap',
+            format: 'dd.mm.yyyy',
+            weekStartDay: 1
+        });
 
         $("#min").val('@Model.FromDate');
         $("#max").val('@Model.ToDate');

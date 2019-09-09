@@ -8,34 +8,37 @@ namespace AvibaWeb.ViewModels.BookingManagement
 {
     public class SalesViewItem
     {
-        public SalesViewItem(bool isEmptyRow = false)
+        public SalesViewItem()
         {
-            IsEmptyRow = isEmptyRow;
             nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
         }
         private NumberFormatInfo nfi;
-
-        public bool IsEmptyRow { get; set; } = false;
-        public string Description { get; set; }
+        
         public decimal SegCount { get; set; }
-        public string SegCountStr => IsEmptyRow ? "" : SegCount.ToString();
+        public string SegCountStr => SegCount.ToString();
         public decimal AmountCash { get; set; }
-        public string AmountCashStr => IsEmptyRow ? "" : AmountCash.ToString("#,0.00", nfi);
+        public string AmountCashStr => AmountCash.ToString("#,0.00", nfi);
         public decimal AmountPK { get; set; }
-        public string AmountPKStr => IsEmptyRow ? "" : AmountPK.ToString("#,0.00", nfi);
+        public string AmountPKStr => AmountPK.ToString("#,0.00", nfi);
         public decimal AmountBN { get; set; }
-        public string AmountBNStr => IsEmptyRow ? "" : AmountBN.ToString("#,0.00", nfi);
-        public string Total => IsEmptyRow ? "" : (AmountCash + AmountPK + AmountBN).ToString("#,0.00", nfi);
-        public string SegCountCustomStyle { get; set; }
-        public string AmountCashCustomStyle { get; set; }
-        public string AmountPKCustomStyle { get; set; }
-        public string AmountBNCustomStyle { get; set; }
-        public string AmountTotalCustomStyle { get; set; }
+        public string AmountBNStr => AmountBN.ToString("#,0.00", nfi);
+        public string Total => (AmountCash + AmountPK + AmountBN).ToString("#,0.00", nfi);
     }
 
     public class SalesViewModel
     {
-        public List<SalesViewItem> Items { get; set; }
+        public SalesViewItem AirSale { get; set; }
+        public SalesViewItem AirPenalty { get; set; }
+        public SalesViewItem AirExchange { get; set; }
+        public SalesViewItem AirRefund { get; set; }
+        public SalesViewItem AirForcedExchange { get; set; }
+        public SalesViewItem AirForcedRefund { get; set; }
+        public SalesViewItem AirTotal { get; set; }
+
+        public SalesViewItem RailSale { get; set; }
+        public SalesViewItem RailRefund { get; set; }
+
+        public SalesViewItem FinalTotal { get; set; }
     }
 }

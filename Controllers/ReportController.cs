@@ -9,6 +9,7 @@ using AvibaWeb.DomainModels;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace AvibaWeb.Controllers
 {
@@ -441,6 +442,92 @@ namespace AvibaWeb.Controllers
             model.AmountSubagent = (from s in _db.SubagentFeeTransactions
                                     where s.TransactionDateTime >= queryFromDate && s.TransactionDateTime < queryToDate.AddDays(1)
                                     select s).Sum(s => s.Amount).ToString("#,0.00", nfi);
+
+            return PartialView(model);
+        }
+
+        [HttpGet]
+        public ActionResult FinalSummary(DateTime? fromDate, DateTime? toDate)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var today = DateTime.Today;
+            var currentMonth = new DateTime(today.Year, today.Month, 1);
+            var queryToDate = toDate ?? currentMonth.AddDays(-1);
+            var queryFromDate = fromDate ?? currentMonth.AddMonths(-1);
+
+            var KRSList = (from dg in _db.DeskGroups
+                           join d in _db.Desks on dg.DeskGroupId equals d.GroupId
+                           join info in _db.VServiceReceiptIncomeInfo on d.DeskId equals info.DeskIssuedId
+                           where info.DateTime >= queryFromDate && info.DateTime < queryToDate.AddDays(1)
+                           group new { info, dg } by dg.DeskGroupId into g
+                           select new
+                           {
+                               g.FirstOrDefault().dg.Name,
+                               Amount = g.Sum(ig => ig.info.Amount)
+                           }).ToList();
+
+            var CorpTicketList = (from dg in _db.DeskGroups
+                                  join d in _db.Desks on dg.DeskGroupId equals d.GroupId
+                                  join ti in _db.VReceiptTicketInfo on d.DeskId equals ti.DeskID
+                                  join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
+                                  join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
+                                  where cr.PaidDateTime >= queryFromDate && cr.PaidDateTime < queryToDate.AddDays(1) &&
+                                     cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid &&
+                                     cr.TypeId == CorporatorReceipt.CRType.CorpClient && cri.TypeId == CorporatorReceiptItem.CRIType.Ticket
+                                  group new { dg, cri, ti } by dg.DeskGroupId into g
+                                  select new
+                                  {
+                                      g.FirstOrDefault().dg.Name,
+                                      Amount = g.Sum(sg => sg.cri.IsPercent ? sg.cri.Amount * sg.cri.FeeRate / 100 : sg.cri.PerSegment ? sg.cri.FeeRate * sg.ti.SegCount : sg.cri.FeeRate)
+                                  }).ToList();
+
+            var CorpLuggageList = (from dg in _db.DeskGroups
+                                   join d in _db.Desks on dg.DeskGroupId equals d.GroupId
+                                   join ti in _db.VReceiptLuggageInfo on d.DeskId equals ti.DeskID
+                                   join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
+                                   join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
+                                   where cr.PaidDateTime >= queryFromDate && cr.PaidDateTime < queryToDate.AddDays(1) &&
+                                     cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid &&
+                                     cr.TypeId == CorporatorReceipt.CRType.CorpClient && cri.TypeId == CorporatorReceiptItem.CRIType.Luggage
+                                   group new { dg, cri, ti } by dg.DeskGroupId into g
+                                   select new
+                                   {
+                                       g.FirstOrDefault().dg.Name,
+                                       Amount = g.Sum(sg => sg.cri.IsPercent ? sg.cri.Amount * sg.cri.FeeRate / 100 : sg.cri.FeeRate),
+                                   }).ToList();
+
+            var expenditureList = (from expenditure in _db.Expenditures
+                                    .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
+                                  from eo in _db.ExpenditureOperations.Where(eo => expenditure.ExpenditureId == eo.ExpenditureId).OrderByDescending(eo => eo.OperationDateTime).Take(1).DefaultIfEmpty()
+                                  where eo.OperationDateTime >= queryFromDate && eo.OperationDateTime < queryToDate.AddDays(1) &&
+                                        eo.OperationTypeId == ExpenditureOperation.EOType.New
+                                  group expenditure by new { groupField = expenditure.DeskGroupId } into g
+                                  select new
+                                  {
+                                      g.FirstOrDefault().DeskGroup.Name,
+                                      Amount = g.Sum(ig => ig.Amount)
+                                  }).ToList();
+
+            var model = new FinalSummaryViewModel
+            {
+                FromDate = queryFromDate.ToString("d"),
+                ToDate = queryToDate.ToString("d"),
+                Items = (from dg in _db.DeskGroups
+                         from k in KRSList.Where(k => k.Name == dg.Name).DefaultIfEmpty()
+                         from ct in CorpTicketList.Where(c => c.Name == dg.Name).DefaultIfEmpty()
+                         from cl in CorpLuggageList.Where(c => c.Name == dg.Name).DefaultIfEmpty()
+                         from e in expenditureList.Where(e => e.Name == dg.Name).DefaultIfEmpty()
+                         select new FinalSummaryViewItem
+                         {
+                             Name = dg.Name,
+                             IncomeAmount = (k == null ? 0 : k.Amount) + (ct == null ? 0 : ct.Amount) + (cl == null ? 0 : cl.Amount),
+                             ExpenditureAmount = (e == null ? 0 : e.Amount)
+                         })
+            };
+
+            
 
             return PartialView(model);
         }

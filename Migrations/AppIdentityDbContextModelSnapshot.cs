@@ -1753,6 +1753,48 @@ namespace AvibaWeb.Migrations
                 b.ToTable("VAirlines");
             });
 
+            modelBuilder.Entity("AvibaWeb.DomainModels.VBookingManagementSales", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
+
+                b.Property<int>("OperationTypeID");
+
+                b.Property<decimal>("CashAmount");
+
+                b.Property<decimal>("ChildCashAmount");
+
+                b.Property<decimal>("PKAmount");
+
+                b.Property<decimal>("ChildPKAmount");
+
+                b.Property<decimal>("BNAmount");
+
+                b.Property<decimal>("ChildBNAmount");
+
+                b.Property<int>("PenaltyCount");
+
+                b.Property<decimal>("PenaltySum");
+
+                b.Property<int?>("TypeID");
+
+                b.Property<string>("DeskID");
+                b.Property<DateTime>("ExecutionDateTime");
+                b.Property<string>("AirlineCode");
+                b.Property<string>("Origin");
+                b.Property<string>("OriginEn");
+                b.Property<string>("Destination");
+                b.Property<string>("DestinationEn");
+
+                b.Property<int>("SegCount");
+
+                b.Property<string>("Session");
+
+                b.HasKey("Id");
+
+                b.ToTable("VBookingManagementSales");
+            });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")

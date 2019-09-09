@@ -10,11 +10,19 @@ namespace AvibaWeb.ViewModels.BookingManagement
     {
     }
 
+    public class DeskFilterItemState
+    {
+        public bool opened { get; set; } = false;
+        public bool disabled { get; set; } = false;
+        public bool selected { get; set; } = false;
+    }
+
     public class DeskFilterItem
     {
         public string id { get; set; }
         public string text { get; set; }
         public string icon { get; set; }
+        public DeskFilterItemState state { get; set; }
         public List<DeskFilterItem> children { get; set; }
     }
 

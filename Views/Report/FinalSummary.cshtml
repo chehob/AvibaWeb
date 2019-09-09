@@ -1,6 +1,6 @@
 ﻿@using AvibaWeb.DomainModels
 @using AvibaWeb.ViewModels.ReportViewModels
-@model IncomeSummaryViewModel
+@model FinalSummaryViewModel
 
 <div class="box col-md-10">
     <div class="row">
@@ -15,72 +15,56 @@
                     <h2></h2>
                 </div>
                 <div class="box-content">
-                    <div>
-                        <div>Сборы наши: @Model.AmountKRS</div>
-                        <div>Сборы субагентов: @Model.AmountSubagent</div>
-                        <div>Агентское вознаграждение: @Model.AmountAgentFee</div>
-                        <div>Сборы БН: @Model.AmountCorp</div>
-                    </div>
                     <table class="table table-striped table-bordered bootstrap-datatable datatable" id="dataTable">
                         <thead>
                             <tr>
-                                <th>Наименование</th>
-                                <th>Сумма</th>
+                                <th></th>
+                                <th>Доход</th>
+                                <th>Расход</th>
+                                <th>Итог</th>
+                                <th></th>
+                                <th>Продажи</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if (!Model.ItemGroups.Any())
+                            @if (!Model.Items.Any())
                             {
-                                <tr>
-                                    <td colspan="2" class="text-center">Нет операций</td>
-                                    <td style="display: none;"></td>
-                                </tr>
+                            <tr>
+                                <td colspan="6" class="text-center">Нет результатов</td>
+                                <td style="display: none;"></td>
+                                <td style="display: none;"></td>
+                                <td style="display: none;"></td>
+                                <td style="display: none;"></td>
+                                <td style="display: none;"></td>
+                            </tr>
                             }
                             else
                             {
-                                foreach (var itemGroup in Model.ItemGroups)
+                                foreach (var item in Model.Items)
                                 {
-                                    <tr>
-                                        <td class="text-center">
-                                            <div style="min-height: 32px;">@itemGroup.Name</div>
-                                        </td>
-                                        <td>
-                                            <b>@itemGroup.Amount</b>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span class="showOperationsBtn btn-setting">Сборы наши КРС</span>
-                                        </td>
-                                        <td>
-                                            <b>@itemGroup.AmountKRSStr</b>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span class="showOperationsBtn btn-setting">Сборы БН</span>
-                                        </td>
-                                        <td>
-                                            <b>@itemGroup.AmountCorpStr</b>
-                                        </td>
-                                    </tr>
+                            <tr>
+                                <td class="text-center">
+                                    <div style="min-height: 32px;">@item.Name</div>
+                                </td>
+                                <td>
+                                    @item.IncomeAmountStr
+                                </td>
+                                <td>
+                                    @item.ExpenditureAmountStr
+                                </td>
+                                <td>
+                                    @item.TotalAmountStr
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                    @item.SalesAmountStr
+                                </td>
+                            </tr>
                                 }
                             }
                         </tbody>
                     </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="dialog" title="Basic dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <span>Операции</span>
-                        <button type="button" class="close" data-dismiss="modal">×</button>
-                    </div>
-                    <div class="modal-body"></div>
-                    <div class="modal-footer"></div>
                 </div>
             </div>
         </div>
@@ -143,34 +127,12 @@
 
         e.preventDefault();
         $.ajax({
-            url: "/Report/IncomeSummary",
+            url: "/Report/FinalSummary",
             type: "GET",
             cache: false,
             data: sendJsonData,
             success: function (result) {
                 $("#results").html(result);
-            },
-            error: function (error) {
-                console.log(error);
-            }
-        });
-    });
-
-    $(".showOperationsBtn").click(function (e) {
-        e.preventDefault();
-
-        const sendJsonData = {
-            fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
-            toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true)
-        };
-
-        $.ajax({
-            url: "/Report/IncomeSummaryOperations",
-            type: "GET",
-            cache: false,
-            data: sendJsonData,
-            success: function (result) {
-                $(".modal-body").html(result);
             },
             error: function (error) {
                 console.log(error);
