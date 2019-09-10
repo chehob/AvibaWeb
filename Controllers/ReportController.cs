@@ -386,7 +386,7 @@ namespace AvibaWeb.Controllers
                            {
                                Name = g.FirstOrDefault().dg.Name,
                                AmountKRS = g.Sum(ig => ig.info.Amount)
-                           });
+                           }).ToList();
 
             var CorpTicketList = (from dg in _db.DeskGroups
                      join d in _db.Desks on dg.DeskGroupId equals d.GroupId
@@ -401,7 +401,7 @@ namespace AvibaWeb.Controllers
                      {
                          Name = g.FirstOrDefault().dg.Name,
                          AmountCorp = g.Sum(sg => sg.cri.IsPercent ? sg.cri.Amount * sg.cri.FeeRate / 100 : sg.cri.PerSegment ? sg.cri.FeeRate * sg.ti.SegCount : sg.cri.FeeRate)
-                     });
+                     }).ToList();
 
             var CorpLuggageList = (from dg in _db.DeskGroups
                                   join d in _db.Desks on dg.DeskGroupId equals d.GroupId
@@ -416,7 +416,7 @@ namespace AvibaWeb.Controllers
                                   {
                                       Name = g.FirstOrDefault().dg.Name,
                                       AmountCorp = g.Sum(sg => sg.cri.IsPercent ? sg.cri.Amount * sg.cri.FeeRate / 100 : sg.cri.FeeRate),
-                                  });
+                                  }).ToList();
 
             var model = new IncomeSummaryViewModel
             {
@@ -461,11 +461,15 @@ namespace AvibaWeb.Controllers
                            join d in _db.Desks on dg.DeskGroupId equals d.GroupId
                            join info in _db.VServiceReceiptIncomeInfo on d.DeskId equals info.DeskIssuedId
                            where info.DateTime >= queryFromDate && info.DateTime < queryToDate.AddDays(1)
-                           group new { info, dg } by dg.DeskGroupId into g
                            select new
                            {
-                               g.FirstOrDefault().dg.Name,
-                               Amount = g.Sum(ig => ig.info.Amount)
+                               dg.DeskGroupId,
+                               info.Amount
+                           }).GroupBy(ig => ig.DeskGroupId)
+                           .Select(g => new
+                           {
+                               g.Key,
+                               Amount = g.Sum(ig => ig.Amount)
                            }).ToList();
 
             var CorpTicketList = (from dg in _db.DeskGroups
@@ -476,11 +480,15 @@ namespace AvibaWeb.Controllers
                                   where cr.PaidDateTime >= queryFromDate && cr.PaidDateTime < queryToDate.AddDays(1) &&
                                      cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid &&
                                      cr.TypeId == CorporatorReceipt.CRType.CorpClient && cri.TypeId == CorporatorReceiptItem.CRIType.Ticket
-                                  group new { dg, cri, ti } by dg.DeskGroupId into g
                                   select new
                                   {
-                                      g.FirstOrDefault().dg.Name,
-                                      Amount = g.Sum(sg => sg.cri.IsPercent ? sg.cri.Amount * sg.cri.FeeRate / 100 : sg.cri.PerSegment ? sg.cri.FeeRate * sg.ti.SegCount : sg.cri.FeeRate)
+                                      dg.DeskGroupId,
+                                      Amount = cri.IsPercent ? cri.Amount * cri.FeeRate / 100 : cri.PerSegment ? cri.FeeRate * ti.SegCount : cri.FeeRate
+                                  }).GroupBy(ig => ig.DeskGroupId)
+                                  .Select(g => new
+                                  {
+                                      g.Key,
+                                      Amount = g.Sum(ig => ig.Amount)
                                   }).ToList();
 
             var CorpLuggageList = (from dg in _db.DeskGroups
@@ -491,11 +499,15 @@ namespace AvibaWeb.Controllers
                                    where cr.PaidDateTime >= queryFromDate && cr.PaidDateTime < queryToDate.AddDays(1) &&
                                      cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid &&
                                      cr.TypeId == CorporatorReceipt.CRType.CorpClient && cri.TypeId == CorporatorReceiptItem.CRIType.Luggage
-                                   group new { dg, cri, ti } by dg.DeskGroupId into g
                                    select new
                                    {
-                                       g.FirstOrDefault().dg.Name,
-                                       Amount = g.Sum(sg => sg.cri.IsPercent ? sg.cri.Amount * sg.cri.FeeRate / 100 : sg.cri.FeeRate),
+                                       dg.DeskGroupId,
+                                       Amount = cri.IsPercent ? cri.Amount * cri.FeeRate / 100 : cri.FeeRate
+                                   }).GroupBy(ig => ig.DeskGroupId)
+                                   .Select(g => new
+                                   {
+                                       g.Key,
+                                       Amount = g.Sum(ig => ig.Amount)
                                    }).ToList();
 
             var expenditureList = (from expenditure in _db.Expenditures
@@ -503,27 +515,46 @@ namespace AvibaWeb.Controllers
                                   from eo in _db.ExpenditureOperations.Where(eo => expenditure.ExpenditureId == eo.ExpenditureId).OrderByDescending(eo => eo.OperationDateTime).Take(1).DefaultIfEmpty()
                                   where eo.OperationDateTime >= queryFromDate && eo.OperationDateTime < queryToDate.AddDays(1) &&
                                         eo.OperationTypeId == ExpenditureOperation.EOType.New
-                                  group expenditure by new { groupField = expenditure.DeskGroupId } into g
+                                  group expenditure by expenditure.DeskGroupId into g
                                   select new
                                   {
-                                      g.FirstOrDefault().DeskGroup.Name,
+                                      g.Key,
                                       Amount = g.Sum(ig => ig.Amount)
                                   }).ToList();
+
+            var salesList = (from dg in _db.DeskGroups
+                             join d in _db.Desks on dg.DeskGroupId equals d.GroupId
+                             join s in _db.VBookingManagementSales on d.DeskId equals s.DeskID
+                             where s.ExecutionDateTime >= queryFromDate && s.ExecutionDateTime < queryToDate.AddDays(1)
+                             select new
+                             {
+                                 dg.DeskGroupId,
+                                 Amount = (s.OperationTypeID == 2 || s.OperationTypeID == 6) ?
+                                 -((s.CashAmount + s.PKAmount + s.BNAmount) / s.SegCount) :
+                                 ((s.CashAmount + s.PKAmount + s.BNAmount) / s.SegCount)
+                             }).GroupBy(ig => ig.DeskGroupId)
+                             .Select(g => new
+                             {
+                                 g.Key,
+                                 Amount = g.Sum(ig => ig.Amount)
+                             }).ToList();
 
             var model = new FinalSummaryViewModel
             {
                 FromDate = queryFromDate.ToString("d"),
                 ToDate = queryToDate.ToString("d"),
                 Items = (from dg in _db.DeskGroups
-                         from k in KRSList.Where(k => k.Name == dg.Name).DefaultIfEmpty()
-                         from ct in CorpTicketList.Where(c => c.Name == dg.Name).DefaultIfEmpty()
-                         from cl in CorpLuggageList.Where(c => c.Name == dg.Name).DefaultIfEmpty()
-                         from e in expenditureList.Where(e => e.Name == dg.Name).DefaultIfEmpty()
+                         from k in KRSList.Where(k => k.Key == dg.DeskGroupId).DefaultIfEmpty()
+                         from ct in CorpTicketList.Where(c => c.Key == dg.DeskGroupId).DefaultIfEmpty()
+                         from cl in CorpLuggageList.Where(c => c.Key == dg.DeskGroupId).DefaultIfEmpty()
+                         from e in expenditureList.Where(e => e.Key == dg.DeskGroupId).DefaultIfEmpty()
+                         from s in salesList.Where(s => s.Key == dg.DeskGroupId).DefaultIfEmpty()
                          select new FinalSummaryViewItem
                          {
                              Name = dg.Name,
                              IncomeAmount = (k == null ? 0 : k.Amount) + (ct == null ? 0 : ct.Amount) + (cl == null ? 0 : cl.Amount),
-                             ExpenditureAmount = (e == null ? 0 : e.Amount)
+                             ExpenditureAmount = (e == null ? 0 : e.Amount),
+                             SalesAmount = (s == null ? 0 : s.Amount)
                          })
             };
 

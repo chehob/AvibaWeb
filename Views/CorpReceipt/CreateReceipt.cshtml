@@ -331,6 +331,7 @@
     onload();
 
     $("#sendDataBtn").click(function (e) {
+        e.preventDefault();
         $("#warningMsg").hide();
 
         if( $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().text() == "Выбрать счет" ) {
@@ -354,14 +355,18 @@
                 }
             });
         }
+    
+        var selectPayee = $("#selectPayee").select2('data');
+        var selectPayer = $("#selectPayer").select2('data');
+        var selectBank = $("#selectBank").select2('data');
 
         const sendJsonData = {
             ReceiptId: $('#editReceiptId').val(),
-            PayerId: $("#selectPayer").select2('data')[0].id,
-            PayerName: $("#selectPayer").select2('data')[0].text,
-            PayeeId: $("#selectPayee").select2('data')[0].id,
-            PayeeName: $("#selectPayee").select2('data')[0].text,
-            PayeeBankName: $("#selectBank").select2('data')[0].text,
+            PayerId: (typeof selectPayer !== 'undefined' && selectPayer.length > 0) ? selectPayer[0].id : "",
+            PayerName: (typeof selectPayer !== 'undefined' && selectPayer.length > 0) ? selectPayer[0].text : "",
+            PayeeId: (typeof selectPayee !== 'undefined' && selectPayee.length > 0) ? selectPayee[0].id : "",
+            PayeeName: (typeof selectPayee !== 'undefined' && selectPayee.length > 0) ? selectPayee[0].text : "",
+            PayeeBankName: (typeof selectBank !== 'undefined' && selectBank.length > 0) ? selectBank[0].text : "",
             FeeRate: $("#feeRate").val(),
             Items: items,
             StatusId: $("#receiptStatus option:selected").val(),
@@ -371,7 +376,7 @@
 
         console.log(sendJsonData);
 
-        e.preventDefault();
+        
         $.ajax({
             url: "/CorpReceipt/CreateReceipt",
             type: "POST",
