@@ -34,6 +34,8 @@
     onload();
 
     $("#saleButton").click(function (e) {
+        console.log($('#selectAirline').select2('data'));
+
         $.ajax({
             url: "/BookingManagement/Sales",
             type: "POST",
@@ -42,7 +44,8 @@
                 fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
                 toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true),
                 deskFilter: $('#deskTree').jstree('get_bottom_selected', false),
-                sessionFilter: $('#sessionTree').jstree('get_bottom_selected', true).map(s => s.text)
+                sessionFilter: $('#sessionTree').jstree('get_bottom_selected', true).map(s => s.text),
+                airlineFilter: $('#selectAirline').select2('data')
             },
             dataType: "json",
             success: function (result) {

@@ -127,7 +127,9 @@
             "plugins": ["checkbox"]
         });
                 
-        $('#selectAirline').select2({
+        $('#selectAirline').on('change', function (e) {
+            $("#saleButton").click();
+        }).select2({
             width: "100%",
             ajax: {
                 url: '/BookingManagement/SearchAirline',
@@ -140,8 +142,11 @@
                 }
             },
             language: "ru"
-        });
-        $('[data-remote]').select2({
+        })
+
+        $('[data-remote]').on('change', function (e) {
+            $("#saleButton").click();
+        }).select2({
             width: "100%",
             ajax: {
                 url: '/BookingManagement/SearchCity',
@@ -160,22 +165,21 @@
             autoclose: true
         }).on('changeDate', function (ev) {
             $("#saleButton").click();
-        });
-        $("#min").datepicker('setDate', moment().format("DD.MM.YYYY"));
-        $("#max").datepicker('setDate', moment().format("DD.MM.YYYY"));
+        }).datepicker('setDate', moment().format("DD.MM.YYYY"));
 
         $('#deskTree').jstree('hide_icons');
         $('#sessionTree').jstree('hide_icons');
     });
 
     $("#clearFilterBtn").click(function (e) {
-        $("#min").val(moment().format("DD.MM.YYYY"));
-        $("#max").val(moment().format("DD.MM.YYYY"));
+        $(".datePicker").datepicker('setDate', moment().format("DD.MM.YYYY"));
 
         $('[data-remote]').val(null).trigger('change');
         $('#selectAirline').val(null).trigger('change');
 
         $('#deskTree').jstree('deselect_all', 'true');
         $('#sessionTree').jstree('deselect_all', 'true');
+
+        $("#saleButton").click();
     });
 </script>

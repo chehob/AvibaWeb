@@ -29,7 +29,7 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Sales(DateTime? fromDate, DateTime? toDate, string[] deskFilter, string[] sessionFilter)
+        public async Task<IActionResult> Sales(DateTime? fromDate, DateTime? toDate, string[] deskFilter, string[] sessionFilter, string[] airlineFilter)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
