@@ -79,6 +79,8 @@
 
         $('#deskTree').on('loaded.jstree', function (e, data) {
             d1.resolve();
+        }).on('changed.jstree', function (node, selected, event) {
+            $("#saleButton").click();
         }).jstree({
             'core': {
                 'themes': {
@@ -102,6 +104,8 @@
 
         $('#sessionTree').on('loaded.jstree', function (e, data) {
             d2.resolve();
+        }).on('changed.jstree', function (node, selected, event) {
+            $("#saleButton").click();
         }).jstree({
             'core': {
                 'themes': {
@@ -155,11 +159,7 @@
         $(".datePicker").datepicker({
             autoclose: true
         }).on('changeDate', function (ev) {
-            if($("#min").val() === $("#max").val()) {
-                setTimeout(function() {
-                    $("#saleButton").click();
-                }, 5000);
-            }
+            $("#saleButton").click();
         });
         $("#min").datepicker('setDate', moment().format("DD.MM.YYYY"));
         $("#max").datepicker('setDate', moment().format("DD.MM.YYYY"));
