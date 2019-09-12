@@ -63,6 +63,10 @@
     <link rel="stylesheet" type="text/css" href="~/lib/jquery-ui/themes/base/jquery-ui.min.css" />
     <script src="~/lib/jquery-ui/ui/i18n/datepicker-ru.js"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ru.min.js"></script>
+
     <script src='~/lib/pdfmake/pdfmake.min.js'></script>
     <script src='~/lib/pdfmake/vfs_fonts.js'></script>
     <script src="~/lib/rubles/lib/rubles.js"></script>
@@ -72,10 +76,6 @@
 
     <link href="~/lib/jstree/themes/proton/style.min.css" rel="stylesheet" type="text/css">
     <script src="~/lib/jstree/jstree.min.js" type="text/javascript"></script>
-
-    <script src="~/lib/gijgo/combined/js/gijgo.min.js" type="text/javascript"></script>
-    <link href="~/lib/gijgo/combined/css/gijgo.min.css" rel="stylesheet" type="text/css">
-    <script src="~/lib/gijgo/combined/js/messages/messages.ru-ru.min.js" type="text/javascript"></script>
 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/af-2.3.2/b-1.5.4/r-2.2.2/datatables.min.css" />
     <link rel="stylesheet" type="text/css" href="~/css/switch.css">
@@ -263,7 +263,9 @@
 </html>
 
 <script>
-    $(function() {
+    $(function () {
+        $.fn.datepicker.defaults.language = 'ru';
+
         pdfMake.fonts = {
             Roboto: {
                 normal: 'Roboto-Regular.ttf',

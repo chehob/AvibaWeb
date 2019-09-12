@@ -5,7 +5,20 @@
 <div class="box col-md-10">
     <div class="row">
         <div class="col-md-12">
-            Выбрать с: <input type="text" autocomplete="off" id="min" name="min" class="date-range-filter"> по: <input type="text" autocomplete="off" id="max" name="max" class="date-range-filter">
+            Выбрать с:
+            <div class="input-group date">
+                <input type="text" id="min" name="min" class="form-control" autocomplete="off">
+                <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                </div>
+            </div>
+            по:
+            <div class="input-group date">
+                <input type="text" id="max" name="max" class="form-control" autocomplete="off">
+                <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                </div>
+            </div>
             <button id="showResults" class="btn btn-primary">Показать</button>
         </div>
 
@@ -102,21 +115,19 @@
                     }
                 });
 
+        $(".input-group.date").datepicker({
+            autoclose: true,
+            language: 'ru'
+        });
         $("#min").datepicker({
-            locale: 'ru-ru',
-            uiLibrary: 'bootstrap',
-            format: 'dd.mm.yyyy',
-            weekStartDay: 1
+            autoclose: true,
         });
         $("#max").datepicker({
-            locale: 'ru-ru',
-            uiLibrary: 'bootstrap',
-            format: 'dd.mm.yyyy',
-            weekStartDay: 1
+            autoclose: true,
         });
 
-        $("#min").val('@Model.FromDate');
-        $("#max").val('@Model.ToDate');
+        $("#min").datepicker('setDate','@Model.FromDate');
+        $("#max").datepicker('setDate','@Model.ToDate');
     });
 
     $("#showResults").click(function (e) {

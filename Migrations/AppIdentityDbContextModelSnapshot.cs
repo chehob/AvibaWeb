@@ -1774,11 +1774,16 @@ namespace AvibaWeb.Migrations
 
                 b.Property<int>("PenaltyCount");
 
-                b.Property<decimal>("PenaltySum");
+                b.Property<decimal>("CashPenalty");
+                b.Property<decimal>("PKPenalty");
+                b.Property<decimal>("BNPenalty");
+                b.Property<decimal>("ChildCashPenalty");
+                b.Property<decimal>("ChildPKPenalty");
+                b.Property<decimal>("ChildBNPenalty");
 
-                b.Property<int?>("TypeID");
+                b.Property<int>("TypeId");
 
-                b.Property<string>("DeskID");
+                b.Property<string>("DeskId");
                 b.Property<DateTime>("ExecutionDateTime");
                 b.Property<string>("AirlineCode");
                 b.Property<string>("Origin");
@@ -1786,9 +1791,9 @@ namespace AvibaWeb.Migrations
                 b.Property<string>("Destination");
                 b.Property<string>("DestinationEn");
 
-                b.Property<int>("SegCount");
-
                 b.Property<string>("Session");
+
+                b.Property<int>("TicketID");
 
                 b.HasKey("Id");
 

@@ -124,9 +124,7 @@ function updateBalance(ajaxContext) {
 
 function loadBookingManagementFilter(ajaxContent) {
     const $div = $("#dvFilter");
-    $div.load($div.data("url"), function() {
-        $("#saleButton").click();
-    });
+    $div.load($div.data("url"));
 }
 
 function numberWithSpaces(x) {

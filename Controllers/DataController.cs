@@ -488,8 +488,6 @@ namespace AvibaWeb.Controllers
                          .FirstOrDefault(a => a.Description == model.Destination.AccountNumber);
             if (financialAccount == null) return new BadRequestResult();
 
-            financialAccount.LastUploadDate = DateTime.Now;
-
             foreach (var counterpartyGroup in model.CounterpartyGroups)
             {
                 string userId = null;
@@ -786,8 +784,10 @@ namespace AvibaWeb.Controllers
                         }
                     }
 
-                    _db.FinancialAccountOperations.Add(operation);
+                    financialAccount.LastUploadDate = DateTime.Now;
                     financialAccount.Balance += operation.Amount;
+
+                    _db.FinancialAccountOperations.Add(operation);                    
 
                     if (isCashRequest)
                     {

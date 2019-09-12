@@ -36,29 +36,73 @@ namespace AvibaWeb.Controllers
 
             var queryToDate = toDate ?? DateTime.Now.Date;
             var queryFromDate = fromDate ?? queryToDate;
+            var railTicketTypes = new int[] { 3, 5 };
 
             var ticketInfo = (from s in _db.VBookingManagementSales
                               where s.ExecutionDateTime >= queryFromDate && s.ExecutionDateTime < queryToDate.AddDays(1)
-                                && deskFilter.Contains(s.DeskID) && sessionFilter.Contains(s.Session)
-                              group s by new { TypeID = Array.IndexOf(new int[] { 3, 5 }, s.TypeID) != -1 ? 1 : 0, s.OperationTypeID } into g
+                                && deskFilter.Contains(s.DeskId) && sessionFilter.Contains(s.Session)
                               select new
                               {
-                                  g.Key.TypeID,
-                                  g.Key.OperationTypeID,
-                                  typeId = g.FirstOrDefault().TypeID,
-                                  opTypeId = g.FirstOrDefault().OperationTypeID,
+                                  s.TicketID,
+                                  TypeID = railTicketTypes.Contains(s.TypeId) ? 1 : 0,
+                                  s.OperationTypeID,
+                                  s.CashAmount,
+                                  s.ChildCashAmount,
+                                  s.PKAmount,
+                                  s.ChildPKAmount,
+                                  s.BNAmount,
+                                  s.ChildBNAmount,
+                                  s.PenaltyCount,
+                                  s.CashPenalty,
+                                  s.PKPenalty,
+                                  s.BNPenalty,
+                                  s.ChildCashPenalty,
+                                  s.ChildPKPenalty,
+                                  s.ChildBNPenalty
+                              }).GroupBy(ig => new { ig.TicketID, ig.OperationTypeID })
+                              .Select(g => new
+                              {
+                                  typeId = g.Min(s => s.TypeID),
+                                  opTypeId = g.Key.OperationTypeID,
                                   SegCount = g.Count(),
-                                  CashAmount = g.Sum(s => s.CashAmount / s.SegCount),
-                                  ChildCashAmount = g.Sum(s => s.ChildCashAmount),
-                                  PKAmount = g.Sum(s => s.PKAmount / s.SegCount),
-                                  ChildPKAmount = g.Sum(s => s.ChildPKAmount),
-                                  BNAmount = g.Sum(s => s.BNAmount / s.SegCount),
-                                  ChildBNAmount = g.Sum(s => s.ChildBNAmount)
-                              }).ToList();
+                                  CashAmount = g.Min(s => s.CashAmount),
+                                  ChildCashAmount = g.Min(s => s.ChildCashAmount),
+                                  PKAmount = g.Min(s => s.PKAmount),
+                                  ChildPKAmount = g.Min(s => s.ChildPKAmount),
+                                  BNAmount = g.Min(s => s.BNAmount),
+                                  ChildBNAmount = g.Min(s => s.ChildBNAmount),
+                                  CashPenalty = g.Min(s => s.CashPenalty),
+                                  PKPenalty = g.Min(s => s.PKPenalty),
+                                  BNPenalty = g.Min(s => s.BNPenalty),
+                                  ChildCashPenalty = g.Min(s => s.ChildCashPenalty),
+                                  ChildPKPenalty = g.Min(s => s.ChildPKPenalty),
+                                  ChildBNPenalty = g.Min(s => s.ChildBNPenalty),
+                                  PenaltyCount = g.Min(s => s.PenaltyCount)
+                              }).ToList()
+                                .GroupBy(ig => new { ig.typeId, ig.opTypeId })
+                                .Select(g => new
+                                {
+                                    g.Key.typeId,
+                                    g.Key.opTypeId,
+                                    SegCount = g.Sum(s => s.SegCount),
+                                    CashAmount = g.Sum(s => s.CashAmount),
+                                    ChildCashAmount = g.Sum(s => s.ChildCashAmount),
+                                    PKAmount = g.Sum(s => s.PKAmount),
+                                    ChildPKAmount = g.Sum(s => s.ChildPKAmount),
+                                    BNAmount = g.Sum(s => s.BNAmount),
+                                    ChildBNAmount = g.Sum(s => s.ChildBNAmount),
+                                    CashPenalty = g.Sum(s => s.CashPenalty),
+                                    PKPenalty = g.Sum(s => s.PKPenalty),
+                                    BNPenalty = g.Sum(s => s.BNPenalty),
+                                    ChildCashPenalty = g.Sum(s => s.ChildCashPenalty),
+                                    ChildPKPenalty = g.Sum(s => s.ChildPKPenalty),
+                                    ChildBNPenalty = g.Sum(s => s.ChildBNPenalty),
+                                    PenaltyCount = g.Sum(s => s.PenaltyCount)
+                                }).ToList();
 
             var model = new SalesViewModel
             {
-                AirSale = ticketInfo.Where(ti => ti.OperationTypeID == 1 && ti.TypeID == 0).DefaultIfEmpty().Select(ti =>
+                AirSale = ticketInfo.Where(ti => ti.opTypeId == 1 && ti.typeId == 0).DefaultIfEmpty().Select(ti =>
                 new SalesViewItem
                 {
                     AmountCash = ti?.CashAmount ?? 0,
@@ -66,21 +110,39 @@ namespace AvibaWeb.Controllers
                     AmountBN = ti?.BNAmount ?? 0,
                     SegCount = ti?.SegCount ?? 0
                 }).First(),
-                AirPenalty = new SalesViewItem
+                AirPenalty = ticketInfo.Where(ti => ti.typeId == 0).GroupBy(g => g.typeId).DefaultIfEmpty().Select(g =>
+                new SalesViewItem
                 {
-                    AmountCash = 0,
-                    AmountPK = 0,
-                    AmountBN = 0,
-                    SegCount = 0
-                },
-                AirExchange = new SalesViewItem
+                    AmountCash = g?.Sum(ti => (ti?.CashPenalty ?? 0) + (ti?.ChildCashPenalty ?? 0)) ?? 0,
+                    AmountPK = g?.Sum(ti => (ti?.PKPenalty ?? 0) + (ti?.ChildPKPenalty ?? 0)) ?? 0,
+                    AmountBN = g?.Sum(ti => (ti?.BNPenalty ?? 0) + (ti?.ChildBNPenalty ?? 0)) ?? 0,
+                    SegCount = g?.Sum(ti => ti?.PenaltyCount ?? 0) ?? 0
+                }).First(),
+                AirExchange = ticketInfo.Where(ti => ti.opTypeId == 3 && ti.typeId == 0).DefaultIfEmpty().Select(ti =>
+                new SalesViewItem
                 {
-                    AmountCash = 0,
-                    AmountPK = 0,
-                    AmountBN = 0,
-                    SegCount = 0
-                },
-                AirRefund = ticketInfo.Where(ti => ti.OperationTypeID == 2 && ti.TypeID == 0).DefaultIfEmpty().Select(ti =>
+                    AmountCash = ti?.ChildCashAmount ?? 0,
+                    AmountPK = ti?.ChildPKAmount ?? 0,
+                    AmountBN = ti?.ChildBNAmount ?? 0,
+                    SegCount = ti?.SegCount ?? 0
+                }).First(),
+                AirRefund = ticketInfo.Where(ti => ti.opTypeId == 2 && ti.typeId == 0).DefaultIfEmpty().Select(ti =>
+                new SalesViewItem
+                {
+                    AmountCash = (ti?.CashAmount ?? 0) + (ti?.CashPenalty ?? 0),
+                    AmountPK = (ti?.PKAmount ?? 0) + (ti?.PKPenalty ?? 0),
+                    AmountBN = (ti?.BNAmount ?? 0) + (ti?.BNPenalty ?? 0),
+                    SegCount = ti?.SegCount ?? 0
+                }).First(),
+                AirForcedExchange = ticketInfo.Where(ti => ti.opTypeId == 7 && ti.typeId == 0).DefaultIfEmpty().Select(ti =>
+                new SalesViewItem
+                {
+                    AmountCash = ti?.ChildCashAmount ?? 0,
+                    AmountPK = ti?.ChildPKAmount ?? 0,
+                    AmountBN = ti?.ChildBNAmount ?? 0,
+                    SegCount = ti?.SegCount ?? 0
+                }).First(),
+                AirForcedRefund = ticketInfo.Where(ti => ti.opTypeId == 6 && ti.typeId == 0).DefaultIfEmpty().Select(ti =>
                 new SalesViewItem
                 {
                     AmountCash = ti?.CashAmount ?? 0,
@@ -88,21 +150,7 @@ namespace AvibaWeb.Controllers
                     AmountBN = ti?.BNAmount ?? 0,
                     SegCount = ti?.SegCount ?? 0
                 }).First(),
-                AirForcedExchange = new SalesViewItem
-                {
-                    AmountCash = 0,
-                    AmountPK = 0,
-                    AmountBN = 0,
-                    SegCount = 0
-                },
-                AirForcedRefund = new SalesViewItem
-                {
-                    AmountCash = 0,
-                    AmountPK = 0,
-                    AmountBN = 0,
-                    SegCount = 0
-                },
-                RailSale = ticketInfo.Where(ti => ti.OperationTypeID == 1 && ti.TypeID == 1).DefaultIfEmpty().Select(ti =>
+                RailSale = ticketInfo.Where(ti => ti.opTypeId == 1 && ti.typeId == 1).DefaultIfEmpty().Select(ti =>
                 new SalesViewItem
                 {
                     AmountCash = ti?.CashAmount ?? 0,
@@ -110,7 +158,7 @@ namespace AvibaWeb.Controllers
                     AmountBN = ti?.BNAmount ?? 0,
                     SegCount = ti?.SegCount ?? 0
                 }).First(),
-                RailRefund = ticketInfo.Where(ti => ti.OperationTypeID == 2 && ti.TypeID == 1).DefaultIfEmpty().Select(ti =>
+                RailRefund = ticketInfo.Where(ti => ti.opTypeId == 2 && ti.typeId == 1).DefaultIfEmpty().Select(ti =>
                    new SalesViewItem
                    {
                        AmountCash = ti?.CashAmount ?? 0,

@@ -523,21 +523,30 @@ namespace AvibaWeb.Controllers
                                   }).ToList();
 
             var salesList = (from dg in _db.DeskGroups
-                             join d in _db.Desks on dg.DeskGroupId equals d.GroupId
-                             join s in _db.VBookingManagementSales on d.DeskId equals s.DeskID
-                             where s.ExecutionDateTime >= queryFromDate && s.ExecutionDateTime < queryToDate.AddDays(1)
-                             select new
-                             {
-                                 dg.DeskGroupId,
-                                 Amount = (s.OperationTypeID == 2 || s.OperationTypeID == 6) ?
-                                 -((s.CashAmount + s.PKAmount + s.BNAmount) / s.SegCount) :
-                                 ((s.CashAmount + s.PKAmount + s.BNAmount) / s.SegCount)
-                             }).GroupBy(ig => ig.DeskGroupId)
-                             .Select(g => new
-                             {
-                                 g.Key,
-                                 Amount = g.Sum(ig => ig.Amount)
-                             }).ToList();
+                     join d in _db.Desks on dg.DeskGroupId equals d.GroupId
+                     join s in _db.VBookingManagementSales on d.DeskId equals s.DeskId
+                     where s.ExecutionDateTime >= queryFromDate && s.ExecutionDateTime < queryToDate.AddDays(1)
+                     select new
+                     {
+                         dg.DeskGroupId,
+                         s.TicketID,
+                         s.OperationTypeID,
+                         Amount = (s.OperationTypeID == 2 || s.OperationTypeID == 6) ?
+                            (-s.CashAmount - s.PKAmount - s.BNAmount) :
+                            ((s.OperationTypeID == 3 || s.OperationTypeID == 7) ?
+                            (s.ChildCashAmount + s.ChildPKAmount + s.ChildBNAmount + s.ChildCashPenalty + s.ChildBNPenalty + s.ChildPKPenalty) :
+                            (s.CashAmount + s.PKAmount + s.BNAmount))
+                     }).GroupBy(ig => new { ig.TicketID, ig.OperationTypeID }).Select(g => new
+                     {
+                         opTypeId = g.Key.OperationTypeID,
+                         Amount = g.Min(s => s.Amount),
+                         DeskGroupId = g.Min(s => s.DeskGroupId)
+                     }).ToList().GroupBy(ig => ig.DeskGroupId)
+                        .Select(g => new
+                        {
+                            g.Key,
+                            Amount = g.Sum(ig => ig.Amount)
+                        }).ToList();
 
             var model = new FinalSummaryViewModel
             {
@@ -555,10 +564,16 @@ namespace AvibaWeb.Controllers
                              IncomeAmount = (k == null ? 0 : k.Amount) + (ct == null ? 0 : ct.Amount) + (cl == null ? 0 : cl.Amount),
                              ExpenditureAmount = (e == null ? 0 : e.Amount),
                              SalesAmount = (s == null ? 0 : s.Amount)
-                         })
+                         }).ToList()
             };
 
-            
+            model.Items.Add(model.Items.GroupBy(g => 1).Select(g => new FinalSummaryViewItem
+            {
+                Name = "Итого",
+                IncomeAmount = g.Sum(ig => ig.IncomeAmount),
+                ExpenditureAmount = g.Sum(ig => ig.ExpenditureAmount),
+                SalesAmount = g.Sum(ig => ig.SalesAmount)
+            }).First());
 
             return PartialView(model);
         }

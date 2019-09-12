@@ -20,11 +20,16 @@ namespace AvibaWeb.DomainModels
         public decimal ChildBNAmount { get; set; }
 
         public int PenaltyCount { get; set; }
-        public decimal PenaltySum { get; set; }
+        public decimal CashPenalty { get; set; }
+        public decimal PKPenalty { get; set; }
+        public decimal BNPenalty { get; set; }
+        public decimal ChildCashPenalty { get; set; }
+        public decimal ChildPKPenalty { get; set; }
+        public decimal ChildBNPenalty { get; set; }
 
-        public int? TypeID { get; set; }
+        public int TypeId { get; set; }
 
-        public string DeskID { get; set; }
+        public string DeskId { get; set; }
         public DateTime ExecutionDateTime { get; set; }
         public string AirlineCode { get; set; }
         public string Origin { get; set; }
@@ -32,8 +37,8 @@ namespace AvibaWeb.DomainModels
         public string Destination { get; set; }
         public string DestinationEn { get; set; }
 
-        public int SegCount { get; set; }
-
         public string Session { get; set; }
+
+        public int TicketID { get; set; }
     }
 }

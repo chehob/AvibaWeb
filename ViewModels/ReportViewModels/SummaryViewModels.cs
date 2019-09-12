@@ -32,6 +32,6 @@ namespace AvibaWeb.ViewModels.ReportViewModels
     {
         public string FromDate { get; set; }
         public string ToDate { get; set; }
-        public IEnumerable<FinalSummaryViewItem> Items { get; set; }
+        public ICollection<FinalSummaryViewItem> Items { get; set; }
     }
 }
