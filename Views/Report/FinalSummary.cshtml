@@ -5,20 +5,8 @@
 <div class="box col-md-10">
     <div class="row">
         <div class="col-md-12">
-            Выбрать с:
-            <div class="input-group date">
-                <input type="text" id="min" name="min" class="form-control" autocomplete="off">
-                <div class="input-group-addon">
-                    <span class="glyphicon glyphicon-th"></span>
-                </div>
-            </div>
-            по:
-            <div class="input-group date">
-                <input type="text" id="max" name="max" class="form-control" autocomplete="off">
-                <div class="input-group-addon">
-                    <span class="glyphicon glyphicon-th"></span>
-                </div>
-            </div>
+            Выбрать с: <input type="text" id="min" name="min" class="form-control" autocomplete="off">
+            по: <input type="text" id="max" name="max" class="form-control" autocomplete="off">
             <button id="showResults" class="btn btn-primary">Показать</button>
         </div>
 
@@ -115,14 +103,7 @@
                     }
                 });
 
-        $(".input-group.date").datepicker({
-            autoclose: true,
-            language: 'ru'
-        });
-        $("#min").datepicker({
-            autoclose: true,
-        });
-        $("#max").datepicker({
+        $(".datePicker").datepicker({
             autoclose: true,
         });
 

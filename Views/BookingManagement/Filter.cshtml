@@ -18,20 +18,8 @@
                     <h2>Дата</h2>
                 </div>
                 <div class="box-content">
-                    Выбрать с: 
-                    <div class="input-group date">
-                        <input type="text" id="min" name="min" class="form-control" autocomplete="off">
-                        <div class="input-group-addon">
-                            <span class="glyphicon glyphicon-th"></span>
-                        </div>
-                    </div>
-                    по: 
-                    <div class="input-group date">
-                        <input type="text" id="max" name="max" class="form-control" autocomplete="off">
-                        <div class="input-group-addon">
-                            <span class="glyphicon glyphicon-th"></span>
-                        </div>
-                    </div>
+                    Выбрать с: <input type="text" id="min" name="min" class="form-control datePicker" autocomplete="off">
+                    по: <input type="text" id="max" name="max" class="form-control datePicker" autocomplete="off">
                 </div>
             </div>
         </div>
@@ -164,9 +152,8 @@
             language: "ru"                   
         });
 
-        $(".input-group.date").datepicker({
-            autoclose: true,
-            language: 'ru'
+        $(".datePicker").datepicker({
+            autoclose: true
         }).on('changeDate', function (ev) {
             if($("#min").val() === $("#max").val()) {
                 setTimeout(function() {
@@ -174,8 +161,8 @@
                 }, 5000);
             }
         });
-        $("#min").val(moment().format("DD.MM.YYYY"));
-        $("#max").val(moment().format("DD.MM.YYYY"));
+        $("#min").datepicker('setDate', moment().format("DD.MM.YYYY"));
+        $("#max").datepicker('setDate', moment().format("DD.MM.YYYY"));
 
         $('#deskTree').jstree('hide_icons');
         $('#sessionTree').jstree('hide_icons');
