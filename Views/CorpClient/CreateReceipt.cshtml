@@ -255,29 +255,17 @@
             }
         });
 
-        $("#issuedDateTime").datepicker({
-            locale: 'ru-ru',
-            uiLibrary: 'bootstrap',
-            format: 'dd.mm.yyyy'
-        });
-        $("#min").datepicker({
-            locale: 'ru-ru',
-            uiLibrary: 'bootstrap',
-            format: 'dd.mm.yyyy'
-        });
-        $("#max").datepicker({
-            locale: 'ru-ru',
-            uiLibrary: 'bootstrap',
-            format: 'dd.mm.yyyy'
-        });
+        $("#issuedDateTime").datepicker();
+        $("#min").datepicker();
+        $("#max").datepicker();
 
         editValue = $("#editReceiptCreatedDate").val();
         if (editValue) {
-            $("#min").val(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").format("DD.MM.YYYY"));
-            $("#max").val(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").format("DD.MM.YYYY"));
+            $("#min").datepicker(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").format("DD.MM.YYYY"));
+            $("#max").datepicker(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").format("DD.MM.YYYY"));
         } else {
-            $("#min").val(moment().format("DD.MM.YYYY"));
-            $("#max").val(moment().format("DD.MM.YYYY"));
+            $("#min").datepicker('setDate', moment().format("DD.MM.YYYY"));
+            $("#max").datepicker('setDate', moment().format("DD.MM.YYYY"));
         }
 
         $.ajax({

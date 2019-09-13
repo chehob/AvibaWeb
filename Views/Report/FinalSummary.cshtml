@@ -30,42 +30,57 @@
                         <tbody>
                             @if (!Model.Items.Any())
                             {
-                            <tr>
-                                <td colspan="6" class="text-center">Нет результатов</td>
-                                <td style="display: none;"></td>
-                                <td style="display: none;"></td>
-                                <td style="display: none;"></td>
-                                <td style="display: none;"></td>
-                                <td style="display: none;"></td>
-                            </tr>
+                                <tr>
+                                    <td colspan="6" class="text-center">Нет результатов</td>
+                                    <td style="display: none;"></td>
+                                    <td style="display: none;"></td>
+                                    <td style="display: none;"></td>
+                                    <td style="display: none;"></td>
+                                    <td style="display: none;"></td>
+                                </tr>
                             }
                             else
                             {
                                 foreach (var item in Model.Items)
                                 {
-                            <tr>
-                                <td class="text-center">
-                                    <div style="min-height: 32px;">@item.Name</div>
-                                </td>
-                                <td>
-                                    @item.IncomeAmountStr
-                                </td>
-                                <td>
-                                    @item.ExpenditureAmountStr
-                                </td>
-                                <td>
-                                    @item.TotalAmountStr
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                    @item.SalesAmountStr
-                                </td>
-                            </tr>
+                                    <tr>
+                                        <td class="text-center">
+                                            <div style="min-height: 32px;">@item.Name</div>
+                                        </td>
+                                        <td>
+                                            @item.IncomeAmountStr
+                                        </td>
+                                        <td>
+                                            <span class="showOperationsBtn btn-setting">
+                                                @item.ExpenditureAmountStr
+                                            </span>
+                                            <input hidden class="deskGroupId" value="@item.DeskGroupId" />
+                                        </td>
+                                        <td>
+                                            @item.TotalAmountStr
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @item.SalesAmountStr
+                                        </td>
+                                    </tr>
                                 }
                             }
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="dialog" title="Basic dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span>Операции</span>
+                        <button type="button" class="close" data-dismiss="modal">×</button>
+                    </div>
+                    <div class="modal-body"></div>
+                    <div class="modal-footer"></div>
                 </div>
             </div>
         </div>
@@ -125,6 +140,29 @@
             data: sendJsonData,
             success: function (result) {
                 $("#results").html(result);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $(".showOperationsBtn").click(function (e) {
+        e.preventDefault();
+
+        const sendJsonData = {
+            deskGroupId: $(this).siblings(".deskGroupId")[0].value,
+            fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+            toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true)
+        };
+
+        $.ajax({
+            url: "/Report/ExpenditureSummaryOperations",
+            type: "GET",
+            cache: false,
+            data: sendJsonData,
+            success: function (result) {
+                $(".modal-body").html(result);
             },
             error: function (error) {
                 console.log(error);

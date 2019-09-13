@@ -56,7 +56,7 @@ namespace AvibaWeb.ViewModels.ReportViewModels
         public string AmountStr => Amount.ToString("#,0.00", nfi);
         public string AmountCashStr => AmountCash.ToString("#,0.00", nfi);
         public string AmountCashlessStr => AmountCashless.ToString("#,0.00", nfi);
-        public List<ExpenditureSummaryViewItem> Items { get; set; }
+        public IEnumerable<ExpenditureSummaryViewItem> Items { get; set; }
     }
 
     public class ExpenditureSummaryViewModel
@@ -74,6 +74,8 @@ namespace AvibaWeb.ViewModels.ReportViewModels
         public string OperationDateTime { get; set; }
         public string Amount { get; set; }
         public string PaymentType { get; set; }
+        public string Counterparty { get; set; }
+        public string Comment { get; set; }
     }
 
     public class ExpenditureSummaryOperationsViewModel

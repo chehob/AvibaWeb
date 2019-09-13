@@ -8,6 +8,8 @@
                 <th>Дата</th>
                 <th>Сумма</th>
                 <th>Тип оплаты</th>
+                <th>Контрагент</th>
+                <th>Комментарий</th>
             </tr>
         </thead>
         <tbody>
@@ -20,6 +22,12 @@
                 </td>
                 <td>
                     @i.PaymentType
+                </td>
+                <td>
+                    @i.Counterparty
+                </td>
+                <td>
+                    @i.Comment
                 </td>
             </tr>
             }

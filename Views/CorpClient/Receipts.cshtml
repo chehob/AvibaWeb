@@ -192,19 +192,11 @@
     $(function () {
         initChosen(false, false);
 
-        $("#min").datepicker({
-                    locale: 'ru-ru',
-                    uiLibrary: 'bootstrap',
-                    format: 'dd.mm.yyyy'
-                });
-        $("#max").datepicker({
-                    locale: 'ru-ru',
-                    uiLibrary: 'bootstrap',
-                    format: 'dd.mm.yyyy'
-                });
+        $("#min").datepicker();
+        $("#max").datepicker();
 
-        $("#min").val(moment().subtract(30, 'days').format("DD.MM.YYYY"));
-        $("#max").val(moment().format("DD.MM.YYYY"));
+        $("#min").datepicker('setDate', moment().subtract(30, 'days').format("DD.MM.YYYY"));
+        $("#max").datepicker('setDate', moment().format("DD.MM.YYYY"));
 
         $("#getReceiptListBtn").trigger("click");
     });

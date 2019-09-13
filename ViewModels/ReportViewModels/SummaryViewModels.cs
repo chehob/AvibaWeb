@@ -16,6 +16,7 @@ namespace AvibaWeb.ViewModels.ReportViewModels
         private NumberFormatInfo nfi;
 
         public string Name { get; set; }
+        public int DeskGroupId { get; set; }
 
         public decimal IncomeAmount { get; set; }
         public string IncomeAmountStr => IncomeAmount.ToString("#,0.00", nfi);

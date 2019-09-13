@@ -96,19 +96,11 @@
     });
 
     $(function() {
-        $("#min").datepicker({
-                    locale: 'ru-ru',
-                    uiLibrary: 'bootstrap',
-                    format: 'dd.mm.yyyy'
-                });
-        $("#max").datepicker({
-                    locale: 'ru-ru',
-                    uiLibrary: 'bootstrap',
-                    format: 'dd.mm.yyyy'
-                });
+        $("#min").datepicker();
+        $("#max").datepicker();
 
-        $("#min").val('@Model.FromDate');
-        $("#max").val('@Model.ToDate');
+        $("#min").datepicker('setDate', '@Model.FromDate');
+        $("#max").datepicker('setDate', '@Model.ToDate');
 
         $("#getReceiptListBtn").trigger("click");
 
