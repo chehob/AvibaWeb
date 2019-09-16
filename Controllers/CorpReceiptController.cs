@@ -69,7 +69,7 @@ namespace AvibaWeb.Controllers
             return this.Json(result);
         }
 
-        public JsonResult CounterpartySelect()
+        public JsonResult CorporatorSelect()
         {
             SelectResult result = new SelectResult
             {
@@ -86,6 +86,64 @@ namespace AvibaWeb.Controllers
                                     id = c.ITN,
                                     text = c.Name
                                 }).ToList()
+                    }
+                }
+            };
+
+            return this.Json(result);
+        }
+
+        public JsonResult CounterpartySelect()
+        {
+            SelectResult result = new SelectResult
+            {
+                results = new List<SelectResultItem>
+                {
+                    new SelectResultItem
+                    {
+                        id = "0",
+                        text = "Корпораторы",
+                        children = (from c in _db.Counterparties
+                            select new SelectResultItem
+                            {
+                                id = c.ITN,
+                                text = c.Name
+                            }).ToList()
+                    }
+                }
+            };
+
+            return this.Json(result);
+        }
+
+        public JsonResult OrganizationAndCounterpartySelect(int? subGroupId = null)
+        {
+            SelectResult result = new SelectResult
+            {
+                results = new List<SelectResultItem>
+                {
+                    new SelectResultItem
+                    {
+                        id = "0",
+                        text = "Корпораторы",
+                        children = (from c in _db.Counterparties
+                            select new SelectResultItem
+                            {
+                                id = c.ITN,
+                                text = c.Name
+                            }).ToList()
+                    },
+                    new SelectResultItem
+                    {
+                        id = "0",
+                        text = "Организации",
+                        children = (from org in _db.Organizations
+                            where org.IsActive && (subGroupId == null || org.ReceiptNumberGroupId == subGroupId)
+                            select new SelectResultItem
+                            {
+                                id = org.OrganizationId.ToString(),
+                                text = org.Description
+                            }).ToList()
                     }
                 }
             };

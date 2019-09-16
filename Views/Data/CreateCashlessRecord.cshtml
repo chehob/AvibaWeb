@@ -15,46 +15,32 @@
         </div></div>
  <br>                   
         <div class="row">
-            <div class="col-md-12">        
-        <select  data-placeholder="Выбрать плательщика" id="selectPayer" data-rel="chosen">
-            <option value=""></option>
-            <optgroup label="Контрагенты">
-                @foreach (var counterparty in Model.Counterparties)
-                {
-                    <option>@counterparty</option>
-                }
-            </optgroup>
-            <optgroup label="Организации">
-                @foreach (var org in Model.Organizations)
-                {
-                    <option>@org</option>
-                }
-            </optgroup>
-        </select>
-        <div id="payerOrgFinancialAccountsDiv"></div>
-         </div>
-        
+            <div class="col-md-12">
+                <select data-placeholder="Выбрать плательщика" id="selectPayer" data-rel="chosen">
+                    <option></option>
+                </select>
+            </div>
+            <br />
+            <div class="col-md-12">
+                <select data-placeholder="Выбрать счет" data-rel="chosen" id="selectPayerBank">
+                    <option></option>
+                </select>
+            </div>
         </div>   
 <br>
 <div class="row">
-                <div class="col-md-12">        
+    <div class="col-md-12">    
         <select data-placeholder="Выбрать получателя" id="selectPayee" data-rel="chosen">
-            <option value=""></option>
-            <optgroup label="Контрагенты">
-                @foreach (var counterparty in Model.Counterparties)
-                {
-                    <option>@counterparty</option>
-                }
-            </optgroup>
-            <optgroup label="Организации">
-                @foreach (var org in Model.Organizations)
-                {
-                    <option>@org</option>
-                }
-            </optgroup>
+            <option></option>
         </select>
-        <div id="payeeOrgFinancialAccountsDiv"></div>
-                </div></div>
+    </div>
+    <br />
+    <div class="col-md-12">
+        <select data-placeholder="Выбрать счет" data-rel="chosen" id="selectPayeeBank">
+            <option></option>
+        </select>
+    </div>
+</div>
 <br>
     <div class="row">
         <div class="col-md-12">
@@ -89,74 +75,94 @@
 
 <script>
     onload = function () {
-        $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
+        $('#selectPayeeBank').hide();
+        $('#selectPayerBank').hide();
 
-        // Select the node that will be observed for mutations
-        var payerTargetNode = $("#selectPayer").next().find("a.chosen-single span")[0];
+        $.get("/CorpReceipt/OrganizationAndCounterpartySelect", function (data) {
+            $('#selectPayee').select2({
+                placeholder: "Выбрать организацию",
+                allowClear: true,
+                width: "100%",
+                data: data.results,
+                language: "ru"
+            });
 
-        // Options for the observer (which mutations to observe)
-        var config = { attributes: true, childList: true, subtree: true };
+            $('#selectPayee').on('select2:select', function (e) {
+                $('#selectPayeeBank').hide();
+                $('#selectPayeeBank').empty();
 
-        // Callback function to execute when mutations are observed
-        var payerCallback = function (mutationsList, observer) {
-            var mutation = mutationsList[0]
-            $.ajax({
-                url: "/Data/OrganizationFinancialAccounts",
-                type: "GET",
-                cache: false,
-                data: { orgName: mutation.target.textContent },
-                success: function (result) {
-                    $("#payerOrgFinancialAccountsDiv").html(result);
-                    $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
-                },
-                error: function (error) {
-                    $("#payerOrgFinancialAccountsDiv").html();
+                if ($("#selectPayee option:selected").parent("optgroup")[0].label === "Организации") {
+                    $.get("/CorpReceipt/OrganizationFinancialAccountSelect",
+                        { orgName: e.params.data.text },
+                        function(data) {
+                            $('#selectPayeeBank').select2({
+                                placeholder: "Выбрать счет",
+                                allowClear: true,
+                                width: "100%",
+                                data: data.results,
+                                language: "ru"
+                            });
+
+                            $('#selectPayeeBank').val(null).trigger('change');
+
+                            $('#selectPayeeBank').show();
+                        });
                 }
             });
-        };
+        });
 
-        // Create an observer instance linked to the callback function
-        var payerObserver = new MutationObserver(payerCallback);
+        $.get("/CorpReceipt/OrganizationAndCounterpartySelect", function (data) {
+            $('#selectPayer').select2({
+                placeholder: "Выбрать организацию",
+                allowClear: true,
+                width: "100%",
+                data: data.results,
+                language: "ru"
+            });
 
-        // Start observing the target node for configured mutations
-        payerObserver.observe(payerTargetNode, config);
+            $('#selectPayer').on('select2:select', function (e) {
+                $('#selectPayerBank').hide();
+                $('#selectPayerBank').empty();
 
-        // Select the node that will be observed for mutations
-        var payeeTargetNode = $("#selectPayee").next().find("a.chosen-single span")[0];
+                if ($("#selectPayer option:selected").parent("optgroup")[0].label === "Организации") {
+                    $.get("/CorpReceipt/OrganizationFinancialAccountSelect",
+                        { orgName: e.params.data.text },
+                        function(data) {
+                            $('#selectPayerBank').select2({
+                                placeholder: "Выбрать счет",
+                                allowClear: true,
+                                width: "100%",
+                                data: data.results,
+                                language: "ru"
+                            });
 
-        // Callback function to execute when mutations are observed
-        var payeeCallback = function (mutationsList, observer) {
-            var mutation = mutationsList[0]
-            $.ajax({
-                url: "/Data/OrganizationFinancialAccounts",
-                type: "GET",
-                cache: false,
-                data: { orgName: mutation.target.textContent },
-                success: function (result) {
-                    $("#payeeOrgFinancialAccountsDiv").html(result);
-                    $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
-                },
-                error: function (error) {
-                    $("#payeeOrgFinancialAccountsDiv").html();
+                            $('#selectPayerBank').val(null).trigger('change');
+
+                            $('#selectPayerBank').show();
+                        });
                 }
             });
-        };
-
-        // Create an observer instance linked to the callback function
-        var payeeObserver = new MutationObserver(payeeCallback);
-
-        // Start observing the target node for configured mutations
-        payeeObserver.observe(payeeTargetNode, config);
+        });
     }
 
     onload();
 
     $("#sendDataBtn").click(function (e) {
+        var selectPayee = $("#selectPayee").select2('data');
+        var selectPayer = $("#selectPayer").select2('data');
+        
+        var selectPayeeBank = $("#selectPayee option:selected").parent("optgroup")[0].label === "Организации" ?
+            $("#selectPayeeBank").select2('data') :
+            "undefined";
+        var selectPayerBank = $("#selectPayer option:selected").parent("optgroup")[0].label === "Организации" ?
+            $("#selectPayerBank").select2('data') :
+            "undefined";
+
         var sendJsonData = {
-            PayerName: $("#selectPayer").next().find("a.chosen-single span").first().html(),
-            PayerBankName: $("#payerOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html(),
-            PayeeName: $("#selectPayee").next().find("a.chosen-single span").first().html(),
-            PayeeBankName: $("#payeeOrgFinancialAccountsDiv > div").find("a.chosen-single span").first().html(),
+            PayerName: (typeof selectPayer !== 'undefined' && selectPayer.length > 0) ? selectPayer[0].text : "",
+            PayerBankName: (typeof selectPayerBank !== 'undefined' && selectPayerBank.length > 0) ? selectPayerBank[0].text : "",
+            PayeeName: (typeof selectPayee !== 'undefined' && selectPayee.length > 0) ? selectPayee[0].text : "",
+            PayeeBankName: (typeof selectPayeeBank !== 'undefined' && selectPayeeBank.length > 0) ? selectPayeeBank[0].text : "",
             Amount: $("#recordAmount").val(),
             Description: $("#recordDescription").val(),
             OrderNumber: $("#recordOrderNumber").val()
@@ -171,7 +177,6 @@
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(sendJsonData),
             success: function (result) {
-                console.log('y');
                 $("#contentResults").html(result.message);
             },
             error: function (error) {

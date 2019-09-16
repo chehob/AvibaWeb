@@ -82,12 +82,6 @@
             <div id="payeeSelectDiv">
                 <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
                     <option value=""></option>
-                    <optgroup label="Организации">
-                        @foreach (var org in Model.Organizations)
-                        {
-                            <option id=@org.Key>@org.Value</option>
-                        }
-                    </optgroup>
                 </select>
             </div>
         </div>
@@ -97,12 +91,6 @@
             <div id="payerSelectDiv">
                 <select data-placeholder="Выбрать корпоратора" id="selectPayer" data-rel="chosen">
                     <option value=""></option>
-                    <optgroup label="Корпораторы">
-                        @foreach (var counterparty in Model.Counterparties)
-                        {
-                            <option id=@counterparty.Key>@counterparty.Value</option>
-                        }
-                    </optgroup>
                 </select>
             </div>
         </div>
@@ -110,7 +98,7 @@
     <br />
     <div class="row">
         <div class="col-md-6">
-            <button id="resetOrgDataBtn" class="btn btn-success">Сбросить</button>
+            <button id="resetSelect" class="btn btn-success">Сбросить</button>
             <input hidden id="withBanks" value="false" />
             <input hidden id="withFees" value="false" />
         </div>
@@ -139,9 +127,12 @@
 
 <script>
     $("#getReceiptListBtn").click(function (e) {
+        var selectPayee = $("#selectPayee").select2('data');
+        var selectPayer = $("#selectPayer").select2('data');
+
         const sendJsonData = {
-            payerId: $("#selectPayer").find('option:selected').prop('id'),
-            payeeId: $("#selectPayee").find('option:selected').prop('id'),
+            payerId: (typeof selectPayer !== 'undefined' && selectPayer.length > 0) ? selectPayer[0].id : "",
+            payeeId: (typeof selectPayee !== 'undefined' && selectPayee.length > 0) ? selectPayee[0].id : "",
             isOnlyPaid: $("#isOnlyPaid").prop('checked'), 
             fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
             toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true)
@@ -165,9 +156,12 @@
     });
 
     $("#createReportListPDF").click(function (e) {
+        var selectPayee = $("#selectPayee").select2('data');
+        var selectPayer = $("#selectPayer").select2('data');
+
         const sendJsonData = {
-            payerId: $("#selectPayer").find('option:selected').prop('id'),
-            payeeId: $("#selectPayee").find('option:selected').prop('id'),
+            payerId: (typeof selectPayer !== 'undefined' && selectPayer.length > 0) ? selectPayer[0].id : "",
+            payeeId: (typeof selectPayee !== 'undefined' && selectPayee.length > 0) ? selectPayee[0].id : "",
             isOnlyPaid: $("#isOnlyPaid").prop('checked'), 
             fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
             toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true)
@@ -190,14 +184,64 @@
     });
 
     $(function () {
-        initChosen(false, false);
+        var d1 = $.Deferred();
+        var d2 = $.Deferred();
+
+        $.get("/CorpReceipt/OrganizationSelect", function (data) {
+            $('#selectPayee').select2({
+                placeholder: "Выбрать организацию",
+                width: "100%",
+                data: data.results,
+                language: "ru"
+            });
+            d1.resolve();
+        });
+
+        $.get("/CorpReceipt/CorporatorSelect", function (data) {
+            $('#selectPayer').select2({
+                placeholder: "Выбрать корпоратора",
+                width: "100%",
+                data: data.results,
+                language: "ru"
+            });
+            d2.resolve();
+        });
+
+        $.when(d1, d2).done(function (v1, v2) {
+            $("#getReceiptListBtn").trigger("click");
+        });
 
         $("#min").datepicker();
         $("#max").datepicker();
 
         $("#min").datepicker('setDate', moment().subtract(30, 'days').format("DD.MM.YYYY"));
         $("#max").datepicker('setDate', moment().format("DD.MM.YYYY"));
+    });
 
-        $("#getReceiptListBtn").trigger("click");
+    $("#resetSelect").click(function (e) {
+        $('#selectPayee').empty();
+        $('#selectPayer').empty();
+
+        $.get("/CorpReceipt/OrganizationSelect", function (data) {
+            $('#selectPayee').select2({
+                placeholder: "Выбрать организацию",
+                width: "100%",
+                data: data.results,
+                language: "ru"
+            });
+
+            $('#selectPayee').val(null).trigger('change');
+        });
+
+        $.get("/CorpReceipt/CorporatorSelect", function (data) {
+            $('#selectPayer').select2({
+                placeholder: "Выбрать корпоратора",
+                width: "100%",
+                data: data.results,
+                language: "ru"
+            });
+
+            $('#selectPayer').val(null).trigger('change');
+        });
     });
 </script>

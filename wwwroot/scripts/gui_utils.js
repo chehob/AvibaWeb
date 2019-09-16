@@ -2437,7 +2437,7 @@ $(document).on('click',
             }
         });
 
-        $.get("/CorpReceipt/CounterpartySelect", function (data) {
+        $.get("/CorpReceipt/CorporatorSelect", function (data) {
             $('#selectPayer').select2({
                 placeholder: "Выбрать корпоратора",
                 width: "100%",
