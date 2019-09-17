@@ -1,0 +1,146 @@
+﻿@using AvibaWeb.ViewModels.BookingManagement
+@model KRSViewModel
+
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>КРС</th>
+            <th>Сегменты</th>
+            <th>Сумма</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Продажи</td>
+            <td>@Model.CashSale.KRSCountStr</td>
+            <td>@Model.CashSale.SegCountStr</td>
+            <td>@Model.CashSale.AmountStr</td>
+        </tr>
+        <tr>
+            <td>Обмены</td>
+            <td>@Model.CashExchange.KRSCountStr</td>
+            <td>@Model.CashExchange.SegCountStr</td>
+            <td>@Model.CashExchange.AmountStr</td>
+        </tr>
+        <tr>
+            <td>Возвраты</td>
+            <td>@Model.CashRefund.KRSCountStr</td>
+            <td>@Model.CashRefund.SegCountStr</td>
+            <td>@Model.CashRefund.AmountStr</td>
+        </tr>
+        <tr>
+            <td>Вынужденные возвраты</td>
+            <td>@Model.CashForcedRefund.KRSCountStr</td>
+            <td>@Model.CashForcedRefund.SegCountStr</td>
+            <td>@Model.CashForcedRefund.AmountStr</td>
+        </tr>
+        <tr>
+            <td>Доп.услуги</td>
+            <td>@Model.CashService.KRSCountStr</td>
+            <td>@Model.CashService.SegCountStr</td>
+            <td>@Model.CashService.AmountStr</td>
+        </tr>
+        <tr>
+            <td>Аннулированные</td>
+            <td>@Model.CashCancel.KRSCountStr</td>
+            <td>@Model.CashCancel.SegCountStr</td>
+            <td>@Model.CashCancel.AmountStr</td>
+        </tr>
+        <tr>
+            <td><b>Итого</b></td>
+            <td><b>@Model.CashTotal.KRSCountStr</b></td>
+            <td><b>@Model.CashTotal.SegCountStr</b></td>
+            <td><b>@Model.CashTotal.AmountStr</b></td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th></th>
+        <th>Сборы ПК</th>
+        <th>Сумма</th>
+        <th>С комиссией</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Продажи</td>
+        <td>@Model.PKSale.KRSCountStr</td>
+        <td>@Model.PKSale.AmountStr</td>
+        <td>@Model.PKSale.AmountCommStr</td>
+    </tr>
+    <tr>
+        <td>Обмены</td>
+        <td>@Model.PKExchange.KRSCountStr</td>
+        <td>@Model.PKExchange.AmountStr</td>
+        <td>@Model.PKExchange.AmountCommStr</td>
+    </tr>
+    <tr>
+        <td>Возвраты</td>
+        <td>@Model.PKRefund.KRSCountStr</td>
+        <td>@Model.PKRefund.AmountStr</td>
+        <td>@Model.PKRefund.AmountCommStr</td>
+    </tr>
+    <tr>
+        <td>Аннулированные</td>
+        <td>@Model.PKCancel.KRSCountStr</td>
+        <td>@Model.PKCancel.AmountStr</td>
+        <td>@Model.PKCancel.AmountCommStr</td>
+    </tr>
+    <tr>
+        <td><b>Итого</b></td>
+        <td><b>@Model.PKTotal.KRSCountStr</b></td>
+        <td><b>@Model.PKTotal.AmountStr</b></td>
+        <td><b>@Model.PKTotal.AmountCommStr</b></td>
+    </tr>
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th></th>
+        <th>Сборы б/н</th>
+        <th>Сегменты</th>
+        <th>Сумма</th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Продажи</td>
+            <td>@Model.BNSale.KRSCountStr</td>
+            <td>@Model.BNSale.SegCountStr</td>
+            <td>@Model.BNSale.AmountStr</td>
+        </tr>
+        <tr>
+            <td>Обмены</td>
+            <td>@Model.BNExchange.KRSCountStr</td>
+            <td>@Model.BNExchange.SegCountStr</td>
+            <td>@Model.BNExchange.AmountStr</td>
+        </tr>
+        <tr>
+            <td>Возвраты</td>
+            <td>@Model.BNRefund.KRSCountStr</td>
+            <td>@Model.BNRefund.SegCountStr</td>
+            <td>@Model.BNRefund.AmountStr</td>
+        </tr>
+        <tr>
+            <td>Вынужденные возвраты</td>
+            <td>@Model.BNForcedRefund.KRSCountStr</td>
+            <td>@Model.BNForcedRefund.SegCountStr</td>
+            <td>@Model.BNForcedRefund.AmountStr</td>
+        </tr>
+    <tr>
+        <td><b>Итого</b></td>
+        <td><b>@Model.BNTotal.KRSCountStr</b></td>
+        <td><b>@Model.BNTotal.SegCountStr</b></td>
+        <td><b>@Model.BNTotal.AmountStr</b></td>
+    </tr>
+    </tbody>
+</table>
+
+<span>Общий итог: @Model.FinalTotalStr</span>
+<span>С учетом комиссии (2,6): @Model.FinalTotalCommStr</span>

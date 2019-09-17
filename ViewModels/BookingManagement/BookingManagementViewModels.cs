@@ -41,4 +41,49 @@ namespace AvibaWeb.ViewModels.BookingManagement
 
         public SalesViewItem FinalTotal { get; set; }
     }
+
+    public class KRSViewItem
+    {
+        public KRSViewItem()
+        {
+            nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+        }
+        private NumberFormatInfo nfi;
+
+        public decimal SegCount { get; set; }
+        public string SegCountStr => SegCount.ToString();
+        public decimal KRSCount { get; set; }
+        public string KRSCountStr => KRSCount.ToString();
+        public decimal Amount { get; set; }
+        public string AmountStr => Amount.ToString("#,0.00", nfi);
+        public decimal AmountComm { get; set; }
+        public string AmountCommStr => AmountComm.ToString("#,0.00", nfi);
+    }
+
+    public class KRSViewModel
+    {
+        public KRSViewItem CashSale { get; set; }
+        public KRSViewItem CashExchange { get; set; }
+        public KRSViewItem CashRefund { get; set; }
+        public KRSViewItem CashForcedRefund { get; set; }
+        public KRSViewItem CashService { get; set; }
+        public KRSViewItem CashCancel { get; set; }
+        public KRSViewItem CashTotal { get; set; }
+
+        public KRSViewItem PKSale { get; set; }
+        public KRSViewItem PKExchange { get; set; }
+        public KRSViewItem PKRefund { get; set; }
+        public KRSViewItem PKCancel { get; set; }
+        public KRSViewItem PKTotal { get; set; }
+
+        public KRSViewItem BNSale { get; set; }
+        public KRSViewItem BNExchange { get; set; }
+        public KRSViewItem BNRefund { get; set; }
+        public KRSViewItem BNForcedRefund { get; set; }
+        public KRSViewItem BNTotal { get; set; }
+
+        public string FinalTotalStr { get; set; }
+        public string FinalTotalCommStr { get; set; }
+    }
 }

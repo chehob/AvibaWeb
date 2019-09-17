@@ -190,6 +190,131 @@ namespace AvibaWeb.Controllers
             return Json(new { message = await _viewRenderService.RenderToStringAsync("BookingManagement/Sales", model) });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> KRS(DateTime? fromDate, DateTime? toDate, string[] deskFilter, string[] sessionFilter, string[] airlineFilter)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var queryToDate = toDate ?? DateTime.Now.Date;
+            var queryFromDate = fromDate ?? queryToDate;
+            var railTicketTypes = new int[] { 3, 5 };
+
+            var model = new KRSViewModel
+            {
+                CashSale = new KRSViewItem
+                {
+                    KRSCount = 0,
+                    Amount = 0,
+                    SegCount = 0
+                },
+                CashExchange = new KRSViewItem
+                {
+                    KRSCount = 0,
+                    Amount = 0,
+                    SegCount = 0
+                },
+                CashRefund = new KRSViewItem
+                {
+                    KRSCount = 0,
+                    Amount = 0,
+                    SegCount = 0
+                },
+                CashForcedRefund = new KRSViewItem
+                {
+                    KRSCount = 0,
+                    Amount = 0,
+                    SegCount = 0
+                },
+                CashService = new KRSViewItem
+                {
+                    KRSCount = 0,
+                    Amount = 0,
+                    SegCount = 0
+                },
+                CashCancel = new KRSViewItem
+                {
+                    KRSCount = 0,
+                    Amount = 0,
+                    SegCount = 0
+                },
+                PKSale = new KRSViewItem
+                {
+                    KRSCount = 0,
+                    Amount = 0,
+                    AmountComm = 0
+                },
+                PKExchange = new KRSViewItem
+                {
+                    KRSCount = 0,
+                    Amount = 0,
+                    AmountComm = 0
+                },
+                PKRefund = new KRSViewItem
+                {
+                    KRSCount = 0,
+                    Amount = 0,
+                    AmountComm = 0
+                },
+                PKCancel = new KRSViewItem
+                {
+                    KRSCount = 0,
+                    Amount = 0,
+                    AmountComm = 0
+                },
+                BNSale = new KRSViewItem
+                {
+                    KRSCount = 0,
+                    Amount = 0,
+                    SegCount = 0
+                },
+                BNExchange = new KRSViewItem
+                {
+                    KRSCount = 0,
+                    Amount = 0,
+                    SegCount = 0
+                },
+                BNRefund = new KRSViewItem
+                {
+                    KRSCount = 0,
+                    Amount = 0,
+                    SegCount = 0
+                },
+                BNForcedRefund = new KRSViewItem
+                {
+                    KRSCount = 0,
+                    Amount = 0,
+                    SegCount = 0
+                },
+            };
+
+            model.CashTotal = new KRSViewItem
+            {
+                Amount = model.CashSale.Amount + model.CashExchange.Amount + model.CashRefund.Amount,
+                SegCount = model.CashSale.SegCount + model.CashExchange.SegCount + model.CashRefund.SegCount,
+                KRSCount = model.CashSale.KRSCount + model.CashExchange.KRSCount + model.CashRefund.KRSCount
+            };
+
+            model.PKTotal = new KRSViewItem
+            {
+                Amount = model.PKSale.Amount + model.PKExchange.Amount + model.PKRefund.Amount,
+                AmountComm = model.PKSale.AmountComm + model.PKExchange.AmountComm + model.PKRefund.AmountComm,
+                KRSCount = model.PKSale.KRSCount + model.PKExchange.KRSCount + model.PKRefund.KRSCount
+            };
+
+            model.BNTotal = new KRSViewItem
+            {
+                Amount = model.BNSale.Amount + model.BNExchange.Amount + model.BNRefund.Amount,
+                SegCount = model.BNSale.SegCount + model.BNExchange.SegCount + model.BNRefund.SegCount,
+                KRSCount = model.BNSale.KRSCount + model.BNExchange.KRSCount + model.BNRefund.KRSCount
+            };
+
+            model.FinalTotalStr = (model.CashTotal.Amount + model.PKTotal.Amount + model.BNTotal.Amount).ToString("#,0.00", nfi);
+            model.FinalTotalCommStr = (model.CashTotal.Amount + model.PKTotal.AmountComm + model.BNTotal.Amount).ToString("#,0.00", nfi);
+
+            return Json(new { message = await _viewRenderService.RenderToStringAsync("BookingManagement/KRS", model) });
+        }
+
         public IActionResult Filter()
         {
             var model = new FilterViewModel
