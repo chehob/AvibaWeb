@@ -252,7 +252,7 @@
             }
         });
 
-        $("#issuedDateTime").datepicker();
+        $("#issuedDateTime").datepicker('setDate', moment().format("DD.MM.YYYY"));
         $("#min").datepicker();
         $("#max").datepicker();
 
