@@ -34,30 +34,40 @@
 
     onload();
 
+    var saleInterval;
+
     $("#saleButton").click(function (e) {
-        $.ajax({
-            url: "/BookingManagement/Sales",
-            type: "POST",
-            cache: false,
-            data: {
-                fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
-                toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true),
-                deskFilter: $('#deskTree').jstree('get_bottom_selected', false),
-                sessionFilter: $('#sessionTree').jstree('get_bottom_selected', true).map(s => s.text),
-                airlineFilter: $('#selectAirline').select2('data')
-            },
-            dataType: "json",
-            success: function (result) {
-                $('#results').html(result.message);
-            },
-            error: function (error) {
-                console.log(error.message);
-            }
-        });
+        clearTimeout(saleInterval);
+
+        saleInterval = setTimeout(function () {
+            $.ajax({
+                url: "/BookingManagement/Sales",
+                type: "POST",
+                cache: false,
+                data: {
+                    fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+                    toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true),
+                    deskFilter: $('#deskTree').jstree('get_bottom_selected', false),
+                    sessionFilter: $('#sessionTree').jstree('get_bottom_selected', true).map(s => s.text),
+                    airlineFilter: $('#selectAirline').select2('data')
+                },
+                dataType: "json",
+                success: function (result) {                    
+                    $('#results').html(result.message);
+                    if ($("#min").val() === $("#max").val()) {
+                        $("#saleButton").click();
+                    }
+                    console.log('loaded');
+                },
+                error: function (error) {
+                    console.log(error.message);
+                }
+            });
+        }, 15000);
     });
 
     $("#KRSButton").click(function (e) {
-        clearInterval(saleInterval);
+        clearTimeout(saleInterval);
         $.ajax({
             url: "/BookingManagement/KRS",
             type: "POST",

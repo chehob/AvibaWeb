@@ -69,27 +69,32 @@
 </div>
 
 <script type="text/javascript">
-    var saleInterval;
-
     $(document).ready(function () {
         var d1 = $.Deferred();
         var d2 = $.Deferred();
 
+        $(".datePicker").datepicker({
+            autoclose: true
+        }).datepicker('setDate', moment().format("DD.MM.YYYY"));
+
         $.when(d1, d2).done(function (v1, v2) {
-            if($("#min").val() === $("#max").val()) {
-                saleInterval = setInterval(function () {
-                    $("#saleButton").click();
-                    if ($("#min").val() !== $("#max").val()) {
-                        clearInterval(saleInterval);
-                    }
-                }, 15000);
-            }
+            $(".datePicker").on('changeDate', function (ev) {
+                $("#saleButton").click();
+            });
+
+            $('#deskTree').on('changed.jstree', function (node, selected, event) {
+                $("#saleButton").click();
+            });
+
+            $('#sessionTree').on('changed.jstree', function (node, selected, event) {
+                $("#saleButton").click();
+            });
+
+            $("#saleButton").click();
         });
 
         $('#deskTree').on('loaded.jstree', function (e, data) {
             d1.resolve();
-        }).on('changed.jstree', function (node, selected, event) {
-            $("#saleButton").click();
         }).jstree({
             'core': {
                 'themes': {
@@ -113,8 +118,6 @@
 
         $('#sessionTree').on('loaded.jstree', function (e, data) {
             d2.resolve();
-        }).on('changed.jstree', function (node, selected, event) {
-            $("#saleButton").click();
         }).jstree({
             'core': {
                 'themes': {
@@ -169,23 +172,6 @@
             },
             language: "ru"                   
         });
-
-        $(".datePicker").datepicker({
-            autoclose: true
-        }).on('changeDate', function (ev) {
-            if ($("#min").val() === $("#max").val()) {
-                saleInterval = setInterval(function() {
-                        $("#saleButton").click();
-                        if ($("#min").val() !== $("#max").val()) {
-                            clearInterval(saleInterval);
-                        }
-                    },
-                    15000);
-            } else {
-                clearInterval(saleInterval);
-            }
-            $("#saleButton").click();
-        }).datepicker('setDate', moment().format("DD.MM.YYYY"));
 
         $('#deskTree').jstree('hide_icons');
         $('#sessionTree').jstree('hide_icons');
