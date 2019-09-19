@@ -1,146 +1,189 @@
 ﻿@using AvibaWeb.ViewModels.BookingManagement
 @model KRSViewModel
 
-<table class="table">
-    <thead>
-        <tr>
-            <th></th>
-            <th>КРС</th>
-            <th>Сегменты</th>
-            <th>Сумма</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Продажи</td>
-            <td>@Model.CashSale.KRSCountStr</td>
-            <td>@Model.CashSale.SegCountStr</td>
-            <td>@Model.CashSale.AmountStr</td>
-        </tr>
-        <tr>
-            <td>Обмены</td>
-            <td>@Model.CashExchange.KRSCountStr</td>
-            <td>@Model.CashExchange.SegCountStr</td>
-            <td>@Model.CashExchange.AmountStr</td>
-        </tr>
-        <tr>
-            <td>Возвраты</td>
-            <td>@Model.CashRefund.KRSCountStr</td>
-            <td>@Model.CashRefund.SegCountStr</td>
-            <td>@Model.CashRefund.AmountStr</td>
-        </tr>
-        <tr>
-            <td>Вынужденные возвраты</td>
-            <td>@Model.CashForcedRefund.KRSCountStr</td>
-            <td>@Model.CashForcedRefund.SegCountStr</td>
-            <td>@Model.CashForcedRefund.AmountStr</td>
-        </tr>
-        <tr>
-            <td>Доп.услуги</td>
-            <td>@Model.CashService.KRSCountStr</td>
-            <td>@Model.CashService.SegCountStr</td>
-            <td>@Model.CashService.AmountStr</td>
-        </tr>
-        <tr>
-            <td>Аннулированные</td>
-            <td>@Model.CashCancel.KRSCountStr</td>
-            <td>@Model.CashCancel.SegCountStr</td>
-            <td>@Model.CashCancel.AmountStr</td>
-        </tr>
-        <tr>
-            <td><b>Итого</b></td>
-            <td><b>@Model.CashTotal.KRSCountStr</b></td>
-            <td><b>@Model.CashTotal.SegCountStr</b></td>
-            <td><b>@Model.CashTotal.AmountStr</b></td>
-        </tr>
-    </tbody>
-</table>
+<style>
+    .KRSTable .labelCol {
+        width: 200px;
+    }
+    .KRSTable .dataCol {
+        width: 100px;
+    }
+</style>
 
-<table class="table">
-    <thead>
-    <tr>
-        <th></th>
-        <th>Сборы ПК</th>
-        <th>Сумма</th>
-        <th>С комиссией</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>Продажи</td>
-        <td>@Model.PKSale.KRSCountStr</td>
-        <td>@Model.PKSale.AmountStr</td>
-        <td>@Model.PKSale.AmountCommStr</td>
-    </tr>
-    <tr>
-        <td>Обмены</td>
-        <td>@Model.PKExchange.KRSCountStr</td>
-        <td>@Model.PKExchange.AmountStr</td>
-        <td>@Model.PKExchange.AmountCommStr</td>
-    </tr>
-    <tr>
-        <td>Возвраты</td>
-        <td>@Model.PKRefund.KRSCountStr</td>
-        <td>@Model.PKRefund.AmountStr</td>
-        <td>@Model.PKRefund.AmountCommStr</td>
-    </tr>
-    <tr>
-        <td>Аннулированные</td>
-        <td>@Model.PKCancel.KRSCountStr</td>
-        <td>@Model.PKCancel.AmountStr</td>
-        <td>@Model.PKCancel.AmountCommStr</td>
-    </tr>
-    <tr>
-        <td><b>Итого</b></td>
-        <td><b>@Model.PKTotal.KRSCountStr</b></td>
-        <td><b>@Model.PKTotal.AmountStr</b></td>
-        <td><b>@Model.PKTotal.AmountCommStr</b></td>
-    </tr>
-    </tbody>
-</table>
+<div class="box col-md-7">
+    <div class="box-inner">
+        <div class="box-content">
+            <span>Общий итог: @Model.FinalTotalStr</span>
+            <br />
+            <span>С учетом комиссии (2,6): @Model.FinalTotalCommStr</span>
+        </div>
+    </div>
+</div>
 
-<table class="table">
-    <thead>
-    <tr>
-        <th></th>
-        <th>Сборы б/н</th>
-        <th>Сегменты</th>
-        <th>Сумма</th>
-    </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Продажи</td>
-            <td>@Model.BNSale.KRSCountStr</td>
-            <td>@Model.BNSale.SegCountStr</td>
-            <td>@Model.BNSale.AmountStr</td>
-        </tr>
-        <tr>
-            <td>Обмены</td>
-            <td>@Model.BNExchange.KRSCountStr</td>
-            <td>@Model.BNExchange.SegCountStr</td>
-            <td>@Model.BNExchange.AmountStr</td>
-        </tr>
-        <tr>
-            <td>Возвраты</td>
-            <td>@Model.BNRefund.KRSCountStr</td>
-            <td>@Model.BNRefund.SegCountStr</td>
-            <td>@Model.BNRefund.AmountStr</td>
-        </tr>
-        <tr>
-            <td>Вынужденные возвраты</td>
-            <td>@Model.BNForcedRefund.KRSCountStr</td>
-            <td>@Model.BNForcedRefund.SegCountStr</td>
-            <td>@Model.BNForcedRefund.AmountStr</td>
-        </tr>
-    <tr>
-        <td><b>Итого</b></td>
-        <td><b>@Model.BNTotal.KRSCountStr</b></td>
-        <td><b>@Model.BNTotal.SegCountStr</b></td>
-        <td><b>@Model.BNTotal.AmountStr</b></td>
-    </tr>
-    </tbody>
-</table>
+<div class="box col-md-6">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="" style="overflow: hidden;">
+            <h2>Сборы нал</h2>
+        </div>
+        <div class="box-content">
+            <table class="table KRSTable">
+                <thead>
+                <tr>
+                    <th class="labelCol"></th>
+                    <th class="dataCol">КРС</th>
+                    <th class="dataCol">Сегменты</th>
+                    <th class="dataCol">Сумма</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="labelCol">Продажи</td>
+                    <td class="dataCol">@Model.CashSale.KRSCountStr</td>
+                    <td class="dataCol">@Model.CashSale.SegCountStr</td>
+                    <td class="dataCol">@Model.CashSale.AmountStr</td>
+                </tr>
+                <tr>
+                    <td class="labelCol">Обмены</td>
+                    <td class="dataCol">@Model.CashExchange.KRSCountStr</td>
+                    <td class="dataCol">@Model.CashExchange.SegCountStr</td>
+                    <td class="dataCol">@Model.CashExchange.AmountStr</td>
+                </tr>
+                <tr>
+                    <td class="labelCol">Возвраты</td>
+                    <td class="dataCol">@Model.CashRefund.KRSCountStr</td>
+                    <td class="dataCol">@Model.CashRefund.SegCountStr</td>
+                    <td class="dataCol">@Model.CashRefund.AmountStr</td>
+                </tr>
+                <tr>
+                    <td class="labelCol">Вынужденные возвраты</td>
+                    <td class="dataCol">@Model.CashForcedRefund.KRSCountStr</td>
+                    <td class="dataCol">@Model.CashForcedRefund.SegCountStr</td>
+                    <td class="dataCol">@Model.CashForcedRefund.AmountStr</td>
+                </tr>
+                <tr>
+                    <td class="labelCol">Доп.услуги</td>
+                    <td class="dataCol">@Model.CashService.KRSCountStr</td>
+                    <td class="dataCol">@Model.CashService.SegCountStr</td>
+                    <td class="dataCol">@Model.CashService.AmountStr</td>
+                </tr>
+                <tr>
+                    <td class="labelCol">Аннулированные</td>
+                    <td class="dataCol">@Model.CashCancel.KRSCountStr</td>
+                    <td class="dataCol">@Model.CashCancel.SegCountStr</td>
+                    <td class="dataCol">@Model.CashCancel.AmountStr</td>
+                </tr>
+                <tr>
+                    <td class="labelCol"><b>Итого</b></td>
+                    <td class="dataCol"><b>@Model.CashTotal.KRSCountStr</b></td>
+                    <td class="dataCol"><b>@Model.CashTotal.SegCountStr</b></td>
+                    <td class="dataCol"><b>@Model.CashTotal.AmountStr</b></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-<span>Общий итог: @Model.FinalTotalStr</span>
-<span>С учетом комиссии (2,6): @Model.FinalTotalCommStr</span>
+<div class="box col-md-6">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="" style="overflow: hidden;">
+            <h2>Сборы ПК</h2>
+        </div>
+        <div class="box-content">
+            <table class="table KRSTable">
+                <thead>
+                    <tr>
+                        <th class="labelCol"></th>
+                        <th class="dataCol">Сборы ПК</th>
+                        <th class="dataCol">Сумма</th>
+                        <th class="dataCol">С комиссией</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="labelCol">Продажи</td>
+                        <td class="dataCol">@Model.PKSale.KRSCountStr</td>
+                        <td class="dataCol">@Model.PKSale.AmountStr</td>
+                        <td class="dataCol">@Model.PKSale.AmountCommStr</td>
+                    </tr>
+                    <tr>
+                        <td class="labelCol">Обмены</td>
+                        <td class="dataCol">@Model.PKExchange.KRSCountStr</td>
+                        <td class="dataCol">@Model.PKExchange.AmountStr</td>
+                        <td class="dataCol">@Model.PKExchange.AmountCommStr</td>
+                    </tr>
+                    <tr>
+                        <td class="labelCol">Возвраты</td>
+                        <td class="dataCol">@Model.PKRefund.KRSCountStr</td>
+                        <td class="dataCol">@Model.PKRefund.AmountStr</td>
+                        <td class="dataCol">@Model.PKRefund.AmountCommStr</td>
+                    </tr>
+                    <tr>
+                        <td class="labelCol">Аннулированные</td>
+                        <td class="dataCol">@Model.PKCancel.KRSCountStr</td>
+                        <td class="dataCol">@Model.PKCancel.AmountStr</td>
+                        <td class="dataCol">@Model.PKCancel.AmountCommStr</td>
+                    </tr>
+                    <tr>
+                        <td class="labelCol"><b>Итого</b></td>
+                        <td class="dataCol"><b>@Model.PKTotal.KRSCountStr</b></td>
+                        <td class="dataCol"><b>@Model.PKTotal.AmountStr</b></td>
+                        <td class="dataCol"><b>@Model.PKTotal.AmountCommStr</b></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="box col-md-6">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="" style="overflow: hidden;">
+            <h2>Сборы БН</h2>
+        </div>
+        <div class="box-content">
+            <table class="table KRSTable">
+                <thead>
+                    <tr>
+                        <th class="labelCol"></th>
+                        <th class="dataCol">Сборы б/н</th>
+                        <th class="dataCol">Сегменты</th>
+                        <th class="dataCol">Сумма</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="labelCol">Продажи</td>
+                        <td class="dataCol">@Model.BNSale.KRSCountStr</td>
+                        <td class="dataCol">@Model.BNSale.SegCountStr</td>
+                        <td class="dataCol">@Model.BNSale.AmountStr</td>
+                    </tr>
+                    <tr>
+                        <td class="labelCol">Обмены</td>
+                        <td class="dataCol">@Model.BNExchange.KRSCountStr</td>
+                        <td class="dataCol">@Model.BNExchange.SegCountStr</td>
+                        <td class="dataCol">@Model.BNExchange.AmountStr</td>
+                    </tr>
+                    <tr>
+                        <td class="labelCol">Возвраты</td>
+                        <td class="dataCol">@Model.BNRefund.KRSCountStr</td>
+                        <td class="dataCol">@Model.BNRefund.SegCountStr</td>
+                        <td class="dataCol">@Model.BNRefund.AmountStr</td>
+                    </tr>
+                    <tr>
+                        <td class="labelCol">Вынужденные возвраты</td>
+                        <td class="dataCol">@Model.BNForcedRefund.KRSCountStr</td>
+                        <td class="dataCol">@Model.BNForcedRefund.SegCountStr</td>
+                        <td class="dataCol">@Model.BNForcedRefund.AmountStr</td>
+                    </tr>
+                    <tr>
+                        <td class="labelCol"><b>Итого</b></td>
+                        <td class="dataCol"><b>@Model.BNTotal.KRSCountStr</b></td>
+                        <td class="dataCol"><b>@Model.BNTotal.SegCountStr</b></td>
+                        <td class="dataCol"><b>@Model.BNTotal.AmountStr</b></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
