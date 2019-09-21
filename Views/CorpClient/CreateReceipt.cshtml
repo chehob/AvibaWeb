@@ -178,7 +178,7 @@
             <hr>
             <h3>Добавить билеты</h3>
             <div class="col-md-12">
-                Выбрать с: <input type="text" id="min" name="min" class="date-range-filter"> по: <input type="text" id="max" name="max" class="date-range-filter">
+                Выбрать с: <input type="text" id="min" name="min" autocomplete="off"> по: <input type="text" id="max" name="max" autocomplete="off">
                 <a href="/" id="getTicketListBtn" class="btn btn-success">Список билетов</a>
             </div>
             <br />
@@ -261,8 +261,8 @@
 
         editValue = $("#editReceiptCreatedDate").val();
         if (editValue) {
-            $("#min").datepicker(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").format("DD.MM.YYYY"));
-            $("#max").datepicker(moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").format("DD.MM.YYYY"));
+            $("#min").datepicker('setDate', moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").format("DD.MM.YYYY"));
+            $("#max").datepicker('setDate', moment($('#receiptCreatedDate').html(), "DD.MM.YYYY").format("DD.MM.YYYY"));
         } else {
             $("#min").datepicker('setDate', moment().format("DD.MM.YYYY"));
             $("#max").datepicker('setDate', moment().format("DD.MM.YYYY"));
