@@ -79,18 +79,18 @@
 
         $.when(d1, d2).done(function (v1, v2) {
             $(".datePicker").on('changeDate', function (ev) {
-                $("#saleButton").click();
+                clickInfo();
             });
 
             $('#deskTree').on('changed.jstree', function (node, selected, event) {
-                $("#saleButton").click();
+                clickInfo();
             });
 
             $('#sessionTree').on('changed.jstree', function (node, selected, event) {
-                $("#saleButton").click();
+                clickInfo();
             });
 
-            $("#saleButton").click();
+            clickInfo();
         });
 
         $('#deskTree').on('loaded.jstree', function (e, data) {
@@ -140,7 +140,7 @@
         });
                 
         $('#selectAirline').on('change', function (e) {
-            $("#saleButton").click();
+            clickInfo();
         }).select2({
             width: "100%",
             ajax: {
@@ -157,7 +157,7 @@
         })
 
         $('[data-remote]').on('change', function (e) {
-            $("#saleButton").click();
+            clickInfo();
         }).select2({
             width: "100%",
             ajax: {
@@ -186,6 +186,17 @@
         $('#deskTree').jstree('deselect_all', 'true');
         $('#sessionTree').jstree('deselect_all', 'true');
 
-        $("#saleButton").click();
+        clickInfo();
     });
+
+    function clickInfo() {
+        switch ($('#currentInfo').val()) {
+            case '0':
+                $("#saleButton").click();
+                break;
+            case '1':
+                $("#KRSButton").click();
+                break;
+        } 
+    }
 </script>

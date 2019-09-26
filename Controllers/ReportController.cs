@@ -428,7 +428,7 @@ namespace AvibaWeb.Controllers
 
             var CorpTicketList = (from dg in _db.DeskGroups
                      join d in _db.Desks on dg.DeskGroupId equals d.GroupId
-                     join ti in _db.VReceiptTicketInfo on d.DeskId equals ti.DeskID
+                     join ti in _db.VReceiptTicketInfo on d.DeskId equals ti.DeskId
                      join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
                      join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
                      where cr.PaidDateTime >= queryFromDate && cr.PaidDateTime < queryToDate.AddDays(1) &&
@@ -443,7 +443,7 @@ namespace AvibaWeb.Controllers
 
             var CorpLuggageList = (from dg in _db.DeskGroups
                                   join d in _db.Desks on dg.DeskGroupId equals d.GroupId
-                                  join ti in _db.VReceiptLuggageInfo on d.DeskId equals ti.DeskID
+                                  join ti in _db.VReceiptLuggageInfo on d.DeskId equals ti.DeskId
                                   join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
                                   join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
                                   where cr.PaidDateTime >= queryFromDate && cr.PaidDateTime < queryToDate.AddDays(1) && 
@@ -512,7 +512,7 @@ namespace AvibaWeb.Controllers
 
             var CorpTicketList = (from dg in _db.DeskGroups
                                   join d in _db.Desks on dg.DeskGroupId equals d.GroupId
-                                  join ti in _db.VReceiptTicketInfo on d.DeskId equals ti.DeskID
+                                  join ti in _db.VReceiptTicketInfo on d.DeskId equals ti.DeskId
                                   join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
                                   join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
                                   where cr.PaidDateTime >= queryFromDate && cr.PaidDateTime < queryToDate.AddDays(1) &&
@@ -531,7 +531,7 @@ namespace AvibaWeb.Controllers
 
             var CorpLuggageList = (from dg in _db.DeskGroups
                                    join d in _db.Desks on dg.DeskGroupId equals d.GroupId
-                                   join ti in _db.VReceiptLuggageInfo on d.DeskId equals ti.DeskID
+                                   join ti in _db.VReceiptLuggageInfo on d.DeskId equals ti.DeskId
                                    join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
                                    join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
                                    where cr.PaidDateTime >= queryFromDate && cr.PaidDateTime < queryToDate.AddDays(1) &&

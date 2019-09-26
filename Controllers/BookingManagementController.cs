@@ -200,92 +200,180 @@ namespace AvibaWeb.Controllers
             var queryFromDate = fromDate ?? queryToDate;
             var railTicketTypes = new int[] { 3, 5 };
 
+            var KRSList = (from info in _db.VServiceReceiptIncomeInfo
+                where info.DateTime >= queryFromDate && info.DateTime < queryToDate.AddDays(1) &&
+                      deskFilter.Contains(info.DeskIssuedId) //&& sessionFilter.Contains(ti.InfoSession)
+                           select new
+                           {
+                               info.TicketOpTypeId,
+                               info.SegCount,
+                               IsSite = info.Serie == "ТКП" ? 1 : 0,
+                               info.Amount
+                           }).GroupBy(g => new { g.TicketOpTypeId, g.IsSite })
+                .Select(g => new
+                {
+                    OpTypeId = g.Key.TicketOpTypeId,
+                    g.Key.IsSite,
+                    ServiceCount = g.Count(),
+                    SegCount = g.Sum(ig => ig.SegCount),
+                    Amount = g.Sum(ig => ig.Amount)
+                }).ToList();
+
+            var CorpTicketList = (from ti in _db.VReceiptTicketInfo
+                    join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
+                    join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
+                    where cr.PaidDateTime >= queryFromDate && cr.PaidDateTime < queryToDate.AddDays(1) &&
+                          deskFilter.Contains(ti.DeskId) && sessionFilter.Contains(ti.InfoSession) &&
+                          cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid &&
+                          cr.TypeId == CorporatorReceipt.CRType.CorpClient &&
+                          cri.TypeId == CorporatorReceiptItem.CRIType.Ticket
+                    select new
+                    {
+                        ti.TicketOpTypeId,
+                        ti.SegCount,
+                        Amount = cri.IsPercent ? cri.Amount * cri.FeeRate / 100 :
+                            cri.PerSegment ? cri.FeeRate * ti.SegCount : cri.FeeRate
+                    }).GroupBy(g => g.TicketOpTypeId)
+                .Select(g => new
+                {
+                    OpTypeId = g.Key,
+                    ServiceCount = g.Count(),
+                    SegCount = g.Sum(ig => ig.SegCount),
+                    Amount = g.Sum(ig => ig.Amount)
+                }).ToList();
+
+            var CorpLuggageList = (from ti in _db.VReceiptLuggageInfo
+                    join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
+                    join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
+                    where cr.PaidDateTime >= queryFromDate && cr.PaidDateTime < queryToDate.AddDays(1) &&
+                          deskFilter.Contains(ti.DeskId) && sessionFilter.Contains(ti.InfoSession) &&
+                          cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid &&
+                          cr.TypeId == CorporatorReceipt.CRType.CorpClient &&
+                          cri.TypeId == CorporatorReceiptItem.CRIType.Luggage
+                    select new
+                    {
+                        ti.TicketOpTypeId,
+                        Amount = cri.IsPercent ? cri.Amount * cri.FeeRate / 100 : cri.FeeRate
+                    }).GroupBy(g => g.TicketOpTypeId)
+                .Select(g => new
+                {
+                    OpTypeId = g.Key,
+                    ServiceCount = g.Count(),
+                    SegCount = g.Count(),
+                    Amount = g.Sum(ig => ig.Amount)
+                }).ToList();
+
+            var BNModel = (from op in new[] {1, 2, 3, 4, 5, 6, 7, 8}
+                from ct in CorpTicketList.Where(ct => ct.OpTypeId == op).DefaultIfEmpty()
+                from cl in CorpLuggageList.Where(cl => cl.OpTypeId == op).DefaultIfEmpty()
+                select new
+                {
+                    OpTypeId = op,
+                    ServiceCount = (ct?.ServiceCount ?? 0) + (cl?.ServiceCount ?? 0),
+                    SegCount = (ct?.SegCount ?? 0) + (cl?.SegCount ?? 0),
+                    Amount = (ct?.Amount ?? 0) + (cl?.Amount ?? 0),
+                }).ToList();
+
             var model = new KRSViewModel
             {
-                CashSale = new KRSViewItem
-                {
-                    KRSCount = 0,
-                    Amount = 0,
-                    SegCount = 0
-                },
-                CashExchange = new KRSViewItem
-                {
-                    KRSCount = 0,
-                    Amount = 0,
-                    SegCount = 0
-                },
-                CashRefund = new KRSViewItem
-                {
-                    KRSCount = 0,
-                    Amount = 0,
-                    SegCount = 0
-                },
-                CashForcedRefund = new KRSViewItem
-                {
-                    KRSCount = 0,
-                    Amount = 0,
-                    SegCount = 0
-                },
-                CashService = new KRSViewItem
-                {
-                    KRSCount = 0,
-                    Amount = 0,
-                    SegCount = 0
-                },
-                CashCancel = new KRSViewItem
-                {
-                    KRSCount = 0,
-                    Amount = 0,
-                    SegCount = 0
-                },
-                PKSale = new KRSViewItem
-                {
-                    KRSCount = 0,
-                    Amount = 0,
-                    AmountComm = 0
-                },
-                PKExchange = new KRSViewItem
-                {
-                    KRSCount = 0,
-                    Amount = 0,
-                    AmountComm = 0
-                },
-                PKRefund = new KRSViewItem
-                {
-                    KRSCount = 0,
-                    Amount = 0,
-                    AmountComm = 0
-                },
-                PKCancel = new KRSViewItem
-                {
-                    KRSCount = 0,
-                    Amount = 0,
-                    AmountComm = 0
-                },
-                BNSale = new KRSViewItem
-                {
-                    KRSCount = 0,
-                    Amount = 0,
-                    SegCount = 0
-                },
-                BNExchange = new KRSViewItem
-                {
-                    KRSCount = 0,
-                    Amount = 0,
-                    SegCount = 0
-                },
-                BNRefund = new KRSViewItem
-                {
-                    KRSCount = 0,
-                    Amount = 0,
-                    SegCount = 0
-                },
-                BNForcedRefund = new KRSViewItem
-                {
-                    KRSCount = 0,
-                    Amount = 0,
-                    SegCount = 0
-                },
+                CashSale = KRSList.Where(ti => ti.OpTypeId == 1 && ti.IsSite == 0).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                CashExchange = KRSList.Where(ti => ti.OpTypeId == 3 && ti.IsSite == 0).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                CashRefund = KRSList.Where(ti => ti.OpTypeId == 2 && ti.IsSite == 0).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                CashForcedRefund = KRSList.Where(ti => ti.OpTypeId == 6 && ti.IsSite == 0).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                CashService = KRSList.Where(ti => ti.OpTypeId == 10 && ti.IsSite == 0).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                CashCancel = KRSList.Where(ti => ti.OpTypeId == 5 && ti.IsSite == 0).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                PKSale = KRSList.Where(ti => ti.OpTypeId == 1 && ti.IsSite == 1).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                PKExchange = KRSList.Where(ti => ti.OpTypeId == 3 && ti.IsSite == 1).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                PKRefund = KRSList.Where(ti => ti.OpTypeId == 2 && ti.IsSite == 1).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                PKCancel = KRSList.Where(ti => ti.OpTypeId == 1 && ti.IsSite == 1).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                BNSale = BNModel.Where(ti => ti.OpTypeId == 1).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                BNExchange = BNModel.Where(ti => ti.OpTypeId == 3).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                BNRefund = BNModel.Where(ti => ti.OpTypeId == 2).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                BNForcedRefund = BNModel.Where(ti => ti.OpTypeId == 6).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
             };
 
             model.CashTotal = new KRSViewItem
@@ -298,7 +386,6 @@ namespace AvibaWeb.Controllers
             model.PKTotal = new KRSViewItem
             {
                 Amount = model.PKSale.Amount + model.PKExchange.Amount + model.PKRefund.Amount,
-                AmountComm = model.PKSale.AmountComm + model.PKExchange.AmountComm + model.PKRefund.AmountComm,
                 KRSCount = model.PKSale.KRSCount + model.PKExchange.KRSCount + model.PKRefund.KRSCount
             };
 

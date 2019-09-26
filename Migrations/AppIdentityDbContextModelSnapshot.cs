@@ -1440,7 +1440,7 @@ namespace AvibaWeb.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("DeskID");
+                    b.Property<string>("DeskId");
 
                     b.Property<DateTime>("ExecutionDateTime");
 
@@ -1458,6 +1458,8 @@ namespace AvibaWeb.Migrations
 
                     b.Property<int>("TicketOperationId");
 
+                    b.Property<int?>("TicketOpTypeId");
+
                     b.HasKey("Id");
 
                     b.ToTable("VReceiptLuggageInfo");
@@ -1470,7 +1472,7 @@ namespace AvibaWeb.Migrations
 
                     b.Property<string>("BSOLabel");
 
-                    b.Property<string>("DeskID");
+                    b.Property<string>("DeskId");
 
                     b.Property<string>("InfoSession");
 
@@ -1485,6 +1487,8 @@ namespace AvibaWeb.Migrations
                     b.Property<string>("TicketRoute");
 
                     b.Property<int?>("TicketType");
+
+                    b.Property<int?>("TicketOpTypeId");
 
                     b.HasKey("Id");
 
@@ -1501,6 +1505,12 @@ namespace AvibaWeb.Migrations
                     b.Property<DateTime>("DateTime");
 
                     b.Property<string>("DeskIssuedId");
+
+                    b.Property<int>("TicketOpTypeId");
+
+                    b.Property<string>("Serie");
+
+                    b.Property<int>("SegCount");
 
                     b.HasKey("Id");
 

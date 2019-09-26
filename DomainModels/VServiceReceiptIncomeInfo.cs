@@ -14,5 +14,8 @@ namespace AvibaWeb.DomainModels
         public decimal Amount { get; set; }
         public DateTime DateTime { get; set; }
         public string DeskIssuedId { get; set; }
+        public int TicketOpTypeId { get; set; }
+        public string Serie { get; set; }
+        public int SegCount { get; set; }
     }
 }
