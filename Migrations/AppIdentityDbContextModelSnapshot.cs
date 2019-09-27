@@ -1810,6 +1810,24 @@ namespace AvibaWeb.Migrations
                 b.ToTable("VBookingManagementSales");
             });
 
+            modelBuilder.Entity("AvibaWeb.DomainModels.VBookingManagementLuggage", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
+
+                b.Property<decimal>("LuggageAmount");
+                b.Property<decimal>("LuggageRate");
+
+                b.Property<string>("DeskID");
+                b.Property<DateTime>("DateTime");
+                b.Property<string>("Session");
+                b.Property<string>("Airline");
+
+                b.HasKey("Id");
+
+                b.ToTable("VBookingManagementLuggage");
+            });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")

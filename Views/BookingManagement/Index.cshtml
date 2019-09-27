@@ -8,6 +8,7 @@
             <input id="currentInfo" hidden value="0" />
             <button id="saleButton" class="btn btn-primary">Продажи</button>
             <button id="KRSButton" class="btn btn-primary">КРС</button>
+            <button id="luggageButton" class="btn btn-primary">Багаж</button>
         </p>
 
         <div id="results"></div>
@@ -102,6 +103,35 @@
                     $('#results').html(result.message);
                 },
                 error: function(error) {
+                    console.log(error.message);
+                }
+            });
+        }, 100);
+    });
+
+    var getLuggageBuffer;
+    $("#luggageButton").click(function (e) {
+        clearTimeout(getLuggageBuffer);
+
+        getLuggageBuffer = setTimeout(function () {
+            $('#currentInfo').val(2);
+            clearTimeout(saleUpdateTimeout);
+            $.ajax({
+                url: "/BookingManagement/Luggage",
+                type: "POST",
+                cache: false,
+                data: {
+                    fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+                    toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true),
+                    deskFilter: $('#deskTree').jstree('get_bottom_selected', false),
+                    sessionFilter: $('#sessionTree').jstree('get_bottom_selected', true).map(s => s.text),
+                    airlineFilter: $('#selectAirline').select2('data')
+                },
+                dataType: "json",
+                success: function (result) {
+                    $('#results').html(result.message);
+                },
+                error: function (error) {
                     console.log(error.message);
                 }
             });

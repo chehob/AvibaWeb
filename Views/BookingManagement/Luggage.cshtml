@@ -1,0 +1,30 @@
+﻿@using AvibaWeb.ViewModels.BookingManagement
+@model LuggageViewModel
+
+<div class="box col-md-6">
+    <div class="box-inner">
+        <div class="box-content">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Авиакомпания</th>
+                        <th>Количество</th>
+                        <th>Вес (кг.)</th>
+                        <th>Сумма</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.Airline</td>
+                        <td>@item.DocCountStr</td>
+                        <td>@item.WeightStr</td>
+                        <td>@item.AmountStr</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -86,4 +86,27 @@ namespace AvibaWeb.ViewModels.BookingManagement
         public string FinalTotalStr { get; set; }
         public string FinalTotalCommStr { get; set; }
     }
+
+    public class LuggageViewItem
+    {
+        public LuggageViewItem()
+        {
+            nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+        }
+        private NumberFormatInfo nfi;
+
+        public string Airline { get; set; }
+        public decimal DocCount { get; set; }
+        public string DocCountStr => DocCount.ToString("#,0", nfi);
+        public decimal Weight { get; set; }
+        public string WeightStr => Weight.ToString("#,0", nfi);
+        public decimal Amount { get; set; }
+        public string AmountStr => Amount.ToString("#,0.00", nfi);
+    }
+
+    public class LuggageViewModel
+    {
+        public List<LuggageViewItem> Items { get; set; }
+    }
 }

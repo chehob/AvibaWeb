@@ -402,6 +402,47 @@ namespace AvibaWeb.Controllers
             return Json(new { message = await _viewRenderService.RenderToStringAsync("BookingManagement/KRS", model) });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Luggage(DateTime? fromDate, DateTime? toDate, string[] deskFilter, string[] sessionFilter, string[] airlineFilter)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var queryToDate = toDate ?? DateTime.Now.Date;
+            var queryFromDate = fromDate ?? queryToDate;
+            var railTicketTypes = new int[] { 3, 5 };
+
+            var model = new LuggageViewModel
+            {
+                Items = (from info in _db.VBookingManagementLuggage
+                         where info.DateTime >= queryFromDate && info.DateTime < queryToDate.AddDays(1) &&
+                              deskFilter.Contains(info.DeskID) && sessionFilter.Contains(info.Session)
+                        select new
+                        {
+                            info.Airline,
+                            Weight = info.LuggageAmount,
+                            Amount = info.LuggageAmount * info.LuggageRate
+                        }).GroupBy(g => g.Airline)
+                    .Select(g => new LuggageViewItem
+                    {
+                        Airline = g.Key,
+                        DocCount = g.Count(),
+                        Amount = g.Sum(ig => ig.Amount),
+                        Weight = g.Sum(ig => ig.Weight)
+                    }).ToList()
+            };
+
+            model.Items.Add(new LuggageViewItem
+            {
+                Airline = "Итого",
+                DocCount = model.Items.Sum(i => i.DocCount),
+                Weight = model.Items.Sum(i => i.Weight),
+                Amount = model.Items.Sum(i => i.Amount)
+            });
+
+            return Json(new { message = await _viewRenderService.RenderToStringAsync("BookingManagement/Luggage", model) });
+        }
+
         public IActionResult Filter()
         {
             var model = new FilterViewModel
