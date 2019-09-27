@@ -5,13 +5,13 @@
 
 <a asp-action="CreateReceipt" asp-controller="CorpReceipt" asp-route-subGroupId="@Model.SubGroupId"
    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-   class="btn btn btn-round btn-lg" style="margin-top: 30px;"><i class="glyphicon glyphicon-plus">&nbsp;</i>Создать bbbсчет1</a>
+   class="btn btn-primary btn-lg" style="margin-top: -115px; margin-left: 250px;"><i class="glyphicon glyphicon-plus"></i></a>
 
 <table class="table table-bordered bootstrap-datatable datatable" id="dataTable">
     <thead>
         <tr>
             <th>№ счета</th>
-            <th>Дата</th>
+            
             <th></th>
         </tr>
     </thead>
@@ -74,13 +74,10 @@
                                 break;
                         }
                     }
-
+<span>@receipt.CreatedDate</span><br>
+<span class="green"><b>@receipt.IssuedDateTime</b></span>
                 </td>
-                <td style="width: 70px;">
-                    <span>@receipt.CreatedDate</span><br>
-                    <span class="green"><b>@receipt.IssuedDateTime</b></span>
-
-                </td>
+  
 
                 <td>
                     <div class="col-md-4">

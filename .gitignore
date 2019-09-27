@@ -14,9 +14,12 @@
 /Scripts/
 /Test/
 /ViewComponents/
+/1c/
 *.dll
 *.pdb
 *.config
 *.json
 .bowerrc
 *.csproj*
+.gitignore
+.DS_Store

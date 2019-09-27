@@ -1,18 +1,18 @@
 ﻿@using AvibaWeb.DomainModels
 
 <p class="btn-group">
-    <a asp-action="Receipts1" asp-controller="CorpReceipt" asp-route-subGroupId="1"
+    <a asp-action="Receipts1" asp-controller="CorpReceipt" asp-route-subGroupId="1" asp-route-isMobile="true"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-default btn-lg"><i class="glyphicon glyphicon glyphicon-list-alt"></i>1</a>
-    <a asp-action="Receipts1" asp-controller="CorpReceipt" asp-route-subGroupId="2"
+    <a asp-action="Receipts1" asp-controller="CorpReceipt" asp-route-subGroupId="2" asp-route-isMobile="true"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-default btn-lg"><i class="glyphicon glyphicon glyphicon-list-alt"></i>2</a>
-    <a asp-action="CreateCounterparty" asp-controller="Data"
+    <a asp-action="CreateCounterparty" asp-controller="Data" asp-route-isMobile="true"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-default btn-lg"><i class="glyphicon glyphicon-edit"></i></a>
-    <a asp-action="MultiPayment" asp-controller="Data" asp-route-type="@CorporatorReceiptMultiPayment.CRMPType.CorpReceipt"
+    <a asp-action="MultiPayment" asp-controller="Data" asp-route-type="@CorporatorReceiptMultiPayment.CRMPType.CorpReceipt" asp-route-isMobile="true"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class="btn btn-default btn-lg"><i class="glyphicon glyphicon glyphicon-plus"></i></a>
+       class="btn btn-default btn-lg"><i class="glyphicon glyphicon-circle-arrow-down"></i></a>
 </p>
 
 <div class="box col-md-12">
