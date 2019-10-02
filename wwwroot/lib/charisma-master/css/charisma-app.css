@@ -546,7 +546,7 @@ ul.github-buttons li {
         padding-bottom: 10px;
     }
 
-    /* .sidebar-nav .nav-canvas {
+    .sidebar-nav .nav-canvas {
         top: -20px;
         left: -90%;
         position: absolute;
@@ -583,7 +583,7 @@ ul.github-buttons li {
     .sidebar-nav a {
         border: none !important;
         color: white;
-    } */
+    }
 
     #for-is-ajax {
         color: white;
