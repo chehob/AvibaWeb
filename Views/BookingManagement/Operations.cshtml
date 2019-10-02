@@ -1,0 +1,54 @@
+﻿@using AvibaWeb.ViewModels.BookingManagement
+@model OperationsViewModel
+
+<div class="box col-md-6">
+    <div class="box-inner">
+        <div class="box-content">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Авиакомпания</th>
+                        <th>Направление</th>
+                        <th>Дата отправления</th>
+                        <th>Операция</th>
+                        <th>Стоимость</th>
+                        <th>Сбор КРС</th>
+                        <th>Штраф</th>
+                        <th>Пассажир</th>
+                        <th>Телефон</th>
+                        <th>Email</th>
+                        <th>Пульт</th>
+                        <th>Дата операции</th>
+                        <th>Пульт брони</th>
+                        <th>Дата брони</th>
+                        <th>Тип оплаты</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.TicketNumber</td>
+                        <td>@item.Airline</td>
+                        <td>@item.Route</td>
+                        <td>@item.DepartureDateTime</td>
+                        <td>@item.OperationType</td>
+                        <td>@item.TicketCost</td>
+                        <td>@item.ServiceTax</td>
+                        <td>@item.Penalty</td>
+                        <td>@item.PassengerName</td>
+                        <td>@item.Phone</td>
+                        <td>@item.Email</td>
+                        <td>@item.Desk</td>
+                        <td>@item.OperationDateTime</td>
+                        <td>@item.BookDesk</td>
+                        <td>@item.BookDateTime</td>
+                        <td>@item.PaymentType</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

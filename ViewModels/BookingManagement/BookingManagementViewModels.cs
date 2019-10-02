@@ -109,4 +109,29 @@ namespace AvibaWeb.ViewModels.BookingManagement
     {
         public List<LuggageViewItem> Items { get; set; }
     }
+
+    public class OperationsViewItem
+    {
+        public string TicketNumber { get; set; }
+        public string Airline { get; set; }
+        public string Route { get; set; }
+        public string DepartureDateTime { get; set; }
+        public string OperationType { get; set; }
+        public string TicketCost { get; set; }
+        public string ServiceTax { get; set; }
+        public string Penalty { get; set; }
+        public string PassengerName { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+        public string Desk { get; set; }
+        public string OperationDateTime { get; set; }
+        public string BookDesk { get; set; }
+        public string BookDateTime { get; set; }
+        public string PaymentType { get; set; }
+    }
+
+    public class OperationsViewModel
+    {
+        public List<OperationsViewItem> Items { get; set; }
+    }
 }

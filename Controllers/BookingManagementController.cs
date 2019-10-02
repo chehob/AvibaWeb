@@ -443,6 +443,45 @@ namespace AvibaWeb.Controllers
             return Json(new { message = await _viewRenderService.RenderToStringAsync("BookingManagement/Luggage", model) });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Operations(DateTime? fromDate, DateTime? toDate, string[] deskFilter, string[] sessionFilter, string[] airlineFilter)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var queryToDate = toDate ?? DateTime.Now.Date;
+            var queryFromDate = fromDate ?? queryToDate;
+            var railTicketTypes = new int[] { 3, 5 };
+
+            var model = new OperationsViewModel
+            {
+                Items = (from info in _db.VBookingManagementOperations
+                        where info.ExecutionDateTime >= queryFromDate && info.ExecutionDateTime < queryToDate.AddDays(1) &&
+                              deskFilter.Contains(info.DeskID) && sessionFilter.Contains(info.Session)
+                        select new OperationsViewItem
+                        {
+                            TicketNumber = info.TicketID,
+                            Airline = info.Airline,
+                            Route = info.Flight,
+                            DepartureDateTime = info.FlightDate.ToString("g"),
+                            OperationType = info.OperationType,
+                            TicketCost = (info.Fare + info.TaxAmount).ToString("#,0.00", nfi),
+                            ServiceTax = info.KRSTax,
+                            Penalty = info.Penalty.ToString("#,0.00", nfi),
+                            PassengerName = info.FullName,
+                            Phone = info.Phone,
+                            Email = info.Email,
+                            Desk = info.DeskID,
+                            OperationDateTime = info.ExecutionDateTime.ToString("g"),
+                            BookDesk = info.BookDeskID,
+                            BookDateTime = info.BookDateTime == null ? "" : info.BookDateTime.Value.ToString("g"),
+                            PaymentType = info.PaymentType
+                        }).ToList()
+            };
+
+            return Json(new { message = await _viewRenderService.RenderToStringAsync("BookingManagement/Operations", model) });
+        }
+
         public IActionResult Filter()
         {
             var model = new FilterViewModel

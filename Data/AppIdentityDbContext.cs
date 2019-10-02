@@ -120,6 +120,7 @@ namespace AvibaWeb.Models
 
         public DbSet<VBookingManagementSales> VBookingManagementSales { get; set; }
         public DbSet<VBookingManagementLuggage> VBookingManagementLuggage { get; set; }
+        public DbSet<VBookingManagementOperation> VBookingManagementOperations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

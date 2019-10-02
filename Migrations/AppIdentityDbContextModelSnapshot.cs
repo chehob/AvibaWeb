@@ -1828,6 +1828,49 @@ namespace AvibaWeb.Migrations
                 b.ToTable("VBookingManagementLuggage");
             });
 
+            modelBuilder.Entity("AvibaWeb.DomainModels.VBookingManagementOperation", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
+
+                b.Property<int>("TicketID");
+                b.Property<int>("Parent");
+
+                b.Property<string>("Airline");
+                b.Property<string>("Flight");
+                b.Property<DateTime>("FlightDate");
+
+                b.Property<int>("OperationID");
+                b.Property<string>("OperationType");
+
+                b.Property<decimal>("Fare");
+                b.Property<decimal>("TaxAmount");
+                b.Property<string>("PaymentType");
+                b.Property<decimal>("Penalty");
+                b.Property<string>("KRSTax");
+
+                b.Property<string>("BookDeskID");
+                b.Property<DateTime?>("BookDateTime");
+
+                b.Property<string>("Phone");
+                b.Property<string>("Email");
+
+                b.Property<string>("FullName");
+
+                b.Property<string>("DeskID");
+                b.Property<DateTime>("ExecutionDateTime");
+                b.Property<string>("AirlineCode");
+                b.Property<string>("Origin");
+                b.Property<string>("OriginEn");
+                b.Property<string>("Destination");
+                b.Property<string>("DestinationEn");
+                b.Property<string>("Session");
+
+                b.HasKey("Id");
+
+                b.ToTable("VBookingManagementOperations");
+            });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")

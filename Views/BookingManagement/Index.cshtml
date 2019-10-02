@@ -9,6 +9,7 @@
             <button id="saleButton" class="btn btn-primary">Продажи</button>
             <button id="KRSButton" class="btn btn-primary">КРС</button>
             <button id="luggageButton" class="btn btn-primary">Багаж</button>
+            <button id="operationsButton" class="btn btn-primary">Операции</button>
         </p>
 
         <div id="results"></div>
@@ -118,6 +119,35 @@
             clearTimeout(saleUpdateTimeout);
             $.ajax({
                 url: "/BookingManagement/Luggage",
+                type: "POST",
+                cache: false,
+                data: {
+                    fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+                    toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true),
+                    deskFilter: $('#deskTree').jstree('get_bottom_selected', false),
+                    sessionFilter: $('#sessionTree').jstree('get_bottom_selected', true).map(s => s.text),
+                    airlineFilter: $('#selectAirline').select2('data')
+                },
+                dataType: "json",
+                success: function (result) {
+                    $('#results').html(result.message);
+                },
+                error: function (error) {
+                    console.log(error.message);
+                }
+            });
+        }, 100);
+    });
+
+    var getOperationsBuffer;
+    $("#operationsButton").click(function (e) {
+        clearTimeout(getOperationsBuffer);
+
+        getOperationsBuffer = setTimeout(function () {
+            $('#currentInfo').val(3);
+            clearTimeout(saleUpdateTimeout);
+            $.ajax({
+                url: "/BookingManagement/Operations",
                 type: "POST",
                 cache: false,
                 data: {
