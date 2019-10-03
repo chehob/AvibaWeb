@@ -1,12 +1,6 @@
 ﻿@using AvibaWeb.ViewModels.BookingManagement
 @model FilterViewModel
 
-<p class="btn-group">
-
-    <button class="btn btn-primary" role="button" id="clearFilterBtn">
-        Сбросить
-    </button>
-</p>
 
 <div class="box" id="filterBlock" style="height: 0px;">
     <div class="">
@@ -14,6 +8,11 @@
             <div class="box-inner">
                 <div class="box-header well" data-original-title="" style="overflow: hidden;">
                     <h2>Дата</h2>
+                    <div class="box-icon">
+
+                        <a href="#" class="btn btn-close btn-round btn-danger"><i
+                                class="glyphicon glyphicon-remove"></i></a>
+                    </div>
                 </div>
                 <div class="box-content">
                     Выбрать с: <input type="text" id="min" name="min" class="form-control datePicker" autocomplete="off">
