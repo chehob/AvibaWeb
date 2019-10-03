@@ -57,7 +57,7 @@ namespace AvibaWeb.ViewModels.BookingManagement
         public string KRSCountStr => KRSCount.ToString();
         public decimal Amount { get; set; }
         public string AmountStr => Amount.ToString("#,0.00", nfi);
-        public decimal AmountComm => Amount * new decimal(0.974);
+        public decimal AmountComm => Amount * new decimal(0.9815);
         public string AmountCommStr => AmountComm.ToString("#,0.00", nfi);
     }
 
