@@ -2,17 +2,15 @@
 @model FilterViewModel
 
 <p class="btn-group">
-    <button class="btn btn-primary" data-toggle="collapse" href="#filterBlock" role="button" aria-expanded="false" aria-controls="filterBlock">
-        Фильтры
-    </button>
+
     <button class="btn btn-primary" role="button" id="clearFilterBtn">
         Сбросить
     </button>
 </p>
 
-<div class="container-fluid collapse" id="filterBlock" style="height: 0px;">
-    <div class="row">
-        <div class="box col-sm-3">
+<div class="box" id="filterBlock" style="height: 0px;">
+    <div class="">
+        <div class="box">
             <div class="box-inner">
                 <div class="box-header well" data-original-title="" style="overflow: hidden;">
                     <h2>Дата</h2>
@@ -23,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <div class="box col-sm-3">
+        <div class="box">
             <div class="box-inner">
                 <div class="box-header well" data-original-title="" style="overflow: hidden;">
                     <h2>Пульты</h2>
@@ -31,7 +29,7 @@
                 <div id="deskTree"></div>
             </div>
         </div>
-        <div class="box col-sm-3">
+        <div class="box">
             <div class="box-inner">
                 <div class="box-header well" data-original-title="" style="overflow: hidden;">
                     <h2>Сеансы</h2>
@@ -39,7 +37,7 @@
                 <div id="sessionTree"></div>
             </div>
         </div>
-        <div class="box col-sm-3">
+        <div class="box">
             <div class="box-inner">
                 <div class="box-header well" data-original-title="" style="overflow: hidden;">
                     <h2>Авиакомпании</h2>
@@ -49,7 +47,7 @@
                 </div>
             </div>
         </div>
-        <div class="box col-sm-3">
+        <div class="box">
             <div class="box-inner">
                 <div class="box-header well" data-original-title="" style="overflow: hidden;">
                     <h2>Направления</h2>
@@ -67,6 +65,7 @@
         </div>
     </div>
 </div>
+
 
 <script type="text/javascript">
     $(document).ready(function () {

@@ -110,11 +110,8 @@
     }
 </style>
 
-<div class="col-md-10">
-    <div class="row">
-        <p id="dvFilter" data-url='@(Url.Action("Filter", "BookingManagement", null))'>
-        </p>
-    </div>
+<div class="col-md-12">
+    
     <div class="row">
         <p class="btn-group">
             <input id="currentInfo" hidden value="0" />
@@ -123,8 +120,11 @@
             <button id="luggageButton" class="btn btn-primary">Багаж</button>
             <button id="operationsButton" class="btn btn-primary">Операции</button>
         </p>
-
-        <div id="results"></div>
+<div class="row">
+    <div class="col-md-2" id="dvFilter" data-url='@(Url.Action("Filter", "BookingManagement", null))' style="float: left;"></div>
+    <div id="results" class="col-md-10"></div>
+    </div>
+        
     </div>
 </div>
 
