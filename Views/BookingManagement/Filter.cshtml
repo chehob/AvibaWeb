@@ -2,21 +2,14 @@
 @model FilterViewModel
 
 
-<div class="box" id="filterBlock" style="height: 0px;">
+<div class="box" id="filterBlock" style="height: 0px; margin-top: -50px;">
     <div class="">
-        <div class="box">
-            <div class="box-inner">
-                <div class="box-header well" data-original-title="" style="overflow: hidden;">
-                    <h2>Дата</h2>
-                    <div class="box-icon">
-                        <a href="#" id="clearFilterBtn" class="btn btn-close btn-round btn-danger">
-                            <i class="glyphicon glyphicon-remove"></i>
-                        </a>
-                    </div>
-                </div>
+        <div class="">
+
                 <div class="box-content">
-                    Выбрать с: <input type="text" id="min" name="min" class="form-control datePicker" autocomplete="off">
-                    по: <input type="text" id="max" name="max" class="form-control datePicker" autocomplete="off">
+                    с:  <input type="text" id="min" name="min" class="datePicker" autocomplete="off" style="width: 80px;">
+                    по: <input type="text" id="max" name="max" class="datePicker" autocomplete="off" style="width: 80px;">
+                    
                 </div>
             </div>
         </div>
@@ -24,6 +17,10 @@
             <div class="box-inner">
                 <div class="box-header well" data-original-title="" style="overflow: hidden;">
                     <h2>Пульты</h2>
+                    <div class="box-icon">
+                        <a href="#" id="clearFilterBtn" class="btn btn-close btn-round btn-success">
+                            <i class="glyphicon glyphicon-check"></i></a>
+                        </div>
                 </div>
                 <div id="deskTree"></div>
             </div>

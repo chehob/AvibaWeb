@@ -113,16 +113,17 @@
 <div class="col-md-12">
     
     <div class="row">
-        <p class="btn-group">
+        <div class="col-md-3"></div>
+        <div class="btn-group col-md-9">
             <input id="currentInfo" hidden value="0" />
             <button id="saleButton" class="btn btn-primary">Продажи</button>
             <button id="KRSButton" class="btn btn-primary">КРС</button>
             <button id="luggageButton" class="btn btn-primary">Багаж</button>
             <button id="operationsButton" class="btn btn-primary">Операции</button>
-        </p>
+        </div>
 <div class="row">
-    <div class="col-md-2" id="dvFilter" data-url='@(Url.Action("Filter", "BookingManagement", null))' style="float: left;"></div>
-    <div id="results" class="col-md-10"></div>
+    <div class="col-md-3" id="dvFilter" data-url='@(Url.Action("Filter", "BookingManagement", null))' style="float: left; "></div>
+    <div id="results" class="col-md-9"></div>
     </div>
         
     </div>
