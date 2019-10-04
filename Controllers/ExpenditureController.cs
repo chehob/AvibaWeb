@@ -186,7 +186,7 @@ namespace AvibaWeb.Controllers
             {
                 Items = (from e in _db.IncomingExpenditures.Include(e => e.FinancialAccountOperation)
                             .ThenInclude(fao => fao.Counterparty)
-                         orderby e.FinancialAccountOperation.InsertDateTime descending
+                         orderby e.IsProcessed, e.FinancialAccountOperation.InsertDateTime descending
                          select new IncomingExpenditureItem
                          {
                              Amount = e.Amount.Value.ToString("#,0.00", nfi),
@@ -285,6 +285,7 @@ namespace AvibaWeb.Controllers
         {
             var incomingExpenditure = _db.IncomingExpenditures.Include(e => e.FinancialAccountOperation)
                 .ThenInclude(fao => fao.Counterparty)
+                .Include(e => e.FinancialAccountOperation.PayeeUser)
                 .FirstOrDefault(e => e.IncomingExpenditureId == model.ExpenditureId);
 
             foreach (var item in model.Items)
@@ -293,8 +294,9 @@ namespace AvibaWeb.Controllers
 
                 var expenditure = new Expenditure
                 {
-                    Name = incomingExpenditure.FinancialAccountOperation.Counterparty.Name + " - " +
-                        incomingExpenditure.FinancialAccountOperation.Description,
+                    Name = incomingExpenditure.FinancialAccountOperation.Counterparty?.Name ??
+                           incomingExpenditure.FinancialAccountOperation.PayeeUser?.Name ?? "" + " - " +
+                           incomingExpenditure.FinancialAccountOperation.Description,
                     Amount = item.Amount,
                     DeskGroupId = item.GroupId,
                     TypeId = _db.ExpenditureTypes.FirstOrDefault(et => et.Description == "Расход").ExpenditureTypeId,

@@ -120,6 +120,7 @@
             <button id="KRSButton" class="btn btn-primary">КРС</button>
             <button id="luggageButton" class="btn btn-primary">Багаж</button>
             <button id="operationsButton" class="btn btn-primary">Операции</button>
+            <button id="searchOperationsButton" class="btn btn-primary">Поиск</button>
         </div>
 <div class="row">
     <div class="col-md-3" id="dvFilter" data-url='@(Url.Action("Filter", "BookingManagement", null))' style="float: left; "></div>
@@ -279,5 +280,21 @@
                 }
             });
         }, 100);
+    });
+
+    $("#searchOperationsButton").click(function (e) {
+        $('#currentInfo').val(4);
+        clearTimeout(saleUpdateTimeout);
+        $.ajax({
+            url: "/BookingManagement/SearchOperations",
+            type: "GET",
+            cache: false,
+            success: function (result) {
+                $('#results').html(result);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
     });
 </script>

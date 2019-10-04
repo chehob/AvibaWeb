@@ -537,6 +537,20 @@ namespace AvibaWeb.Controllers
                     if (counterpartyGroup.IsUserITN)
                     {
                         operation.UserId = userId;
+
+                        var lowerPaymentDescription = record.PaymentDescription.ToLower();
+                        if (lowerPaymentDescription.Contains("аванс") || lowerPaymentDescription.Contains("зарплата") ||
+                             lowerPaymentDescription.Contains("заработная плата"))
+                        {
+                            var incomingExpenditure = new IncomingExpenditure
+                            {
+                                Amount = -operation.Amount,
+                                IsProcessed = false,
+                                FinancialAccountOperation = operation
+                            };
+
+                            _db.IncomingExpenditures.Add(incomingExpenditure);
+                        }
                     }
                     else if (!isCashRequest && counterpartyGroup.IsTransferAccount)
                     {
@@ -753,7 +767,9 @@ namespace AvibaWeb.Controllers
                                 FinancialAccountOperation = operation
                             };
 
-                            if (counterparty?.ExpenditureDeskGroupId != null && counterparty?.ExpenditureObjectId != null)
+                            if ((counterparty?.ExpenditureDeskGroupId != null && counterparty?.ExpenditureObjectId != null) ||
+                                !(lowerPaymentDescription.Contains("аванс") || lowerPaymentDescription.Contains("зарплата") ||
+                                 lowerPaymentDescription.Contains("заработная плата")))
                             {
                                 var expenditure = new Expenditure
                                 {

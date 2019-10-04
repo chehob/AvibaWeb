@@ -1,0 +1,26 @@
+﻿<div>
+    <input type="text" id="keyString" />
+    <button id="searchButton">Найти</button>
+</div>
+
+<div id="operationsResult" />
+
+<script>
+    $("#searchButton").click(function (e) {
+        $.ajax({
+            url: "/BookingManagement/SearchOperations",
+            type: "POST",
+            cache: false,
+            data: {
+                key: $('#keyString').val()
+            },
+            dataType: "json",
+            success: function (result) {
+                $('#operationsResult').html(result.message);
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+</script>

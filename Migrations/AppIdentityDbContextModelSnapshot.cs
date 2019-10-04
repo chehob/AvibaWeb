@@ -1833,7 +1833,8 @@ namespace AvibaWeb.Migrations
                 b.Property<Guid>("Id")
                     .ValueGeneratedOnAdd();
 
-                b.Property<int>("TicketID");
+                b.Property<string>("PNRID");
+                b.Property<string>("TicketID");
                 b.Property<int>("Parent");
 
                 b.Property<string>("Airline");

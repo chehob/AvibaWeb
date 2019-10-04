@@ -10,6 +10,7 @@ namespace AvibaWeb.DomainModels
     {
         [Key]
         public Guid Id { get; set; }
+        public string PNRID { get; set; }
         public string TicketID { get; set; }
         public int Parent { get; set; }
 
