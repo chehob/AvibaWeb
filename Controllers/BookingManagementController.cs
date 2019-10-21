@@ -494,10 +494,11 @@ namespace AvibaWeb.Controllers
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
+            string lowerKey = key.ToLower();
             var model = new OperationsViewModel
             {
                 Items = (from info in _db.VBookingManagementOperations
-                         where info.TicketID.ToLower().Contains(key) || info.FullName.ToLower().Contains(key) || info.PNRID.ToLower().Contains(key)
+                         where info.TicketID.ToLower().Contains(lowerKey) || info.FullName.ToLower().Contains(lowerKey) || info.PNRID.ToLower().Contains(lowerKey)
                          orderby info.ExecutionDateTime
                          select new OperationsViewItem
                          {

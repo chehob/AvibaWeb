@@ -2177,7 +2177,8 @@ $(document).on('click',
                 .replace('</b>', '').replace('<b>', '')}" />`
             ]);
 
-            $('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
+            $('#dataTable').DataTable().row($(this).parents('tr')[0]).remove().draw().show().draw(false);
+            //$('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]).show().draw(false);
 
             var segTotal = 0;
             var ticketTotal = 0;
@@ -2233,7 +2234,8 @@ $(document).on('click',
                 <input hidden value="${isPercent}" />`
             ]);
 
-            $('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]);
+            $('#dataTable').DataTable().row($(this).parents('tr')[0]).remove().draw().show().draw(false);
+            //$('#dataTable').dataTable().fnDeleteRow($(this).parents('tr')[0]).show().draw(false);
 
             var segTotal = 0;
             var ticketTotal = 0;

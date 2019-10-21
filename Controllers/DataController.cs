@@ -767,9 +767,9 @@ namespace AvibaWeb.Controllers
                                 FinancialAccountOperation = operation
                             };
 
-                            if ((counterparty?.ExpenditureDeskGroupId != null && counterparty?.ExpenditureObjectId != null) ||
+                            if (counterparty?.ExpenditureDeskGroupId != null && counterparty?.ExpenditureObjectId != null &&
                                 !(lowerPaymentDescription.Contains("аванс") || lowerPaymentDescription.Contains("зарплата") ||
-                                 lowerPaymentDescription.Contains("заработная плата")))
+                                lowerPaymentDescription.Contains("заработная плата")))
                             {
                                 var expenditure = new Expenditure
                                 {
