@@ -1374,7 +1374,7 @@ $(document).on('click',
                                                             margin: [35, 0, 0, 0]
                                                         },
                                                         {
-                                                            text: `Сдал _____________________________________________`,
+                                                            text: `Сдал             ${result.orgHeadName}`,
                                                             margin: [0, -30, 0, 0]
                                                         }
                                                     ],
@@ -1499,7 +1499,7 @@ $(document).on('click',
                                                             margin: [15, 15, 0, 0]
                                                         },
                                                         {
-                                                            text: '________________________________________',
+                                                            text: `${result.orgHeadName}`,
                                                             margin: [0, -30, 0, 0]
                                                         },
                                                         {
