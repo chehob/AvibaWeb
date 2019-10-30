@@ -3228,7 +3228,7 @@ function initCleave()
     $('.input-numeral').toArray().forEach(function(field){
         new Cleave(field, {
             numeral: true,
-            numeralDecimalMark: ['.', ','],
+            numeralDecimalMark: '.',
             delimiter: ' '
         })
      });    
