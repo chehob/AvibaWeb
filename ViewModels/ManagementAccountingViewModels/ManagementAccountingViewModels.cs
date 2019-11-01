@@ -60,6 +60,19 @@ namespace AvibaWeb.ViewModels.ManagementAccountingViewModels
         public string Total => Organizations.Sum(o => o.Balance).ToString("#,0.00", nfi);
     }
 
+    public class ProvidersBlockViewModel
+    {
+        public ProvidersBlockViewModel()
+        {
+            nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+        }
+        private NumberFormatInfo nfi;
+
+        public List<OrganizationCashlessInfo> Organizations;
+        public string Total => Organizations.Where(o => o.Name != "ПАО \"Авиакомпания \"Сибирь\"").Sum(o => o.Balance).ToString("#,0.00", nfi);
+    }
+
     public class CorporatorBlockViewModel
     {
         public string NegBalance { get; set; }

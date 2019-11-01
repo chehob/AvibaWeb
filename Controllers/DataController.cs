@@ -605,8 +605,25 @@ namespace AvibaWeb.Controllers
                             var isUnrecognizedOperation = false;
                             var multiPaymentType = CorporatorReceiptMultiPayment.CRMPType.CorpClient;
                             if (lowerPaymentDescription.Contains("wr-") || lowerPaymentDescription.Contains("rs-") ||
-                                lowerPaymentDescription.Contains("rg-"))
+                                lowerPaymentDescription.Contains("rg-") || lowerPaymentDescription.Contains("wr -") || 
+                                lowerPaymentDescription.Contains("rs -") || lowerPaymentDescription.Contains("rg -"))
                             {
+                                if (lowerPaymentDescription.Contains("wr -"))
+                                {
+                                    lowerPaymentDescription = lowerPaymentDescription.Remove(
+                                        Regex.Matches(lowerPaymentDescription, "wr -")[0].Index + 2, 1);
+                                }
+                                else if (lowerPaymentDescription.Contains("rs -"))
+                                {
+                                    lowerPaymentDescription = lowerPaymentDescription.Remove(
+                                        Regex.Matches(lowerPaymentDescription, "rs -")[0].Index + 2, 1);
+                                }
+                                else if (lowerPaymentDescription.Contains("rg -"))
+                                {
+                                    lowerPaymentDescription = lowerPaymentDescription.Remove(
+                                        Regex.Matches(lowerPaymentDescription, "rg -")[0].Index + 2, 1);
+                                }
+
                                 var foundIndexes = new List<int>();
 
                                 var offset = 3;

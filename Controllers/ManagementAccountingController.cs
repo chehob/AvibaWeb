@@ -126,7 +126,12 @@ namespace AvibaWeb.Controllers
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
-            var model = new CashlessBlockViewModel
+            var alfaBankBalance =
+                (from fa in _db.FinancialAccounts
+                 where fa.Description == "40702810102970003030"
+                 select fa.Balance).FirstOrDefault();
+
+            var model = new ProvidersBlockViewModel
             {
                 Organizations = await (from c in _db.Counterparties
                         .Include(c => c.ProviderBalance)
@@ -134,7 +139,7 @@ namespace AvibaWeb.Controllers
                     select new OrganizationCashlessInfo
                     {
                         Name = c.Name,
-                        Balance = c.ProviderBalance.Balance
+                        Balance = c.Name == "ПАО \"Авиакомпания \"Сибирь\"" ? alfaBankBalance : c.ProviderBalance.Balance
                     }).ToListAsync()
             };
 
@@ -228,7 +233,8 @@ namespace AvibaWeb.Controllers
                                       select lg.Balance).SumAsync(v => v),
                 ProvidersTotal = await (from c in _db.Counterparties
                         .Include(c => c.ProviderBinding)
-                                        where c.Type.Description == "Провайдер услуг"
+                                        where c.Type.Description == "Провайдер услуг" &&
+                                              c.Name != "ПАО \"Авиакомпания \"Сибирь\""
                                         select (c.ProviderBalance.Balance)).SumAsync(v => v),
                 SubagentsTotal = -await (from c in _db.Counterparties
                         .Include(c => c.SubagentData)
