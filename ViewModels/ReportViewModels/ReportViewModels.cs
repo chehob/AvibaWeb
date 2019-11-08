@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace AvibaWeb.ViewModels.ReportViewModels
@@ -14,13 +15,13 @@ namespace AvibaWeb.ViewModels.ReportViewModels
         }
 
         public string AvibaTotalInfo => AvibaBalanceInfo.Sum(x => x.Balance).ToString("### ### ##0.00 руб", CultureInfo.InvariantCulture);
-        public IQueryable<BalanceInfoElement> AvibaBalanceInfo { get; set; }
+        public List<BalanceInfoElement> AvibaBalanceInfo { get; set; }
 
         public string AviaTourTotalInfo => AviaTourBalanceInfo.Sum(x => x.Balance).ToString("### ### ##0.00 руб", CultureInfo.InvariantCulture);
-        public IQueryable<BalanceInfoElement> AviaTourBalanceInfo { get; set; }
+        public List<BalanceInfoElement> AviaTourBalanceInfo { get; set; }
 
         public string CollectorsTotalInfo => CollectorsBalanceInfo.Sum(x => x.Balance).ToString("### ### ##0.00 руб", CultureInfo.InvariantCulture);
-        public IQueryable<BalanceInfoElement> CollectorsBalanceInfo { get; set; }
+        public List<BalanceInfoElement> CollectorsBalanceInfo { get; set; }
 
         public string TotalBalanceStr =>
             (AvibaBalanceInfo.Sum(x => x.Balance) + AviaTourBalanceInfo.Sum(x => x.Balance) +

@@ -43,22 +43,22 @@ namespace AvibaWeb.Controllers
             var aviaTourDeskFilter = new[] { "ГРБЕ56", "ГРБЕ12", "ГРБЕ58", "ГРБЕ57", "ГРБЕ59", "ГРБЕ16", "ГРБЕ61", "ГРБЕ60", "ГРБЕ41" };
             var model = new OnlineInfoModel
             {
-                AvibaBalanceInfo = from v in _db.VDeskBalances
+                AvibaBalanceInfo = (from v in _db.VDeskBalances
                     where avibaDeskFilter.Contains(v.DeskId) && v.Balance != 0
                     orderby v.DeskName
                     select new OnlineInfoModel.BalanceInfoElement
                     {
                         Name = v.DeskName,
                         Balance = v.Balance
-                    },
-                AviaTourBalanceInfo = from v in _db.VDeskBalances
+                    }).ToList(),
+                AviaTourBalanceInfo = (from v in _db.VDeskBalances
                     where aviaTourDeskFilter.Contains(v.DeskId) && v.Balance != 0
                     orderby v.DeskName
                     select new OnlineInfoModel.BalanceInfoElement
                     {
                         Name = v.DeskName,
                         Balance = v.Balance
-                    },
+                    }).ToList(),
                 CollectorsBalanceInfo = _db.Users
                     .Where(u => u.Roles.Any(r => r.RoleId == collectorRole.Id && u.Balance != 0) &&
                                 //u.Roles.All(r => r.RoleId != officeRole.Id) &&
@@ -67,7 +67,7 @@ namespace AvibaWeb.Controllers
                     {
                         Name = u.Name,
                         Balance = u.Balance
-                    }),
+                    }).ToList(),
                 OfficeBalance = _db.Users.Where(u => u.Roles.Any(r => r.RoleId == officeRole.Id)).Sum(u => u.Balance),
                 TransitBalance = _db.TransitAccounts.FirstOrDefault().Balance
             };
