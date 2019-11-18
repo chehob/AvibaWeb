@@ -1595,6 +1595,61 @@ namespace AvibaWeb.Controllers
         }
         #endregion
 
+        #region PKReceiptRules
+        [HttpGet]
+        public IActionResult PKReceiptRules()
+        {
+            var model = new PKReceiptRuleViewModel
+            {
+                Rules = (from p in _db.PKReceiptRules
+                    select p.Rate).ToList()
+            };
+
+            return PartialView(model);
+        }
+
+        [HttpPost]
+        public IActionResult AddPKReceiptRule([FromBody]AddPKReceiptRuleViewModel model)
+        {
+            var rule = (from p in _db.PKReceiptRules
+                where p.Rate == model.Rate
+                select p).FirstOrDefault();
+
+            if (rule != null)
+            {
+                return Json(new { success = false, message = "" });
+            }
+
+            var newRule = new PKReceiptRule
+            {
+                Rate = model.Rate
+            };
+
+            _db.PKReceiptRules.Add(newRule);
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "" });
+        }
+
+        [HttpPost]
+        public IActionResult RemovePKReceiptRule([FromBody]AddPKReceiptRuleViewModel model)
+        {
+            var rule = (from p in _db.PKReceiptRules
+                where p.Rate == model.Rate
+                select p).FirstOrDefault();
+
+            if (rule == null)
+            {
+                return Json(new { success = false, message = "" });
+            }
+
+            _db.PKReceiptRules.Remove(rule);
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "" });
+        }
+        #endregion
+
         #region Helpers
         private void AddErrors(IdentityResult result)
         {

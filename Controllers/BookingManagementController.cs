@@ -378,9 +378,9 @@ namespace AvibaWeb.Controllers
 
             model.CashTotal = new KRSViewItem
             {
-                Amount = model.CashSale.Amount + model.CashExchange.Amount + model.CashRefund.Amount,
-                SegCount = model.CashSale.SegCount + model.CashExchange.SegCount + model.CashRefund.SegCount,
-                KRSCount = model.CashSale.KRSCount + model.CashExchange.KRSCount + model.CashRefund.KRSCount
+                Amount = model.CashSale.Amount + model.CashExchange.Amount + model.CashRefund.Amount + model.CashService.Amount + model.CashCancel.Amount,
+                SegCount = model.CashSale.SegCount + model.CashExchange.SegCount + model.CashRefund.SegCount + model.CashService.SegCount - model.CashCancel.SegCount,
+                KRSCount = model.CashSale.KRSCount + model.CashExchange.KRSCount + model.CashRefund.KRSCount + model.CashService.KRSCount - model.CashCancel.KRSCount
             };
 
             model.PKTotal = new KRSViewItem

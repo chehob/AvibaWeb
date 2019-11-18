@@ -1,0 +1,110 @@
+﻿@using AvibaWeb.ViewModels.AdminViewModels
+@model PKReceiptRuleViewModel
+
+<div class="box col-md-10">
+    <div class="box-inner" style="">
+        <div class="box-header well" data-original-title="">
+            <h2><i class="glyphicon glyphicon-user"></i> Сборы ПК</h2>
+        </div>
+        <div class="box-content">
+            <div class="alert" style="text-align: right;">
+                <input id="addRuleRate" val="" />
+                <button class="btn btn-success" id="addRuleBtn">
+                    <i class="glyphicon glyphicon-plus icon-white"></i>
+                    Создать
+                </button>
+            </div>
+
+            <table class="table table-striped table-bordered bootstrap-datatable datatable responsive" id="ruleTable">
+                <thead>
+                    <tr>
+                        <th>Правило</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (!Model.Rules.Any())
+                    {
+                        <tr>
+                            <td colspan="2" class="text-center">Нет правил</td>
+                            <td style="display: none;"></td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var rule in Model.Rules)
+                        {
+                            <tr>
+                                <td>@rule</td>
+                                <td>
+                                    <button class="btn btn-danger" id="removeRuleBtn">
+                                        <i class="glyphicon glyphicon-remove"></i>
+                                        Удалить
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function()
+    {
+        $('#ruleTable').DataTable({
+            paging: false,
+            ordering: false,
+            searching: false,
+            info: false
+        });
+    });
+
+    $("#addRuleBtn").click(function (e) {
+        var rule = $('#addRuleRate').val();
+        e.preventDefault();
+        $.ajax({
+            url: "/Admin/AddPKReceiptRule",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ rate: Number(rule) }),
+            success: function (result) {
+                $('#ruleTable').DataTable().row.add([
+                    rule,
+                    `<button class="btn btn-danger" id="removeRuleBtn"><i class="glyphicon glyphicon-remove"></i> Удалить</button>`
+                ]).draw();
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+
+    $("#removeRuleBtn").click(function (e) {
+        var rule = Number($($(this).parents('tr')[0]).children('td')[0].innerText.replace(',','.'));
+        console.log(rule);
+        e.preventDefault();
+        $.ajax({
+            url: "/Admin/RemovePKReceiptRule",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ rate: rule }),
+            success: function (result) {
+                $('#ruleTable').DataTable()
+                    .row($(this).parents('tr')[0])
+                    .remove()
+                    .draw();
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+</script>

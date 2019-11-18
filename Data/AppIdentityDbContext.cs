@@ -122,6 +122,8 @@ namespace AvibaWeb.Models
         public DbSet<VBookingManagementLuggage> VBookingManagementLuggage { get; set; }
         public DbSet<VBookingManagementOperation> VBookingManagementOperations { get; set; }
 
+        public DbSet<PKReceiptRule> PKReceiptRules { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
