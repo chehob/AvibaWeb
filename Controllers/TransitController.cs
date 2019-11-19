@@ -209,6 +209,7 @@ namespace AvibaWeb.Controllers
                     AmountStr = (-f.Amount).ToString("#,0.00", nfi),
                     IssuedDateTime = f.OperationDateTime,
                     Status = 0,
+                    Payer = f.Counterparty.Name,
                     Comment = f.Description
                 }).ToList());
 

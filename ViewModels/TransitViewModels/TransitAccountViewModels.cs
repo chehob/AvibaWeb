@@ -37,6 +37,9 @@ namespace AvibaWeb.ViewModels.TransitViewModels
         [Display(Name = "Статус")]
         public TransitAccountCreditOperation.TACOType Status { get; set; }
 
+        [Display(Name = "Плательщик")]
+        public string Payer { get; set; }
+
         [Display(Name = "Комментарий")]
         public string Comment { get; set; }
 
