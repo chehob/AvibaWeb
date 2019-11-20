@@ -4,14 +4,16 @@ using AvibaWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AvibaWeb.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191120001226_MServiceReceipt_IsFiltered")]
+    partial class MServiceReceipt_IsFiltered
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1694,8 +1696,6 @@ namespace AvibaWeb.Migrations
                     b.Property<string>("Serie");
 
                     b.Property<int>("TicketOpTypeId");
-
-                    b.Property<int>("IsFiltered");
 
                     b.HasKey("Id");
 

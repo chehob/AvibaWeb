@@ -77,6 +77,12 @@ namespace AvibaWeb.ViewModels.BookingManagement
         public KRSViewItem PKCancel { get; set; }
         public KRSViewItem PKTotal { get; set; }
 
+        public KRSViewItem PKFilterSale { get; set; }
+        public KRSViewItem PKFilterExchange { get; set; }
+        public KRSViewItem PKFilterRefund { get; set; }
+        public KRSViewItem PKFilterCancel { get; set; }
+        public KRSViewItem PKFilterTotal { get; set; }
+
         public KRSViewItem BNSale { get; set; }
         public KRSViewItem BNExchange { get; set; }
         public KRSViewItem BNRefund { get; set; }

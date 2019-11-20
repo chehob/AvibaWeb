@@ -219,6 +219,23 @@ namespace AvibaWeb.Controllers
                     Amount = g.Sum(ig => ig.Amount)
                 }).ToList();
 
+            var KRSFilterList = (from info in _db.VServiceReceiptIncomeInfo
+                    where info.DateTime >= queryFromDate && info.DateTime < queryToDate.AddDays(1) &&
+                          deskFilter.Contains(info.DeskIssuedId) && info.IsFiltered == 1 && info.Serie == "ТКП"
+                    select new
+                    {
+                        info.TicketOpTypeId,
+                        info.SegCount,
+                        info.Amount
+                    }).GroupBy(g => new { g.TicketOpTypeId })
+                .Select(g => new
+                {
+                    OpTypeId = g.Key.TicketOpTypeId,
+                    ServiceCount = g.Count(),
+                    SegCount = g.Sum(ig => ig.SegCount),
+                    Amount = g.Sum(ig => ig.Amount)
+                }).ToList();
+
             var CorpTicketList = (from ti in _db.VReceiptTicketInfo
                     join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
                     join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
@@ -339,7 +356,35 @@ namespace AvibaWeb.Controllers
                         Amount = ti?.Amount ?? 0,
                         SegCount = ti?.SegCount ?? 0
                     }).First(),
-                PKCancel = KRSList.Where(ti => ti.OpTypeId == 1 && ti.IsSite == 1).DefaultIfEmpty().Select(ti =>
+                PKCancel = KRSList.Where(ti => ti.OpTypeId == 5).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                PKFilterSale = KRSFilterList.Where(ti => ti.OpTypeId == 1).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                PKFilterExchange = KRSFilterList.Where(ti => ti.OpTypeId == 3).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                PKFilterRefund = KRSFilterList.Where(ti => ti.OpTypeId == 2).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
+                PKFilterCancel = KRSFilterList.Where(ti => ti.OpTypeId == 5).DefaultIfEmpty().Select(ti =>
                     new KRSViewItem
                     {
                         KRSCount = ti?.ServiceCount ?? 0,
@@ -387,6 +432,12 @@ namespace AvibaWeb.Controllers
             {
                 Amount = model.PKSale.Amount + model.PKExchange.Amount + model.PKRefund.Amount,
                 KRSCount = model.PKSale.KRSCount + model.PKExchange.KRSCount + model.PKRefund.KRSCount
+            };
+
+            model.PKFilterTotal = new KRSViewItem
+            {
+                Amount = model.PKFilterSale.Amount + model.PKFilterExchange.Amount + model.PKFilterRefund.Amount,
+                KRSCount = model.PKFilterSale.KRSCount + model.PKFilterExchange.KRSCount + model.PKFilterRefund.KRSCount
             };
 
             model.BNTotal = new KRSViewItem

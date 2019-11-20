@@ -71,6 +71,8 @@ namespace AvibaWeb.DomainModels
         // external service number
         public string EMDNumber { get; set; }
 
+        public bool IsFiltered { get; set; } = false;
+
         public virtual ICollection<ServiceReceiptItem> Items { get; set; }
     }
 }

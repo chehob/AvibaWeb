@@ -92,6 +92,58 @@
         <div class="box-content">
             <table class="table KRSTable">
                 <thead>
+                <tr>
+                    <th class="labelCol"></th>
+                    <th class="dataCol">Сборы ПК</th>
+                    <th class="dataCol">Сумма</th>
+                    <th class="dataCol">С комиссией</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="labelCol">Продажи</td>
+                    <td class="dataCol">@Model.PKSale.KRSCountStr</td>
+                    <td class="dataCol">@Model.PKSale.AmountStr</td>
+                    <td class="dataCol">@Model.PKSale.AmountCommStr</td>
+                </tr>
+                <tr>
+                    <td class="labelCol">Обмены</td>
+                    <td class="dataCol">@Model.PKExchange.KRSCountStr</td>
+                    <td class="dataCol">@Model.PKExchange.AmountStr</td>
+                    <td class="dataCol">@Model.PKExchange.AmountCommStr</td>
+                </tr>
+                <tr>
+                    <td class="labelCol">Возвраты</td>
+                    <td class="dataCol">@Model.PKRefund.KRSCountStr</td>
+                    <td class="dataCol">@Model.PKRefund.AmountStr</td>
+                    <td class="dataCol">@Model.PKRefund.AmountCommStr</td>
+                </tr>
+                <tr>
+                    <td class="labelCol">Аннулированные</td>
+                    <td class="dataCol">@Model.PKCancel.KRSCountStr</td>
+                    <td class="dataCol">@Model.PKCancel.AmountStr</td>
+                    <td class="dataCol">@Model.PKCancel.AmountCommStr</td>
+                </tr>
+                <tr>
+                    <td class="labelCol"><b>Итого</b></td>
+                    <td class="dataCol"><b>@Model.PKTotal.KRSCountStr</b></td>
+                    <td class="dataCol"><b>@Model.PKTotal.AmountStr</b></td>
+                    <td class="dataCol"><b>@Model.PKTotal.AmountCommStr</b></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="box col-md-9">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="" style="overflow: hidden;">
+            <h2>Сборы ПК (фильтр)</h2>
+        </div>
+        <div class="box-content">
+            <table class="table KRSTable">
+                <thead>
                     <tr>
                         <th class="labelCol"></th>
                         <th class="dataCol">Сборы ПК</th>
@@ -102,33 +154,33 @@
                 <tbody>
                     <tr>
                         <td class="labelCol">Продажи</td>
-                        <td class="dataCol">@Model.PKSale.KRSCountStr</td>
-                        <td class="dataCol">@Model.PKSale.AmountStr</td>
-                        <td class="dataCol">@Model.PKSale.AmountCommStr</td>
+                        <td class="dataCol">@Model.PKFilterSale.KRSCountStr</td>
+                        <td class="dataCol">@Model.PKFilterSale.AmountStr</td>
+                        <td class="dataCol">@Model.PKFilterSale.AmountCommStr</td>
                     </tr>
                     <tr>
                         <td class="labelCol">Обмены</td>
-                        <td class="dataCol">@Model.PKExchange.KRSCountStr</td>
-                        <td class="dataCol">@Model.PKExchange.AmountStr</td>
-                        <td class="dataCol">@Model.PKExchange.AmountCommStr</td>
+                        <td class="dataCol">@Model.PKFilterExchange.KRSCountStr</td>
+                        <td class="dataCol">@Model.PKFilterExchange.AmountStr</td>
+                        <td class="dataCol">@Model.PKFilterExchange.AmountCommStr</td>
                     </tr>
                     <tr>
                         <td class="labelCol">Возвраты</td>
-                        <td class="dataCol">@Model.PKRefund.KRSCountStr</td>
-                        <td class="dataCol">@Model.PKRefund.AmountStr</td>
-                        <td class="dataCol">@Model.PKRefund.AmountCommStr</td>
+                        <td class="dataCol">@Model.PKFilterRefund.KRSCountStr</td>
+                        <td class="dataCol">@Model.PKFilterRefund.AmountStr</td>
+                        <td class="dataCol">@Model.PKFilterRefund.AmountCommStr</td>
                     </tr>
                     <tr>
                         <td class="labelCol">Аннулированные</td>
-                        <td class="dataCol">@Model.PKCancel.KRSCountStr</td>
-                        <td class="dataCol">@Model.PKCancel.AmountStr</td>
-                        <td class="dataCol">@Model.PKCancel.AmountCommStr</td>
+                        <td class="dataCol">@Model.PKFilterCancel.KRSCountStr</td>
+                        <td class="dataCol">@Model.PKFilterCancel.AmountStr</td>
+                        <td class="dataCol">@Model.PKFilterCancel.AmountCommStr</td>
                     </tr>
                     <tr>
                         <td class="labelCol"><b>Итого</b></td>
-                        <td class="dataCol"><b>@Model.PKTotal.KRSCountStr</b></td>
-                        <td class="dataCol"><b>@Model.PKTotal.AmountStr</b></td>
-                        <td class="dataCol"><b>@Model.PKTotal.AmountCommStr</b></td>
+                        <td class="dataCol"><b>@Model.PKFilterTotal.KRSCountStr</b></td>
+                        <td class="dataCol"><b>@Model.PKFilterTotal.AmountStr</b></td>
+                        <td class="dataCol"><b>@Model.PKFilterTotal.AmountCommStr</b></td>
                     </tr>
                 </tbody>
             </table>
