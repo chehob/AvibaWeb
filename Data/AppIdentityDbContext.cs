@@ -124,6 +124,8 @@ namespace AvibaWeb.Models
 
         public DbSet<PKReceiptRule> PKReceiptRules { get; set; }
 
+        public DbSet<VBookingManagementPaycheck> VBookingManagementPaycheck { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

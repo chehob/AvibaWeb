@@ -1,0 +1,34 @@
+﻿<div>
+    <input type="text" id="period" class="datePicker" autocomplete="off" />
+    <button id="searchButton">Найти</button>
+</div>
+
+<div id="result" />
+
+<script>
+    $(function () {
+        $('#period').datepicker({
+            viewMode: 'months',
+            minViewMode: 'months',
+            format: 'mm/yyyy'
+        });
+    });
+
+    $("#searchButton").click(function (e) {
+        $.ajax({
+            url: "/BookingManagement/Paycheck",
+            type: "POST",
+            cache: false,
+            data: {
+                date: moment($('#period').val(), "DD.MM.YYYY").toISOString(true),
+            },
+            dataType: "json",
+            success: function (result) {
+                $('#result').html(result.message);
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+</script>

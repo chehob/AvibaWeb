@@ -140,4 +140,15 @@ namespace AvibaWeb.ViewModels.BookingManagement
     {
         public List<OperationsViewItem> Items { get; set; }
     }
+
+    public class PaycheckOperationsViewItem
+    {
+        public string Name { get; set; }
+        public string Amount { get; set; }
+    }
+
+    public class PaycheckOperationsViewModel
+    {
+        public List<PaycheckOperationsViewItem> Items { get; set; }
+    }
 }

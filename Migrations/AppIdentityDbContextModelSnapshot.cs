@@ -1452,6 +1452,20 @@ namespace AvibaWeb.Migrations
                     b.ToTable("VBookingManagementOperations");
                 });
 
+            modelBuilder.Entity("AvibaWeb.DomainModels.VBookingManagementPaycheck", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
+
+                b.Property<string>("Name");
+
+                b.Property<decimal>("Amount");
+
+                b.HasKey("Id");
+
+                b.ToTable("VBookingManagementPaycheck");
+            });
+
             modelBuilder.Entity("AvibaWeb.DomainModels.VBookingManagementSales", b =>
                 {
                     b.Property<Guid>("Id")

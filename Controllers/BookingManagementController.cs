@@ -556,7 +556,7 @@ namespace AvibaWeb.Controllers
             {
                 lowerDoc = doc.ToLower();
             }
-            
+
             var birthDateTime = new DateTime();
             if (birthDate != null)
             {
@@ -566,8 +566,8 @@ namespace AvibaWeb.Controllers
             var model = new OperationsViewModel
             {
                 Items = (from info in _db.VBookingManagementOperations
-                         where info.TicketID.ToLower().Contains(lowerKey) || 
-                               ((key == null || info.FullName.ToLower().Contains(lowerKey)) && 
+                         where info.TicketID.ToLower().Contains(lowerKey) ||
+                               ((key == null || info.FullName.ToLower().Contains(lowerKey)) &&
                                 (doc == null || info.Passport.ToLower().Contains(lowerDoc)) &&
                                 (birthDate == null || info.BirthDate == birthDateTime)) ||
                                info.PNRID.ToLower().Contains(lowerKey)
@@ -594,6 +594,31 @@ namespace AvibaWeb.Controllers
             };
 
             return Json(new { message = await _viewRenderService.RenderToStringAsync("BookingManagement/Operations", model) });
+        }
+
+        [HttpGet]
+        public IActionResult Paycheck()
+        {
+            return PartialView();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Paycheck(DateTime? date)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var model = new PaycheckOperationsViewModel
+            {
+                Items = (from info in _db.VBookingManagementPaycheck
+                    select new PaycheckOperationsViewItem
+                    {
+                        Name = info.Name,
+                        Amount = info.Amount.ToString()
+                    }).ToList()
+            };
+
+            return Json(new { message = await _viewRenderService.RenderToStringAsync("BookingManagement/PaycheckOperations", model) });
         }
 
         public IActionResult Filter()
