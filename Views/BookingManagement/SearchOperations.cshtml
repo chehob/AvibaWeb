@@ -1,18 +1,29 @@
 ﻿<div>
-    <input type="text" id="keyString" />
+    <input type="text" id="keyString" autocomplete="off" />
+    Документ: <input type="text" id="doc" autocomplete="off" />
+    Дата рождения: <input type="text" id="birthDate" class="datePicker" autocomplete="off" />
     <button id="searchButton">Найти</button>
 </div>
 
 <div id="operationsResult" />
 
 <script>
+    $(function() {
+        //$(".datePicker").datepicker({
+        //    autoclose: true
+        //}).datepicker('setDate', moment().format("DD.MM.YYYY"));
+    });
+
     $("#searchButton").click(function (e) {
         $.ajax({
             url: "/BookingManagement/SearchOperations",
             type: "POST",
             cache: false,
             data: {
-                key: $('#keyString').val()
+                key: $('#keyString').val(),
+                doc: $('#doc').val(),
+                //birthDate: moment($('#birthDate').val(), "DD.MM.YYYY").toISOString(true),
+                birthDate: $('#birthDate').val()
             },
             dataType: "json",
             success: function (result) {

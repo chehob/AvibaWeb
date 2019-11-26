@@ -356,7 +356,7 @@ namespace AvibaWeb.Controllers
                         Amount = ti?.Amount ?? 0,
                         SegCount = ti?.SegCount ?? 0
                     }).First(),
-                PKCancel = KRSList.Where(ti => ti.OpTypeId == 5).DefaultIfEmpty().Select(ti =>
+                PKCancel = KRSList.Where(ti => ti.OpTypeId == 5 && ti.IsSite == 1).DefaultIfEmpty().Select(ti =>
                     new KRSViewItem
                     {
                         KRSCount = ti?.ServiceCount ?? 0,
@@ -540,16 +540,37 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SearchOperations(string key)
+        public async Task<IActionResult> SearchOperations(string key, string doc, string birthDate)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
-            string lowerKey = key.ToLower();
+            string lowerKey = null;
+            if (key != null)
+            {
+                lowerKey = key.ToLower();
+            }
+
+            string lowerDoc = null;
+            if (doc != null)
+            {
+                lowerDoc = doc.ToLower();
+            }
+            
+            var birthDateTime = new DateTime();
+            if (birthDate != null)
+            {
+                birthDateTime = DateTime.Parse(birthDate);
+            }
+
             var model = new OperationsViewModel
             {
                 Items = (from info in _db.VBookingManagementOperations
-                         where info.TicketID.ToLower().Contains(lowerKey) || info.FullName.ToLower().Contains(lowerKey) || info.PNRID.ToLower().Contains(lowerKey)
+                         where info.TicketID.ToLower().Contains(lowerKey) || 
+                               ((key == null || info.FullName.ToLower().Contains(lowerKey)) && 
+                                (doc == null || info.Passport.ToLower().Contains(lowerDoc)) &&
+                                (birthDate == null || info.BirthDate == birthDateTime)) ||
+                               info.PNRID.ToLower().Contains(lowerKey)
                          orderby info.ExecutionDateTime
                          select new OperationsViewItem
                          {

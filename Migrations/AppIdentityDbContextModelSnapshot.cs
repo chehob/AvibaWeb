@@ -1443,6 +1443,10 @@ namespace AvibaWeb.Migrations
 
                     b.Property<string>("TicketID");
 
+                    b.Property<string>("Passport");
+
+                    b.Property<DateTime>("BirthDate");
+
                     b.HasKey("Id");
 
                     b.ToTable("VBookingManagementOperations");

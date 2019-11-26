@@ -34,6 +34,8 @@ namespace AvibaWeb.DomainModels
         public string Email { get; set; }
 
         public string FullName { get; set; }
+        public string Passport { get; set; }
+        public DateTime BirthDate { get; set; }
 
         public string DeskID { get; set; }
         public DateTime ExecutionDateTime { get; set; }
