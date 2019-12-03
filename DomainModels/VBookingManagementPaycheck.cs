@@ -11,6 +11,7 @@ namespace AvibaWeb.DomainModels
         [Key]
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public decimal Amount { get; set; }
+        public DateTime CheckInDateTime { get; set; }
+        public string DeskId { get; set; }
     }
 }

@@ -126,6 +126,8 @@ namespace AvibaWeb.Models
 
         public DbSet<VBookingManagementPaycheck> VBookingManagementPaycheck { get; set; }
 
+        public DbSet<S7ProviderBalance> S7ProviderBalance { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

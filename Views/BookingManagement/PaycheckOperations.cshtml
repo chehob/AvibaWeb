@@ -9,6 +9,7 @@
                     <tr>
                         <th>ФИО</th>
                         <th>Кол-во смен</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -17,6 +18,14 @@
                         <tr>
                             <td>@item.Name</td>
                             <td>@item.Amount</td>
+                            <td style="overflow: hidden; max-width: 100px; text-overflow: ellipsis; white-space: nowrap;">
+                                <span data-toggle="tooltip" title="
+                                      @foreach (var ci in item.CheckIns)
+                                      {
+@:@ci.CheckInDateTime (@ci.DeskId)
+                                      }" class="glyphicon glyphicon-list-alt" style="cursor: pointer;"></span>
+                                Операции
+                            </td>
                         </tr>
                     }
                 </tbody>

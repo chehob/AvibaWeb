@@ -139,9 +139,16 @@ namespace AvibaWeb.Controllers
                     select new OrganizationCashlessInfo
                     {
                         Name = c.Name,
-                        Balance = c.Name == "ПАО \"Авиакомпания \"Сибирь\"" ? alfaBankBalance : c.ProviderBalance.Balance
+                        Balance = c.Name == "ПАО \"Авиакомпания \"Сибирь\"" ? 0 : c.ProviderBalance.Balance
                     }).ToListAsync()
             };
+
+            var s7balance = (from pb in _db.S7ProviderBalance
+                where pb.Id == 1
+                select pb.Balance).FirstOrDefault();
+
+            model.Organizations.FirstOrDefault(o => o.Name == "ПАО \"Авиакомпания \"Сибирь\"").Balance =
+                alfaBankBalance + s7balance;
 
             var tkpOrg = model.Organizations.FirstOrDefault(o => o.Name == "АО \"Транспортная Клиринговая палата\"");
             tkpOrg.CustomBalanceStr = (2122000 + tkpOrg.Balance).ToString("#,0.00", nfi);
@@ -216,6 +223,23 @@ namespace AvibaWeb.Controllers
                 TransitBalance = _db.TransitAccounts.FirstOrDefault().Balance
             };
 
+            var alfaBankBalance =
+                (from fa in _db.FinancialAccounts
+                    where fa.Description == "40702810102970003030"
+                    select fa.Balance).FirstOrDefault();
+
+            var s7Balance = (from pb in _db.S7ProviderBalance
+                where pb.Id == 1
+                select pb.Balance).FirstOrDefault();
+
+            var providersBalance = await (from c in _db.Counterparties
+                    .Include(c => c.ProviderBinding)
+                where c.Type.Description == "Провайдер услуг" &&
+                      c.Name != "ПАО \"Авиакомпания \"Сибирь\""
+                select (c.ProviderBalance.Balance)).ToListAsync();
+
+            providersBalance.Add(alfaBankBalance + s7Balance);
+
             var model = new SummaryBlockViewModel
             {
                 OrganizationBalance = await (from o in _db.Organizations
@@ -231,11 +255,7 @@ namespace AvibaWeb.Controllers
                 TransitTotal = await (from lg in _db.LoanGroups
                                       where lg.IsActive && lg.Description != "Дивиденты" && lg.Balance != 0
                                       select lg.Balance).SumAsync(v => v),
-                ProvidersTotal = await (from c in _db.Counterparties
-                        .Include(c => c.ProviderBinding)
-                                        where c.Type.Description == "Провайдер услуг" &&
-                                              c.Name != "ПАО \"Авиакомпания \"Сибирь\""
-                                        select (c.ProviderBalance.Balance)).SumAsync(v => v),
+                ProvidersTotal = providersBalance.Sum(v => v),
                 SubagentsTotal = -await (from c in _db.Counterparties
                         .Include(c => c.SubagentData)
                                          where c.Type.Description == "Субагент Р"

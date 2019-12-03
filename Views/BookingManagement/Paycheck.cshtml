@@ -20,7 +20,7 @@
             type: "POST",
             cache: false,
             data: {
-                date: moment($('#period').val(), "DD.MM.YYYY").toISOString(true),
+                date: moment($('#period').val(), "MM/YYYY").toISOString(true),
             },
             dataType: "json",
             success: function (result) {

@@ -4,14 +4,16 @@ using AvibaWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AvibaWeb.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191128083842_MS7ProviderBalance_Initial")]
+    partial class MS7ProviderBalance_Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1471,11 +1473,9 @@ namespace AvibaWeb.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<decimal>("Amount");
+
                     b.Property<string>("Name");
-
-                    b.Property<DateTime>("CheckInDateTime");
-
-                    b.Property<string>("DeskId");
 
                     b.HasKey("Id");
 

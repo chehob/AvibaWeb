@@ -70,7 +70,7 @@ namespace AvibaWeb.ViewModels.ManagementAccountingViewModels
         private NumberFormatInfo nfi;
 
         public List<OrganizationCashlessInfo> Organizations;
-        public string Total => Organizations.Where(o => o.Name != "ПАО \"Авиакомпания \"Сибирь\"").Sum(o => o.Balance).ToString("#,0.00", nfi);
+        public string Total => Organizations.Sum(o => o.Balance).ToString("#,0.00", nfi);
     }
 
     public class CorporatorBlockViewModel
