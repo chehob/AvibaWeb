@@ -121,7 +121,6 @@
             <button id="luggageButton" class="btn btn-primary">Багаж</button>
             <button id="operationsButton" class="btn btn-primary">Операции</button>
             <button id="searchOperationsButton" class="btn btn-primary">Поиск</button>
-            <button id="paycheckButton" class="btn btn-primary">Зарплата</button>
         </div>
 <div class="row">
     <div class="col-md-3" id="dvFilter" data-url='@(Url.Action("Filter", "BookingManagement", null))' style="float: left; "></div>
@@ -288,22 +287,6 @@
         clearTimeout(saleUpdateTimeout);
         $.ajax({
             url: "/BookingManagement/SearchOperations",
-            type: "GET",
-            cache: false,
-            success: function (result) {
-                $('#results').html(result);
-            },
-            error: function (error) {
-                console.log(error);
-            }
-        });
-    });
-
-    $("#paycheckButton").click(function (e) {
-        $('#currentInfo').val(5);
-        clearTimeout(saleUpdateTimeout);
-        $.ajax({
-            url: "/BookingManagement/Paycheck",
             type: "GET",
             cache: false,
             success: function (result) {

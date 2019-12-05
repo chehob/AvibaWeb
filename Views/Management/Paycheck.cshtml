@@ -1,6 +1,6 @@
 ﻿<div>
-    <input type="text" id="period" class="datePicker" autocomplete="off" />
-    <button id="searchButton">Найти</button>
+    <input type="text" id="period" class="datePicker" autocomplete="off" placeholder="Выбор периода" />
+    <button id="searchButton">Показать</button>
 </div>
 
 <div id="result" />
@@ -16,7 +16,7 @@
 
     $("#searchButton").click(function (e) {
         $.ajax({
-            url: "/BookingManagement/Paycheck",
+            url: "/Management/Paycheck",
             type: "POST",
             cache: false,
             data: {

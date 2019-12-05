@@ -134,28 +134,12 @@ namespace AvibaWeb.ViewModels.BookingManagement
         public string BookDesk { get; set; }
         public string BookDateTime { get; set; }
         public string PaymentType { get; set; }
+        public string BirthDate { get; set; }
+        public string Passport { get; set; }
     }
 
     public class OperationsViewModel
     {
         public List<OperationsViewItem> Items { get; set; }
-    }
-
-    public class PaycheckOperationsCheckInInfo
-    {
-        public string CheckInDateTime { get; set; }
-        public string DeskId { get; set; }
-    }
-
-    public class PaycheckOperationsViewItem
-    {
-        public string Name { get; set; }
-        public string Amount { get; set; }
-        public List<PaycheckOperationsCheckInInfo> CheckIns { get; set; }
-    }
-
-    public class PaycheckOperationsViewModel
-    {
-        public List<PaycheckOperationsViewItem> Items { get; set; }
     }
 }

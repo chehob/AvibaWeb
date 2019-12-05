@@ -191,5 +191,49 @@ namespace AvibaWeb.Controllers
 
             return Json(new { message = "Ok" });
         }
+
+        [HttpGet]
+        public IActionResult Paycheck()
+        {
+            return PartialView();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Paycheck(DateTime? date)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var beginDate = date.Value;
+            var endDate = date.Value.AddMonths(1);
+
+            var sessions = (from info in _db.VBookingManagementPaycheck
+                where info.CheckInDateTime >= beginDate && info.CheckInDateTime < endDate
+                select new
+                {
+                    info.Name,
+                    info.CheckInDateTime,
+                    info.DeskId
+                }).ToList();
+
+            var model = new PaycheckOperationsViewModel
+            {
+                Items = (from info in sessions
+                    group info by info.Name
+                    into g
+                    select new PaycheckOperationsViewItem
+                    {
+                        Name = g.Key,
+                        CheckIns = g.Select(ig => new PaycheckOperationsCheckInInfo
+                        {
+                            CheckInDateTime = ig.CheckInDateTime.ToString("G"),
+                            DeskId = ig.DeskId
+                        }).ToList(),
+                        Amount = g.Count().ToString()
+                    }).OrderByDescending(i => i.Amount).ToList()
+            };
+
+            return Json(new { message = await _viewRenderService.RenderToStringAsync("Management/PaycheckOperations", model) });
+        }
     }
 }

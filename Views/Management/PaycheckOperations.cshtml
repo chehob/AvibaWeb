@@ -1,4 +1,4 @@
-﻿@using AvibaWeb.ViewModels.BookingManagement
+﻿@using AvibaWeb.ViewModels.ManagementViewModels
 @model PaycheckOperationsViewModel
 
 <div class="box">
@@ -19,12 +19,11 @@
                             <td>@item.Name</td>
                             <td>@item.Amount</td>
                             <td style="overflow: hidden; max-width: 100px; text-overflow: ellipsis; white-space: nowrap;">
-                                <span data-toggle="tooltip" title="
-                                      @foreach (var ci in item.CheckIns)
+                                <span data-toggle="tooltip" title="@foreach (var ci in item.CheckIns)
                                       {
 @:@ci.CheckInDateTime (@ci.DeskId)
                                       }" class="glyphicon glyphicon-list-alt" style="cursor: pointer;"></span>
-                                Операции
+                                Смены
                             </td>
                         </tr>
                     }

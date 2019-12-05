@@ -541,7 +541,7 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SearchOperations(string key, string doc, string birthDate)
+        public async Task<IActionResult> SearchOperations(string key, string doc)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
@@ -558,19 +558,12 @@ namespace AvibaWeb.Controllers
                 lowerDoc = doc.ToLower();
             }
 
-            var birthDateTime = new DateTime();
-            if (birthDate != null)
-            {
-                birthDateTime = DateTime.Parse(birthDate);
-            }
-
             var model = new OperationsViewModel
             {
                 Items = (from info in _db.VBookingManagementOperations
                          where info.TicketID.ToLower().Contains(lowerKey) ||
                                ((key == null || info.FullName.ToLower().Contains(lowerKey)) &&
-                                (doc == null || info.Passport.ToLower().Contains(lowerDoc)) &&
-                                (birthDate == null || info.BirthDate == birthDateTime)) ||
+                                (doc == null || info.Passport.ToLower().Contains(lowerDoc))) ||
                                info.PNRID.ToLower().Contains(lowerKey)
                          orderby info.ExecutionDateTime
                          select new OperationsViewItem
@@ -590,55 +583,13 @@ namespace AvibaWeb.Controllers
                              OperationDateTime = info.ExecutionDateTime.ToString("g"),
                              BookDesk = info.BookDeskID,
                              BookDateTime = info.BookDateTime == null ? "" : info.BookDateTime.Value.ToString("g"),
-                             PaymentType = info.PaymentType
+                             PaymentType = info.PaymentType,
+                             BirthDate = info.BirthDate == null ? "" : info.BirthDate.Value.ToString("d"),
+                             Passport = info.Passport
                          }).ToList()
             };
 
             return Json(new { message = await _viewRenderService.RenderToStringAsync("BookingManagement/Operations", model) });
-        }
-
-        [HttpGet]
-        public IActionResult Paycheck()
-        {
-            return PartialView();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Paycheck(DateTime? date)
-        {
-            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
-            nfi.NumberGroupSeparator = " ";
-
-            var beginDate = date.Value;
-            var endDate = date.Value.AddMonths(1);
-
-            var sessions = (from info in _db.VBookingManagementPaycheck
-                where info.CheckInDateTime >= beginDate && info.CheckInDateTime < endDate
-                select new
-                {
-                    info.Name,
-                    info.CheckInDateTime,
-                    info.DeskId
-                }).ToList();
-
-            var model = new PaycheckOperationsViewModel
-            {
-                Items = (from info in sessions
-                    group info by info.Name
-                    into g
-                    select new PaycheckOperationsViewItem
-                    {
-                        Name = g.Key,
-                        CheckIns = g.Select(ig => new PaycheckOperationsCheckInInfo
-                        {
-                            CheckInDateTime = ig.CheckInDateTime.ToString("G"),
-                            DeskId = ig.DeskId
-                        }).ToList(),
-                        Amount = g.Count().ToString()
-                    }).OrderByDescending(i => i.Amount).ToList()
-            };
-
-            return Json(new { message = await _viewRenderService.RenderToStringAsync("BookingManagement/PaycheckOperations", model) });
         }
 
         public IActionResult Filter()

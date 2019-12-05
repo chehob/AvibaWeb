@@ -1409,7 +1409,7 @@ namespace AvibaWeb.Migrations
 
                     b.Property<string>("AirlineCode");
 
-                    b.Property<DateTime>("BirthDate");
+                    b.Property<DateTime?>("BirthDate");
 
                     b.Property<DateTime?>("BookDateTime");
 

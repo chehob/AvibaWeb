@@ -1,7 +1,6 @@
 ﻿<div>
     <input type="text" id="keyString" autocomplete="off" />
     Документ: <input type="text" id="doc" autocomplete="off" />
-    Дата рождения: <input type="text" id="birthDate" class="datePicker" autocomplete="off" />
     <button id="searchButton">Найти</button>
 </div>
 
@@ -21,9 +20,7 @@
             cache: false,
             data: {
                 key: $('#keyString').val(),
-                doc: $('#doc').val(),
-                //birthDate: moment($('#birthDate').val(), "DD.MM.YYYY").toISOString(true),
-                birthDate: $('#birthDate').val()
+                doc: $('#doc').val()
             },
             dataType: "json",
             success: function (result) {
