@@ -1,6 +1,5 @@
 ﻿<div>
     <input type="text" id="keyString" autocomplete="off" />
-    Документ: <input type="text" id="doc" autocomplete="off" />
     <button id="searchButton">Найти</button>
 </div>
 
@@ -19,8 +18,7 @@
             type: "POST",
             cache: false,
             data: {
-                key: $('#keyString').val(),
-                doc: $('#doc').val()
+                key: $('#keyString').val()
             },
             dataType: "json",
             success: function (result) {
