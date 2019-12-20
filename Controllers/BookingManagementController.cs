@@ -30,7 +30,7 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Sales(DateTime? fromDate, DateTime? toDate, string[] deskFilter, string[] sessionFilter, string[] airlineFilter)
+        public async Task<IActionResult> Sales(DateTime? fromDate, DateTime? toDate, string[] deskFilter, string[] sessionFilter, string[] airlineFilter, string[] originCity, string[] destinationCity)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
@@ -42,6 +42,9 @@ namespace AvibaWeb.Controllers
             var ticketInfo = (from s in _db.VBookingManagementSales
                               where s.ExecutionDateTime >= queryFromDate && s.ExecutionDateTime < queryToDate.AddDays(1)
                                 && deskFilter.Contains(s.DeskId) && sessionFilter.Contains(s.Session)
+                                && (airlineFilter.Length == 0 || airlineFilter.Contains(s.AirlineCode) || airlineFilter.Contains(s.AirlineCode))
+                                && (originCity.Length == 0 || originCity.Contains(s.Origin) || originCity.Contains(s.OriginEn))
+                                && (destinationCity.Length == 0 || destinationCity.Contains(s.Destination) || destinationCity.Contains(s.DestinationEn))
                               select new
                               {
                                   s.TicketID,
