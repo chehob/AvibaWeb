@@ -47,6 +47,7 @@ namespace AvibaWeb.ViewModels.ReportViewModels
     {
         public string _5kBillSum { get; set; }
         public string _2kBillSum { get; set; }
+        public string OtherSum { get; set; }
         public decimal OfficeBalance { get; set; }
     }
 
@@ -54,6 +55,7 @@ namespace AvibaWeb.ViewModels.ReportViewModels
     {
         public string _5kBillSum { get; set; }
         public string _2kBillSum { get; set; }
+        public string OtherSum { get; set; }
         public string RemainderSum { get; set; }
     }
 }

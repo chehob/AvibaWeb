@@ -592,7 +592,7 @@ namespace AvibaWeb.Controllers
                         else
                         {
                             counterparty = _db.Counterparties.Include(c => c.ProviderBalance).FirstOrDefault(c => c.ITN == operation.CounterpartyId);
-                            if (counterparty?.ProviderBalance != null)
+                            if (counterparty?.ProviderBalance != null && operation.CounterpartyId != "5448100656")
                             {
                                 counterparty.ProviderBalance.Balance -= operation.Amount;
                             }

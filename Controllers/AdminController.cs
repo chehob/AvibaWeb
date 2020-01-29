@@ -58,7 +58,6 @@ namespace AvibaWeb.Controllers
         {
             var adminRole = _db.Roles.SingleOrDefault(r => r.Name.Contains("Administrators"));
             return PartialView(_userManager.Users
-                .Where(u => u.Roles.All(r => r.RoleId != adminRole.Id))
                 .OrderByDescending(u => u.IsActive)
                 .ThenBy(u => u.Name));
         }

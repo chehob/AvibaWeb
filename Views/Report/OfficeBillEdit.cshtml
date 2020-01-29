@@ -19,12 +19,18 @@
                     @Html.TextBoxFor(m => m._5kBillSum, new { @class = "form-control", id = "5kBillEdit" })
                 </td>
             </tr>
-            <tr>
-                <td>2000</td>
-                <td>
-                    @Html.TextBoxFor(m => m._2kBillSum, new { @class = "form-control", id = "2kBillEdit" })
-                </td>
-            </tr>
+        <tr>
+            <td>2000</td>
+            <td>
+                @Html.TextBoxFor(m => m._2kBillSum, new { @class = "form-control", id = "2kBillEdit" })
+            </td>
+        </tr>
+        <tr>
+            <td>Мелкие</td>
+            <td>
+                @Html.TextBoxFor(m => m.OtherSum, new { @class = "form-control", id = "OtherEdit" })
+            </td>
+        </tr>
             <tr>
                 <td>Остаток</td>
                 <td id="reminderSumTd"></td>
@@ -47,6 +53,10 @@
         if (e.value) {
             reminderSum -= parseInt(e.value.replace(/ /g, ''));
         }
+        e = document.getElementById('OtherEdit');
+        if (e.value) {
+            reminderSum -= parseInt(e.value.replace(/ /g, ''));
+        }
         e = document.getElementById('reminderSumTd');
         e.innerHTML = numberWithSpaces(reminderSum);
     };
@@ -57,6 +67,10 @@
         e.onpropertychange = e.oninput; // for IE8
 
         e = document.getElementById('2kBillEdit');
+        e.oninput = updateReminderSum;
+        e.onpropertychange = e.oninput; // for IE8
+
+        e = document.getElementById('OtherEdit');
         e.oninput = updateReminderSum;
         e.onpropertychange = e.oninput; // for IE8
 

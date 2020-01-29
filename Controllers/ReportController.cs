@@ -75,12 +75,17 @@ namespace AvibaWeb.Controllers
             model.OfficeBillInfo = new OfficeBillInfoViewModel
             {
                 _5kBillSum = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "5kBillSum").Value,
-                _2kBillSum = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "2kBillSum").Value                
+                _2kBillSum = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "2kBillSum").Value,
+                OtherSum = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "OtherSum").Value
             };
 
-            model.OfficeBillInfo.RemainderSum = (model.OfficeBalance - 
-                decimal.Parse(model.OfficeBillInfo._5kBillSum.Replace(".", ",").Replace(" ", string.Empty)) -
-                decimal.Parse(model.OfficeBillInfo._2kBillSum.Replace(".", ",").Replace(" ", string.Empty)))
+            model.OfficeBillInfo.RemainderSum = (model.OfficeBalance -
+                                                 decimal.Parse(model.OfficeBillInfo._5kBillSum.Replace(".", ",")
+                                                     .Replace(" ", string.Empty)) -
+                                                 decimal.Parse(model.OfficeBillInfo._2kBillSum.Replace(".", ",")
+                                                     .Replace(" ", string.Empty)) -
+                                                 decimal.Parse(model.OfficeBillInfo.OtherSum.Replace(".", ",")
+                                                     .Replace(" ", string.Empty)))
                 .ToString("#,0", nfi);
 
             return PartialView(model);
@@ -212,6 +217,7 @@ namespace AvibaWeb.Controllers
             {
                 _5kBillSum = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "5kBillSum").Value,
                 _2kBillSum = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "2kBillSum").Value,
+                OtherSum = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "OtherSum").Value,
                 OfficeBalance = _db.Users.Where(u => u.Roles.Any(r => r.RoleId == officeRole.Id)).Sum(u => u.Balance)
             };
 
@@ -230,6 +236,9 @@ namespace AvibaWeb.Controllers
             settingsValue = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "2kBillSum");
             settingsValue.Value = decimal.Parse(model._2kBillSum.Replace(".", ",").Replace(" ", string.Empty)).ToString("#,0", nfi);
 
+            settingsValue = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "OtherSum");
+            settingsValue.Value = decimal.Parse(model.OtherSum.Replace(".", ",").Replace(" ", string.Empty)).ToString("#,0", nfi);
+
             await _db.SaveChangesAsync();
 
             return RedirectToAction("OfficeBillInfo");
@@ -244,14 +253,17 @@ namespace AvibaWeb.Controllers
             var model = new OfficeBillInfoViewModel
             {
                 _5kBillSum = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "5kBillSum").Value,
-                _2kBillSum = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "2kBillSum").Value
+                _2kBillSum = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "2kBillSum").Value,
+                OtherSum = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "OtherSum").Value,
             };
 
             var officeRole = _db.Roles.FirstOrDefault(r => r.Name.Contains("Офис"));
 
-            model.RemainderSum = (_db.Users.Where(u => u.Roles.Any(r => r.RoleId == officeRole.Id)).Sum(u => u.Balance) -
-                decimal.Parse(model._5kBillSum.Replace(".", ",").Replace(" ", string.Empty)) -
-                decimal.Parse(model._2kBillSum.Replace(".", ",").Replace(" ", string.Empty)))
+            model.RemainderSum =
+                (_db.Users.Where(u => u.Roles.Any(r => r.RoleId == officeRole.Id)).Sum(u => u.Balance) -
+                 decimal.Parse(model._5kBillSum.Replace(".", ",").Replace(" ", string.Empty)) -
+                 decimal.Parse(model._2kBillSum.Replace(".", ",").Replace(" ", string.Empty)) -
+                 decimal.Parse(model.OtherSum.Replace(".", ",").Replace(" ", string.Empty)))
                 .ToString("#,0", nfi);
 
             return PartialView(model);
@@ -395,7 +407,7 @@ namespace AvibaWeb.Controllers
                           expenditure.DeskGroupId == deskGroupId && (objectId == null || expenditure.ObjectId == objectId)
                     select new ExpenditureSummaryOperationsItem
                     {
-                        OperationDateTime = eo.OperationDateTime.ToString("dd.MM.yyyy HH:mm"),
+                        OperationDateTime = expenditure.PaymentTypeId == PaymentTypes.Cash ? eo.OperationDateTime.ToString("dd.MM.yyyy HH:mm") : expenditure.IncomingExpenditure.FinancialAccountOperation.OperationDateTime.ToString("dd.MM.yyyy HH:mm"),
                         Amount = expenditure.Amount.ToString("#,0.00", nfi),
                         PaymentType = expenditure.PaymentTypeId == PaymentTypes.Cash ? "Нал" : "Безнал",
                         Counterparty = expenditure.PaymentTypeId == PaymentTypes.Cash ? "" : expenditure.IncomingExpenditure.FinancialAccountOperation.Counterparty.Name,

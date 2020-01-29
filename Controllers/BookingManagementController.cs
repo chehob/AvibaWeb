@@ -560,7 +560,8 @@ namespace AvibaWeb.Controllers
                 Items = (from info in _db.VBookingManagementOperations
                          where info.TicketID.ToLower().Contains(lowerKey) ||
                                info.FullName.ToLower().Contains(lowerKey) ||
-                               info.PNRID.ToLower().Contains(lowerKey)
+                               info.PNRID.ToLower().Contains(lowerKey) ||
+                               info.Passport.ToLower().Contains(lowerKey)
                          orderby info.ExecutionDateTime
                          select new OperationsViewItem
                          {
