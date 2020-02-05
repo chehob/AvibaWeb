@@ -20,6 +20,8 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
 
     public class IncomingExpendituresViewModel
     {
+        public string FromDate { get; set; }
+        public string ToDate { get; set; }
         //public CRMPType Type { get; set; }
         public List<IncomingExpenditureItem> Items { get; set; }
     }

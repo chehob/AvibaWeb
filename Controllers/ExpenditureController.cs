@@ -31,10 +31,13 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpGet]
-        public ActionResult IssuedExpenditures()
+        public ActionResult IssuedExpenditures(DateTime? fromDate, DateTime? toDate)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
+
+            var queryToDate = toDate ?? DateTime.Now.Date;
+            var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
 
             var expenditureList = (from expenditure in _db.Expenditures
                     .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
@@ -42,10 +45,13 @@ namespace AvibaWeb.Controllers
                 join eo in _db.ExpenditureOperations on expenditure.ExpenditureId equals eo.ExpenditureId into operations
                 from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
                 orderby operation.OperationDateTime descending
+                where operation.OperationDateTime >= queryFromDate && operation.OperationDateTime < queryToDate.AddDays(1)
                 select new { expenditure, operation }).ToList();
 
             var model = new ExpendituresViewModel
             {
+                FromDate = queryFromDate.ToString("d"),
+                ToDate = queryToDate.ToString("d"),
                 Items = (from e in expenditureList
                          select new ExpenditureViewItem
                          {
@@ -121,9 +127,22 @@ namespace AvibaWeb.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateExpenditure(CreateExpenditureModel model)
         {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
             var officeRole = _db.Roles.SingleOrDefault(r => r.Name.Contains("Офис"));
             var office = _db.Users.FirstOrDefault(u => u.Roles.Any(r => r.RoleId == officeRole.Id));
             if (office == null) return RedirectToAction("IssuedExpenditures");
+
+            var otherSum = decimal.Parse(_db.SettingsValues.FirstOrDefault(sv => sv.Key == "OtherSum").Value
+                .Replace(".", ",").Replace(" ", string.Empty));
+            var remainder = model.Amount;
+            if (otherSum > 0)
+            {
+                _db.SettingsValues.FirstOrDefault(sv => sv.Key == "OtherSum").Value = otherSum >= model.Amount
+                    ? (otherSum - model.Amount).ToString("#,0", nfi)
+                    : (0).ToString("#,0", nfi);
+            }
 
             office.Balance -= model.Amount;
 
@@ -177,16 +196,23 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpGet]
-        public ActionResult IncomingExpenditures()
+        public ActionResult IncomingExpenditures(DateTime? fromDate, DateTime? toDate)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
+            var queryToDate = toDate ?? DateTime.Now.Date;
+            var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
+
             return PartialView(new IncomingExpendituresViewModel
             {
+                FromDate = queryFromDate.ToString("d"),
+                ToDate = queryToDate.ToString("d"),
                 Items = (from e in _db.IncomingExpenditures.Include(e => e.FinancialAccountOperation)
                             .ThenInclude(fao => fao.Counterparty)
                          orderby e.IsProcessed, e.FinancialAccountOperation.InsertDateTime descending
+                         where e.FinancialAccountOperation.InsertDateTime >= queryFromDate &&
+                               e.FinancialAccountOperation.InsertDateTime < queryToDate.AddDays(1)
                          select new IncomingExpenditureItem
                          {
                              Amount = e.Amount.Value.ToString("#,0.00", nfi),
@@ -200,27 +226,36 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpGet]
-        public ActionResult CashlessExpenditures()
+        public ActionResult CashlessExpenditures(DateTime? fromDate, DateTime? toDate)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
+            var queryToDate = toDate ?? DateTime.Now.Date;
+            var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
+
             var expenditureList = (from expenditure in _db.Expenditures
-                                    .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
-                                    .Include(e => e.IncomingExpenditure).ThenInclude(ie => ie.FinancialAccountOperation)
-                                    .Where(e => e.PaymentTypeId == PaymentTypes.Cashless)
-                                   join eo in _db.ExpenditureOperations on expenditure.ExpenditureId equals eo.ExpenditureId into operations
-                                   from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
-                                   orderby operation.OperationDateTime descending
-                                   select new { expenditure, operation }).ToList()
+                    .Include(e => e.DeskGroup).Include(e => e.Type).Include(e => e.Object)
+                    .Include(e => e.IncomingExpenditure).ThenInclude(ie => ie.FinancialAccountOperation)
+                    .Where(e => e.PaymentTypeId == PaymentTypes.Cashless)
+                from eo in _db.ExpenditureOperations.Where(eo => expenditure.ExpenditureId == eo.ExpenditureId)
+                    .OrderByDescending(eo => eo.OperationDateTime).Take(1).DefaultIfEmpty()
+                    //join eo in _db.ExpenditureOperations.Where(ieo => ieo.OperationDateTime >= queryFromDate && ieo.OperationDateTime < queryToDate) on expenditure.ExpenditureId equals eo.ExpenditureId into operations
+                    //from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
+                    //orderby operation.OperationDateTime descending
+                                   where eo.OperationDateTime >= queryFromDate && eo.OperationDateTime < queryToDate.AddDays(1)
+                                   orderby eo.OperationDateTime descending
+                                   select new {expenditure, eo}).ToList()
                                    .GroupBy(f => f.expenditure.IncomingExpenditureId, new NullableComparer<int>());
 
             var model = new CashlessExpendituresViewModel
             {
+                FromDate = queryFromDate.ToString("d"),
+                ToDate = queryToDate.ToString("d"),
                 ItemGroups = (from e in expenditureList
                               select new ExpenditureViewItemGroup
                               {
-                                  Status = e.FirstOrDefault().operation.OperationTypeId,
+                                  Status = e.FirstOrDefault().eo.OperationTypeId,
                                   IncomingExpenditureId = e.FirstOrDefault().expenditure.IncomingExpenditureId,
                                   Description = e.FirstOrDefault().expenditure.IncomingExpenditure?.FinancialAccountOperation.Description,
                                   Items = (from g in e
@@ -232,8 +267,8 @@ namespace AvibaWeb.Controllers
                                                DeskGroup = g.expenditure.DeskGroup != null ? g.expenditure.DeskGroup.Name : "",
                                                Type = g.expenditure.Type != null ? g.expenditure.Type.Description : "",
                                                Object = g.expenditure.Object != null ? g.expenditure.Object.Description : "",
-                                               IssuedDateTime = g.operation.OperationDateTime,
-                                               Status = g.operation.OperationTypeId
+                                               IssuedDateTime = g.eo.OperationDateTime,
+                                               Status = g.eo.OperationTypeId
                                            }).ToList()
                               }).ToList()
             };

@@ -109,6 +109,8 @@
     $("#saveBtn").click(function (e) {
         $("#warningMsg").hide();
 
+        $("#saveBtn").attr("disabled", true);
+
         if (Number($("#expenditureReminder").text().replace(/[^0-9.-]+/g, "")) != 0) {
             $("#warningMsg").show();
             return false;
@@ -150,9 +152,11 @@
                         $("#results").html(getResult);
                     }
                 });
+                $("#saveBtn").attr("disabled", false);
             },
             error: function (error) {
                 console.log(error);
+                $("#saveBtn").attr("disabled", false);
             }
         });
     });

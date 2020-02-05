@@ -68,6 +68,8 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
 
     public class ExpendituresViewModel
     {
+        public string FromDate { get; set; }
+        public string ToDate { get; set; }
         public List<ExpenditureViewItem> Items { get; set; }
     }
 
@@ -81,6 +83,8 @@ namespace AvibaWeb.ViewModels.ExpenditureViewModels
 
     public class CashlessExpendituresViewModel
     {
+        public string FromDate { get; set; }
+        public string ToDate { get; set; }
         public List<ExpenditureViewItemGroup> ItemGroups { get; set; }
     }
 }
