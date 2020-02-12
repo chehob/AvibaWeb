@@ -1052,7 +1052,8 @@ namespace AvibaWeb.Controllers
 
             var organization = new Organization
             {
-                Description = model.Description
+                Description = model.Description,
+                CorpReceiptPrefix = model.CorpReceiptPrefix
             };
 
             _db.Organizations.Add(organization);
@@ -1079,6 +1080,7 @@ namespace AvibaWeb.Controllers
             {
                 organization.Description = model.Description;
                 organization.IsActive = model.IsActive;
+                organization.CorpReceiptPrefix = model.CorpReceiptPrefix;
 
                 await _db.SaveChangesAsync();
                 return RedirectToAction("Organizations");

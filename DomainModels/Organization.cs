@@ -37,6 +37,7 @@ namespace AvibaWeb.DomainModels
 
         public int ReceiptNumberGroupId { get; set; }
 
+        [Display(Name = "Префикс счета")]
         public string CorpReceiptPrefix { get; set; }
 
         public int? _1CUploadDataId { get; set; }

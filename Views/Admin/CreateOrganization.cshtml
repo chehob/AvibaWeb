@@ -18,6 +18,12 @@
                         @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
                     </div>
                 </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.CorpReceiptPrefix, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.CorpReceiptPrefix, new { @class = "form-control" })
+                    </div>
+                </div>
                 @Html.ValidationSummary("", new { @class = "text-danger" })
                 <div class="row">
                     <div class="col-md-offset-2 col-md-10">

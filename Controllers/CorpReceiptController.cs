@@ -580,9 +580,7 @@ namespace AvibaWeb.Controllers
                 select new ReceiptPDFViewModel
                 {
                     TotalAmount = cr.Amount.Value,
-                    ReceiptNumber = cr.TypeId == CorporatorReceipt.CRType.CorpClient ?
-                        "WR-" + cr.ReceiptNumber.ToString() :
-                        cr.PayeeAccount.Organization.CorpReceiptPrefix + "-" + cr.ReceiptNumber.ToString(),
+                    ReceiptNumber = cr.PayeeAccount.Organization.CorpReceiptPrefix + "-" + cr.ReceiptNumber.ToString(),
                     PayerNameWithITN = $"{cr.Corporator.Name} ИНН: {cr.Corporator.ITN} ,КПП {cr.Corporator.KPP}",
                     PayerName = cr.Corporator.Name,
                     PayerAddress = cr.Corporator.Address,
@@ -645,9 +643,7 @@ namespace AvibaWeb.Controllers
                     FeeRateStr = cr.FeeRate.Value.ToString("#,0.00", nfi),
                     IssuedDateTime = operation.OperationDateTime.ToShortDateString(),
                     PaymentTemplateLabelStr = "Образец заполнения назначения платежа:",
-                    PaymentTemplateStr = cr.TypeId == CorporatorReceipt.CRType.CorpClient ?
-                        $"Оплата по счету WR-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС" :
-                        $"Оплата по счету {cr.PayeeAccount.Organization.CorpReceiptPrefix}-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС"
+                    PaymentTemplateStr = $"Оплата по счету {cr.PayeeAccount.Organization.CorpReceiptPrefix}-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС"
                 }).FirstOrDefault();
 
             //model.Taxes.AddRange(
