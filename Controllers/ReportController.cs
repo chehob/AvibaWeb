@@ -68,6 +68,18 @@ namespace AvibaWeb.Controllers
                         Name = u.Name,
                         Balance = u.Balance
                     }).ToList(),
+                LoanBalanceInfo =
+                    (from expenditure in _db.LoanExpenditures
+                        join eo in _db.LoanExpenditureOperations on expenditure.LoanExpenditureId equals eo.LoanExpenditureId into operations
+                        from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
+                        orderby operation.OperationDateTime descending
+                        where operation.OperationTypeId == LoanExpenditureOperation.LEOType.New
+                        select expenditure)
+                    .Select(u => new OnlineInfoModel.BalanceInfoElement
+                    {
+                        Name = u.Description,
+                        Balance = u.Amount
+                    }).ToList(),
                 OfficeBalance = _db.Users.Where(u => u.Roles.Any(r => r.RoleId == officeRole.Id)).Sum(u => u.Balance),
                 TransitBalance = _db.TransitAccounts.FirstOrDefault().Balance
             };

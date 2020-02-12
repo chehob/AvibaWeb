@@ -128,6 +128,9 @@ namespace AvibaWeb.Models
 
         public DbSet<S7ProviderBalance> S7ProviderBalance { get; set; }
 
+        public DbSet<LoanExpenditure> LoanExpenditures { get; set; }
+        public DbSet<LoanExpenditureOperation> LoanExpenditureOperations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

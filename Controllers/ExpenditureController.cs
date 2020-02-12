@@ -11,6 +11,7 @@ using X.PagedList;
 using System.Globalization;
 using System.Collections.Generic;
 using AvibaWeb.Infrastructure;
+using AvibaWeb.ViewModels.LoanExpenditureViewModels;
 
 namespace AvibaWeb.Controllers
 {
@@ -400,6 +401,115 @@ namespace AvibaWeb.Controllers
             await _db.SaveChangesAsync();
 
             return RedirectToAction("CashlessExpenditures");
+        }
+
+        [HttpGet]
+        public ActionResult CreateLoanExpenditure()
+        {
+            var model = new CreateLoanExpenditureModel()
+            {
+            };
+            return PartialView(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateLoanExpenditure(CreateLoanExpenditureModel model)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var officeRole = _db.Roles.SingleOrDefault(r => r.Name.Contains("Офис"));
+            var office = _db.Users.FirstOrDefault(u => u.Roles.Any(r => r.RoleId == officeRole.Id));
+            if (office == null) return RedirectToAction("LoanExpenditures");
+
+            var otherSum = decimal.Parse(_db.SettingsValues.FirstOrDefault(sv => sv.Key == "OtherSum").Value
+                .Replace(".", ",").Replace(" ", string.Empty));
+            var remainder = model.Amount;
+            if (otherSum > 0)
+            {
+                _db.SettingsValues.FirstOrDefault(sv => sv.Key == "OtherSum").Value = otherSum >= model.Amount
+                    ? (otherSum - model.Amount).ToString("#,0", nfi)
+                    : (0).ToString("#,0", nfi);
+            }
+
+            office.Balance -= model.Amount;
+
+            var expenditure = new LoanExpenditure
+            {
+                Description = model.Name,
+                Amount = model.Amount
+            };
+
+            var operation = new LoanExpenditureOperation
+            {
+                LoanExpenditure = expenditure,
+                OperationDateTime = DateTime.Now,
+                OperationTypeId = LoanExpenditureOperation.LEOType.New
+            };
+
+            _db.LoanExpenditureOperations.Add(operation);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("LoanExpenditures");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CancelLoanExpenditure(int id)
+        {
+            var expenditure = await _db.LoanExpenditures.FindAsync(id);
+            if (expenditure == null) return PartialView("Error", new[] { "Операция не найдена" });
+
+            var officeRole = _db.Roles.SingleOrDefault(r => r.Name.Contains("Офис"));
+            var office = _db.Users.FirstOrDefault(u => u.Roles.Any(r => r.RoleId == officeRole.Id));
+            if (office == null) return RedirectToAction("LoanExpenditures");
+
+            office.Balance += expenditure.Amount;
+
+            var operation = new LoanExpenditureOperation
+            {
+                LoanExpenditure = expenditure,
+                OperationDateTime = DateTime.Now,
+                OperationTypeId = LoanExpenditureOperation.LEOType.Cancelled
+            };
+
+            _db.LoanExpenditureOperations.Add(operation);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("LoanExpenditures");
+        }
+
+        [HttpGet]
+        public ActionResult LoanExpenditures(DateTime? fromDate, DateTime? toDate)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var queryToDate = toDate ?? DateTime.Now.Date;
+            var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
+
+            var expenditureList = (from expenditure in _db.LoanExpenditures
+                                   join eo in _db.LoanExpenditureOperations on expenditure.LoanExpenditureId equals eo.LoanExpenditureId into operations
+                                   from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
+                                   orderby operation.OperationDateTime descending
+                                   where operation.OperationDateTime >= queryFromDate && operation.OperationDateTime < queryToDate.AddDays(1)
+                                   select new { expenditure, operation }).ToList();
+
+            var model = new LoanExpendituresViewModel
+            {
+                FromDate = queryFromDate.ToString("d"),
+                ToDate = queryToDate.ToString("d"),
+                Items = (from e in expenditureList
+                         select new LoanExpenditureViewItem
+                         {
+                             LoanExpenditureId = e.expenditure.LoanExpenditureId,
+                             Amount = e.expenditure.Amount.ToString("#,0.00", nfi),
+                             Description = e.expenditure.Description,
+                             IssuedDateTime = e.operation.OperationDateTime,
+                             Status = e.operation.OperationTypeId
+                         }).ToList()
+            };
+
+            return PartialView(model);
         }
     }
 }

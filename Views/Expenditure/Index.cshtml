@@ -8,12 +8,18 @@
     <a asp-action="IncomingExpenditures" asp-controller="Expenditure"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary"><i class="glyphicon glyphicon glyphicon-plus">&nbsp;</i>Нераспределенные расходы</a>
+    <a asp-action="LoanExpenditures" asp-controller="Expenditure"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-primary">Долги</a>
 </p>
 
 <div class="box col-md-10">
     <a asp-action="CreateExpenditure" asp-controller="Expenditure"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-default">Создать операцию</a>
+    <a asp-action="CreateLoanExpenditure" asp-controller="Expenditure"
+       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+       class="btn btn-default">Создать долговую операцию</a>
     <a asp-action="Debit" asp-controller="Transit"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-default">Перечислить на транзитный счет</a>

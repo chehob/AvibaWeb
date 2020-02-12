@@ -23,6 +23,9 @@ namespace AvibaWeb.ViewModels.ReportViewModels
         public string CollectorsTotalInfo => CollectorsBalanceInfo.Sum(x => x.Balance).ToString("### ### ##0.00 руб", CultureInfo.InvariantCulture);
         public List<BalanceInfoElement> CollectorsBalanceInfo { get; set; }
 
+        public string LoanTotalInfo => LoanBalanceInfo.Sum(x => x.Balance).ToString("### ### ##0.00 руб", CultureInfo.InvariantCulture);
+        public List<BalanceInfoElement> LoanBalanceInfo { get; set; }
+
         public string TotalBalanceStr =>
             (AvibaBalanceInfo.Sum(x => x.Balance) + AviaTourBalanceInfo.Sum(x => x.Balance) +
              CollectorsBalanceInfo.Sum(x => x.Balance) + OfficeBalance + TransitBalance)
