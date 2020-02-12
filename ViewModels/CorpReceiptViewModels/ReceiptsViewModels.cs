@@ -92,5 +92,6 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public string IssuedDateTime { get; set; }
         public string PaymentTemplateLabelStr { get; set; }
         public string PaymentTemplateStr { get; set; }
+        public string HeaderImage { get; set; }
     }
 }
