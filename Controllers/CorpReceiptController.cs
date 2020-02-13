@@ -725,6 +725,12 @@ namespace AvibaWeb.Controllers
                 var b = System.IO.File.ReadAllBytes(path);
                 return "data:image/png;base64," + Convert.ToBase64String(b);
             })();
+            model.HeaderImage = new Func<string>(() =>
+            {
+                var path = _hostingEnvironment.WebRootPath + "/img/corpImages/headerImage.png";
+                var b = System.IO.File.ReadAllBytes(path);
+                return "data:image/png;base64," + Convert.ToBase64String(b);
+            })();
 
             return Json(model);
         }
