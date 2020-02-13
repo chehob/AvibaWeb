@@ -1961,6 +1961,198 @@ $(document).on('click',
             });
         });
 
+        $(document).on('click',
+        ".createUstekReportPDF",
+        function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "/CorpReceipt/ReceiptUstekPDFData",
+                type: "POST",
+                cache: false,
+                data: { id: $(this).closest('tr').find('.receiptId').val() },
+                success: function (result) {
+                    const itemData = [];
+
+                    var headerRow = [];
+
+                    headerRow.push({ text: 'Наименование', style: 'tableHeader' });
+                    headerRow.push({ text: 'Цена', style: 'tableHeader' });
+                    headerRow.push({ text: 'Кол-во', style: 'tableHeader' });
+                    headerRow.push({ text: 'Ед. Изм.', style: 'tableHeader' });
+                    headerRow.push({ text: 'Сумма', style: 'tableHeader' });
+
+                    itemData.push(headerRow);
+
+                    var dataRow = [];
+                    result.items.forEach(function (item) {
+                        dataRow = [];
+
+                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+                        dataRow.push({ text: item.segCount, alignment: 'center' });
+                        dataRow.push({ text: item.amountLabelStr, alignment: 'center' });                        
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+
+                        itemData.push(dataRow);
+                    });
+
+                    result.luggageItems.forEach(function(item) {
+                        dataRow = [];
+    
+                        itemCount++;
+                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+                        dataRow.push({ text: item.segCount, alignment: 'center' });
+                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+    
+                        itemData.push(dataRow);
+                    });                    
+
+                    result.taxes.forEach(function(item) {
+                        dataRow = [];
+
+                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
+                        dataRow.push({ text: item.feeStr, alignment: 'right' });                        
+                        dataRow.push({ text: item.segCount, alignment: 'center' });
+                        dataRow.push({ text: item.amountLabelStr, alignment: 'center' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+    
+                        itemData.push(dataRow);
+                    });
+
+                    dataRow = [];
+
+                    dataRow.push({ text: 'Итого: ', colSpan: 4, alignment: 'right' });
+                    dataRow.push({});
+                    dataRow.push({});
+                    dataRow.push({});
+                    dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
+
+                    itemData.push(dataRow);
+
+                    const docDefinition = {
+                        info: {
+                            title: 'test',
+                        },
+                        content: [                        
+                            {
+                                text: `АКТ № ${result.receiptNumber} от ${result.issuedDateTime}`,
+                                style: 'bigText',                                
+                                bold: true,
+                                margin: [0, 35, 0, 0]
+                            },
+                            {
+                                text: `Исполнитель: ${result.orgName}`,
+                                style: 'mediumText',
+                                margin: [0, 25, 0, 0]
+                            },
+                            {
+                                text: `Заказчик: ${result.payerName}`,
+                                style: 'mediumText',
+                                margin: [0, 25, 0, 0]
+                            },
+                            {
+                                table: {
+                                    headerRows: 1,
+                                    widths: [220, 65, 45, 'auto', '*'],
+                                    body: itemData
+                                },
+                                style: 'mediumText',
+                                margin: [0, 15, 0, 40]
+                            },
+                            {
+                                stack: [
+                                    {
+                                        text: `Всего оказано услуг на сумму ${result.itemTotalStr} руб.`,
+                                        style: 'mediumText'
+                                    },
+                                    {
+                                        text: `${rubles(result.itemTotal)}`,
+                                        style: 'mediumText',
+                                        bold: true
+                                    },
+                                    {
+                                        text: `Вышеперечисленные услуги выполнены полностью и в срок. Заказчик претензий по объему, качеству и срокам оказания услуг не имеет.`,
+                                        style: 'mediumText',
+                                        margin: [0, 25, 0, 0]
+                                    },
+                                    {
+                                        columns: [
+                                            [
+                                                {
+                                                    text: 'ИСПОЛНИТЕЛЬ',
+                                                    bold: true,
+                                                },
+                                                {
+                                                    text: `${result.orgHeadTitle} ${result.orgName}`,
+                                                    margin: [0, 10, 0, 0]
+                                                },
+                                                {
+                                                    text: `${result.orgHeadName}`,
+                                                    margin: [0, 15, 0, 0]
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    text: 'ЗАКАЗЧИК',
+                                                    bold: true,
+                                                },
+                                                {
+                                                    text: `${result.payerName}`,
+                                                    margin: [0, 10, 0, 0]
+                                                },
+                                                {
+                                                    text: '________________________________________',
+                                                    margin: [0, 15, 0, 0]
+                                                }
+                                            ]
+                                        ],
+                                        style: 'mediumText',
+                                        margin: [0, 25, 0, 0]
+                                    }
+                                ],
+                                id: 'NoBreak'
+                            }                       
+                        ],
+
+                        pageBreakBefore: function(currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
+                            if (currentNode.id === 'NoBreak' && currentNode.pageNumbers.length != 1) {
+                              return true;
+                            }
+                            return false;
+                        },                        
+
+                        styles: {
+                            bigText: {
+                                fontSize: 13,
+                                color: '#012659'
+                            },
+                            mediumText: {
+                                fontSize: 10,
+                                color: '#012659'
+                            },
+                            smallText: {
+                                fontSize: 8,
+                                color: '#012659'
+                            },
+                            tableHeader: {
+                                bold: true,
+                                fontSize: 10,
+                                alignment: 'center',
+                                color: '#012659'
+                            }
+                        }
+                    };
+
+                    pdfMake.createPdf(docDefinition).open();
+                },
+                error: function (error) {
+                    console.log(error.message);
+                }
+            });
+        });
+
     $(document).on('click',
         ".createReportPDF2",
         function (e) {
