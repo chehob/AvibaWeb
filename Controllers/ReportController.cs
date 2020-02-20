@@ -519,6 +519,19 @@ namespace AvibaWeb.Controllers
             var queryToDate = toDate ?? currentMonth.AddDays(-1);
             var queryFromDate = fromDate ?? currentMonth.AddMonths(-1);
 
+            var customIncomeList = (from cif in _db.VCustomIncomeInfo
+                    where cif.OperationDateTime >= queryFromDate && cif.OperationDateTime < queryToDate.AddDays(1)
+                    select new
+                    {
+                        cif.GroupId,
+                        cif.Amount
+                    }).GroupBy(ig => ig.GroupId)
+                .Select(g => new
+                {
+                    g.Key,
+                    Amount = g.Sum(ig => ig.Amount)
+                }).ToList();
+
             var KRSList = (from dg in _db.DeskGroups
                            join d in _db.Desks on dg.DeskGroupId equals d.GroupId
                            join info in _db.VServiceReceiptIncomeInfo on d.DeskId equals info.DeskIssuedId
@@ -629,11 +642,12 @@ namespace AvibaWeb.Controllers
                          from cl in CorpLuggageList.Where(c => c.Key == dg.DeskGroupId).DefaultIfEmpty()
                          from e in expenditureList.Where(e => e.Key == dg.DeskGroupId).DefaultIfEmpty()
                          from s in salesList.Where(s => s.Key == dg.DeskGroupId).DefaultIfEmpty()
+                        from cif in customIncomeList.Where(cif => cif.Key == dg.DeskGroupId).DefaultIfEmpty()
                          select new FinalSummaryViewItem
                          {
                              Name = dg.Name,
                              DeskGroupId = dg.DeskGroupId,
-                             IncomeAmount = (k == null ? 0 : k.Amount) + (ct == null ? 0 : ct.Amount) + (cl == null ? 0 : cl.Amount),
+                             IncomeAmount = (k == null ? 0 : k.Amount) + (ct == null ? 0 : ct.Amount) + (cl == null ? 0 : cl.Amount) + (cif == null ? 0 : cif.Amount),
                              ExpenditureAmount = (e == null ? 0 : e.Amount),
                              SalesAmount = (s == null ? 0 : s.Amount)
                          }).ToList()

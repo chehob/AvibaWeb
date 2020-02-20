@@ -17,6 +17,6 @@ namespace AvibaWeb.DomainModels
         public int TicketOpTypeId { get; set; }
         public string Serie { get; set; }
         public int SegCount { get; set; }
-        public int IsFiltered { get; set; }
+        public bool IsFiltered { get; set; }
     }
 }

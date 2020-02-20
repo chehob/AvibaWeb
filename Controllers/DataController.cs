@@ -488,6 +488,9 @@ namespace AvibaWeb.Controllers
                          .FirstOrDefault(a => a.Description == model.Destination.AccountNumber);
             if (financialAccount == null) return new BadRequestResult();
 
+            var corpReceiptPrefixes = _db.Organizations.Where(o => o.CorpReceiptPrefix != null)
+                .Select(o => o.CorpReceiptPrefix.ToLower()).Distinct().ToList();
+
             foreach (var counterpartyGroup in model.CounterpartyGroups)
             {
                 string userId = null;
@@ -604,54 +607,24 @@ namespace AvibaWeb.Controllers
                         {
                             var isUnrecognizedOperation = false;
                             var multiPaymentType = CorporatorReceiptMultiPayment.CRMPType.CorpClient;
-                            if (lowerPaymentDescription.Contains("wr-") || lowerPaymentDescription.Contains("rs-") ||
-                                lowerPaymentDescription.Contains("rg-") || lowerPaymentDescription.Contains("wr -") || 
-                                lowerPaymentDescription.Contains("rs -") || lowerPaymentDescription.Contains("rg -"))
+                            var foundPrefix = corpReceiptPrefixes.FirstOrDefault(p =>
+                                lowerPaymentDescription.Contains(p.ToLower() + "-") ||
+                                lowerPaymentDescription.Contains(p.ToLower() + " -"));
+                            if (!string.IsNullOrEmpty(foundPrefix))
                             {
-                                if (lowerPaymentDescription.Contains("wr -"))
+                                if(lowerPaymentDescription.Contains(foundPrefix + " -"))
                                 {
                                     lowerPaymentDescription = lowerPaymentDescription.Remove(
-                                        Regex.Matches(lowerPaymentDescription, "wr -")[0].Index + 2, 1);
-                                }
-                                else if (lowerPaymentDescription.Contains("rs -"))
-                                {
-                                    lowerPaymentDescription = lowerPaymentDescription.Remove(
-                                        Regex.Matches(lowerPaymentDescription, "rs -")[0].Index + 2, 1);
-                                }
-                                else if (lowerPaymentDescription.Contains("rg -"))
-                                {
-                                    lowerPaymentDescription = lowerPaymentDescription.Remove(
-                                        Regex.Matches(lowerPaymentDescription, "rg -")[0].Index + 2, 1);
+                                        Regex.Matches(lowerPaymentDescription, foundPrefix + " -")[0].Index + 2, 1);
                                 }
 
                                 var foundIndexes = new List<int>();
 
                                 var offset = 3;
-                                var matches = Regex.Matches(lowerPaymentDescription, "wr-");
+                                var matches = Regex.Matches(lowerPaymentDescription, foundPrefix + "-");
                                 foreach (Match match in matches)
                                 {
                                     foundIndexes.Add(match.Index);
-                                }
-
-                                var subGroupId = 1;
-                                if (foundIndexes.Count == 0)
-                                {
-                                    multiPaymentType = CorporatorReceiptMultiPayment.CRMPType.CorpReceipt;
-                                    matches = Regex.Matches(lowerPaymentDescription, "rs-");
-                                    foreach (Match match in matches)
-                                    {
-                                        foundIndexes.Add(match.Index);
-                                    }
-                                }
-
-                                if (foundIndexes.Count == 0)
-                                {
-                                    subGroupId = 2;
-                                    matches = Regex.Matches(lowerPaymentDescription, "rg-");
-                                    foreach (Match match in matches)
-                                    {
-                                        foundIndexes.Add(match.Index);
-                                    }
                                 }
 
                                 if (foundIndexes.Count > 0)
@@ -669,12 +642,26 @@ namespace AvibaWeb.Controllers
                                             int.Parse(new string(receiptStr.Where(char.IsDigit).Take(7).ToArray()));
 
                                         var receipt = _db.CorporatorReceipts
-                                            .FirstOrDefault(cr => cr.ReceiptNumber == receiptNumber &&
-                                                            cr.CorporatorId == operation.CounterpartyId &&
-                                                            ((multiPaymentType == CorporatorReceiptMultiPayment.CRMPType.CorpClient &&
-                                                                cr.TypeId == CorporatorReceipt.CRType.CorpClient) ||
-                                                                (multiPaymentType == CorporatorReceiptMultiPayment.CRMPType.CorpReceipt &&
-                                                                cr.TypeId == CorporatorReceipt.CRType.WebSite && cr.WebSiteSubGroupId == subGroupId)));
+                                            .FirstOrDefault(cr =>
+                                                cr.ReceiptNumber == receiptNumber &&
+                                                cr.CorporatorId == operation.CounterpartyId);
+
+                                        if (receipt != null)
+                                        {
+                                            switch (receipt.TypeId)
+                                            {
+                                                case CorporatorReceipt.CRType.WebSite:
+                                                    multiPaymentType = CorporatorReceiptMultiPayment.CRMPType
+                                                        .CorpReceipt;
+                                                    break;
+                                                case CorporatorReceipt.CRType.CorpClient:
+                                                    multiPaymentType = CorporatorReceiptMultiPayment.CRMPType
+                                                        .CorpClient;
+                                                    break;
+                                                default:
+                                                    throw new ArgumentOutOfRangeException();
+                                            }
+                                        }
 
                                         if (receipt == null)
                                         {

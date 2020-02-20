@@ -131,6 +131,8 @@ namespace AvibaWeb.Models
         public DbSet<LoanExpenditure> LoanExpenditures { get; set; }
         public DbSet<LoanExpenditureOperation> LoanExpenditureOperations { get; set; }
 
+        public DbSet<VCustomIncomeInfo> VCustomIncomeInfo { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

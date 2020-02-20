@@ -1771,6 +1771,22 @@ namespace AvibaWeb.Migrations
                     b.ToTable("VServiceReceiptIncomeInfo");
                 });
 
+            modelBuilder.Entity("AvibaWeb.DomainModels.VCustomIncomeInfo", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
+
+                b.Property<decimal>("Amount");
+
+                b.Property<DateTime>("OperationDateTime");
+
+                b.Property<int>("GroupId");
+
+                b.HasKey("Id");
+
+                b.ToTable("VCustomIncomeInfo");
+            });
+
             modelBuilder.Entity("AvibaWeb.DomainModels.VSessionTypes", b =>
                 {
                     b.Property<Guid>("Id")

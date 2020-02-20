@@ -465,14 +465,7 @@ namespace AvibaWeb.Controllers
 
             office.Balance += expenditure.Amount;
 
-            var operation = new LoanExpenditureOperation
-            {
-                LoanExpenditure = expenditure,
-                OperationDateTime = DateTime.Now,
-                OperationTypeId = LoanExpenditureOperation.LEOType.Cancelled
-            };
-
-            _db.LoanExpenditureOperations.Add(operation);
+            _db.LoanExpenditures.Remove(expenditure);
             await _db.SaveChangesAsync();
 
             return RedirectToAction("LoanExpenditures");

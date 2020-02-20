@@ -225,7 +225,7 @@ namespace AvibaWeb.Controllers
 
             var KRSFilterList = (from info in _db.VServiceReceiptIncomeInfo
                     where info.DateTime >= queryFromDate && info.DateTime < queryToDate.AddDays(1) &&
-                          deskFilter.Contains(info.DeskIssuedId) && info.IsFiltered == 1 && info.Serie == "ТКП"
+                          deskFilter.Contains(info.DeskIssuedId) && info.IsFiltered == true && info.Serie == "ТКП"
                     select new
                     {
                         info.TicketOpTypeId,
