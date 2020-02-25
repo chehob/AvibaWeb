@@ -2579,7 +2579,7 @@ $(document).on('click',
                             {
                                 table: {
                                     headerRows: 1,
-                                    widths: [20, 220, 45, 'auto', 65, '*'],
+                                    widths: [20, 180, 45, 'auto', 55, '*'],
                                     body: feeData
                                 },
                                 style: 'mediumText',
