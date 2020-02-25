@@ -875,6 +875,7 @@ namespace AvibaWeb.Controllers
                      TicketLabel = $"Сервисный сбор за возврат билета\n{item.Route ?? ti.TicketRoute} {ti.BSOLabel}\n{item.PassengerName ?? ti.PassengerName}"
                  }).ToList());
 
+            model.ItemCount = model.Items.Count + model.LuggageItems.Count;
             model.ItemTotal = model.Items.Sum(i => i.Amount) + model.LuggageItems.Sum(i => i.Amount);
             model.ItemTotalStr = model.ItemTotal.ToString("#,0.00", nfi);
             model.SegCountTotal = model.Items.Sum(i => i.SegCount) + model.LuggageItems.Sum(i => i.SegCount);
