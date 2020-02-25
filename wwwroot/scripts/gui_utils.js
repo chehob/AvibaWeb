@@ -2530,7 +2530,7 @@ $(document).on('click',
                     dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
                     dataRow.push({ text: 'Авиабилеты', style: 'smallText' });
                     dataRow.push({ text: result.segCountTotal, alignment: 'center' });
-                    dataRow.push({ text: 'шт.', alignment: 'center' });
+                    dataRow.push({ text: 'полетный сегмент', alignment: 'center' });
                     dataRow.push({ text: '', alignment: 'right' });
                     dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
 
