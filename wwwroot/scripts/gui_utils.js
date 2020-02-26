@@ -1899,7 +1899,7 @@ $(document).on('click',
 
                     dataRow = [];
 
-                    dataRow.push({ text: 'Итого: ', colSpan: 4, alignment: 'right' });
+                    dataRow.push({ text: 'Итого: ', colSpan: 3, alignment: 'right' });
                     dataRow.push({});
                     dataRow.push({});
                     dataRow.push({ text: result.totalAmountStr, alignment: 'right' });
