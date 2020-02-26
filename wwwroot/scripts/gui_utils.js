@@ -1889,36 +1889,20 @@ $(document).on('click',
 
                     var dataRow = [];
                     var itemCount = 0;
-                    result.items.forEach(function (item) {
-                        dataRow = [];
 
-                        itemCount++;
-                        dataRow.push({ text: 'Авиабилеты', style: 'smallText' });
-                        dataRow.push({ text: item.segCount, alignment: 'center' });
-                        dataRow.push({ text: item.amountLabelStr, alignment: 'center' });                        
-                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+                    dataRow.push({ text: 'Авиабилеты', style: 'smallText' });
+                    dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                    dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });                        
+                    dataRow.push({ text: result.totalAmountStr, alignment: 'right' });
 
-                        itemData.push(dataRow);
-                    });
-
-                    result.luggageItems.forEach(function(item) {
-                        dataRow = [];
-    
-                        itemCount++;
-                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
-                        dataRow.push({ text: item.segCount, alignment: 'center' });
-                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
-                        dataRow.push({ text: item.amountStr, alignment: 'right' });
-    
-                        itemData.push(dataRow);
-                    });
+                    itemData.push(dataRow);
 
                     dataRow = [];
 
                     dataRow.push({ text: 'Итого: ', colSpan: 4, alignment: 'right' });
                     dataRow.push({});
                     dataRow.push({});
-                    dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
+                    dataRow.push({ text: result.totalAmountStr, alignment: 'right' });
 
                     itemData.push(dataRow);
 
