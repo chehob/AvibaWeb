@@ -243,9 +243,9 @@ namespace AvibaWeb.Controllers
             var CorpTicketList = (from ti in _db.VReceiptTicketInfo
                     join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
                     join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
-                    where cr.PaidDateTime >= queryFromDate && cr.PaidDateTime < queryToDate.AddDays(1) &&
+                    where cr.IssuedDateTime >= queryFromDate && cr.IssuedDateTime < queryToDate.AddDays(1) &&
                           deskFilter.Contains(ti.DeskId) && sessionFilter.Contains(ti.InfoSession) &&
-                          cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid &&
+                          //cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid &&
                           cr.TypeId == CorporatorReceipt.CRType.CorpClient &&
                           cri.TypeId == CorporatorReceiptItem.CRIType.Ticket
                     select new
@@ -266,9 +266,9 @@ namespace AvibaWeb.Controllers
             var CorpLuggageList = (from ti in _db.VReceiptLuggageInfo
                     join cri in _db.CorporatorReceiptItems on ti.TicketOperationId equals cri.TicketOperationId
                     join cr in _db.CorporatorReceipts on cri.CorporatorReceiptId equals cr.CorporatorReceiptId
-                    where cr.PaidDateTime >= queryFromDate && cr.PaidDateTime < queryToDate.AddDays(1) &&
+                    where cr.IssuedDateTime >= queryFromDate && cr.IssuedDateTime < queryToDate.AddDays(1) &&
                           deskFilter.Contains(ti.DeskId) && sessionFilter.Contains(ti.InfoSession) &&
-                          cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid &&
+                          //cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid &&
                           cr.TypeId == CorporatorReceipt.CRType.CorpClient &&
                           cri.TypeId == CorporatorReceiptItem.CRIType.Luggage
                     select new

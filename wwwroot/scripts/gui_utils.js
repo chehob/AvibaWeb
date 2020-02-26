@@ -1881,7 +1881,6 @@ $(document).on('click',
                     var headerRow = [];
 
                     headerRow.push({ text: 'Наименование', style: 'tableHeader' });
-                    headerRow.push({ text: 'Цена', style: 'tableHeader' });
                     headerRow.push({ text: 'Кол-во', style: 'tableHeader' });
                     headerRow.push({ text: 'Ед. Изм.', style: 'tableHeader' });
                     headerRow.push({ text: 'Сумма', style: 'tableHeader' });
@@ -1894,8 +1893,7 @@ $(document).on('click',
                         dataRow = [];
 
                         itemCount++;
-                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
-                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+                        dataRow.push({ text: 'Авиабилеты', style: 'smallText' });
                         dataRow.push({ text: item.segCount, alignment: 'center' });
                         dataRow.push({ text: item.amountLabelStr, alignment: 'center' });                        
                         dataRow.push({ text: item.amountStr, alignment: 'right' });
@@ -1908,7 +1906,6 @@ $(document).on('click',
     
                         itemCount++;
                         dataRow.push({ text: item.ticketLabel, style: 'smallText' });
-                        dataRow.push({ text: item.amountStr, alignment: 'right' });
                         dataRow.push({ text: item.segCount, alignment: 'center' });
                         dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
                         dataRow.push({ text: item.amountStr, alignment: 'right' });
@@ -1919,7 +1916,6 @@ $(document).on('click',
                     dataRow = [];
 
                     dataRow.push({ text: 'Итого: ', colSpan: 4, alignment: 'right' });
-                    dataRow.push({});
                     dataRow.push({});
                     dataRow.push({});
                     dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
@@ -1991,7 +1987,7 @@ $(document).on('click',
                             {
                                 table: {
                                     headerRows: 1,
-                                    widths: [220, 65, 45, 'auto', '*'],
+                                    widths: [280, 45, 'auto', '*'],
                                     body: itemData
                                 },
                                 style: 'mediumText',
@@ -2009,15 +2005,7 @@ $(document).on('click',
                                             heights: [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
             
                                             body: [
-                                                [`Передал: ${result.orgName}`,`Принял: ${result.payerName}`],
-                                                [`Адрес: ${result.orgAddress}`,`Адрес: ${result.payerAddress}`],
-                                                [`Расчетный счет: ${result.orgFinancialAccount}`,`Расчетный счет: ${result.payerFinancialAccount}`],
-                                                [`Кор. счет: ${result.orgCorrAccount}`,`Кор. счет: ${result.payerCorrAccount}`],
-                                                [`Банк: ${result.orgBankName}`,`Банк: ${result.payerBankName}`],
-                                                [`ИНН: ${result.orgITN}`,`ИНН: ${result.payerITN}`],
-                                                [`КПП: ${result.orgKPP}`,`КПП: ${result.payerKPP}`],
-                                                [`БИК: ${result.orgBIK}`,`БИК: ${result.payerBIK}`],
-                                                [{},{}],
+                                                ['',''],
                                                 [`Сдал             ${result.orgHeadName}`,`Принял ______________________________________`],
                                                 [
                                                     {
