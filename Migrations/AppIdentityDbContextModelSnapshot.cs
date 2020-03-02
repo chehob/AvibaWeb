@@ -1512,6 +1512,8 @@ namespace AvibaWeb.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<DateTime>("DeskCloseTime");
+
                     b.HasKey("Id");
 
                     b.ToTable("VBookingManagementPaycheck");

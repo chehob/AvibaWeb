@@ -213,12 +213,14 @@ namespace AvibaWeb.Controllers
                 {
                     info.Name,
                     info.CheckInDateTime,
+                    info.DeskCloseTime,
                     info.DeskId
                 }).ToList();
 
             var model = new PaycheckOperationsViewModel
             {
                 Items = (from info in sessions
+                    orderby info.CheckInDateTime
                     group info by info.Name
                     into g
                     select new PaycheckOperationsViewItem
@@ -226,7 +228,7 @@ namespace AvibaWeb.Controllers
                         Name = g.Key,
                         CheckIns = g.Select(ig => new PaycheckOperationsCheckInInfo
                         {
-                            CheckInDateTime = ig.CheckInDateTime.ToString("G"),
+                            CheckInDateTime = ig.CheckInDateTime.ToString("G") + " - " + ig.DeskCloseTime.ToString("G"),
                             DeskId = ig.DeskId
                         }).ToList(),
                         Amount = g.Count().ToString()

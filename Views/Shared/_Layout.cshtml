@@ -219,7 +219,7 @@
                             </li>
 
                         }
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Менеджеры"))
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Менеджеры") || User.IsInRole("Офис"))
                         {
                             <li>
                                 <a asp-action="Index" asp-controller="Management"

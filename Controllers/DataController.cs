@@ -513,7 +513,7 @@ namespace AvibaWeb.Controllers
                     var dAmount = decimal.Parse(record.Amount.Replace('.', ',').Replace(" ", string.Empty));
                     var isCashRequest = (record.PaymentDescription.ToLower().Contains("внесение наличных") ||
                                          record.PaymentDescription.ToLower()
-                                             .Contains("поступления от реализации платных услуг") ||
+                                             .Contains("от реализации платных услуг") ||
                                          record.PaymentDescription.ToLower()
                                              .Contains("поступление выручки")) && dAmount > 0;
 

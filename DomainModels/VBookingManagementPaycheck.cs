@@ -13,5 +13,6 @@ namespace AvibaWeb.DomainModels
         public string Name { get; set; }
         public DateTime CheckInDateTime { get; set; }
         public string DeskId { get; set; }
+        public DateTime DeskCloseTime { get; set; }
     }
 }

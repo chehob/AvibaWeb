@@ -400,34 +400,37 @@ namespace AvibaWeb.Controllers
             var corporator = _db.Counterparties.Include(c => c.CorporatorAccount).FirstOrDefault(c => c.ITN == receipt.CorporatorId);
             if (corporator != null)
             {
-                if (model.Items.Count > 0 && 
-                    ((corporator.CorporatorAccount.Balance > 0 &&
-                    corporator.CorporatorAccount.Balance >= receipt.Amount) ||
-                    receipt.Amount < 0))
+                if (corporator.CorporatorAccount != null)
                 {
-                    receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Paid;
-                    receipt.PaidAmount = receipt.Amount;
-                    receipt.PaidDateTime = DateTime.Now;
-                }
-                else if (model.Items.Count > 0 &&
-                    (corporator.CorporatorAccount.Balance > 0 && 
-                    corporator.CorporatorAccount.Balance < receipt.Amount && 
-                    receipt.Amount > 0))
-                {
-                    receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Partial;
-                    receipt.PaidAmount = corporator.CorporatorAccount.Balance;
-                    receipt.PaidDateTime = DateTime.Now;
-                }
-                else
-                {
-                    receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Unpaid;
-                    receipt.PaidAmount = null;
-                    receipt.PaidDateTime = null;
-                }
+                    if (model.Items.Count > 0 &&
+                        ((corporator.CorporatorAccount.Balance > 0 &&
+                          corporator.CorporatorAccount.Balance >= receipt.Amount) ||
+                         receipt.Amount < 0))
+                    {
+                        receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Paid;
+                        receipt.PaidAmount = receipt.Amount;
+                        receipt.PaidDateTime = DateTime.Now;
+                    }
+                    else if (model.Items.Count > 0 &&
+                             (corporator.CorporatorAccount.Balance > 0 &&
+                              corporator.CorporatorAccount.Balance < receipt.Amount &&
+                              receipt.Amount > 0))
+                    {
+                        receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Partial;
+                        receipt.PaidAmount = corporator.CorporatorAccount.Balance;
+                        receipt.PaidDateTime = DateTime.Now;
+                    }
+                    else
+                    {
+                        receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Unpaid;
+                        receipt.PaidAmount = null;
+                        receipt.PaidDateTime = null;
+                    }
 
-                if (model.Items.Count > 0)
-                {
-                    AddCorporatorAccountReceipt(corporator, receipt, receipt.Amount.Value);
+                    if (model.Items.Count > 0)
+                    {
+                        AddCorporatorAccountReceipt(corporator, receipt, receipt.Amount.Value);
+                    }
                 }
             }            
 
