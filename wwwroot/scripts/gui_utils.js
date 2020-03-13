@@ -1248,22 +1248,18 @@ $(document).on('click',
                     styles: {
                         headerWarning: {
                             fontSize: 7,
-                            alignment: 'center',
-                            color: '#012659'
+                            alignment: 'center'
                         },
                         mediumText: {
-                            fontSize: 10,
-                            color: '#012659'
+                            fontSize: 10
                         },
                         smallText: {
-                            fontSize: 8,
-                            color: '#012659'
+                            fontSize: 8
                         },
                         tableHeader: {
                             bold: true,
                             fontSize: 10,
-                            alignment: 'center',
-                            color: '#012659'
+                            alignment: 'center'
                         }
                     }
                 };
@@ -3058,22 +3054,18 @@ $(document).on('click',
 
                         styles: {
                             bigText: {
-                                fontSize: 13,
-                                color: '#012659'
+                                fontSize: 13
                             },
                             mediumText: {
-                                fontSize: 10,
-                                color: '#012659'
+                                fontSize: 10
                             },
                             smallText: {
-                                fontSize: 8,
-                                color: '#012659'
+                                fontSize: 8
                             },
                             tableHeader: {
                                 bold: true,
                                 fontSize: 10,
-                                alignment: 'center',
-                                color: '#012659'
+                                alignment: 'center'
                             }
                         }
                     };
