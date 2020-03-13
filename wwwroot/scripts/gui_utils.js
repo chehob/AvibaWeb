@@ -2855,7 +2855,7 @@ $(document).on('click',
         function (e) {
             e.preventDefault();
             $.ajax({
-                url: "/CorpReceipt/ReceiptUstekPDFData",
+                url: "/CorpReceipt/ReceiptAvibaPDFData",
                 type: "POST",
                 cache: false,
                 data: { id: $(this).closest('tr').find('.receiptId').val() },
@@ -2873,9 +2873,11 @@ $(document).on('click',
                     itemData.push(headerRow);
 
                     var dataRow = [];
+                    var itemCount = 0;
                     result.items.forEach(function (item) {
                         dataRow = [];
 
+                        itemCount++;
                         dataRow.push({ text: item.ticketLabel, style: 'smallText' });
                         dataRow.push({ text: item.amountStr, alignment: 'right' });
                         dataRow.push({ text: item.segCount, alignment: 'center' });
@@ -2896,18 +2898,6 @@ $(document).on('click',
                         dataRow.push({ text: item.amountStr, alignment: 'right' });
     
                         itemData.push(dataRow);
-                    });                    
-
-                    result.taxes.forEach(function(item) {
-                        dataRow = [];
-
-                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
-                        dataRow.push({ text: item.feeStr, alignment: 'right' });                        
-                        dataRow.push({ text: item.segCount, alignment: 'center' });
-                        dataRow.push({ text: item.amountLabelStr, alignment: 'center' });
-                        dataRow.push({ text: item.amountStr, alignment: 'right' });
-    
-                        itemData.push(dataRow);
                     });
 
                     dataRow = [];
@@ -2920,11 +2910,51 @@ $(document).on('click',
 
                     itemData.push(dataRow);
 
+                    const feeData = [];
+
+                    headerRow = [];
+
+                    headerRow.push({ text: '№', style: 'tableHeader' });
+                    headerRow.push({ text: 'Наименование', style: 'tableHeader' });
+                    headerRow.push({ text: 'Кол-во', style: 'tableHeader' });
+                    headerRow.push({ text: 'Ед.', style: 'tableHeader' });
+                    headerRow.push({ text: 'Цена', style: 'tableHeader' });
+                    headerRow.push({ text: 'Сумма', style: 'tableHeader' });
+
+                    feeData.push(headerRow);
+
+                    itemCount = 0;
+                    dataRow = [];
+    
+                    itemCount++;
+                    dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
+                    dataRow.push({ text: 'Авиабилеты', style: 'smallText' });
+                    dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                    dataRow.push({ text: 'полетный сегмент', alignment: 'center' });
+                    dataRow.push({ text: '', alignment: 'right' });
+                    dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
+
+                    feeData.push(dataRow);
+
+                    result.taxes.forEach(function(item) {
+                        dataRow = [];
+    
+                        itemCount++;
+                        dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
+                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
+                        dataRow.push({ text: item.segCount, alignment: 'center' });
+                        dataRow.push({ text: item.amountLabelStr, alignment: 'center' });
+                        dataRow.push({ text: item.feeStr, alignment: 'right' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+    
+                        feeData.push(dataRow);
+                    });
+
                     const docDefinition = {
                         info: {
                             title: 'test',
                         },
-                        content: [                        
+                        content: [                         
                             {
                                 text: `АКТ № ${result.receiptNumber} от ${result.issuedDateTime}`,
                                 style: 'bigText',                                
@@ -2944,20 +2974,34 @@ $(document).on('click',
                             {
                                 table: {
                                     headerRows: 1,
-                                    widths: [220, 65, 45, 'auto', '*'],
-                                    body: itemData
+                                    widths: [20, 180, 45, 'auto', 55, '*'],
+                                    body: feeData
                                 },
                                 style: 'mediumText',
-                                margin: [0, 15, 0, 40]
+                                margin: [0, 35, 0, 0]
+                            },
+                            {
+                                text: `Итого: ${result.totalAmountStr}`,
+                                style: 'mediumText',
+                                alignment: 'right',
+                                bold: true,
+                                margin: [0, 35, 0, 0]
+                            },
+                            {
+                                text: `Без налога (НДС): -`,
+                                style: 'mediumText',
+                                alignment: 'right',
+                                bold: true,
+                                margin: [0, 0, 0, 40]
                             },
                             {
                                 stack: [
                                     {
-                                        text: `Всего оказано услуг на сумму ${result.itemTotalStr} руб.`,
+                                        text: `Всего оказано услуг на сумму ${result.totalAmountStr} руб.`,
                                         style: 'mediumText'
                                     },
                                     {
-                                        text: `${rubles(result.itemTotal)}`,
+                                        text: `${rubles(result.totalAmountStr)}`,
                                         style: 'mediumText',
                                         bold: true
                                     },
