@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AvibaWeb.DomainModels;
@@ -9,6 +10,8 @@ using AvibaWeb.Models;
 using AvibaWeb.ViewModels.BookingManagement;
 using AvibaWeb.ViewModels.CorpReceiptViewModels;
 using AvibaWeb.ViewModels.DataViewModels;
+using DocXToPdfConverter;
+using DocXToPdfConverter.DocXToPdfHandlers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -733,6 +736,59 @@ namespace AvibaWeb.Controllers
             })();
 
             return Json(model);
+        }
+
+        [HttpGet]
+        public IActionResult ReceiptConvertPDFData(int id)
+        {
+            var model = new object();
+
+            var path = _hostingEnvironment.WebRootPath + "/img/reportTemplate/test.docx";
+            var path2 = _hostingEnvironment.WebRootPath + "/img/reportTemplate/" + Guid.NewGuid() + ".pdf";
+
+            var locationOfLibreOfficeSoffice = @"D:\Programs\LibreOfficePortable\App\libreoffice\program\soffice.exe";
+
+            var placeholders = new Placeholders();
+            placeholders.TablePlaceholderStartTag = "==";
+            placeholders.TablePlaceholderEndTag = "==";
+
+            placeholders.TextPlaceholders = new Dictionary<string, string>
+            {
+                {"Name", "Mr. Miller" }
+            };
+
+            placeholders.TablePlaceholders = new List<Dictionary<string, string[]>>
+            {
+
+                new Dictionary<string, string[]>()
+                {
+                    {"Name", new string[]{ "Homer Simpson", "Mr. Burns", "Mr. Smithers" }},
+                }
+            };
+
+            placeholders.ImagePlaceholders = new Dictionary<string, ImageElement>
+            {
+                {
+                    "QRCode",
+                    new ImageElement
+                    {
+                        Dpi = 300,
+                        memStream = StreamHandler.GetFileAsMemoryStream(
+                            _hostingEnvironment.WebRootPath + "/img/corpImages/headerImage.png")
+                    }
+                }
+            };
+
+            var test = new ReportGenerator(locationOfLibreOfficeSoffice);
+
+            //Convert from DOCX to PDF
+            test.Convert(path, path2, placeholders);
+
+            var bytes = System.IO.File.ReadAllBytes(path2);
+            System.IO.File.Delete(path2);
+
+            Response.Headers.Add("Content-Disposition", "inline; filename=test.pdf");
+            return File(bytes, "application/pdf");
         }
 
         [HttpPost]

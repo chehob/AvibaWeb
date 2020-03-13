@@ -20,7 +20,21 @@
            data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
            class="btn btn-primary">Сводка</a>
     }
+    
+@if (User.IsInRole("Administrators"))
+{
+    <button id="createdata">test</button>
+}
 </p>
 
 <div id="results">
 </div>
+
+<script>
+    $('#createdata').click(function (e) {
+        // if using type="submit", this is mandatory
+        e.preventDefault();
+
+        window.open('@Url.Action("ReceiptConvertPDFData", "CorpReceipt", new { id = 0 })', '_blank');
+    });
+</script>
