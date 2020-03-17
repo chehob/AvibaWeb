@@ -43,5 +43,7 @@ namespace AvibaWeb.DomainModels
         public int? _1CUploadDataId { get; set; }
         [ForeignKey("_1CUploadDataId")]
         public virtual _1CUploadData _1CUploadBinding { get; set; }
+
+        public virtual ICollection<CorporatorReceiptTemplate> DocTemplates { get; set; }
     }
 }

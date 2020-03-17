@@ -133,6 +133,8 @@ namespace AvibaWeb.Models
 
         public DbSet<VCustomIncomeInfo> VCustomIncomeInfo { get; set; }
 
+        public DbSet<CorporatorReceiptTemplate> CorporatorReceiptTemplates { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

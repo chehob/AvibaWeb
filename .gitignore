@@ -15,6 +15,7 @@
 /Test/
 /ViewComponents/
 /1c/
+/wwwroot/img/reportTemplate/
 *.dll
 *.pdb
 *.config

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using AvibaWeb.DomainModels;
 using AvibaWeb.Infrastructure;
 using AvibaWeb.Models;
@@ -13,8 +14,11 @@ using AvibaWeb.ViewModels.DataViewModels;
 using DocXToPdfConverter;
 using DocXToPdfConverter.DocXToPdfHandlers;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -26,13 +30,15 @@ namespace AvibaWeb.Controllers
         private readonly AppIdentityDbContext _db;
         private readonly IViewRenderService _viewRenderService;
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IConfiguration _configuration;
 
         public CorpReceiptController(AppIdentityDbContext db, IViewRenderService viewRenderService,
-            IHostingEnvironment hostingEnvironment)
+            IHostingEnvironment hostingEnvironment, IConfiguration configuration)
         {
             _db = db;
             _viewRenderService = viewRenderService;
             _hostingEnvironment = hostingEnvironment;
+            _configuration = configuration;
         }
 
         // GET: /<controller>/
@@ -493,7 +499,7 @@ namespace AvibaWeb.Controllers
             var model = new CorpReceiptsViewModel
             {
                 Items = (from cr in _db.CorporatorReceipts
-                        .Include(c => c.PayeeAccount.Organization)
+                        .Include(c => c.PayeeAccount.Organization).ThenInclude(o => o.DocTemplates)
                     join operation in _db.CorporatorReceiptOperations on cr.CorporatorReceiptId equals operation
                         .CorporatorReceiptId into operations
                     from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
@@ -510,7 +516,8 @@ namespace AvibaWeb.Controllers
                         PayeeBankName = cr.PayeeAccount.BankName,
                         PayerOrgName = cr.Corporator.Name,
                         TotalStr = cr.Amount.Value.ToString("#,0.00", nfi),
-                        Status = cr.StatusId
+                        Status = cr.StatusId,
+                        DocTemplates = cr.PayeeAccount.Organization.DocTemplates.ToList()
                     }).ToList()
             };
 
@@ -533,7 +540,7 @@ namespace AvibaWeb.Controllers
             var model = new CorpReceiptsViewModel
             {
                 Items = (from cr in _db.CorporatorReceipts
-                        .Include(c => c.PayeeAccount.Organization)
+                        .Include(c => c.PayeeAccount.Organization).ThenInclude(o => o.DocTemplates)
                     join operation in _db.CorporatorReceiptOperations on cr.CorporatorReceiptId equals operation
                         .CorporatorReceiptId into operations
                     from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
@@ -551,7 +558,8 @@ namespace AvibaWeb.Controllers
                         PayeeBankName = cr.PayeeAccount.BankName,
                         PayerOrgName = cr.Corporator.Name,
                         TotalStr = cr.Amount.Value.ToString("#,0.00", nfi),
-                        Status = cr.StatusId
+                        Status = cr.StatusId,
+                        DocTemplates = cr.PayeeAccount.Organization.DocTemplates.ToList()
                     }).ToList(),
                 SubGroupId = subGroupId
             };
@@ -739,22 +747,51 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpGet]
-        public IActionResult ReceiptConvertPDFData(int id)
+        public IActionResult CreatePDFFromTemplate(int id, int receiptId)
         {
+            var template = _db.CorporatorReceiptTemplates.FirstOrDefault(crt => crt.CorporatorReceiptTemplateId == id);
+            var receipt = _db.CorporatorReceipts.Include(cr => cr.PayeeAccount).ThenInclude(a => a.Organization)
+                .ThenInclude(o => o.Counterparty)
+                .Include(cr => cr.Corporator)
+                .FirstOrDefault(cr => cr.CorporatorReceiptId == receiptId);
+            if (template == null || receipt == null)
+            {
+                return new EmptyResult();
+            }
+
             var model = new object();
 
-            var path = _hostingEnvironment.WebRootPath + "/img/reportTemplate/test.docx";
+            var path = _hostingEnvironment.WebRootPath + "/img/reportTemplate/" + template.FileName + ".docx";
             var path2 = _hostingEnvironment.WebRootPath + "/img/reportTemplate/" + Guid.NewGuid() + ".pdf";
 
-            var locationOfLibreOfficeSoffice = @"D:\Programs\LibreOfficePortable\App\libreoffice\program\soffice.exe";
+            var locationOfLibreOfficeSoffice = _configuration["LibreOffice:Path"];
 
             var placeholders = new Placeholders();
             placeholders.TablePlaceholderStartTag = "==";
             placeholders.TablePlaceholderEndTag = "==";
 
+            var receiptOperation = _db.CorporatorReceiptOperations
+                .Where(cro => cro.CorporatorReceiptId == receipt.CorporatorReceiptId)
+                .OrderByDescending(cro => cro.OperationDateTime).FirstOrDefault();
+
             placeholders.TextPlaceholders = new Dictionary<string, string>
             {
-                {"Name", "Mr. Miller" }
+                {"PayeeITN", receipt.PayeeAccount.Organization.Counterparty.ITN },
+                {"PayeeKPP", receipt.PayeeAccount.Organization.Counterparty.KPP },
+                {"PayeeName", receipt.PayeeAccount.Organization.Description },
+                {"PayeeAddress", receipt.PayeeAccount.Organization.Counterparty.Address },
+                {"PayeeBankName", receipt.PayeeAccount.OffBankName },
+                {"PayeeAccount", receipt.PayeeAccount.Description },
+                {"PayeeBIK", receipt.PayeeAccount.BIK },
+                {"PayeeCorrAccount", receipt.PayeeAccount.CorrespondentAccount },
+
+                {"ReceiptNumber", receipt.PayeeAccount.Organization.CorpReceiptPrefix + "-" + receipt.ReceiptNumber },
+                {"ReceiptDate", receiptOperation?.OperationDateTime.ToShortDateString() },
+
+                {"PayerITN", receipt.Corporator.ITN },
+                {"PayerKPP", receipt.Corporator.KPP },
+                {"PayerName", receipt.Corporator.Name },
+                {"PayerAddress", receipt.Corporator.Address },
             };
 
             placeholders.TablePlaceholders = new List<Dictionary<string, string[]>>
@@ -769,10 +806,10 @@ namespace AvibaWeb.Controllers
             placeholders.ImagePlaceholders = new Dictionary<string, ImageElement>
             {
                 {
-                    "QRCode",
+                    "AvibaHeader",
                     new ImageElement
                     {
-                        Dpi = 300,
+                        Dpi = 150,
                         memStream = StreamHandler.GetFileAsMemoryStream(
                             _hostingEnvironment.WebRootPath + "/img/corpImages/headerImage.png")
                     }
@@ -787,7 +824,11 @@ namespace AvibaWeb.Controllers
             var bytes = System.IO.File.ReadAllBytes(path2);
             System.IO.File.Delete(path2);
 
-            Response.Headers.Add("Content-Disposition", "inline; filename=test.pdf");
+            var encodedOutputFileName =
+                HttpUtility.UrlEncode($"Счет №{receipt.ReceiptNumber}.pdf", System.Text.Encoding.UTF8)
+                    .Replace("+", " ");
+            
+            Response.Headers.Add("Content-Disposition", $"inline; filename={encodedOutputFileName}");
             return File(bytes, "application/pdf");
         }
 

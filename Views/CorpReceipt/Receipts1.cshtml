@@ -98,8 +98,8 @@
                             <div class="btn-group">
                                 <button class="btn btn-default btn-xs">Документы</button>
                                 <button class="btn dropdown-toggle btn-default btn-xs" data-toggle="dropdown">
-                                    <span
-                                        class="caret"></span></button>
+                                    <span class="caret"></span>
+                                </button>
                                 <ul class="dropdown-menu">
 
                                     <li style="background-color: lightskyblue"><a href="/" class="createSiteReceiptPDF"><i class="glyphicon glyphicon-list-alt"></i> Счет PDF</a></li>
@@ -116,6 +116,19 @@
 
                                 </ul>
                             </div>
+
+                            @*<div class="btn-group">
+                                <button class="btn btn-default btn-xs">Док</button>
+                                <button class="btn dropdown-toggle btn-default btn-xs" data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    @foreach (var template in receipt.DocTemplates)
+                                    {
+                                        <li style="background-color: lightskyblue"><a href="/" class="createPDFFromTemplate" templateId="@template.CorporatorReceiptTemplateId" receiptId="@receipt.ReceiptId"><i class="glyphicon glyphicon-list-alt"></i> @template.Description</a></li>
+                                    }
+                                </ul>
+                            </div>*@
 
                         }
                     </div>
@@ -190,5 +203,16 @@
                 }
             });
         }
+    });
+
+    $('.createPDFFromTemplate').click(function (e) {
+        // if using type="submit", this is mandatory
+        e.preventDefault();
+        
+        var link = '@Url.Action("CreatePDFFromTemplate", "CorpReceipt", new { id = "-1", receiptId = "-2" })';
+        link = link.replace("-1", this.getAttribute("templateId"));
+        link = link.replace("-2", this.getAttribute("receiptId"));
+
+        window.open(link, '_blank');
     });
 </script>

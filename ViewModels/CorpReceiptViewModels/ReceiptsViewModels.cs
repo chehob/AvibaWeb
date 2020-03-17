@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AvibaWeb.DomainModels;
 using static AvibaWeb.DomainModels.CorporatorReceipt;
 
 namespace AvibaWeb.ViewModels.CorpReceiptViewModels
@@ -26,6 +27,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public string PartialStr { get; set; }
         public CRPaymentStatus Status { get; set; }
         public int TicketsToPDFCount { get; set; }
+        public List<CorporatorReceiptTemplate> DocTemplates { get; set; }
     }
 
     public class ReceiptPDFItem
