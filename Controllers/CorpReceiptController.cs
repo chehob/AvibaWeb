@@ -759,8 +759,6 @@ namespace AvibaWeb.Controllers
                 return new EmptyResult();
             }
 
-            var model = new object();
-
             var path = _hostingEnvironment.WebRootPath + "/img/reportTemplate/" + template.FileName + ".docx";
             var path2 = _hostingEnvironment.WebRootPath + "/img/reportTemplate/" + Guid.NewGuid() + ".pdf";
 
@@ -831,6 +829,90 @@ namespace AvibaWeb.Controllers
             Response.Headers.Add("Content-Disposition", $"inline; filename={encodedOutputFileName}");
             return File(bytes, "application/pdf");
         }
+        [HttpGet]
+        public IActionResult CreatePDFFromTemplateTest(int id, int receiptId)
+        {
+            var template = _db.CorporatorReceiptTemplates.FirstOrDefault(crt => crt.CorporatorReceiptTemplateId == id);
+            var receipt = _db.CorporatorReceipts.Include(cr => cr.PayeeAccount).ThenInclude(a => a.Organization)
+                .ThenInclude(o => o.Counterparty)
+                .Include(cr => cr.Corporator)
+                .FirstOrDefault(cr => cr.CorporatorReceiptId == receiptId);
+            if (template == null || receipt == null)
+            {
+                return new EmptyResult();
+            }
+
+            var path = _hostingEnvironment.WebRootPath + "/img/reportTemplate/" + template.FileName + ".docx";
+            var path2 = "C:/deploy/test/" + Guid.NewGuid() + ".pdf";
+
+            var locationOfLibreOfficeSoffice = _configuration["LibreOffice:Path"];
+
+            var placeholders = new Placeholders();
+            placeholders.TablePlaceholderStartTag = "==";
+            placeholders.TablePlaceholderEndTag = "==";
+
+            var receiptOperation = _db.CorporatorReceiptOperations
+                .Where(cro => cro.CorporatorReceiptId == receipt.CorporatorReceiptId)
+                .OrderByDescending(cro => cro.OperationDateTime).FirstOrDefault();
+
+            placeholders.TextPlaceholders = new Dictionary<string, string>
+            {
+                {"PayeeITN", receipt.PayeeAccount.Organization.Counterparty.ITN },
+                {"PayeeKPP", receipt.PayeeAccount.Organization.Counterparty.KPP },
+                {"PayeeName", receipt.PayeeAccount.Organization.Description },
+                {"PayeeAddress", receipt.PayeeAccount.Organization.Counterparty.Address },
+                {"PayeeBankName", receipt.PayeeAccount.OffBankName },
+                {"PayeeAccount", receipt.PayeeAccount.Description },
+                {"PayeeBIK", receipt.PayeeAccount.BIK },
+                {"PayeeCorrAccount", receipt.PayeeAccount.CorrespondentAccount },
+
+                {"ReceiptNumber", receipt.PayeeAccount.Organization.CorpReceiptPrefix + "-" + receipt.ReceiptNumber },
+                {"ReceiptDate", receiptOperation?.OperationDateTime.ToShortDateString() },
+
+                {"PayerITN", receipt.Corporator.ITN },
+                {"PayerKPP", receipt.Corporator.KPP },
+                {"PayerName", receipt.Corporator.Name },
+                {"PayerAddress", receipt.Corporator.Address },
+            };
+
+            placeholders.TablePlaceholders = new List<Dictionary<string, string[]>>
+            {
+
+                new Dictionary<string, string[]>()
+                {
+                    {"Name", new string[]{ "Homer Simpson", "Mr. Burns", "Mr. Smithers" }},
+                }
+            };
+
+            placeholders.ImagePlaceholders = new Dictionary<string, ImageElement>
+            {
+                {
+                    "AvibaHeader",
+                    new ImageElement
+                    {
+                        Dpi = 150,
+                        memStream = StreamHandler.GetFileAsMemoryStream(
+                            _hostingEnvironment.WebRootPath + "/img/corpImages/headerImage.png")
+                    }
+                }
+            };
+
+            var test = new ReportGenerator(locationOfLibreOfficeSoffice);
+
+            //Convert from DOCX to PDF
+            test.Convert(path, path2, placeholders);
+
+            var bytes = System.IO.File.ReadAllBytes(path2);
+            System.IO.File.Delete(path2);
+
+            var encodedOutputFileName =
+                HttpUtility.UrlEncode($"Счет №{receipt.ReceiptNumber}.pdf", System.Text.Encoding.UTF8)
+                    .Replace("+", " ");
+
+            Response.Headers.Add("Content-Disposition", $"inline; filename={encodedOutputFileName}");
+            return File(bytes, "application/pdf");
+        }
+
 
         [HttpPost]
         public IActionResult ReceiptAvibaPDFData(int id)
