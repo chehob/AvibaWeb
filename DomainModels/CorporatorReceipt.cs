@@ -63,6 +63,8 @@ namespace AvibaWeb.DomainModels
 
         public CR1CStatus _1CStatus { get; set; }
 
+        public int VirtualSegCount { get; set; }
+
         public virtual ICollection<CorporatorReceiptItem> Items { get; set; }
 
         public virtual ICollection<CorporatorReceiptOperation> Operations { get; set; }

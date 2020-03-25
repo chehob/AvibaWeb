@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using AvibaWeb.DomainModels;
@@ -252,11 +254,12 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpGet]
-        public IActionResult CreateReceipt(int? id, int subGroupId, bool isMobile = false)
+        public IActionResult CreateReceipt(int? id, int subGroupId, bool isMobile = false, bool isVirtual = false)
         {
             var model = new CreateReceiptViewModel
             {
-                SubGroupId = subGroupId
+                SubGroupId = subGroupId,
+                IsVirtual = isVirtual
             };
 
             if (id != null)
@@ -359,6 +362,7 @@ namespace AvibaWeb.Controllers
                 var receiptOldItems = receipt.Items.ToList();
 
                 if (model.Items != null)
+                {
                     foreach (var i in model.Items)
                     {
                         var item = new CorporatorReceiptItem
@@ -372,16 +376,21 @@ namespace AvibaWeb.Controllers
                             TypeId = i.TypeId
                         };
 
-                        var itemFee = (item.IsPercent ?
-                            item.Amount * item.FeeRate / 100 :
-                            (item.PerSegment ?
-                                i.SegCount * item.FeeRate :
-                                item.FeeRate));
+                        var itemFee = (item.IsPercent
+                            ? item.Amount * item.FeeRate / 100
+                            : (item.PerSegment ? i.SegCount * item.FeeRate : item.FeeRate));
                         receipt.Amount += item.Amount + itemFee;
 
                         receipt.Items.Add(item);
                         viewModelItems.Add(item);
                     }
+                }
+                
+                if (model.VirtualSegCount > 0)
+                {
+                    receipt.VirtualSegCount = model.VirtualSegCount;
+                    receipt.Amount = model.ReceiptTotal;
+                }
 
                 var itemsToRemove = receiptOldItems.Except(viewModelItems);
                 foreach (var i in itemsToRemove)
@@ -404,7 +413,8 @@ namespace AvibaWeb.Controllers
                     Amount = 0,
                     StatusId = model.StatusId,
                     TypeId = CorporatorReceipt.CRType.WebSite,
-                    WebSiteSubGroupId = model.SubGroupId
+                    WebSiteSubGroupId = model.SubGroupId,
+                    VirtualSegCount = model.VirtualSegCount
                 };
 
                 if (model.IssuedDateTime != null)
@@ -437,6 +447,12 @@ namespace AvibaWeb.Controllers
                                 item.SegCount * receiptItem.FeeRate :
                                 receiptItem.FeeRate));
                     receipt.Amount += receiptItem.Amount + itemFee;
+                }
+
+                if (model.VirtualSegCount > 0)
+                {
+                    receipt.VirtualSegCount = model.VirtualSegCount;
+                    receipt.Amount = model.ReceiptTotal;
                 }
 
                 var operation = new CorporatorReceiptOperation
@@ -654,7 +670,8 @@ namespace AvibaWeb.Controllers
                     FeeRateStr = cr.FeeRate.Value.ToString("#,0.00", nfi),
                     IssuedDateTime = operation.OperationDateTime.ToShortDateString(),
                     PaymentTemplateLabelStr = "Образец заполнения назначения платежа:",
-                    PaymentTemplateStr = $"Оплата по счету {cr.PayeeAccount.Organization.CorpReceiptPrefix}-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС"
+                    PaymentTemplateStr = $"Оплата по счету {cr.PayeeAccount.Organization.CorpReceiptPrefix}-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС",
+                    VirtualSegCount = cr.VirtualSegCount
                 }).FirstOrDefault();
 
             //model.Taxes.AddRange(
@@ -714,10 +731,20 @@ namespace AvibaWeb.Controllers
                      TicketLabel = $"Сервисный сбор за возврат билета\n{item.Route ?? ti.TicketRoute} {ti.BSOLabel}\n{item.PassengerName ?? ti.PassengerName}"
                  }).ToList());
 
-            model.ItemTotal = model.Items.Sum(i => i.Amount) + model.LuggageItems.Sum(i => i.Amount);
+            if (model.VirtualSegCount > 0)
+            {
+                model.SegCountTotal = model.VirtualSegCount;
+                model.FeeTotal = model.FeeRate * model.VirtualSegCount;
+                model.ItemTotal = model.TotalAmount - model.FeeTotal;
+            }
+            else
+            {
+                model.ItemTotal = model.Items.Sum(i => i.Amount) + model.LuggageItems.Sum(i => i.Amount);
+                model.SegCountTotal = model.Items.Sum(i => i.SegCount) + model.LuggageItems.Sum(i => i.SegCount);
+                model.FeeTotal = model.Taxes.Sum(t => t.Amount);
+            }
+
             model.ItemTotalStr = model.ItemTotal.ToString("#,0.00", nfi);
-            model.SegCountTotal = model.Items.Sum(i => i.SegCount) + model.LuggageItems.Sum(i => i.SegCount);
-            model.FeeTotal = model.Taxes.Sum(t => t.Amount);
             model.FeeTotalStr = model.FeeTotal.ToString("#,0.00", nfi);
             model.TotalAmountStr = model.TotalAmount.ToString("#,0.00", nfi);
             model.SignatureImage = new Func<string>(() =>
@@ -843,7 +870,9 @@ namespace AvibaWeb.Controllers
             }
 
             var path = _hostingEnvironment.WebRootPath + "/img/reportTemplate/" + template.FileName + ".docx";
-            var path2 = "C:/deploy/test/" + Guid.NewGuid() + ".pdf";
+            var outputFile = _hostingEnvironment.WebRootPath + "/img/reportTemplate/" + Guid.NewGuid();
+            var path2 = outputFile + ".pdf";
+            //var path2 = "C:/deploy/test/" + Guid.NewGuid() + ".pdf";
 
             var locationOfLibreOfficeSoffice = _configuration["LibreOffice:Path"];
 
@@ -994,7 +1023,8 @@ namespace AvibaWeb.Controllers
                              FeeRateStr = cr.FeeRate.Value.ToString("#,0.00", nfi),
                              IssuedDateTime = operation.OperationDateTime.ToShortDateString(),
                              PaymentTemplateLabelStr = "Образец заполнения назначения платежа:",
-                             PaymentTemplateStr = $"Оплата по счету {cr.PayeeAccount.Organization.CorpReceiptPrefix}-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС"
+                             PaymentTemplateStr = $"Оплата по счету {cr.PayeeAccount.Organization.CorpReceiptPrefix}-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС",
+                             VirtualSegCount = cr.VirtualSegCount
                          }).FirstOrDefault();
 
             //model.Taxes.AddRange(
@@ -1054,11 +1084,22 @@ namespace AvibaWeb.Controllers
                      TicketLabel = $"Сервисный сбор за возврат билета\n{item.Route ?? ti.TicketRoute} {ti.BSOLabel}\n{item.PassengerName ?? ti.PassengerName}"
                  }).ToList());
 
-            model.ItemCount = model.Items.Count + model.LuggageItems.Count;
-            model.ItemTotal = model.Items.Sum(i => i.Amount) + model.LuggageItems.Sum(i => i.Amount);
+            if (model.VirtualSegCount > 0)
+            {
+                model.SegCountTotal = model.VirtualSegCount;
+                model.FeeTotal = model.FeeRate * model.VirtualSegCount;
+                model.ItemTotal = model.TotalAmount - model.FeeTotal;
+                model.ItemCount = 1;
+            }
+            else
+            {
+                model.ItemCount = model.Items.Count + model.LuggageItems.Count;
+                model.ItemTotal = model.Items.Sum(i => i.Amount) + model.LuggageItems.Sum(i => i.Amount);
+                model.SegCountTotal = model.Items.Sum(i => i.SegCount) + model.LuggageItems.Sum(i => i.SegCount);
+                model.FeeTotal = model.Taxes.Sum(t => t.Amount);
+            }
+
             model.ItemTotalStr = model.ItemTotal.ToString("#,0.00", nfi);
-            model.SegCountTotal = model.Items.Sum(i => i.SegCount) + model.LuggageItems.Sum(i => i.SegCount);
-            model.FeeTotal = model.Taxes.Sum(t => t.Amount);
             model.FeeTotalStr = model.FeeTotal.ToString("#,0.00", nfi);
             model.TotalAmountStr = model.TotalAmount.ToString("#,0.00", nfi);
             model.SignatureImage = new Func<string>(() =>
@@ -1167,7 +1208,8 @@ namespace AvibaWeb.Controllers
                              FeeRateStr = cr.FeeRate.Value.ToString("#,0.00", nfi),
                              IssuedDateTime = operation.OperationDateTime.ToShortDateString(),
                              PaymentTemplateLabelStr = "Образец заполнения назначения платежа:",
-                             PaymentTemplateStr = $"Оплата по счету {cr.PayeeAccount.Organization.CorpReceiptPrefix}-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС"
+                             PaymentTemplateStr = $"Оплата по счету {cr.PayeeAccount.Organization.CorpReceiptPrefix}-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС",
+                             VirtualSegCount = cr.VirtualSegCount
                          }).FirstOrDefault();
 
             var luggageTaxes = (from item in _db.CorporatorReceiptItems
@@ -1211,10 +1253,20 @@ namespace AvibaWeb.Controllers
                      TicketLabel = $"Сервисный сбор за возврат билета\n{item.Route ?? ti.TicketRoute} {ti.BSOLabel}\n{item.PassengerName ?? ti.PassengerName}"
                  }).ToList());
 
-            model.ItemTotal = model.Items.Sum(i => i.Amount) + model.LuggageItems.Sum(i => i.Amount) + model.Taxes.Sum(t => t.Amount);
+            if (model.VirtualSegCount > 0)
+            {
+                model.SegCountTotal = model.VirtualSegCount;
+                model.FeeTotal = model.FeeRate * model.VirtualSegCount;
+                model.ItemTotal = model.TotalAmount - model.FeeTotal;
+            }
+            else
+            {
+                model.ItemTotal = model.Items.Sum(i => i.Amount) + model.LuggageItems.Sum(i => i.Amount) + model.Taxes.Sum(t => t.Amount);
+                model.SegCountTotal = model.Items.Sum(i => i.SegCount) + model.LuggageItems.Sum(i => i.SegCount);
+                model.FeeTotal = model.Taxes.Sum(t => t.Amount);
+            }
+
             model.ItemTotalStr = model.ItemTotal.ToString("#,0.00", nfi);
-            model.SegCountTotal = model.Items.Sum(i => i.SegCount) + model.LuggageItems.Sum(i => i.SegCount);
-            model.FeeTotal = model.Taxes.Sum(t => t.Amount);
             model.FeeTotalStr = model.FeeTotal.ToString("#,0.00", nfi);
             model.TotalAmountStr = model.TotalAmount.ToString("#,0.00", nfi);
             model.SignatureImage = new Func<string>(() =>

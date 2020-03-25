@@ -96,5 +96,6 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public string PaymentTemplateStr { get; set; }
         public string HeaderImage { get; set; }
         public int ItemCount { get; set; }
+        public int VirtualSegCount { get; set; }
     }
 }

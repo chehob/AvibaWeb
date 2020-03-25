@@ -1802,6 +1802,19 @@ $(document).on('click',
                         itemData.push(dataRow);
                     });
 
+                    if(result.items.length == 0 && result.luggageItems.length == 0) {
+                        dataRow = [];
+    
+                        itemCount++;
+                        dataRow.push({ text: 'Авиабилеты', style: 'smallText' });
+                        dataRow.push({ text: result.itemTotalStr, alignment: 'center' });
+                        dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                        dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
+    
+                        itemData.push(dataRow);
+                    }
+
                     dataRow = [];
 
                     dataRow.push({ text: 'Итого: ', colSpan: 4, alignment: 'right' });
@@ -1839,6 +1852,19 @@ $(document).on('click',
     
                         feeData.push(dataRow);
                     });
+
+                    if(result.taxes.length == 0) {
+                        dataRow = [];
+
+                        dataRow.push({ text: '1', alignment: 'center' });
+                        dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
+                        dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                        dataRow.push({ text: 'шт.', alignment: 'center' });
+                        dataRow.push({ text: result.feeRateStr, alignment: 'right' });
+                        dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
+
+                        feeData.push(dataRow);
+                    }
 
                     const docDefinition = {
                         info: {
@@ -2076,7 +2102,7 @@ $(document).on('click',
                     dataRow.push({ text: 'Авиабилеты', style: 'smallText' });
                     dataRow.push({ text: result.segCountTotal, alignment: 'center' });
                     dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });                        
-                    dataRow.push({ text: result.totalAmountStr, alignment: 'right' });
+                    dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
 
                     itemData.push(dataRow);
 
@@ -2116,6 +2142,19 @@ $(document).on('click',
     
                         feeData.push(dataRow);
                     });
+
+                    if(result.taxes.length == 0) {
+                        dataRow = [];
+
+                        dataRow.push({ text: '1', alignment: 'center' });
+                        dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
+                        dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                        dataRow.push({ text: 'шт.', alignment: 'center' });
+                        dataRow.push({ text: result.feeRateStr, alignment: 'right' });
+                        dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
+
+                        feeData.push(dataRow);
+                    }
 
                     const docDefinition = {
                         info: {
@@ -2368,6 +2407,19 @@ $(document).on('click',
                         itemData.push(dataRow);
                     });
 
+                    if(result.items.length == 0 && result.luggageItems.length == 0) {
+                        dataRow = [];
+    
+                        itemCount++;
+                        dataRow.push({ text: 'Авиабилеты', style: 'smallText' });
+                        dataRow.push({ text: result.itemTotalStr, alignment: 'center' });
+                        dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                        dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
+    
+                        itemData.push(dataRow);
+                    }
+
                     dataRow = [];
 
                     dataRow.push({ text: 'Итого: ', colSpan: 4, alignment: 'right' });
@@ -2405,6 +2457,19 @@ $(document).on('click',
     
                         feeData.push(dataRow);
                     });
+
+                    if(result.taxes.length == 0) {
+                        dataRow = [];
+
+                        dataRow.push({ text: '1', alignment: 'center' });
+                        dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
+                        dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                        dataRow.push({ text: 'шт.', alignment: 'center' });
+                        dataRow.push({ text: result.feeRateStr, alignment: 'right' });
+                        dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
+
+                        feeData.push(dataRow);
+                    }
 
                     const docDefinition = {
                         info: {
@@ -2655,6 +2720,19 @@ $(document).on('click',
                         itemData.push(dataRow);
                     });
 
+                    if(result.items.length == 0 && result.luggageItems.length == 0) {
+                        dataRow = [];
+    
+                        itemCount++;
+                        dataRow.push({ text: 'Авиабилеты', style: 'smallText' });
+                        dataRow.push({ text: result.itemTotalStr, alignment: 'center' });
+                        dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                        dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
+    
+                        itemData.push(dataRow);
+                    }
+
                     dataRow = [];
 
                     dataRow.push({ text: 'Итого: ', colSpan: 4, alignment: 'right' });
@@ -2704,6 +2782,19 @@ $(document).on('click',
     
                         feeData.push(dataRow);
                     });
+
+                    if(result.taxes.length == 0) {
+                        dataRow = [];
+
+                        dataRow.push({ text: '1', alignment: 'center' });
+                        dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
+                        dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                        dataRow.push({ text: 'шт.', alignment: 'center' });
+                        dataRow.push({ text: result.feeRateStr, alignment: 'right' });
+                        dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
+
+                        feeData.push(dataRow);
+                    }
 
                     const docDefinition = {
                         info: {
@@ -2896,6 +2987,19 @@ $(document).on('click',
                         itemData.push(dataRow);
                     });
 
+                    if(result.items.length == 0 && result.luggageItems.length == 0) {
+                        dataRow = [];
+    
+                        itemCount++;
+                        dataRow.push({ text: 'Авиабилеты', style: 'smallText' });
+                        dataRow.push({ text: result.itemTotalStr, alignment: 'center' });
+                        dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                        dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
+    
+                        itemData.push(dataRow);
+                    }
+
                     dataRow = [];
 
                     dataRow.push({ text: 'Итого: ', colSpan: 4, alignment: 'right' });
@@ -2945,6 +3049,19 @@ $(document).on('click',
     
                         feeData.push(dataRow);
                     });
+
+                    if(result.taxes.length == 0) {
+                        dataRow = [];
+
+                        dataRow.push({ text: '1', alignment: 'center' });
+                        dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
+                        dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                        dataRow.push({ text: 'шт.', alignment: 'center' });
+                        dataRow.push({ text: result.feeRateStr, alignment: 'right' });
+                        dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
+
+                        feeData.push(dataRow);
+                    }
 
                     const docDefinition = {
                         info: {
@@ -3129,6 +3246,19 @@ $(document).on('click',
                         itemData.push(dataRow);
                     });
 
+                    if(result.items.length == 0 && result.luggageItems.length == 0) {
+                        dataRow = [];
+    
+                        itemCount++;
+                        dataRow.push({ text: 'Авиабилеты', style: 'smallText' });
+                        dataRow.push({ text: result.itemTotalStr, alignment: 'center' });
+                        dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                        dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
+    
+                        itemData.push(dataRow);
+                    }
+
                     dataRow = [];
 
                     dataRow.push({ text: 'Итого: ', colSpan: 4, alignment: 'right' });
@@ -3166,6 +3296,19 @@ $(document).on('click',
     
                         feeData.push(dataRow);
                     });
+
+                    if(result.taxes.length == 0) {
+                        dataRow = [];
+
+                        dataRow.push({ text: '1', alignment: 'center' });
+                        dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
+                        dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                        dataRow.push({ text: 'шт.', alignment: 'center' });
+                        dataRow.push({ text: result.feeRateStr, alignment: 'right' });
+                        dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
+
+                        feeData.push(dataRow);
+                    }
                     
                     // dataRow = [];
 

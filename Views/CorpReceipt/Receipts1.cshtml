@@ -6,6 +6,9 @@
 <a asp-action="CreateReceipt" asp-controller="CorpReceipt" asp-route-subGroupId="@Model.SubGroupId"
    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
    class="btn btn-primary"><i class="glyphicon glyphicon-plus">&nbsp;</i>Создать счет</a>
+<a asp-action="CreateReceipt" asp-controller="CorpReceipt" asp-route-subGroupId="@Model.SubGroupId" asp-route-isVirtual="true"
+   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+   class="btn btn-primary"><i class="glyphicon glyphicon-plus">&nbsp;</i>Создать счет 2</a>
 
 <table class="table table-bordered bootstrap-datatable datatable" id="dataTable">
     <thead>
@@ -40,7 +43,7 @@
                         break;
                 }">
                 <td style="width: 70px;">
-                    @Html.HiddenFor(m => receipt.ReceiptId, new {@class = "receiptId"})
+                    @Html.HiddenFor(m => receipt.ReceiptId, new { @class = "receiptId" })
                     <a asp-action="CreateReceipt" asp-controller="CorpReceipt" asp-route-id="@receipt.ReceiptId"
                        asp-route-subGroupId="@Model.SubGroupId"
                        data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
@@ -65,11 +68,11 @@
                                 break;
 
                             case CorporatorReceipt.CRPaymentStatus.Partial:
-                                
+
                                 break;
 
                             case CorporatorReceipt.CRPaymentStatus.Paid:
-                                
+
                                 <span>@receipt.PaidDateTime</span>
                                 break;
                         }
