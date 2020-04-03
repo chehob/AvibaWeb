@@ -1688,6 +1688,28 @@ namespace AvibaWeb.Migrations
                     b.ToTable("VIncomeKRS");
                 });
 
+            modelBuilder.Entity("AvibaWeb.DomainModels.VLogData", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
+
+                b.Property<DateTime>("OperationDate");
+
+                b.Property<string>("Description");
+
+                b.Property<string>("Category");
+
+                b.Property<decimal>("OldBalance");
+
+                b.Property<decimal>("Delta");
+
+                b.Property<decimal>("NewBalance");
+
+                b.HasKey("Id");
+
+                b.ToTable("VLogData");
+            });
+
             modelBuilder.Entity("AvibaWeb.DomainModels.VKRSCancelRequest", b =>
                 {
                     b.Property<Guid>("Id")

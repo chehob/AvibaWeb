@@ -1,5 +1,5 @@
-﻿@using AvibaWeb.DomainModels
-@model TransitAccountDebit
+﻿@using AvibaWeb.ViewModels.TransitViewModels
+@model CreateDebitViewModel
 
 <div class="box col-md-10">
     <div class="box-inner" style="margin-top:-10px;">
@@ -9,16 +9,18 @@
         <div class="box-content">
             <form asp-controller="Transit" asp-action="Debit"
                   data-ajax="true" data-ajax-method="post" data-ajax-mode="replace" data-ajax-update="#contentResults">
+                @Html.HiddenFor(m => m.IsEditBalance)
+
                 <div class="row">
-                    @Html.LabelFor(m => m.Amount, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.Debit.Amount, new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
-                        <input asp-for="Amount" class="form-control" value="" />
+                        <input asp-for="@Model.Debit.Amount" class="form-control input-numeral" value="" />
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.Comment, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.Debit.Comment, new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
-                        <input asp-for="Comment" class="form-control" value="" />
+                        <input asp-for="@Model.Debit.Comment" class="form-control" value="" />
                     </div>
                 </div>
                 @Html.ValidationSummary("", new { @class = "text-danger" })
@@ -32,4 +34,9 @@
                 </div>
             </form></div></div></div>
 
+<script>
+    $(function() {
+        initCleave();
+    });
+</script>
 

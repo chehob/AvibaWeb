@@ -135,6 +135,8 @@ namespace AvibaWeb.Models
 
         public DbSet<CorporatorReceiptTemplate> CorporatorReceiptTemplates { get; set; }
 
+        public DbSet<VLogData> VLogData { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

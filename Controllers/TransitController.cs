@@ -42,13 +42,18 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpGet]
-        public IActionResult Debit()
+        public IActionResult Debit(bool isEdit = false)
         {
-            return PartialView();
+            var model = new CreateDebitViewModel
+            {
+                Debit = new TransitAccountDebit(),
+                IsEditBalance = isEdit
+            };
+            return PartialView(model);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Debit(TransitAccountDebit debit)
+        public async Task<ActionResult> Debit(CreateDebitViewModel model)
         {
             var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
 
@@ -59,35 +64,43 @@ namespace AvibaWeb.Controllers
             var account = _db.TransitAccounts.FirstOrDefault();
             if (account == null) return RedirectToAction("Index", "Expenditure");
 
-            user.Balance -= debit.Amount;
-            account.Balance += debit.Amount;
-
-            debit.Account = account;
-            debit.OperationDateTime = DateTime.Now;
-
-            var collection = new Collection
+            if (!model.IsEditBalance)
             {
-                Amount = debit.Amount,
-                ProviderId = user.Id,
-                CollectorId = office.Id
-            };
+                user.Balance -= model.Debit.Amount;
+            }
 
-            var operation = new CollectionOperation
+            account.Balance += model.Debit.Amount;
+
+            model.Debit.Account = account;
+            model.Debit.OperationDateTime = DateTime.Now;
+
+            if (!model.IsEditBalance)
             {
-                Collection = collection,
-                OperationDateTime = DateTime.Now,
-                OperationTypeId = CollectionOperationType.COType.Accepted
-            };
+                var collection = new Collection
+                {
+                    Amount = model.Debit.Amount,
+                    ProviderId = user.Id,
+                    CollectorId = office.Id
+                };
 
-            _db.CollectionOperations.Add(operation);
-            _db.TransitAccountDebits.Add(debit);
+                var operation = new CollectionOperation
+                {
+                    Collection = collection,
+                    OperationDateTime = DateTime.Now,
+                    OperationTypeId = CollectionOperationType.COType.Accepted
+                };
+
+                _db.CollectionOperations.Add(operation);
+            }
+
+            _db.TransitAccountDebits.Add(model.Debit);
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Expenditure");
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
-        public IActionResult CreateCredit(int? id)
+        public IActionResult CreateCredit(int? id, bool isEdit = false)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
@@ -102,7 +115,8 @@ namespace AvibaWeb.Controllers
                     LoanGroupId = id,
                     Account = account
                 },
-                TransitBalance = _db.TransitAccounts.FirstOrDefault().Balance.ToString("#,0.00", nfi)
+                TransitBalance = _db.TransitAccounts.FirstOrDefault().Balance.ToString("#,0.00", nfi),
+                IsEditBalance = isEdit
             };
             return PartialView(model);
         }
@@ -118,13 +132,16 @@ namespace AvibaWeb.Controllers
             var loanGroup = _db.LoanGroups.FirstOrDefault(g => g.LoanGroupId == model.Credit.LoanGroupId);
             
             account.Balance -= model.Credit.AccountAmount;
-            if (loanGroup == null)
+            if (!model.IsEditBalance)
             {
-                user.Balance += model.Credit.AccountAmount;
-            }
-            else
-            {
-                loanGroup.Balance += model.Credit.AccountAmount + model.Credit.AddAmount;
+                if (loanGroup == null)
+                {
+                    user.Balance += model.Credit.AccountAmount;
+                }
+                else
+                {
+                    loanGroup.Balance += model.Credit.AccountAmount + model.Credit.AddAmount;
+                }
             }
 
             model.Credit.LoanGroup = loanGroup;

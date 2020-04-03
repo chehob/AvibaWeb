@@ -23,6 +23,8 @@ namespace AvibaWeb.ViewModels.TransitViewModels
     {
         public string TransitBalance { get; set; }
 
+        public bool IsEditBalance { get; set; }
+
         public TransitAccountCredit Credit { get; set; }
     }
 }

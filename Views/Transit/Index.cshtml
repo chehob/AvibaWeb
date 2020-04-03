@@ -25,6 +25,12 @@
             <i class="glyphicon glyphicon-arrow-left"></i>
             Вернуть
         </a>
+        <a asp-action="Debit" asp-controller="Transit"
+           data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+           asp-route-isEdit="true"
+           class="btn btn-danger">
+            Корректировка
+        </a>
     </div>
     <div class="box col-md-2 text-right">
         <a asp-action="LoanGroups" asp-controller="Admin"

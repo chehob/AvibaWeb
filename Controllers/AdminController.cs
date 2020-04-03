@@ -1651,6 +1651,40 @@ namespace AvibaWeb.Controllers
         }
         #endregion
 
+        #region Log
+
+        [HttpGet]
+        public IActionResult Log(DateTime? fromDate, DateTime? toDate)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var queryToDate = toDate ?? DateTime.Now;
+            var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
+
+            var model = new LogViewModel
+            {
+                FromDate = queryFromDate.ToString("d"),
+                ToDate = queryToDate.ToString("d"),
+                Records =
+                    (from ld in _db.VLogData
+                        where ld.OperationDateTime.Date >= queryFromDate && ld.OperationDateTime.Date <= queryToDate
+                        orderby ld.OperationDateTime descending
+                        select new LogData
+                        {
+                            OperationDateTime = ld.OperationDateTime.ToString("G"),
+                            Description = ld.Description,
+                            CategoryStr = ld.Category,
+                            OldBalance = ld.OldBalance.ToString("#,0.00", nfi),
+                            Delta = ld.Delta.ToString("#,0.00", nfi),
+                            NewBalance = ld.NewBalance.ToString("#,0.00", nfi)
+                        }).ToList()
+            };
+
+            return PartialView(model);
+        }
+        #endregion
+
         #region Helpers
         private void AddErrors(IdentityResult result)
         {
