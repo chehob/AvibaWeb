@@ -1,4 +1,5 @@
-﻿using AvibaWeb.DomainModels;
+﻿using System.Data.SqlClient;
+using AvibaWeb.DomainModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -158,6 +159,12 @@ namespace AvibaWeb.Models
                 .HasForeignKey(e => e.UserId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.SetNull);
+        }
+
+        public virtual void SetUserContext(string userId)
+        {
+            var idParam = new SqlParameter("@userId", userId);
+            Database.ExecuteSqlCommand("SetUserContext @userId", idParam);
         }
     }
 }

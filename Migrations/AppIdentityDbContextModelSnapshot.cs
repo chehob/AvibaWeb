@@ -1705,6 +1705,8 @@ namespace AvibaWeb.Migrations
 
                 b.Property<decimal>("NewBalance");
 
+                b.Property<string>("ModifiedBy");
+
                 b.HasKey("Id");
 
                 b.ToTable("VLogData");

@@ -26,5 +26,6 @@ namespace AvibaWeb.ViewModels.AdminViewModels
         public string OldBalance { get; set; }
         public string Delta { get; set; }
         public string NewBalance { get; set; }
+        public string ModifiedBy { get; set; }
     }
 }

@@ -16,5 +16,6 @@ namespace AvibaWeb.DomainModels
         public decimal OldBalance { get; set; }
         public decimal Delta { get; set; }
         public decimal NewBalance { get; set; }
+        public string ModifiedBy { get; set; }
     }
 }

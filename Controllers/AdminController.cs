@@ -1677,7 +1677,8 @@ namespace AvibaWeb.Controllers
                             CategoryStr = ld.Category,
                             OldBalance = ld.OldBalance.ToString("#,0.00", nfi),
                             Delta = ld.Delta.ToString("#,0.00", nfi),
-                            NewBalance = ld.NewBalance.ToString("#,0.00", nfi)
+                            NewBalance = ld.NewBalance.ToString("#,0.00", nfi),
+                            ModifiedBy = ld.ModifiedBy
                         }).ToList()
             };
 

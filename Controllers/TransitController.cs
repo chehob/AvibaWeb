@@ -74,6 +74,9 @@ namespace AvibaWeb.Controllers
             model.Debit.Account = account;
             model.Debit.OperationDateTime = DateTime.Now;
 
+            using (var transaction = await _db.Database.BeginTransactionAsync())
+            {
+                
             if (!model.IsEditBalance)
             {
                 var collection = new Collection
@@ -93,8 +96,12 @@ namespace AvibaWeb.Controllers
                 _db.CollectionOperations.Add(operation);
             }
 
-            _db.TransitAccountDebits.Add(model.Debit);
-            await _db.SaveChangesAsync();
+                _db.TransitAccountDebits.Add(model.Debit);
+                _db.SetUserContext(user.Id);
+                await _db.SaveChangesAsync();
+
+                transaction.Commit();
+            }
 
             return RedirectToAction("Index");
         }
@@ -154,8 +161,14 @@ namespace AvibaWeb.Controllers
                 OperationTypeId = TransitAccountCreditOperation.TACOType.New
             };
 
-            _db.TransitAccountCreditOperations.Add(operation);
-            await _db.SaveChangesAsync();
+            using (var transaction = await _db.Database.BeginTransactionAsync())
+            {
+                _db.SetUserContext(user.Id);
+                _db.TransitAccountCreditOperations.Add(operation);
+                await _db.SaveChangesAsync();
+
+                transaction.Commit();
+            }
 
             return RedirectToAction("Index");
         }
