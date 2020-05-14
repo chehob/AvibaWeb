@@ -1,4 +1,5 @@
 ﻿@using AvibaWeb.ViewModels.CorpReceiptViewModels
+@using AvibaWeb.ViewModels.RevenueViewModels
 @using static AvibaWeb.DomainModels.CorporatorReceipt
 @model CreateReceiptViewModel
 
@@ -62,11 +63,11 @@
                 {
                     <div class="col-md-6">
                         <label for="virtualSegCount">Кол-во сегментов:</label>
-                        <input type="text" id="virtualSegCount" />
+                        <input type="text" id="virtualSegCount" value="@Model.Receipt.VirtualSegCount" />
                     </div>
                     <div class="col-md-10">
                         <label for="virtualTotal">Сумма счета:</label>
-                        <input type="text" id="virtualTotal" />
+                        <input type="text" id="virtualTotal" value="@Model.Receipt.VirtualAmount"  />
                     </div>
                 }
 
@@ -377,7 +378,7 @@
             SubGroupId: @Model.SubGroupId,
             @if (Model.IsVirtual)
             {
-                @:ReceiptTotal: $("#virtualTotal").val(),
+                @:ReceiptTotal: $("#virtualTotal").val().replace(',','.'),
                 @:VirtualSegCount: $("#virtualSegCount").val()
             }
         };

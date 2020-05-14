@@ -175,8 +175,16 @@ namespace AvibaWeb.Controllers
                 OperationTypeId = CollectionOperationType.COType.Accepted
             };
 
-            _db.CollectionOperations.Add(operation);
-            await _db.SaveChangesAsync();
+            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+
+            using (var transaction = await _db.Database.BeginTransactionAsync())
+            {
+                _db.CollectionOperations.Add(operation);
+                _db.SetUserContext(user.Id);
+                await _db.SaveChangesAsync();
+
+                transaction.Commit();
+            }
 
             return RedirectToAction("IncomingCollections");
         }
@@ -234,8 +242,16 @@ namespace AvibaWeb.Controllers
                 OperationTypeId = CollectionOperationType.COType.New
             };
 
-            _db.CollectionOperations.Add(operation);
-            await _db.SaveChangesAsync();
+            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+
+            using (var transaction = await _db.Database.BeginTransactionAsync())
+            {
+                _db.CollectionOperations.Add(operation);
+                _db.SetUserContext(user.Id);
+                await _db.SaveChangesAsync();
+
+                transaction.Commit();
+            }
 
             return RedirectToAction("AcceptedCollections");
         }

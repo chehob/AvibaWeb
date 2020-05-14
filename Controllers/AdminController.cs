@@ -1148,7 +1148,16 @@ namespace AvibaWeb.Controllers
                 account.Balance = model.Balance;
                 account.IsActive = model.IsActive;
 
-                await _db.SaveChangesAsync();
+                var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+
+                using (var transaction = await _db.Database.BeginTransactionAsync())
+                {
+                    _db.SetUserContext(user.Id);
+                    await _db.SaveChangesAsync();
+
+                    transaction.Commit();
+                }
+
                 return RedirectToAction("Organizations");
             }
 

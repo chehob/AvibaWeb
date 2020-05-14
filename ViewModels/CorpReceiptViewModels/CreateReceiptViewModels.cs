@@ -37,6 +37,8 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public string PaidDateTime { get; set; }
         public string ReceiptNumber { get; set; }
         public CRPaymentStatus StatusId { get; set; }
+        public string VirtualSegCount { get; set; }
+        public string VirtualAmount { get; set; }
     }
 
     public class ReceiptItem

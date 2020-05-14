@@ -825,7 +825,15 @@ namespace AvibaWeb.Controllers
                 }
             }
 
-            await _db.SaveChangesAsync();
+            var curUser = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+
+            using (var transaction = await _db.Database.BeginTransactionAsync())
+            {
+                _db.SetUserContext(curUser.Id);
+                await _db.SaveChangesAsync();
+
+                transaction.Commit();
+            }
 
             var hasMultiPayments = _db.CorporatorReceiptMultiPayments.Any(mp =>
                 mp.TypeId == CorporatorReceiptMultiPayment.CRMPType.CorpClient && mp.IsProcessed == false);

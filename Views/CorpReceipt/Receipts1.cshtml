@@ -44,10 +44,22 @@
                 }">
                 <td style="width: 70px;">
                     @Html.HiddenFor(m => receipt.ReceiptId, new { @class = "receiptId" })
-                    <a asp-action="CreateReceipt" asp-controller="CorpReceipt" asp-route-id="@receipt.ReceiptId"
-                       asp-route-subGroupId="@Model.SubGroupId"
-                       data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
-                       class="btn btn-xs btn-success"><i class="glyphicon glyphicon-pencil"></i></a>
+                    @if (receipt.IsVirtual)
+                    {
+                        <a asp-action="CreateReceipt" asp-controller="CorpReceipt" asp-route-id="@receipt.ReceiptId"
+                           asp-route-subGroupId="@Model.SubGroupId" 
+                           asp-route-isVirtual=true
+                           data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
+                           class="btn btn-xs btn-success"><i class="glyphicon glyphicon-pencil"></i></a>
+                    }
+                    else
+                    {
+                        <a asp-action="CreateReceipt" asp-controller="CorpReceipt" asp-route-id="@receipt.ReceiptId"
+                           asp-route-subGroupId="@Model.SubGroupId"
+                           data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results"
+                           class="btn btn-xs btn-success"><i class="glyphicon glyphicon-pencil"></i></a>
+                    }
+                    
                     <span id="myId">@receipt.ReceiptNumber</span>
 
                     <br>

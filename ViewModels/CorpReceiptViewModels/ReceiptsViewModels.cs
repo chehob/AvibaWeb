@@ -28,6 +28,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public CRPaymentStatus Status { get; set; }
         public int TicketsToPDFCount { get; set; }
         public List<CorporatorReceiptTemplate> DocTemplates { get; set; }
+        public bool IsVirtual { get; set; }
     }
 
     public class ReceiptPDFItem

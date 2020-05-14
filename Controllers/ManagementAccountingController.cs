@@ -244,7 +244,7 @@ namespace AvibaWeb.Controllers
             {
                 OrganizationBalance = await (from o in _db.Organizations
                                              join fa in _db.FinancialAccounts on o.OrganizationId equals fa.OrganizationId
-                                             where fa.IsActive != false
+                                             where fa.IsActive != false && o.IsActive != false && fa.Description != "40702810102970003030"
                                              select fa).SumAsync(a => a.Balance),
                 CorpNegativeBalance = -await (from v in _db.CorporatorAccounts
                                               join c in _db.Counterparties.Include(c => c.Type) on v.ITN equals c.ITN

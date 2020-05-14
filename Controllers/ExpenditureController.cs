@@ -12,17 +12,20 @@ using System.Globalization;
 using System.Collections.Generic;
 using AvibaWeb.Infrastructure;
 using AvibaWeb.ViewModels.LoanExpenditureViewModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace AvibaWeb.Controllers
 {
     public class ExpenditureController : Controller
     {
         private readonly AppIdentityDbContext _db;
+        private readonly UserManager<AppUser> _userManager;
         private const int PageSize = 10;
 
-        public ExpenditureController(AppIdentityDbContext db)
+        public ExpenditureController(AppIdentityDbContext db, UserManager<AppUser> usrMgr)
         {
             _db = db;
+            _userManager = usrMgr;
         }
 
         // GET: Expenditures
@@ -165,8 +168,16 @@ namespace AvibaWeb.Controllers
                 OperationTypeId = ExpenditureOperation.EOType.New
             };
 
-            _db.ExpenditureOperations.Add(operation);
-            await _db.SaveChangesAsync();
+            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+
+            using (var transaction = await _db.Database.BeginTransactionAsync())
+            {
+                _db.ExpenditureOperations.Add(operation);
+                _db.SetUserContext(user.Id);
+                await _db.SaveChangesAsync();
+
+                transaction.Commit();
+            }
 
             return RedirectToAction("IssuedExpenditures");
         }
@@ -190,8 +201,16 @@ namespace AvibaWeb.Controllers
                 OperationTypeId = ExpenditureOperation.EOType.Cancelled
             };
 
-            _db.ExpenditureOperations.Add(operation);
-            await _db.SaveChangesAsync();
+            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+
+            using (var transaction = await _db.Database.BeginTransactionAsync())
+            {
+                _db.ExpenditureOperations.Add(operation);
+                _db.SetUserContext(user.Id);
+                await _db.SaveChangesAsync();
+
+                transaction.Commit();
+            }
 
             return RedirectToAction("IssuedExpenditures");
         }
@@ -447,8 +466,16 @@ namespace AvibaWeb.Controllers
                 OperationTypeId = LoanExpenditureOperation.LEOType.New
             };
 
-            _db.LoanExpenditureOperations.Add(operation);
-            await _db.SaveChangesAsync();
+            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+
+            using (var transaction = await _db.Database.BeginTransactionAsync())
+            {
+                _db.LoanExpenditureOperations.Add(operation);
+                _db.SetUserContext(user.Id);
+                await _db.SaveChangesAsync();
+
+                transaction.Commit();
+            }
 
             return RedirectToAction("LoanExpenditures");
         }
@@ -465,8 +492,16 @@ namespace AvibaWeb.Controllers
 
             office.Balance += expenditure.Amount;
 
-            _db.LoanExpenditures.Remove(expenditure);
-            await _db.SaveChangesAsync();
+            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+
+            using (var transaction = await _db.Database.BeginTransactionAsync())
+            {
+                _db.LoanExpenditures.Remove(expenditure);
+                _db.SetUserContext(user.Id);
+                await _db.SaveChangesAsync();
+
+                transaction.Commit();
+            }
 
             return RedirectToAction("LoanExpenditures");
         }

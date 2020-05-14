@@ -303,7 +303,9 @@ namespace AvibaWeb.Controllers
                         IssuedDateTime = cr.IssuedDateTime != null ? cr.IssuedDateTime.Value.ToString("d") : "",
                         PaidDateTime = cr.PaidDateTime != null ? cr.PaidDateTime.Value.ToString("d") : "",
                         ReceiptNumber = cr.ReceiptNumber != null ? cr.ReceiptNumber.ToString() : "",
-                        StatusId = cr.StatusId
+                        StatusId = cr.StatusId,
+                        VirtualSegCount = cr.VirtualSegCount.ToString(),
+                        VirtualAmount = cr.Amount.ToString()
                     }).FirstOrDefault();
             }
             else
@@ -564,7 +566,6 @@ namespace AvibaWeb.Controllers
                     where cr.TypeId == CorporatorReceipt.CRType.WebSite && cr.WebSiteSubGroupId == subGroupId
                     select new CorpReceiptsItem
                     {
-
                         ReceiptNumber = cr.ReceiptNumber.ToString(),
                         ReceiptId = cr.CorporatorReceiptId,
                         CreatedDate = operation.OperationDateTime.ToString("d"),
@@ -575,7 +576,8 @@ namespace AvibaWeb.Controllers
                         PayerOrgName = cr.Corporator.Name,
                         TotalStr = cr.Amount.Value.ToString("#,0.00", nfi),
                         Status = cr.StatusId,
-                        DocTemplates = cr.PayeeAccount.Organization.DocTemplates.ToList()
+                        DocTemplates = cr.PayeeAccount.Organization.DocTemplates.ToList(),
+                        IsVirtual = cr.VirtualSegCount > 0
                     }).ToList(),
                 SubGroupId = subGroupId
             };

@@ -191,8 +191,16 @@ namespace AvibaWeb.Controllers
                 OperationTypeId = TransitAccountCreditOperation.TACOType.Cancelled
             };
 
-            _db.TransitAccountCreditOperations.Add(operation);
-            await _db.SaveChangesAsync();
+            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+
+            using (var transaction = await _db.Database.BeginTransactionAsync())
+            {
+                _db.TransitAccountCreditOperations.Add(operation);
+                _db.SetUserContext(user.Id);
+                await _db.SaveChangesAsync();
+
+                transaction.Commit();
+            }
 
             return RedirectToAction("Index");
         }
