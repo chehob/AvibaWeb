@@ -19,11 +19,14 @@ namespace AvibaWeb.ViewModels.ReportViewModels
         private NumberFormatInfo nfi;
 
         public string Name { get; set; }
-        public string Amount => (AmountKRS + AmountCorp).ToString("#,0.00", nfi);
+        public decimal Amount => (AmountKRS + AmountCorp + AmountOther);
+        public string AmountStr => Amount.ToString("#,0.00", nfi);
         public decimal AmountKRS { get; set; }
         public string AmountKRSStr => AmountKRS.ToString("#,0.00", nfi);
         public decimal AmountCorp { get; set; }
         public string AmountCorpStr => AmountCorp.ToString("#,0.00", nfi);
+        public decimal AmountOther { get; set; }
+        public string AmountOtherStr => AmountOther.ToString("#,0.00", nfi);
     }
 
     public class IncomeSummaryViewModel
@@ -34,6 +37,7 @@ namespace AvibaWeb.ViewModels.ReportViewModels
         public string AmountSubagent { get; set; }
         public string AmountAgentFee { get; set; }
         public string AmountCorp { get; set; }
+        public string AmountOther { get; set; }
         public List<IncomeSummaryViewItemGroup> ItemGroups { get; set; }
     }
 }

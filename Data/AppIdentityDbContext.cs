@@ -25,6 +25,9 @@ namespace AvibaWeb.Models
         public DbSet<ExpenditureType> ExpenditureTypes { get; set; }
         public DbSet<ExpenditureOperation> ExpenditureOperations { get; set; }
 
+        public DbSet<Income> Incomes { get; set; }
+        public DbSet<IncomeOperation> IncomeOperations { get; set; }
+
         public DbSet<AcceptedCollector> AcceptedCollectors { get; set; }
 
         public DbSet<Organization> Organizations { get; set; }

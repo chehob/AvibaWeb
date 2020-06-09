@@ -439,6 +439,12 @@ namespace AvibaWeb.Controllers
             var queryToDate = toDate ?? DateTime.Now.Date;
             var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
 
+            var deskGroupList = (from dg in _db.DeskGroups
+                select new
+                {
+                    Name = dg.Name
+                }).ToList();
+
             var KRSList = (from dg in _db.DeskGroups
                            join d in _db.Desks on dg.DeskGroupId equals d.GroupId
                            join info in _db.VServiceReceiptIncomeInfo on d.DeskId equals info.DeskIssuedId
@@ -480,18 +486,36 @@ namespace AvibaWeb.Controllers
                                       AmountCorp = g.Sum(sg => sg.cri.IsPercent ? sg.cri.Amount * sg.cri.FeeRate / 100 : sg.cri.FeeRate),
                                   }).ToList();
 
+            var OtherList = (from income in _db.Incomes
+                    .Include(e => e.DeskGroup)
+                from io in _db.IncomeOperations.Where(io => income.IncomeId == io.IncomeId)
+                    .OrderByDescending(io => io.OperationDateTime).Take(1).DefaultIfEmpty()
+                where io.OperationDateTime >= queryFromDate &&
+                      io.OperationDateTime < queryToDate.AddDays(1) &&
+                      io.OperationTypeId == IncomeOperation.IOType.New
+                group income by income.DeskGroupId
+                into g
+                select new
+                {
+                    Name = g.FirstOrDefault().DeskGroup.Name,
+                    Amount = g.Sum(ig => ig.Amount)
+                }).ToList();
+
             var model = new IncomeSummaryViewModel
             {
                 FromDate = queryFromDate.ToString("d"),
                 ToDate = queryToDate.ToString("d"),
-                ItemGroups = (from k in KRSList
-                              from ct in CorpTicketList.Where(c => c.Name == k.Name).DefaultIfEmpty()
-                              from cl in CorpLuggageList.Where(c => c.Name == k.Name).DefaultIfEmpty()
+                ItemGroups = (from dg in deskGroupList
+                              from k in KRSList.Where(c => c.Name == dg.Name).DefaultIfEmpty()
+                              from ct in CorpTicketList.Where(c => c.Name == dg.Name).DefaultIfEmpty()
+                              from cl in CorpLuggageList.Where(c => c.Name == dg.Name).DefaultIfEmpty()
+                              from ol in OtherList.Where(c => c.Name == dg.Name).DefaultIfEmpty()
                               select new IncomeSummaryViewItemGroup
                               {
-                                  Name = k.Name,
-                                  AmountKRS = k.AmountKRS,
-                                  AmountCorp = (ct == null ? 0 : ct.AmountCorp) + (cl == null ? 0 : cl.AmountCorp)                                  
+                                  Name = dg.Name,
+                                  AmountKRS = (k == null ? 0 : k.AmountKRS),
+                                  AmountCorp = (ct == null ? 0 : ct.AmountCorp) + (cl == null ? 0 : cl.AmountCorp),
+                                  AmountOther = ol?.Amount ?? 0
                               }).ToList()
             };
             model.AmountKRS = model.ItemGroups.Sum(ig => ig.AmountKRS).ToString("#,0.00", nfi);
@@ -504,6 +528,7 @@ namespace AvibaWeb.Controllers
             model.AmountSubagent = (from s in _db.SubagentFeeTransactions
                                     where s.TransactionDateTime >= queryFromDate && s.TransactionDateTime < queryToDate.AddDays(1)
                                     select s).Sum(s => s.Amount).ToString("#,0.00", nfi);
+            model.AmountOther = model.ItemGroups.Sum(ig => ig.AmountOther).ToString("#,0.00", nfi);
 
             return PartialView(model);
         }
@@ -585,6 +610,21 @@ namespace AvibaWeb.Controllers
                                        Amount = g.Sum(ig => ig.Amount)
                                    }).ToList();
 
+            var otherIncomeList = (from income in _db.Incomes
+                    .Include(e => e.DeskGroup)
+                from io in _db.IncomeOperations.Where(io => income.IncomeId == io.IncomeId)
+                    .OrderByDescending(io => io.OperationDateTime).Take(1).DefaultIfEmpty()
+                where io.OperationDateTime >= queryFromDate &&
+                      io.OperationDateTime < queryToDate.AddDays(1) &&
+                      io.OperationTypeId == IncomeOperation.IOType.New
+                group income by income.DeskGroupId
+                into g
+                select new
+                {
+                    g.Key,
+                    Amount = g.Sum(ig => ig.Amount)
+                }).ToList();
+
             var expenditureList = (from expenditure in _db.Expenditures
                     .Include(e => e.DeskGroup)
                     .Include(e => e.IncomingExpenditure).ThenInclude(ie => ie.FinancialAccountOperation)
@@ -640,6 +680,7 @@ namespace AvibaWeb.Controllers
                          from k in KRSList.Where(k => k.Key == dg.DeskGroupId).DefaultIfEmpty()
                          from ct in CorpTicketList.Where(c => c.Key == dg.DeskGroupId).DefaultIfEmpty()
                          from cl in CorpLuggageList.Where(c => c.Key == dg.DeskGroupId).DefaultIfEmpty()
+                         from ol in otherIncomeList.Where(c => c.Key == dg.DeskGroupId).DefaultIfEmpty()
                          from e in expenditureList.Where(e => e.Key == dg.DeskGroupId).DefaultIfEmpty()
                          from s in salesList.Where(s => s.Key == dg.DeskGroupId).DefaultIfEmpty()
                         from cif in customIncomeList.Where(cif => cif.Key == dg.DeskGroupId).DefaultIfEmpty()
@@ -647,7 +688,7 @@ namespace AvibaWeb.Controllers
                          {
                              Name = dg.Name,
                              DeskGroupId = dg.DeskGroupId,
-                             IncomeAmount = (k == null ? 0 : k.Amount) + (ct == null ? 0 : ct.Amount) + (cl == null ? 0 : cl.Amount) + (cif == null ? 0 : cif.Amount),
+                             IncomeAmount = (k == null ? 0 : k.Amount) + (ct == null ? 0 : ct.Amount) + (cl == null ? 0 : cl.Amount) + (cif == null ? 0 : cif.Amount) + (ol == null ? 0 : ol.Amount),
                              ExpenditureAmount = (e == null ? 0 : e.Amount),
                              SalesAmount = (s == null ? 0 : s.Amount)
                          }).ToList()

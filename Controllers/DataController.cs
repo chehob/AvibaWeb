@@ -339,7 +339,7 @@ namespace AvibaWeb.Controllers
                                           },
                                           CounterpartyGroups =
                                               (from r in g.SelectMany(r => r.CashlessRecords)
-                                               group r by r.PayeeITN == "0000000000" ? r.PayeeName : r.PayeeITN
+                                               group r by r.PayeeITN == "0000000000" || r.PayeeITN == "000000000000" ? r.PayeeName : r.PayeeITN
                                                   into cg
                                                select new CashlessImportCounterpartyGroup
                                                {

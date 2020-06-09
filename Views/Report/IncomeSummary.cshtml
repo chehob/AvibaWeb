@@ -20,6 +20,7 @@
                         <div>Сборы субагентов: @Model.AmountSubagent</div>
                         <div>Агентское вознаграждение: @Model.AmountAgentFee</div>
                         <div>Сборы БН: @Model.AmountCorp</div>
+                        <div>Другие доходы: @Model.AmountOther</div>
                     </div>
                     <table class="table table-striped table-bordered bootstrap-datatable datatable" id="dataTable">
                         <thead>
@@ -40,30 +41,41 @@
                             {
                                 foreach (var itemGroup in Model.ItemGroups)
                                 {
-                                    <tr>
-                                        <td class="text-center">
-                                            <div style="min-height: 32px;">@itemGroup.Name</div>
-                                        </td>
-                                        <td>
-                                            <b>@itemGroup.Amount</b>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span class="showOperationsBtn btn-setting">Сборы наши КРС</span>
-                                        </td>
-                                        <td>
-                                            <b>@itemGroup.AmountKRSStr</b>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span class="showOperationsBtn btn-setting">Сборы БН</span>
-                                        </td>
-                                        <td>
-                                            <b>@itemGroup.AmountCorpStr</b>
-                                        </td>
-                                    </tr>
+                                    if (itemGroup.Amount > 0)
+                                    {
+                                        <tr>
+                                            <td class="text-center">
+                                                <div style="min-height: 32px;">@itemGroup.Name</div>
+                                            </td>
+                                            <td>
+                                                <b>@itemGroup.AmountStr</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="showOperationsBtn btn-setting">Сборы наши КРС</span>
+                                            </td>
+                                            <td>
+                                                <b>@itemGroup.AmountKRSStr</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="showOperationsBtn btn-setting">Сборы БН</span>
+                                            </td>
+                                            <td>
+                                                <b>@itemGroup.AmountCorpStr</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="showOperationsBtn btn-setting">Другие доходы</span>
+                                            </td>
+                                            <td>
+                                                <b>@itemGroup.AmountOtherStr</b>
+                                            </td>
+                                        </tr>
+                                    }
                                 }
                             }
                         </tbody>
