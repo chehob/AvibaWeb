@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using AvibaWeb.ViewModels.ExpenditureViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AvibaWeb.Controllers
 {
@@ -703,6 +705,69 @@ namespace AvibaWeb.Controllers
             }).First());
 
             return PartialView(model);
+        }
+
+        [HttpGet]
+        public ActionResult CreateIncome()
+        {
+            var model = new CreateIncomeModel()
+            {
+                DeskGroups = from d in _db.DeskGroups.Where(g => g.IsActive).OrderBy(g => g.Name)
+                             select new SelectListItem
+                             {
+                                 Value = d.DeskGroupId.ToString(),
+                                 Text = d.Name
+                             }
+            };
+            return PartialView(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateIncome(CreateIncomeModel model)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            //var officeRole = _db.Roles.SingleOrDefault(r => r.Name.Contains("Офис"));
+            //var office = _db.Users.FirstOrDefault(u => u.Roles.Any(r => r.RoleId == officeRole.Id));
+            //if (office == null) return RedirectToAction("IncomeSummary");
+
+            //var otherSum = decimal.Parse(_db.SettingsValues.FirstOrDefault(sv => sv.Key == "OtherSum").Value
+            //    .Replace(".", ",").Replace(" ", string.Empty));
+            //var remainder = model.Amount;
+            //if (otherSum > 0)
+            //{
+            //    _db.SettingsValues.FirstOrDefault(sv => sv.Key == "OtherSum").Value = otherSum >= model.Amount
+            //        ? (otherSum - model.Amount).ToString("#,0", nfi)
+            //        : (0).ToString("#,0", nfi);
+            //}
+
+            var income = new Income
+            {
+                Name = model.Name,
+                Amount = model.Amount,
+                DeskGroupId = model.SelectedDeskGroupId
+            };
+
+            var operation = new IncomeOperation
+            {
+                Income = income,
+                OperationDateTime = DateTime.Now,
+                OperationTypeId = IncomeOperation.IOType.New
+            };
+
+            //var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+
+            using (var transaction = await _db.Database.BeginTransactionAsync())
+            {
+                _db.IncomeOperations.Add(operation);
+                //_db.SetUserContext(user.Id);
+                await _db.SaveChangesAsync();
+
+                transaction.Commit();
+            }
+
+            return RedirectToAction("IncomeSummary");
         }
     }
 }

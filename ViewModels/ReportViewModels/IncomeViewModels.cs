@@ -40,4 +40,20 @@ namespace AvibaWeb.ViewModels.ReportViewModels
         public string AmountOther { get; set; }
         public List<IncomeSummaryViewItemGroup> ItemGroups { get; set; }
     }
+
+    public class CreateIncomeModel
+    {
+        [Display(Name = "Наименование")]
+        public string Name { get; set; }
+
+        [Required]
+        [Display(Name = "Сумма")]
+        public decimal Amount { get; set; }
+
+        [Required]
+        public int SelectedDeskGroupId { get; set; }
+
+        [Display(Name = "Подразделение")]
+        public IEnumerable<SelectListItem> DeskGroups { get; set; }
+    }
 }
