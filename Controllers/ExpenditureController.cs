@@ -230,9 +230,9 @@ namespace AvibaWeb.Controllers
                 ToDate = queryToDate.ToString("d"),
                 Items = (from e in _db.IncomingExpenditures.Include(e => e.FinancialAccountOperation)
                             .ThenInclude(fao => fao.Counterparty)
-                         orderby e.IsProcessed, e.FinancialAccountOperation.InsertDateTime descending
-                         where e.FinancialAccountOperation.InsertDateTime >= queryFromDate &&
-                               e.FinancialAccountOperation.InsertDateTime < queryToDate.AddDays(1)
+                         orderby e.IsProcessed, e.FinancialAccountOperation.OperationDateTime descending
+                         where e.FinancialAccountOperation.OperationDateTime >= queryFromDate &&
+                               e.FinancialAccountOperation.OperationDateTime < queryToDate.AddDays(1)
                          select new IncomingExpenditureItem
                          {
                              Amount = e.Amount.Value.ToString("#,0.00", nfi),

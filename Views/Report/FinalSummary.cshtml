@@ -51,10 +51,19 @@
                                             @item.IncomeAmountStr
                                         </td>
                                         <td>
-                                            <span class="showOperationsBtn btn-setting">
-                                                @item.ExpenditureAmountStr
-                                            </span>
-                                            <input hidden class="deskGroupId" value="@item.DeskGroupId" />
+                                            @if (item.Name == "Нераспределенные расходы")
+                                            {
+                                                <span class="showIncomingExpenditureOperationsBtn btn-setting">
+                                                    @item.ExpenditureAmountStr
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="showOperationsBtn btn-setting">
+                                                    @item.ExpenditureAmountStr
+                                                </span>
+                                                <input hidden class="deskGroupId" value="@item.DeskGroupId" />
+                                            }
                                         </td>
                                         <td>
                                             @item.TotalAmountStr
@@ -158,6 +167,28 @@
 
         $.ajax({
             url: "/Report/ExpenditureSummaryOperations",
+            type: "GET",
+            cache: false,
+            data: sendJsonData,
+            success: function (result) {
+                $(".modal-body").html(result);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $(".showIncomingExpenditureOperationsBtn").click(function (e) {
+        e.preventDefault();
+
+        const sendJsonData = {
+            fromDate: moment($('#min').val(), "DD.MM.YYYY").toISOString(true),
+            toDate: moment($('#max').val(), "DD.MM.YYYY").toISOString(true)
+        };
+
+        $.ajax({
+            url: "/Report/IncomingExpenditureSummaryOperations",
             type: "GET",
             cache: false,
             data: sendJsonData,

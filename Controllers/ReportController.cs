@@ -431,7 +431,33 @@ namespace AvibaWeb.Controllers
 
             return PartialView(model);
         }
-        
+
+        [HttpGet]
+        public ActionResult IncomingExpenditureSummaryOperations(DateTime fromDate, DateTime toDate)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var model = new ExpenditureSummaryOperationsViewModel
+            {
+                Items = (from ie in _db.IncomingExpenditures
+                        .Include(ie => ie.FinancialAccountOperation).ThenInclude(fao => fao.Counterparty)
+                         where ie.IsProcessed == false &&
+                               ie.FinancialAccountOperation.OperationDateTime >= fromDate &&
+                               ie.FinancialAccountOperation.OperationDateTime < toDate.AddDays(1)
+                         select new ExpenditureSummaryOperationsItem
+                         {
+                             OperationDateTime = ie.FinancialAccountOperation.OperationDateTime.ToString("dd.MM.yyyy HH:mm"),
+                             Amount = ie.FinancialAccountOperation.Amount.ToString("#,0.00", nfi),
+                             PaymentType = "Безнал",
+                             Counterparty = ie.FinancialAccountOperation.Counterparty.Name,
+                             Comment = ie.FinancialAccountOperation.Description
+                         }).ToList()
+            };
+
+            return PartialView("ExpenditureSummaryOperations", model);
+        }
+
         [HttpGet]
         public ActionResult IncomeSummary(DateTime? fromDate, DateTime? toDate)
         {
@@ -674,6 +700,16 @@ namespace AvibaWeb.Controllers
                             Amount = g.Sum(ig => ig.Amount)
                         }).ToList();
 
+            var incomingExpendituresAmount = (from ie in _db.IncomingExpenditures
+                join fao in _db.FinancialAccountOperations on ie.FinancialAccountOperationId equals fao
+                    .FinancialAccountOperationId
+                where ie.IsProcessed == false &&
+                      fao.OperationDateTime >= queryFromDate && fao.OperationDateTime < queryToDate.AddDays(1)
+                select new
+                {
+                    fao.Amount
+                }).Sum(fao => fao.Amount);
+
             var model = new FinalSummaryViewModel
             {
                 FromDate = queryFromDate.ToString("d"),
@@ -695,6 +731,14 @@ namespace AvibaWeb.Controllers
                              SalesAmount = (s == null ? 0 : s.Amount)
                          }).ToList()
             };
+
+            model.Items.Add(new FinalSummaryViewItem
+            {
+                Name = "Нераспределенные расходы",
+                IncomeAmount = 0,
+                ExpenditureAmount = -incomingExpendituresAmount,
+                SalesAmount = 0
+            });
 
             model.Items.Add(model.Items.GroupBy(g => 1).Select(g => new FinalSummaryViewItem
             {
