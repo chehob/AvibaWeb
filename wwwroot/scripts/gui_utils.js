@@ -366,6 +366,12 @@ $(document).on('click',
                             style: 'headerWarning'
                         },
                         {
+                            text: result.orgAccountWarningStr,
+                            style: 'headerWarning',
+                            color: '#ff0000',
+                            margin: [0, 10, 0, 0]
+                        },
+                        {
                             table: {
                                 widths: [150, 150, 40, '*'],
                                 heights: [15, 30, 15, 15],
@@ -595,6 +601,12 @@ $(document).on('click',
                             style: 'headerWarning'
                         },
                         {
+                            text: result.orgAccountWarningStr,
+                            style: 'headerWarning',
+                            color: '#ff0000',
+                            margin: [0, 10, 0, 0]
+                        },
+                        {
                             table: {
                                 widths: [150, 150, 40, '*'],
                                 heights: [15, 30, 15, 15],
@@ -776,6 +788,12 @@ $(document).on('click',
                         {
                             text: 'Внимание! Счет действителен для оплаты в течение 3 банковских дней. Оплата данного счета означает согласие с условиями договора.',
                             style: 'headerWarning'
+                        },
+                        {
+                            text: result.orgAccountWarningStr,
+                            style: 'headerWarning',
+                            color: '#ff0000',
+                            margin: [0, 10, 0, 0]
                         },
                         {
                             table: {
@@ -966,6 +984,12 @@ $(document).on('click',
                             style: 'headerWarning'
                         },
                         {
+                            text: result.orgAccountWarningStr,
+                            style: 'headerWarning',
+                            color: '#ff0000',
+                            margin: [0, 10, 0, 0]
+                        },
+                        {
                             table: {
                                 widths: [150, 150, 40, '*'],
                                 heights: [15, 30, 15, 15],
@@ -1153,6 +1177,12 @@ $(document).on('click',
                             style: 'headerWarning'
                         },
                         {
+                            text: result.orgAccountWarningStr,
+                            style: 'headerWarning',
+                            color: '#ff0000',
+                            margin: [0, 10, 0, 0]
+                        },
+                        {
                             table: {
                                 widths: [150, 150, 40, '*'],
                                 heights: [15, 30, 15, 15],
@@ -1334,6 +1364,12 @@ $(document).on('click',
                         {
                             text: 'Внимание! Счет действителен для оплаты в течение 3 банковских дней. Оплата данного счета означает согласие с условиями договора.',
                             style: 'headerWarning'
+                        },
+                        {
+                            text: result.orgAccountWarningStr,
+                            style: 'headerWarning',
+                            color: '#ff0000',
+                            margin: [0, 10, 0, 0]
                         },
                         {
                             table: {

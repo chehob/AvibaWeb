@@ -668,6 +668,7 @@ namespace AvibaWeb.Controllers
                     OrgBankName = cr.PayeeAccount.OffBankName,
                     OrgBIK = cr.PayeeAccount.BIK,
                     OrgAddress = orgc.Address,
+                    OrgAccountWarningStr = cr.PayeeAccount.Description == "40702810510160006058" ? "Внимание! Изменились реквизиты с 28.07.2020" : "",
                     FeeRate = cr.FeeRate.Value,
                     FeeRateStr = cr.FeeRate.Value.ToString("#,0.00", nfi),
                     IssuedDateTime = operation.OperationDateTime.ToShortDateString(),

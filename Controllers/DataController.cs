@@ -105,6 +105,10 @@ namespace AvibaWeb.Controllers
                 newLineIndex = firstCsv.IndexOf("\n", index, StringComparison.Ordinal);
                 sl = firstCsv.Substring(index, newLineIndex - index).Split("=");
                 cashlessDestination.AccountNumber = sl[1].Trim('\r');
+                if (cashlessDestination.AccountNumber == "40702810710160006058")
+                {
+                    cashlessDestination.AccountNumber = "40702810510160006058";
+                }
 
                 index = firstCsv.IndexOf("СекцияРасчСчет", index, StringComparison.Ordinal);
                 var rows = 0;

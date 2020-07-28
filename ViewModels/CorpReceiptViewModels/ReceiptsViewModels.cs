@@ -98,5 +98,6 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public string HeaderImage { get; set; }
         public int ItemCount { get; set; }
         public int VirtualSegCount { get; set; }
+        public string OrgAccountWarningStr { get; set; }
     }
 }
