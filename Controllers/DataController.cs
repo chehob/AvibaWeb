@@ -256,6 +256,10 @@ namespace AvibaWeb.Controllers
                     newLineIndex = firstCsv.IndexOf("\n", index, StringComparison.Ordinal);
                     sl = firstCsv.Substring(index, newLineIndex - index).Split("=");
                     record.PayeeAccount = sl[1].Trim('\r');
+                    if (record.PayeeAccount == "40702810710160006058")
+                    {
+                        record.PayeeAccount = "40702810510160006058";
+                    }
 
                     // Payee Bank Name
                     index = firstCsv.IndexOf(
@@ -282,6 +286,10 @@ namespace AvibaWeb.Controllers
                     newLineIndex = firstCsv.IndexOf("\n", index, StringComparison.Ordinal);
                     sl = firstCsv.Substring(index, newLineIndex - index).Split("=");
                     record.PayeeBankBIC = sl[1].Trim('\r');
+                    if (record.PayeeAccount == "40702810510160006058" && record.PayeeBankBIC == "042007855")
+                    {
+                        record.PayeeBankBIC = "044525411";
+                    }
 
                     // Payee KPP
                     index = firstCsv.IndexOf(
@@ -519,7 +527,9 @@ namespace AvibaWeb.Controllers
                                          record.PaymentDescription.ToLower()
                                              .Contains("от реализации платных услуг") ||
                                          record.PaymentDescription.ToLower()
-                                             .Contains("поступление выручки")) && dAmount > 0;
+                                             .Contains("поступление выручки") ||
+                                         record.PaymentDescription.ToLower()
+                                             .Contains("внес.ср.")) && dAmount > 0;
 
                     var operationExists = _db.FinancialAccountOperations.Any(fao =>
                         fao.OrderNumber == record.Number &&

@@ -332,6 +332,13 @@ namespace AvibaWeb.Controllers
                         Amount = ti?.Amount ?? 0,
                         SegCount = ti?.SegCount ?? 0
                     }).First(),
+                CashLuggage = KRSList.Where(ti => ti.OpTypeId == 0 && ti.IsSite == 0).DefaultIfEmpty().Select(ti =>
+                    new KRSViewItem
+                    {
+                        KRSCount = ti?.ServiceCount ?? 0,
+                        Amount = ti?.Amount ?? 0,
+                        SegCount = ti?.SegCount ?? 0
+                    }).First(),
                 CashCancel = KRSList.Where(ti => ti.OpTypeId == 5 && ti.IsSite == 0).DefaultIfEmpty().Select(ti =>
                     new KRSViewItem
                     {
@@ -427,9 +434,9 @@ namespace AvibaWeb.Controllers
 
             model.CashTotal = new KRSViewItem
             {
-                Amount = model.CashSale.Amount + model.CashExchange.Amount + model.CashRefund.Amount + model.CashService.Amount + model.CashCancel.Amount,
-                SegCount = model.CashSale.SegCount + model.CashExchange.SegCount + model.CashRefund.SegCount + model.CashService.SegCount - model.CashCancel.SegCount,
-                KRSCount = model.CashSale.KRSCount + model.CashExchange.KRSCount + model.CashRefund.KRSCount + model.CashService.KRSCount - model.CashCancel.KRSCount
+                Amount = model.CashSale.Amount + model.CashExchange.Amount + model.CashRefund.Amount + model.CashService.Amount + model.CashLuggage.Amount + model.CashCancel.Amount,
+                SegCount = model.CashSale.SegCount + model.CashExchange.SegCount + model.CashRefund.SegCount + model.CashService.SegCount + model.CashLuggage.SegCount - model.CashCancel.SegCount,
+                KRSCount = model.CashSale.KRSCount + model.CashExchange.KRSCount + model.CashRefund.KRSCount + model.CashService.KRSCount + model.CashLuggage.KRSCount - model.CashCancel.KRSCount
             };
 
             model.PKTotal = new KRSViewItem

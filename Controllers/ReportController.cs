@@ -722,6 +722,7 @@ namespace AvibaWeb.Controllers
                          from e in expenditureList.Where(e => e.Key == dg.DeskGroupId).DefaultIfEmpty()
                          from s in salesList.Where(s => s.Key == dg.DeskGroupId).DefaultIfEmpty()
                         from cif in customIncomeList.Where(cif => cif.Key == dg.DeskGroupId).DefaultIfEmpty()
+                        where dg.IsActive
                          select new FinalSummaryViewItem
                          {
                              Name = dg.Name,
@@ -739,6 +740,18 @@ namespace AvibaWeb.Controllers
                 ExpenditureAmount = -incomingExpendituresAmount,
                 SalesAmount = 0
             });
+
+            var transitAddIncome = (from credit in _db.TransitAccountCredits
+                                    where credit.AddAmount != 0
+                                    join taco in _db.TransitAccountCreditOperations on credit.TransitAccountCreditId equals taco.TransitAccountCreditId into operations
+                                    from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
+                                    orderby operation.OperationDateTime descending
+                                    where operation.OperationDateTime >= queryFromDate && operation.OperationDateTime < queryToDate.AddDays(1) &&
+                                        operation.OperationTypeId != TransitAccountCreditOperation.TACOType.Cancelled
+                                    select credit.AddAmount).Sum();
+
+            var officeItem = model.Items.FirstOrDefault(i => i.Name == "Офис");
+            officeItem.IncomeAmount += transitAddIncome;
 
             model.Items.Add(model.Items.GroupBy(g => 1).Select(g => new FinalSummaryViewItem
             {

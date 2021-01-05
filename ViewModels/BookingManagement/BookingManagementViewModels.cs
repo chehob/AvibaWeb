@@ -68,6 +68,7 @@ namespace AvibaWeb.ViewModels.BookingManagement
         public KRSViewItem CashRefund { get; set; }
         public KRSViewItem CashForcedRefund { get; set; }
         public KRSViewItem CashService { get; set; }
+        public KRSViewItem CashLuggage { get; set; }
         public KRSViewItem CashCancel { get; set; }
         public KRSViewItem CashTotal { get; set; }
 

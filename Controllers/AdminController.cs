@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using AvibaWeb.Infrastructure;
 using AvibaWeb.ViewModels.CorpReceiptViewModels;
+using MoreLinq;
 
 namespace AvibaWeb.Controllers
 {
@@ -1171,7 +1172,9 @@ namespace AvibaWeb.Controllers
         [HttpGet]
         public ActionResult LoanGroups()
         {
-            return PartialView(_db.LoanGroups.Include(g => g.Counterparties).OrderBy(g => g.Description));
+            var model = _db.LoanGroups.Include(g => g.Counterparties).OrderBy(g => g.Description);
+            model.ForEach(i => i.Counterparties = i.Counterparties.OrderBy(c => c.Name).ToList());
+            return PartialView(model);
         }
 
         [HttpGet]
@@ -1210,8 +1213,8 @@ namespace AvibaWeb.Controllers
                 Id = id,
                 Name = group.Description,
                 IsActive = group.IsActive,
-                Counterparties = _db.Counterparties.Select(c => c.Name).ToList(),
-                GroupCounterparties = _db.Counterparties.Where(c => c.LoanGroupId == id).Select(c => c.Name).ToList(),
+                Counterparties = _db.Counterparties.OrderBy(c => c.Name).Select(c => c.Name).ToList(),
+                GroupCounterparties = _db.Counterparties.Where(c => c.LoanGroupId == id).OrderBy(c => c.Name).Select(c => c.Name).ToList(),
             };
 
             return PartialView(viewModel);
@@ -1271,17 +1274,20 @@ namespace AvibaWeb.Controllers
                 var counterparty = _db.Counterparties.FirstOrDefault(d => d.ITN == model.CounterpartyId);
                 if (group != null && counterparty != null)
                 {
-                    foreach (var o in model.CounterpartyOperations)
+                    if (!group.Counterparties.Contains(counterparty))
                     {
-                        if (o.IsProcessed)
+                        foreach (var o in model.CounterpartyOperations)
                         {
-                            group.Balance -= decimal.Parse(o.Amount.Replace(".", ",").Replace(" ", string.Empty));
+                            if (o.IsProcessed)
+                            {
+                                group.Balance -= decimal.Parse(o.Amount.Replace(".", ",").Replace(" ", string.Empty));
+                            }
                         }
-                    }                    
 
-                    group.Counterparties.Add(counterparty);
-
-                    await _db.SaveChangesAsync();
+                        group.Counterparties.Add(counterparty);
+                        await _db.SaveChangesAsync();
+                    }
+                    
                     return Json(new { loanGroupId = model.LoanGroupId });
                 }
 
