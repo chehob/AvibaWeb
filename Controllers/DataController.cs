@@ -122,7 +122,7 @@ namespace AvibaWeb.Controllers
                     if (rows == 0)
                     {
                         sl = firstCsv.Substring(index, newLineIndex - index).Split("=");
-                        cashlessDestination.OpeningBalance = sl[1].Trim('\r').Replace('.', ',');
+                        cashlessDestination.OpeningBalance = sl[1].Trim('\r');
                     }
 
                     // Debit turnover
@@ -130,31 +130,31 @@ namespace AvibaWeb.Controllers
                     newLineIndex = firstCsv.IndexOf("\n", index, StringComparison.Ordinal);
                     sl = firstCsv.Substring(index, newLineIndex - index).Split("=");
                     cashlessDestination.DebitTurnover =
-                        (decimal.Parse(cashlessDestination.DebitTurnover) +
-                        decimal.Parse(sl[1].Trim('\r').Replace('.', ','))).ToString();
+                        (decimal.Parse(cashlessDestination.DebitTurnover, CultureInfo.InvariantCulture) +
+                        decimal.Parse(sl[1].Trim('\r'), CultureInfo.InvariantCulture)).ToString();
 
                     // Credit turnover
                     index = newLineIndex + 1;
                     newLineIndex = firstCsv.IndexOf("\n", index, StringComparison.Ordinal);
                     sl = firstCsv.Substring(index, newLineIndex - index).Split("=");
                     cashlessDestination.CreditTurnover =
-                        (decimal.Parse(cashlessDestination.CreditTurnover) +
-                        decimal.Parse(sl[1].Trim('\r').Replace('.', ','))).ToString();
+                        (decimal.Parse(cashlessDestination.CreditTurnover, CultureInfo.InvariantCulture) +
+                        decimal.Parse(sl[1].Trim('\r'), CultureInfo.InvariantCulture)).ToString();
 
                     // Closing balance
                     index = newLineIndex + 1;
                     newLineIndex = firstCsv.IndexOf("\n", index, StringComparison.Ordinal);
                     sl = firstCsv.Substring(index, newLineIndex - index).Split("=");
-                    cashlessDestination.ClosingBalance = sl[1].Trim('\r').Replace('.', ',');
+                    cashlessDestination.ClosingBalance = sl[1].Trim('\r');
 
                     rows++;
                     index = firstCsv.IndexOf("СекцияРасчСчет", index, StringComparison.Ordinal);
                 }
 
-                cashlessDestination.OpeningBalance = decimal.Parse(cashlessDestination.OpeningBalance).ToString("#,0.00", nfi);
-                cashlessDestination.DebitTurnover = decimal.Parse(cashlessDestination.DebitTurnover).ToString("#,0.00", nfi);
-                cashlessDestination.CreditTurnover = decimal.Parse(cashlessDestination.CreditTurnover).ToString("#,0.00", nfi);
-                cashlessDestination.ClosingBalance = decimal.Parse(cashlessDestination.ClosingBalance).ToString("#,0.00", nfi);
+                cashlessDestination.OpeningBalance = decimal.Parse(cashlessDestination.OpeningBalance, CultureInfo.InvariantCulture).ToString("#,0.00", nfi);
+                cashlessDestination.DebitTurnover = decimal.Parse(cashlessDestination.DebitTurnover, CultureInfo.InvariantCulture).ToString("#,0.00", nfi);
+                cashlessDestination.CreditTurnover = decimal.Parse(cashlessDestination.CreditTurnover, CultureInfo.InvariantCulture).ToString("#,0.00", nfi);
+                cashlessDestination.ClosingBalance = decimal.Parse(cashlessDestination.ClosingBalance, CultureInfo.InvariantCulture).ToString("#,0.00", nfi);
 
                 var isDocTypeFound = false;
                 var isDocFirstType = false;
@@ -182,7 +182,7 @@ namespace AvibaWeb.Controllers
                     index = newLineIndex + 1;
                     newLineIndex = firstCsv.IndexOf("\n", index, StringComparison.Ordinal);
                     sl = firstCsv.Substring(index, newLineIndex - index).Split("=");
-                    record.Amount = decimal.Parse(sl[1].Trim('\r').Replace('.', ',')).ToString("#,0.00", nfi);
+                    record.Amount = decimal.Parse(sl[1].Trim('\r'), CultureInfo.InvariantCulture).ToString("#,0.00", nfi);
 
                     // Payee Account
                     index = firstCsv.IndexOf("ПлательщикСчет", index, StringComparison.Ordinal);
@@ -343,11 +343,11 @@ namespace AvibaWeb.Controllers
                                               OpeningBalance = orderedGroup.FirstOrDefault()?.CashlessDestination.OpeningBalance,
                                               ClosingBalance = orderedGroup.LastOrDefault()?.CashlessDestination.ClosingBalance,
                                               DebitTurnover = g.Sum(r =>
-                                                  decimal.Parse(r.CashlessDestination.DebitTurnover.Replace(".", ",")
-                                                      .Replace(" ", string.Empty))).ToString("#,0.00", nfi),
+                                                  decimal.Parse(r.CashlessDestination.DebitTurnover
+                                                      .Replace(" ", string.Empty), CultureInfo.InvariantCulture)).ToString("#,0.00", nfi),
                                               CreditTurnover = g.Sum(r =>
-                                                  decimal.Parse(r.CashlessDestination.CreditTurnover.Replace(".", ",")
-                                                      .Replace(" ", string.Empty))).ToString("#,0.00", nfi)
+                                                  decimal.Parse(r.CashlessDestination.CreditTurnover
+                                                      .Replace(" ", string.Empty), CultureInfo.InvariantCulture)).ToString("#,0.00", nfi)
                                           },
                                           CounterpartyGroups =
                                               (from r in g.SelectMany(r => r.CashlessRecords)
@@ -456,11 +456,11 @@ namespace AvibaWeb.Controllers
         //                                      OpeningBalance = orderedGroup.FirstOrDefault()?.CashlessDestination.OpeningBalance,
         //                                      ClosingBalance = orderedGroup.LastOrDefault()?.CashlessDestination.ClosingBalance,
         //                                      DebitTurnover = g.Sum(r =>
-        //                                          decimal.Parse(r.CashlessDestination.DebitTurnover.Replace(".", ",")
-        //                                              .Replace(" ", string.Empty))).ToString(),
+        //                                          decimal.Parse(r.CashlessDestination.DebitTurnover
+        //                                              .Replace(" ", string.Empty), CultureInfo.InvariantCulture)).ToString(),
         //                                      CreditTurnover = g.Sum(r =>
-        //                                          decimal.Parse(r.CashlessDestination.CreditTurnover.Replace(".", ",")
-        //                                              .Replace(" ", string.Empty))).ToString()
+        //                                          decimal.Parse(r.CashlessDestination.CreditTurnover
+        //                                              .Replace(" ", string.Empty), CultureInfo.InvariantCulture)).ToString()
         //                                  },
         //                                  CounterpartyGroups =
         //                                      (from r in g.SelectMany(r => r.CashlessRecords)
@@ -522,7 +522,7 @@ namespace AvibaWeb.Controllers
                         transferAccount = _db.FinancialAccounts.FirstOrDefault(a => a.Description == record.PayeeAccount);
                     }
 
-                    var dAmount = decimal.Parse(record.Amount.Replace('.', ',').Replace(" ", string.Empty));
+                    var dAmount = decimal.Parse(record.Amount.Replace(" ", string.Empty), CultureInfo.InvariantCulture);
                     var isCashRequest = (record.PaymentDescription.ToLower().Contains("внесение наличных") ||
                                          record.PaymentDescription.ToLower()
                                              .Contains("от реализации платных услуг") ||
@@ -653,7 +653,7 @@ namespace AvibaWeb.Controllers
                                         var endIndex = 6;
                                         var receiptStr = beginStr.Substring(0, endIndex).Trim().Split(' ')[0];
                                         var receiptNumber =
-                                            int.Parse(new string(receiptStr.Where(char.IsDigit).Take(7).ToArray()));
+                                            int.Parse(new string(receiptStr.Where(char.IsDigit).Take(7).ToArray()), CultureInfo.InvariantCulture);
 
                                         var receipt = _db.CorporatorReceipts
                                             .FirstOrDefault(cr =>
@@ -1067,7 +1067,7 @@ namespace AvibaWeb.Controllers
                 {
                     return Json(new { success = false, message = "" });
                 }
-                model.Amount = (-decimal.Parse(model.Amount.Replace(".", ",").Replace(" ", string.Empty))).ToString();
+                model.Amount = (-decimal.Parse(model.Amount.Replace(" ", string.Empty), CultureInfo.InvariantCulture)).ToString();
 
                 payeeFinancialAccount = (from fa in _db.FinancialAccounts
                                          join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
@@ -1078,7 +1078,7 @@ namespace AvibaWeb.Controllers
                     return Json(new { success = false, message = "" });
                 }
 
-                var opAmount = -decimal.Parse(model.Amount.Replace('.', ',').Replace(" ", string.Empty));
+                var opAmount = -decimal.Parse(model.Amount.Replace(" ", string.Empty), CultureInfo.InvariantCulture);
                 var operationExists = _db.FinancialAccountOperations.Any(fao =>
                         fao.OrderNumber == model.OrderNumber &&
                         fao.FinancialAccountId == financialAccount.FinancialAccountId &&
@@ -1113,7 +1113,7 @@ namespace AvibaWeb.Controllers
                 {
                     return Json(new { success = false, message = "" });
                 }
-                model.Amount = (-decimal.Parse(model.Amount.Replace(".", ",").Replace(" ", string.Empty))).ToString();
+                model.Amount = (-decimal.Parse(model.Amount.Replace(" ", string.Empty), CultureInfo.InvariantCulture)).ToString();
                 counterparty = _db.Counterparties.Include(c => c.LoanGroup).Include(c => c.SubagentData)
                     .Include(c => c.ProviderBalance)
                     .FirstOrDefault(c => c.Name == model.PayeeName);
@@ -1138,7 +1138,7 @@ namespace AvibaWeb.Controllers
                 return Json(new { success = false, message = "" });
             }
 
-            var faopAmount = decimal.Parse(model.Amount.Replace('.', ',').Replace(" ", string.Empty));
+            var faopAmount = decimal.Parse(model.Amount.Replace(" ", string.Empty), CultureInfo.InvariantCulture);
             var faoperationExists = false;
             if (model.PayeeBankName != null && model.PayerBankName != null)
             {

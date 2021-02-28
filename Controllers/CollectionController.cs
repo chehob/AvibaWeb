@@ -403,8 +403,8 @@ namespace AvibaWeb.Controllers
                 CurrentData = new OfficeBalanceRecord
                 {
                     Total = user.Balance,
-                    _5kBill = decimal.Parse(_db.SettingsValues.FirstOrDefault(sv => sv.Key == "5kBillSum").Value.Replace(".", ",").Replace(" ", string.Empty)),
-                    _2kBill = decimal.Parse(_db.SettingsValues.FirstOrDefault(sv => sv.Key == "2kBillSum").Value.Replace(".", ",").Replace(" ", string.Empty)),
+                    _5kBill = decimal.Parse(_db.SettingsValues.FirstOrDefault(sv => sv.Key == "5kBillSum").Value.Replace(" ", string.Empty), CultureInfo.InvariantCulture),
+                    _2kBill = decimal.Parse(_db.SettingsValues.FirstOrDefault(sv => sv.Key == "2kBillSum").Value.Replace(" ", string.Empty), CultureInfo.InvariantCulture),
                 },
                 Records = (from o in _db.OfficeBalanceHistory
                            where o.SaveDateTime.Date >= queryFromDate && o.SaveDateTime.Date <= queryToDate

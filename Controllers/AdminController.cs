@@ -1280,7 +1280,7 @@ namespace AvibaWeb.Controllers
                         {
                             if (o.IsProcessed)
                             {
-                                group.Balance -= decimal.Parse(o.Amount.Replace(".", ",").Replace(" ", string.Empty));
+                                group.Balance -= decimal.Parse(o.Amount.Replace(".", ",").Replace(" ", string.Empty), CultureInfo.InvariantCulture);
                             }
                         }
 

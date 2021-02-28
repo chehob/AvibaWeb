@@ -80,10 +80,10 @@ namespace AvibaWeb.ViewModels.ReportViewModels
         private NumberFormatInfo nfi;
 
         public List<OrganizationCashlessInfo> Organizations;
-        public string Balance => Organizations.Sum(o => decimal.Parse(o.Balance.Replace(".", ",").Replace(" ", string.Empty))).ToString("#,0.00", nfi);
+        public string Balance => Organizations.Sum(o => decimal.Parse(o.Balance.Replace(" ", string.Empty), CultureInfo.InvariantCulture)).ToString("#,0.00", nfi);
         public string LoanGroupsBalance { get; set; }
-        public string Total => (decimal.Parse(Balance.Replace(".", ",").Replace(" ", string.Empty)) +
-            decimal.Parse(LoanGroupsBalance.Replace(".", ",").Replace(" ", string.Empty))).ToString("#,0.00", nfi);
+        public string Total => (decimal.Parse(Balance.Replace(" ", string.Empty), CultureInfo.InvariantCulture) +
+            decimal.Parse(LoanGroupsBalance.Replace(" ", string.Empty), CultureInfo.InvariantCulture)).ToString("#,0.00", nfi);
     }
 
     public class OrganizationCashlessInfo
@@ -97,7 +97,7 @@ namespace AvibaWeb.ViewModels.ReportViewModels
 
         public string Name { get; set; }
         public List<OrganizationAccountBalance> AccountBalances { get; set; }
-        public string Balance => AccountBalances.Sum(ab => decimal.Parse(ab.Balance.Replace(".", ",").Replace(" ", string.Empty))).ToString("#,0.00", nfi);
+        public string Balance => AccountBalances.Sum(ab => decimal.Parse(ab.Balance.Replace(" ", string.Empty), CultureInfo.InvariantCulture)).ToString("#,0.00", nfi);
     }
 
     public class AccountOperationsViewModel

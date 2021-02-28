@@ -2,7 +2,7 @@
 @model IndexViewModel
 
 @if (Model.IsUserLoggedInKRS ||
-    User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Инкассаторы") || User.IsInRole("Кассиры"))
+   User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Инкассаторы") || User.IsInRole("Кассиры") || User.IsInRole("Бухгалтерия"))
 {
 <p class="btn-group">
     <a asp-action="CreateReceipt" asp-controller="CorpClient"

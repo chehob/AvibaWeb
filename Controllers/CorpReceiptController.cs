@@ -343,7 +343,7 @@ namespace AvibaWeb.Controllers
                     join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
                     where o.OrganizationId == (int.TryParse(model.PayeeId, out orgId) ? orgId : 0) && fa.BankName == model.PayeeBankName
                     select fa).FirstOrDefault();
-                receipt.FeeRate = model.FeeRate.Length == 0 ? 0 : decimal.Parse(model.FeeRate);
+                receipt.FeeRate = model.FeeRate.Length == 0 ? 0 : decimal.Parse(model.FeeRate, CultureInfo.InvariantCulture);
                 receipt.StatusId = model.StatusId;
                 if (receipt.StatusId == CorporatorReceipt.CRPaymentStatus.Paid)
                 {
@@ -370,7 +370,7 @@ namespace AvibaWeb.Controllers
                         var item = new CorporatorReceiptItem
                         {
                             Receipt = receipt,
-                            TicketOperationId = int.Parse(i.TicketOperationId),
+                            TicketOperationId = int.Parse(i.TicketOperationId, CultureInfo.InvariantCulture),
                             Amount = i.Amount,
                             PassengerName = i.PassengerName,
                             Route = i.Route,
@@ -411,7 +411,7 @@ namespace AvibaWeb.Controllers
                                     join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
                                     where o.OrganizationId == (int.TryParse(model.PayeeId, out orgId) ? orgId : 0) && fa.BankName == model.PayeeBankName
                                     select fa).FirstOrDefault(),
-                    FeeRate = model.FeeRate.Length == 0 ? 0 : decimal.Parse(model.FeeRate),
+                    FeeRate = model.FeeRate.Length == 0 ? 0 : decimal.Parse(model.FeeRate, CultureInfo.InvariantCulture),
                     Amount = 0,
                     StatusId = model.StatusId,
                     TypeId = CorporatorReceipt.CRType.WebSite,
@@ -434,7 +434,7 @@ namespace AvibaWeb.Controllers
                     var receiptItem = new CorporatorReceiptItem
                     {
                         Receipt = receipt,
-                        TicketOperationId = int.Parse(item.TicketOperationId),
+                        TicketOperationId = int.Parse(item.TicketOperationId, CultureInfo.InvariantCulture),
                         Amount = item.Amount,
                         PassengerName = item.PassengerName,
                         Route = item.Route,

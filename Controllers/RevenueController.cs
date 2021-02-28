@@ -51,7 +51,7 @@ namespace AvibaWeb.Controllers
                 return Json(new { message = "No provider" });
             }
 
-            var feeAmount = decimal.Parse(model.FeeAmount);
+            var feeAmount = decimal.Parse(model.FeeAmount, CultureInfo.InvariantCulture);
 
             var record = new ProviderAgentFeeTransaction
             {

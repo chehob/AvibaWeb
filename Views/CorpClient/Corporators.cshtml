@@ -43,7 +43,7 @@
                     </td>
                     <td>
                         
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Кассиры"))
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Кассиры") || User.IsInRole("Бухгалтерия"))
                         {
                             <div class="btn-group">
                                 <button class="btn btn-default btn-xs">Параметры</button>

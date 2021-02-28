@@ -47,7 +47,9 @@ namespace AvibaWeb.DomainModels
             [Display(Name = "Штраф за обмен")]
             ExchangePenalty = 19,
             [Display(Name = "Штраф за возврат")]
-            RefundPenalty = 21
+            RefundPenalty = 21,
+            [Display(Name = "Расписка")]
+            Receipt = 23
         }
 
         [Key]

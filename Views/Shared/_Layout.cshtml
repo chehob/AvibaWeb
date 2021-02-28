@@ -162,7 +162,7 @@
                             </li>
 
                         }
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Кассиры") || User.IsInRole("Офис"))
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Кассиры") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
                         {
                             <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
                                 <a asp-action="Index" asp-controller="CorpClient"
@@ -170,7 +170,7 @@
                                    class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;CorpClient</a>
                             </li>
                         }
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
                         {
                             <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
                                 <a asp-action="Index" asp-controller="CorpReceipt"
@@ -188,7 +188,7 @@
                             </li>
 
                         }
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Кассиры"))
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Кассиры") || User.IsInRole("Бухгалтерия"))
                         {
                             <li>
                                 <a asp-action="Index" asp-controller="Report"
@@ -211,14 +211,17 @@
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
                                    class="main"><i class="glyphicon glyphicon-circle-arrow-up"></i>&nbsp;Расходы</a>
                             </li>
+                        }
 
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
+                        {
                             <li>
                                 <a asp-action="Index" asp-controller="Data"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
                                    class="main"><i class="glyphicon glyphicon-retweet"></i>&nbsp;Безнал</a>
                             </li>
-
                         }
+
                         @if (User.IsInRole("Administrators") || User.IsInRole("Менеджеры") || User.IsInRole("Офис"))
                         {
                             <li>

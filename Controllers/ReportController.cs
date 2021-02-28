@@ -94,12 +94,12 @@ namespace AvibaWeb.Controllers
             };
 
             model.OfficeBillInfo.RemainderSum = (model.OfficeBalance -
-                                                 decimal.Parse(model.OfficeBillInfo._5kBillSum.Replace(".", ",")
-                                                     .Replace(" ", string.Empty)) -
-                                                 decimal.Parse(model.OfficeBillInfo._2kBillSum.Replace(".", ",")
-                                                     .Replace(" ", string.Empty)) -
-                                                 decimal.Parse(model.OfficeBillInfo.OtherSum.Replace(".", ",")
-                                                     .Replace(" ", string.Empty)))
+                                                 decimal.Parse(model.OfficeBillInfo._5kBillSum
+                                                     .Replace(" ", string.Empty), CultureInfo.InvariantCulture) -
+                                                 decimal.Parse(model.OfficeBillInfo._2kBillSum
+                                                     .Replace(" ", string.Empty), CultureInfo.InvariantCulture) -
+                                                 decimal.Parse(model.OfficeBillInfo.OtherSum
+                                                     .Replace(" ", string.Empty), CultureInfo.InvariantCulture))
                 .ToString("#,0", nfi);
 
             return PartialView(model);
@@ -245,13 +245,13 @@ namespace AvibaWeb.Controllers
             nfi.NumberGroupSeparator = " ";
 
             var settingsValue = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "5kBillSum");
-            settingsValue.Value = decimal.Parse(model._5kBillSum.Replace(".", ",").Replace(" ", string.Empty)).ToString("#,0", nfi);
+            settingsValue.Value = decimal.Parse(model._5kBillSum.Replace(" ", string.Empty), CultureInfo.InvariantCulture).ToString("#,0", nfi);
 
             settingsValue = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "2kBillSum");
-            settingsValue.Value = decimal.Parse(model._2kBillSum.Replace(".", ",").Replace(" ", string.Empty)).ToString("#,0", nfi);
+            settingsValue.Value = decimal.Parse(model._2kBillSum.Replace(" ", string.Empty), CultureInfo.InvariantCulture).ToString("#,0", nfi);
 
             settingsValue = _db.SettingsValues.FirstOrDefault(sv => sv.Key == "OtherSum");
-            settingsValue.Value = decimal.Parse(model.OtherSum.Replace(".", ",").Replace(" ", string.Empty)).ToString("#,0", nfi);
+            settingsValue.Value = decimal.Parse(model.OtherSum.Replace(" ", string.Empty), CultureInfo.InvariantCulture).ToString("#,0", nfi);
 
             await _db.SaveChangesAsync();
 
@@ -275,9 +275,9 @@ namespace AvibaWeb.Controllers
 
             model.RemainderSum =
                 (_db.Users.Where(u => u.Roles.Any(r => r.RoleId == officeRole.Id)).Sum(u => u.Balance) -
-                 decimal.Parse(model._5kBillSum.Replace(".", ",").Replace(" ", string.Empty)) -
-                 decimal.Parse(model._2kBillSum.Replace(".", ",").Replace(" ", string.Empty)) -
-                 decimal.Parse(model.OtherSum.Replace(".", ",").Replace(" ", string.Empty)))
+                 decimal.Parse(model._5kBillSum.Replace(" ", string.Empty), CultureInfo.InvariantCulture) -
+                 decimal.Parse(model._2kBillSum.Replace(" ", string.Empty), CultureInfo.InvariantCulture) -
+                 decimal.Parse(model.OtherSum.Replace(" ", string.Empty), CultureInfo.InvariantCulture))
                 .ToString("#,0", nfi);
 
             return PartialView(model);
@@ -790,7 +790,7 @@ namespace AvibaWeb.Controllers
             //if (office == null) return RedirectToAction("IncomeSummary");
 
             //var otherSum = decimal.Parse(_db.SettingsValues.FirstOrDefault(sv => sv.Key == "OtherSum").Value
-            //    .Replace(".", ",").Replace(" ", string.Empty));
+            //    .Replace(" ", string.Empty), CultureInfo.InvariantCulture);
             //var remainder = model.Amount;
             //if (otherSum > 0)
             //{

@@ -158,9 +158,9 @@ namespace AvibaWeb.Controllers
 
                 receipt.PayeeAccount = (from fa in _db.FinancialAccounts
                                         join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
-                                        where o.OrganizationId == int.Parse(model.PayeeId) && fa.BankName == model.PayeeBankName
+                                        where o.OrganizationId == int.Parse(model.PayeeId, CultureInfo.InvariantCulture) && fa.BankName == model.PayeeBankName
                                         select fa).FirstOrDefault();
-                receipt.FeeRate = string.IsNullOrEmpty(model.FeeRate) ? 0 : decimal.Parse(model.FeeRate);                
+                receipt.FeeRate = string.IsNullOrEmpty(model.FeeRate) ? 0 : decimal.Parse(model.FeeRate, CultureInfo.InvariantCulture);                
                 receipt.Amount = 0;
                 receipt.StatusId = CorporatorReceipt.CRPaymentStatus.Unpaid;
                 receipt.TypeId = CorporatorReceipt.CRType.CorpClient;
@@ -175,7 +175,7 @@ namespace AvibaWeb.Controllers
                         var item = new CorporatorReceiptItem
                         {
                             Receipt = receipt,
-                            TicketOperationId = int.Parse(i.TicketOperationId),
+                            TicketOperationId = int.Parse(i.TicketOperationId, CultureInfo.InvariantCulture),
                             Amount = i.Amount,
                             PassengerName = i.PassengerName,
                             Route = i.Route,
@@ -256,7 +256,7 @@ namespace AvibaWeb.Controllers
                     foreach (var i in model.Items)
                     {
                         var ticketOperationId = new SqlParameter("@TicketOperationId",
-                            int.Parse(i.TicketOperationId));
+                            int.Parse(i.TicketOperationId, CultureInfo.InvariantCulture));
                         _db.Database.ExecuteSqlCommand(
                             @"
                             update t
@@ -288,7 +288,7 @@ namespace AvibaWeb.Controllers
                             ticketOperationId);
 
                         var rList = (from sr in _db.ServiceReceipts.Include(sr => sr.Items)
-                                     where sr.ServiceOperationId == int.Parse(i.TicketOperationId) && sr.IsCanceled == false
+                                     where sr.ServiceOperationId == int.Parse(i.TicketOperationId, CultureInfo.InvariantCulture) && sr.IsCanceled == false
                                      select sr);
 
                         foreach (var r in rList)
@@ -309,9 +309,9 @@ namespace AvibaWeb.Controllers
                     CorporatorId = model.PayerId,
                     PayeeAccount = (from fa in _db.FinancialAccounts
                                     join o in _db.Organizations on fa.OrganizationId equals o.OrganizationId
-                                    where o.OrganizationId == int.Parse(model.PayeeId) && fa.BankName == model.PayeeBankName
+                                    where o.OrganizationId == int.Parse(model.PayeeId, CultureInfo.InvariantCulture) && fa.BankName == model.PayeeBankName
                                     select fa).FirstOrDefault(),
-                    FeeRate = string.IsNullOrEmpty(model.FeeRate) ? 0 : decimal.Parse(model.FeeRate),
+                    FeeRate = string.IsNullOrEmpty(model.FeeRate) ? 0 : decimal.Parse(model.FeeRate, CultureInfo.InvariantCulture),
                     Amount = 0,
                     StatusId = CorporatorReceipt.CRPaymentStatus.Unpaid,
                     TypeId = CorporatorReceipt.CRType.CorpClient
@@ -331,7 +331,7 @@ namespace AvibaWeb.Controllers
                     var receiptItem = new CorporatorReceiptItem
                     {
                         Receipt = receipt,
-                        TicketOperationId = int.Parse(item.TicketOperationId),
+                        TicketOperationId = int.Parse(item.TicketOperationId, CultureInfo.InvariantCulture),
                         Amount = item.Amount,
                         PassengerName = item.PassengerName,
                         Route = item.Route,
@@ -350,7 +350,7 @@ namespace AvibaWeb.Controllers
                     receipt.Amount += receiptItem.Amount + itemFee;
 
                     var ticketOperationId = new SqlParameter("@TicketOperationId",
-                        int.Parse(item.TicketOperationId));
+                        int.Parse(item.TicketOperationId, CultureInfo.InvariantCulture));
                     _db.Database.ExecuteSqlCommand(
                         @"
                         update t
@@ -529,7 +529,7 @@ namespace AvibaWeb.Controllers
                                     cro.OperationDateTime < DateTime.Parse(request.toDate).AddDays(1) &&
                                     cro.CorporatorReceiptId == cr.CorporatorReceiptId)
                                 .OrderByDescending(o => o.OperationDateTime).Take(1)
-                            where (string.IsNullOrEmpty(request.payeeId) || cr.PayeeAccount.Organization.OrganizationId == int.Parse(request.payeeId)) &&
+                            where (string.IsNullOrEmpty(request.payeeId) || cr.PayeeAccount.Organization.OrganizationId == int.Parse(request.payeeId, CultureInfo.InvariantCulture)) &&
                                 (string.IsNullOrEmpty(request.payerId) || cr.CorporatorId == request.payerId) &&
                                 (string.IsNullOrEmpty(request.isOnlyPaid) || request.isOnlyPaid == "false" || cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid)
                             orderby cr.IssuedDateTime descending
@@ -1071,7 +1071,7 @@ namespace AvibaWeb.Controllers
                         cr.CorporatorReceiptId == cro.CorporatorReceiptId)
                     .OrderByDescending(o => o.OperationDateTime)
                     .FirstOrDefault()
-                where cr.PayeeAccount.Organization.OrganizationId == int.Parse(requestData.payeeId) &&
+                where cr.PayeeAccount.Organization.OrganizationId == int.Parse(requestData.payeeId, CultureInfo.InvariantCulture) &&
                       cr.Corporator.ITN == requestData.payerId &&
                       cr.TypeId == CorporatorReceipt.CRType.CorpClient &&
                       cro != null
@@ -1080,11 +1080,11 @@ namespace AvibaWeb.Controllers
                  join fa in _db.FinancialAccounts.Include(fa => fa.Organization) on cp.FinancialAccountId equals fa.FinancialAccountId
                  where ((string.IsNullOrEmpty(cp.FactualCounterpartyId) && cp.CounterpartyId == requestData.payerId) ||
                         cp.FactualCounterpartyId == requestData.payerId) &&
-                    fa.Organization.OrganizationId == int.Parse(requestData.payeeId) &&
+                    fa.Organization.OrganizationId == int.Parse(requestData.payeeId, CultureInfo.InvariantCulture) &&
                     cp.OperationDateTime < DateTime.Parse(requestData.fromDate)
                  select cp.Amount).Sum();
 
-            var org = _db.Organizations.FirstOrDefault(o => o.OrganizationId == int.Parse(requestData.payeeId));
+            var org = _db.Organizations.FirstOrDefault(o => o.OrganizationId == int.Parse(requestData.payeeId, CultureInfo.InvariantCulture));
 
             var model = new ReviseReportPDFViewModel
             {
@@ -1117,7 +1117,7 @@ namespace AvibaWeb.Controllers
                                   join cri in _db.CorporatorReceiptItems on cr.CorporatorReceiptId equals cri.CorporatorReceiptId
                                   join ti in _db.VReceiptTicketInfo on cri.TicketOperationId equals ti.TicketOperationId into tis
                                   from ti in tis.DefaultIfEmpty()
-                                  where cr.PayeeAccount.OrganizationId == int.Parse(requestData.payeeId) &&
+                                  where cr.PayeeAccount.OrganizationId == int.Parse(requestData.payeeId, CultureInfo.InvariantCulture) &&
                                        cr.Corporator.ITN == requestData.payerId &&
                                        cr.TypeId == CorporatorReceipt.CRType.CorpClient &&
                                        cr.IssuedDateTime >= DateTime.Parse(requestData.fromDate) &&
@@ -1741,7 +1741,7 @@ namespace AvibaWeb.Controllers
                                     cro.OperationDateTime < DateTime.Parse(request.toDate).AddDays(1) &&
                                     cro.CorporatorReceiptId == cr.CorporatorReceiptId)
                                 .OrderByDescending(o => o.OperationDateTime).Take(1)
-                            where (string.IsNullOrEmpty(request.payeeId) || cr.PayeeAccount.Organization.OrganizationId == int.Parse(request.payeeId)) &&
+                            where (string.IsNullOrEmpty(request.payeeId) || cr.PayeeAccount.Organization.OrganizationId == int.Parse(request.payeeId, CultureInfo.InvariantCulture)) &&
                                 (string.IsNullOrEmpty(request.payerId) || cr.CorporatorId == request.payerId) &&
                                 (string.IsNullOrEmpty(request.isOnlyPaid) || request.isOnlyPaid == "false" || cr.StatusId == CorporatorReceipt.CRPaymentStatus.Paid)
                             orderby cr.IssuedDateTime descending

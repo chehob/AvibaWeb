@@ -139,7 +139,7 @@ namespace AvibaWeb.Controllers
             if (office == null) return RedirectToAction("IssuedExpenditures");
 
             var otherSum = decimal.Parse(_db.SettingsValues.FirstOrDefault(sv => sv.Key == "OtherSum").Value
-                .Replace(".", ",").Replace(" ", string.Empty));
+                .Replace(" ", string.Empty), CultureInfo.InvariantCulture);
             var remainder = model.Amount;
             if (otherSum > 0)
             {
@@ -442,7 +442,7 @@ namespace AvibaWeb.Controllers
             if (office == null) return RedirectToAction("LoanExpenditures");
 
             var otherSum = decimal.Parse(_db.SettingsValues.FirstOrDefault(sv => sv.Key == "OtherSum").Value
-                .Replace(".", ",").Replace(" ", string.Empty));
+                .Replace(" ", string.Empty), CultureInfo.InvariantCulture);
             var remainder = model.Amount;
             if (otherSum > 0)
             {
