@@ -136,7 +136,7 @@
                                 <a href="https://ams.aviba.ru/Mobile"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Мобильная</a>
                             </li>
                         }
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
                         {
                             <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
                                 <a asp-action="Index" asp-controller="ManagementAccounting"
@@ -179,7 +179,7 @@
                             </li>
 
                         }
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Менеджеры"))
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Менеджеры") || User.IsInRole("Бухгалтерия"))
                         {
                             <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
                                 <a asp-action="Index" asp-controller="BookingManagement"
@@ -206,6 +206,10 @@
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
                                    class="main"><i class="glyphicon glyphicon-circle-arrow-down"> </i>&nbsp;Поступления</a>
                             </li>
+                        }
+
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
+                        {
                             <li>
                                 <a asp-action="Index" asp-controller="Expenditure"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"

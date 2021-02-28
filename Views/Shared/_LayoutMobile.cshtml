@@ -124,7 +124,7 @@
                 
                 <li>
                     <ul class="nav nav-pills nav-stacked">
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
                         {
                             <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
                                 <a asp-action="Index" asp-controller="ManagementAccounting"
@@ -185,6 +185,10 @@
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
                                    class="main"><i class="glyphicon glyphicon-circle-arrow-down"> </i>&nbsp;Поступления</a>
                             </li>
+                        }
+                        
+                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
+                        {
                             <li>
                                 <a asp-action="Index" asp-controller="Expenditure"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
