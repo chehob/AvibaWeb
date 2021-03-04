@@ -264,7 +264,7 @@ namespace AvibaWeb.Controllers
                     //from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
                     //orderby operation.OperationDateTime descending
                                    where eo.OperationDateTime >= queryFromDate && eo.OperationDateTime < queryToDate.AddDays(1)
-                                   orderby eo.OperationDateTime descending
+                                   orderby eo.Expenditure.IncomingExpenditure.FinancialAccountOperation.OperationDateTime descending
                                    select new {expenditure, eo}).ToList()
                                    .GroupBy(f => f.expenditure.IncomingExpenditureId, new NullableComparer<int>());
 
@@ -287,7 +287,7 @@ namespace AvibaWeb.Controllers
                                                DeskGroup = g.expenditure.DeskGroup != null ? g.expenditure.DeskGroup.Name : "",
                                                Type = g.expenditure.Type != null ? g.expenditure.Type.Description : "",
                                                Object = g.expenditure.Object != null ? g.expenditure.Object.Description : "",
-                                               IssuedDateTime = g.eo.OperationDateTime,
+                                               IssuedDateTime = g.expenditure.IncomingExpenditure?.FinancialAccountOperation.OperationDateTime ?? g.eo.OperationDateTime,
                                                Status = g.eo.OperationTypeId
                                            }).ToList()
                               }).ToList()

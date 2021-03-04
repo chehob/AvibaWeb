@@ -197,10 +197,10 @@
                             </li>
                         }
 
+                        <li class="nav-header hidden-md"><hr></li>
 
                         @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
-                        {
-                            <li class="nav-header hidden-md"><hr></li>
+                        {                            
                             <li>
                                 <a asp-action="Index" asp-controller="Revenue"
                                    data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"

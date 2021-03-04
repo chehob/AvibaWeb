@@ -1,9 +1,12 @@
 ﻿<p class="btn-group">
     @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
     {
+        if (!User.IsInRole("Бухгалтерия"))
+        {
         <a asp-action="OnlineInfo" asp-controller="Report"
            data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
            class="btn btn-primary">Наличные</a>
+        }
         <a asp-action="CashlessOrg" asp-controller="Report"
            data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
            class="btn btn-primary">Безнал счета</a>
@@ -13,14 +16,17 @@
         <a asp-action="ExpenditureSummary" asp-controller="Report" asp-route-grouping="@AvibaWeb.ViewModels.ReportViewModels.ExpenditureSummaryGrouping.ByDeskGroup"
            data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
            class="btn btn-primary">Расходы</a>
+        if (!User.IsInRole("Бухгалтерия"))
+        {
         <a asp-action="IncomeSummary" asp-controller="Report"
            data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
            class="btn btn-primary">Доходы</a>
         <a asp-action="FinalSummary" asp-controller="Report"
            data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
            class="btn btn-primary">Сводка</a>
+        }
     }
-    
+
 @if (User.IsInRole("Administrators"))
 {
     <button id="createdata">test</button>
