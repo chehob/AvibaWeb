@@ -21,10 +21,13 @@
     <div class="col-md-6"><b class="yellow pull-right animated flash">@Model.CashlessTotal</b></div>
 </div>
 
+@if (User.IsInRole("Administrators"))
+{
 <div id="CashTotalStr" style="cursor: pointer" class="row">
     <div class="col-md-6"><b class="yellow">Итого нал:</b></div>
     <div class="col-md-6"><b class="yellow pull-right animated flash">@Model.CashTotalStr</b></div>
 </div>
+}
 
 
 <div id="summaryOrganizationBalanceDiv" style="cursor: pointer" class="row">
