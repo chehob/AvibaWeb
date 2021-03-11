@@ -1,7 +1,10 @@
 ﻿<p class="btn-group">
+   @if (!User.IsInRole("Бухгалтерия"))
+        {
     <a asp-action="IssuedExpenditures" asp-controller="Expenditure"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary">Наличные</a>
+        }
     <a asp-action="CashlessExpenditures" asp-controller="Expenditure"
        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
        class="btn btn-primary">Безнал</a>

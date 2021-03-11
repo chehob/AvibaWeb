@@ -936,7 +936,8 @@ namespace AvibaWeb.Controllers
                     if (dataRecord == null) continue;
 
                     var transferAccount = _db.FinancialAccounts.FirstOrDefault(a =>
-                        a.BIK == dataRecord.PayeeBankBIC && a.Organization.CounterpartyId == dataRecord.PayeeITN);
+                        a.BIK == dataRecord.PayeeBankBIC && a.Organization.CounterpartyId == dataRecord.PayeeITN && 
+                        a.Description == dataRecord.PayeeAccount);
                     if (transferAccount != null)
                     {
                         counterpartyGroup.IsKnownCounterparty = true;
