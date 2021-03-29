@@ -1,4 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@using AvibaWeb.ViewModels.HomeViewModels
+@model LayoutModel
 <!DOCTYPE html>
 <html>
 <head>
@@ -87,181 +89,191 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/i18n/ru.js"></script>
 </head>
 <body style="position: relative;">
-<!-- topbar starts -->
-<nav class="navbar navbar-default" role="navigation">
+    <!-- topbar starts -->
+    <nav class="navbar navbar-default" role="navigation">
 
-    <div class="navbar-inner">
-        <button type="button" class="navbar-toggle pull-left animated flip">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="@Url.Action("Index", "Home")"><img src="~/img/logo20.png" style="width:155px; height:40px; margin-top:-10px;" alt="AVIBA-MS"></img></a>
-        <!-- user dropdown starts -->
-        @Html.Partial("_LoginPartial")
-        <!-- user dropdown ends -->
-        <!-- theme selector ends -->
-        <!--
-        <ul class="collapse navbar-collapse nav navbar-nav top-menu">
+        <div class="navbar-inner">
+            <button type="button" class="navbar-toggle pull-left animated flip">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")"><img src="~/img/logo20.png" style="width:155px; height:40px; margin-top:-10px;" alt="AVIBA-MS"></img></a>
+            <!-- user dropdown starts -->
+            @Html.Partial("_LoginPartial")
+            <!-- user dropdown ends -->
+            <!-- theme selector ends -->
+            <!--
+            <ul class="collapse navbar-collapse nav navbar-nav top-menu">
 
-            <li class="dropdown">
-                <a href="#" data-toggle="dropdown"><i class="glyphicon glyphicon glyphicon-th-large"></i> МЕНЮ <span
-                                                                                                                   class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="@Url.Action("Index", "Collection")" class="main"><span class="outer"><span class="inner content">Инкассация</span></span></a></li>
-                    <li class="divider"></li>
-                    <li><a href="@Url.Action("Index", "Report")" class="main"><span class="outer"><span class="inner users">Отчеты</span></span></a></li>
+                <li class="dropdown">
+                    <a href="#" data-toggle="dropdown"><i class="glyphicon glyphicon glyphicon-th-large"></i> МЕНЮ <span
+                                                                                                                       class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="@Url.Action("Index", "Collection")" class="main"><span class="outer"><span class="inner content">Инкассация</span></span></a></li>
+                        <li class="divider"></li>
+                        <li><a href="@Url.Action("Index", "Report")" class="main"><span class="outer"><span class="inner users">Отчеты</span></span></a></li>
 
-                    <li class="divider"></li>
-                    <li><a href="@Url.Action("Index", "Admin")" class="main"><span class="outer"><span class="inner users">Админка</span></span></a></li>
-                </ul>
-            </li>
-        </ul>
-        -->
-    </div>
-</nav>
-<!-- left menu starts -->
-<div class="col-md-2">
-    <div class="sidebar-nav">
-        <div class="nav-canvas">
-
-            <ul class="nav nav-pills nav-stacked main-menu">
-                <li class="nav-header">Меню</li>
-                <li>
-                    <ul class="nav nav-pills nav-stacked">
-                        @if (User.IsInRole("Administrators"))
-                        {
-                            <li>
-                                <a href="https://ams.aviba.ru/Mobile"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Мобильная</a>
-                            </li>
-                        }
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
-                        {
-                            <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
-                                <a asp-action="Index" asp-controller="ManagementAccounting"
-                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults" data-ajax-begin="disableLoader"
-                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Управленческий учет</a>
-                            </li>
-                        }
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Инкассаторы"))
-                        {
-                            <li>
-                                <a asp-action="Index" asp-controller="Collection"
-                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults" data-ajax-success="updateBalance"
-                                   class="main"><i class="glyphicon glyphicon-share"></i>&nbsp;Инкассация</a>
-
-                            </li>
-                        }
-                        @if (User.IsInRole("Administrators"))
-                        {
-                            <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
-                                <a asp-action="Index" asp-controller="Transit"
-                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Транзитный счет</a>
-                            </li>
-
-                        }
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Кассиры") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
-                        {
-                            <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
-                                <a asp-action="Index" asp-controller="CorpClient"
-                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;CorpClient</a>
-                            </li>
-                        }
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
-                        {
-                            <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
-                                <a asp-action="Index" asp-controller="CorpReceipt"
-                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Счета корпораторам</a>
-                            </li>
-
-                        }
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Менеджеры") || User.IsInRole("Бухгалтерия"))
-                        {
-                            <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
-                                <a asp-action="Index" asp-controller="BookingManagement"
-                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults" data-ajax-success="loadBookingManagementFilter"
-                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;BookingManagement</a>
-                            </li>
-
-                        }
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Кассиры") || User.IsInRole("Бухгалтерия"))
-                        {
-                            <li>
-                                <a asp-action="Index" asp-controller="Report"
-                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                   class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Отчеты</a>
-                            </li>
-                        }
-
-                        <li class="nav-header hidden-md"><hr></li>
-
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
-                        {                            
-                            <li>
-                                <a asp-action="Index" asp-controller="Revenue"
-                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                   class="main"><i class="glyphicon glyphicon-circle-arrow-down"> </i>&nbsp;Поступления</a>
-                            </li>
-                        }
-
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
-                        {
-                            <li>
-                                <a asp-action="Index" asp-controller="Expenditure"
-                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                   class="main"><i class="glyphicon glyphicon-circle-arrow-up"></i>&nbsp;Расходы</a>
-                            </li>
-                        }
-
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
-                        {
-                            <li>
-                                <a asp-action="Index" asp-controller="Data"
-                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                   class="main"><i class="glyphicon glyphicon-retweet"></i>&nbsp;Безнал</a>
-                            </li>
-                        }
-
-                        @if (User.IsInRole("Administrators") || User.IsInRole("Менеджеры") || User.IsInRole("Офис"))
-                        {
-                            <li>
-                                <a asp-action="Index" asp-controller="Management"
-                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                   class="main"><i class="glyphicon glyphicon-briefcase"></i>&nbsp;Менеджмент</a>
-                            </li>
-                        }
-
-                        @if (User.IsInRole("Administrators"))
-                        {
-
-
-                            <li>
-                                <a asp-action="Index" asp-controller="Admin"
-                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                                   class="main"><i class="glyphicon glyphicon-cog"></i>&nbsp;Админка</a>
-                            </li>
-                        }
-                        <li>
-                            <a asp-action="Index" asp-controller="Directory"
-                               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
-                               class="main"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Справочники</a>
-                        </li>
+                        <li class="divider"></li>
+                        <li><a href="@Url.Action("Index", "Admin")" class="main"><span class="outer"><span class="inner users">Админка</span></span></a></li>
                     </ul>
                 </li>
             </ul>
+            -->
+        </div>
+    </nav>
+    <!-- left menu starts -->
+    <div class="col-md-2">
+        <div class="sidebar-nav">
+            <div class="nav-canvas">
+
+                <ul class="nav nav-pills nav-stacked main-menu">
+                    <li class="nav-header">Меню</li>
+                    <li>
+                        <ul class="nav nav-pills nav-stacked">
+                            @if (User.IsInRole("Administrators"))
+                            {
+                                <li>
+                                    <a href="https://ams.aviba.ru/Mobile"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Мобильная</a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
+                            {
+                                <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
+                                    <a asp-action="Index" asp-controller="ManagementAccounting"
+                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults" data-ajax-begin="disableLoader"
+                                       class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Управленческий учет</a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Инкассаторы"))
+                            {
+                                <li>
+                                    <a asp-action="Index" asp-controller="Collection"
+                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults" data-ajax-success="updateBalance"
+                                       class="main">
+                                        <i class="glyphicon glyphicon-share"></i>&nbsp; Инкассация
+
+                                        @if (@Model.IncomingNotAccepted > 0)
+                                        {
+                                            <i class="animated flash infinite yellow glyphicon glyphicon-warning-sign"></i>
+                                        }
+                                        else
+                                        {
+                                        }</a>
+
+
+</li>
+                                    }
+                                    @if (User.IsInRole("Administrators"))
+                                    {
+<li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
+                                    <a asp-action="Index" asp-controller="Transit"
+                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                       class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Транзитный счет</a>
+                                </li>
+
+                            }
+                            @if (User.IsInRole("Administrators") || User.IsInRole("Кассиры") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
+                            {
+                                <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
+                                    <a asp-action="Index" asp-controller="CorpClient"
+                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                       class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;CorpClient</a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
+                            {
+                                <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
+                                    <a asp-action="Index" asp-controller="CorpReceipt"
+                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                       class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Счета корпораторам</a>
+                                </li>
+
+                            }
+                            @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Менеджеры") || User.IsInRole("Бухгалтерия"))
+                            {
+                                <li style="overflow: hidden; text-overflow:clip; white-space: nowrap;">
+                                    <a asp-action="Index" asp-controller="BookingManagement"
+                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults" data-ajax-success="loadBookingManagementFilter"
+                                       class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;BookingManagement</a>
+                                </li>
+
+                            }
+                            @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Кассиры") || User.IsInRole("Бухгалтерия"))
+                            {
+                                <li>
+                                    <a asp-action="Index" asp-controller="Report"
+                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                       class="main"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Отчеты</a>
+                                </li>
+                            }
+
+                            <li class="nav-header hidden-md"><hr></li>
+
+                            @if (User.IsInRole("Administrators") || User.IsInRole("Офис"))
+                            {
+                                <li>
+                                    <a asp-action="Index" asp-controller="Revenue"
+                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                       class="main"><i class="glyphicon glyphicon-circle-arrow-down"> </i>&nbsp;Поступления</a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
+                            {
+                                <li>
+                                    <a asp-action="Index" asp-controller="Expenditure"
+                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                       class="main"><i class="glyphicon glyphicon-circle-arrow-up"></i>&nbsp;Расходы</a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Бухгалтерия"))
+                            {
+                                <li>
+                                    <a asp-action="Index" asp-controller="Data"
+                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                       class="main"><i class="glyphicon glyphicon-retweet"></i>&nbsp;Безнал</a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Administrators") || User.IsInRole("Менеджеры") || User.IsInRole("Офис"))
+                            {
+                                <li>
+                                    <a asp-action="Index" asp-controller="Management"
+                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                       class="main"><i class="glyphicon glyphicon-briefcase"></i>&nbsp;Менеджмент</a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Administrators"))
+                            {
+
+
+                                <li>
+                                    <a asp-action="Index" asp-controller="Admin"
+                                       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                       class="main"><i class="glyphicon glyphicon-cog"></i>&nbsp;Админка</a>
+                                </li>
+                            }
+                            <li>
+                                <a asp-action="Index" asp-controller="Directory"
+                                   data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults"
+                                   class="main"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Справочники</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-</div>
-<div id="contentResults"></div>
-@RenderBody()
+    <div id="contentResults"></div>
+    @RenderBody()
 
-<div class="mWaiting">
-</div>
-<div id="mWaitingProgress"></div>
+    <div class="mWaiting">
+    </div>
+    <div id="mWaitingProgress"></div>
 </body>
 
 @if (IsSectionDefined("Scripts"))
@@ -301,7 +313,7 @@
         ajaxStart: function () {
             showLoader = setTimeout("$('.mWaiting').fadeIn(500);", 1000);
         },
-        ajaxStop: function() { 
+        ajaxStop: function () {
             clearTimeout(showLoader);
             $('.mWaiting').fadeOut(500);
         }

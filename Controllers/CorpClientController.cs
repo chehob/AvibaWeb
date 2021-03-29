@@ -1142,9 +1142,11 @@ namespace AvibaWeb.Controllers
                                         Label = $"Продажа ({r.FirstOrDefault().cr.ReceiptNumber} от {r.FirstOrDefault().cr.IssuedDateTime.Value.ToString("d")})",
                                         Debit = r.Sum(a => a.cri.IsPercent ? 
                                                     a.cri.Amount * a.cri.FeeRate / 100 :
-                                                    a.cri.PerSegment ?
-                                                        a.cri.FeeRate * ( a.ti == null ? 1 : a.ti.SegCount ) :
-                                                        a.cri.FeeRate)
+                                                    a.cri.TypeId == CorporatorReceiptItem.CRIType.Luggage ? 
+                                                        a.cri.FeeRate :
+                                                        a.cri.PerSegment ?
+                                                            a.cri.FeeRate * ( a.ti == null ? 1 : a.ti.SegCount ) :
+                                                            a.cri.FeeRate)
                                     }
                                 }));
 
