@@ -1,6 +1,4 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Rendering
-@using AvibaWeb.ViewModels.HomeViewModels
-@model LayoutModel
 <!DOCTYPE html>
 <html>
 <head>
@@ -153,16 +151,7 @@
                                        data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentResults" data-ajax-success="updateBalance"
                                        class="main">
                                         <i class="glyphicon glyphicon-share"></i>&nbsp; Инкассация
-
-                                        @if (@Model.IncomingNotAccepted > 0)
-                                        {
-                                            <i class="animated flash infinite yellow glyphicon glyphicon-warning-sign"></i>
-                                        }
-                                        else
-                                        {
-                                        }</a>
-
-
+                                        <span id="incomingCollectionAlert"></span></a>
 </li>
                                     }
                                     @if (User.IsInRole("Administrators"))
@@ -302,7 +291,20 @@
                 italics: 'HeliosLight.otf'
             }
         };
+
+        getIncomingCollectionAlert();
+        @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Инкассаторы"))
+        {
+            @:setInterval(getIncomingCollectionAlert, 10000);
+        }
+
     });
+
+    function getIncomingCollectionAlert() {
+        $.get("/Home/IncomingCollectionAlert", function (result) {
+            $('#incomingCollectionAlert').html(result.message);
+        });
+    }
 
     function disableLoader() {
         clearTimeout(showLoader);

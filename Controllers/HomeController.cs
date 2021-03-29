@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using AvibaWeb.DomainModels;
+using AvibaWeb.Infrastructure;
 using AvibaWeb.Models;
 using AvibaWeb.ViewModels.HomeViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -16,22 +17,30 @@ namespace AvibaWeb.Controllers
     {
         private readonly AppIdentityDbContext _db;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IViewRenderService _viewRenderService;
 
-        public HomeController(AppIdentityDbContext db, 
-            UserManager<AppUser> usrMgr)
+        public HomeController(AppIdentityDbContext db, UserManager<AppUser> usrMgr,
+             IViewRenderService viewRenderService)
         {
             _db = db;
             _userManager = usrMgr;
+            _viewRenderService = viewRenderService;
         }
 
         [Authorize]
-        public async Task<ViewResult> Index()
+        public ViewResult Index()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> IncomingCollectionAlert()
         {
             var userId = _userManager.GetUserId(User);
             var user = await _userManager.GetUserAsync(User);
 
-            var model = new LayoutModel();
-            if (user == null) return View(model);
+            var model = new IncomingCollectionAlert();
+            if (user == null) return PartialView(model);
 
             model.IncomingNotAccepted =
                 (from c in _db.Collections
@@ -40,7 +49,7 @@ namespace AvibaWeb.Controllers
                  where c.CollectorId == userId && co.OperationTypeId == CollectionOperationType.COType.New
                  select c.Amount).DefaultIfEmpty().Sum();
 
-            return View(model);
+            return Json(new { message = await _viewRenderService.RenderToStringAsync("Home/IncomingCollectionAlert", model) });
         }
     }
 }
