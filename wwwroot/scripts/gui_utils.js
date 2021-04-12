@@ -393,7 +393,7 @@ $(document).on('click',
                             margin: [0, 15, 0, 0]
                         },
                         {
-                            text: `Поставщик: ${result.orgName}`,
+                            text: `Исполнитель: ${result.orgName}`,
                             style: 'mediumText',
                             bold: true,
                             margin: [0, 15, 0, 0]
@@ -403,7 +403,7 @@ $(document).on('click',
                             style: 'mediumText',
                         },
                         {
-                            text: `Покупатель: ${result.payerName}`,
+                            text: `Заказчик: ${result.payerName}`,
                             style: 'mediumText',
                             bold: true,
                             margin: [0, 15, 0, 0]
@@ -628,7 +628,7 @@ $(document).on('click',
                             margin: [0, 15, 0, 0]
                         },
                         {
-                            text: `Поставщик: ${result.orgName}`,
+                            text: `Исполнитель: ${result.orgName}`,
                             style: 'mediumText',
                             bold: true,
                             margin: [0, 15, 0, 0]
@@ -638,7 +638,7 @@ $(document).on('click',
                             style: 'mediumText',
                         },
                         {
-                            text: `Покупатель: ${result.payerName}`,
+                            text: `Заказчик: ${result.payerName}`,
                             style: 'mediumText',
                             bold: true,
                             margin: [0, 15, 0, 0]
@@ -817,7 +817,7 @@ $(document).on('click',
                             margin: [0, 15, 0, 0]
                         },
                         {
-                            text: `Поставщик: ${result.orgName}`,
+                            text: `Исполнитель: ${result.orgName}`,
                             style: 'mediumText',
                             bold: true,
                             margin: [0, 15, 0, 0]
@@ -827,7 +827,7 @@ $(document).on('click',
                             style: 'mediumText',
                         },
                         {
-                            text: `Покупатель: ${result.payerName}`,
+                            text: `Заказчик: ${result.payerName}`,
                             style: 'mediumText',
                             bold: true,
                             margin: [0, 15, 0, 0]
@@ -1011,7 +1011,7 @@ $(document).on('click',
                             margin: [0, 15, 0, 0]
                         },
                         {
-                            text: `Поставщик: ${result.orgName}`,
+                            text: `Исполнитель: ${result.orgName}`,
                             style: 'mediumText',
                             bold: true,
                             margin: [0, 15, 0, 0]
@@ -1021,7 +1021,7 @@ $(document).on('click',
                             style: 'mediumText',
                         },
                         {
-                            text: `Покупатель: ${result.payerName}`,
+                            text: `Заказчик: ${result.payerName}`,
                             style: 'mediumText',
                             bold: true,
                             margin: [0, 15, 0, 0]
@@ -1204,7 +1204,7 @@ $(document).on('click',
                             margin: [0, 15, 0, 0]
                         },
                         {
-                            text: `Поставщик: ${result.orgName}`,
+                            text: `Исполнитель: ${result.orgName}`,
                             style: 'mediumText',
                             bold: true,
                             margin: [0, 15, 0, 0]
@@ -1214,7 +1214,7 @@ $(document).on('click',
                             style: 'mediumText',
                         },
                         {
-                            text: `Покупатель: ${result.payerName}`,
+                            text: `Заказчик: ${result.payerName}`,
                             style: 'mediumText',
                             bold: true,
                             margin: [0, 15, 0, 0]
@@ -1393,7 +1393,7 @@ $(document).on('click',
                             margin: [0, 15, 0, 0]
                         },
                         {
-                            text: `Поставщик: ${result.orgName}`,
+                            text: `Исполнитель: ${result.orgName}`,
                             style: 'mediumText',
                             bold: true,
                             margin: [0, 15, 0, 0]
@@ -1403,7 +1403,7 @@ $(document).on('click',
                             style: 'mediumText',
                         },
                         {
-                            text: `Покупатель: ${result.payerName}`,
+                            text: `Заказчик: ${result.payerName}`,
                             style: 'mediumText',
                             bold: true,
                             margin: [0, 15, 0, 0]
