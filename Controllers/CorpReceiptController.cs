@@ -606,6 +606,7 @@ namespace AvibaWeb.Controllers
                 where cr.CorporatorReceiptId == id
                 let org = cr.PayeeAccount.Organization
                 let orgc = org.Counterparty
+                let cd = _db.CorporatorDocuments.Where(cdi => cr.CorporatorId == cdi.ITN && cr.PayeeAccount.OrganizationId == cdi.OrganizationId).OrderByDescending(cdi => cdi.Date).FirstOrDefault()
                 select new ReceiptPDFViewModel
                 {
                     TotalAmount = cr.Amount.Value,
@@ -674,7 +675,9 @@ namespace AvibaWeb.Controllers
                     IssuedDateTime = operation.OperationDateTime.ToShortDateString(),
                     PaymentTemplateLabelStr = "Образец заполнения назначения платежа:",
                     PaymentTemplateStr = $"Оплата по счету {cr.PayeeAccount.Organization.CorpReceiptPrefix}-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС",
-                    VirtualSegCount = cr.VirtualSegCount
+                    VirtualSegCount = cr.VirtualSegCount,
+                    CounterpartyDocument = cd.Document,
+                    CounterpartyDocumentDate = cd.Date.ToShortDateString()
                 }).FirstOrDefault();
 
             //model.Taxes.AddRange(

@@ -99,5 +99,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
         public int ItemCount { get; set; }
         public int VirtualSegCount { get; set; }
         public string OrgAccountWarningStr { get; set; }
+        public string CounterpartyDocument { get; set; }
+        public string CounterpartyDocumentDate { get; set; }
     }
 }

@@ -2112,6 +2112,338 @@ $(document).on('click',
         });
 
         $(document).on('click',
+        ".createIndustriaReportPDF",
+        function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "/CorpReceipt/ReceiptPDFData",
+                type: "POST",
+                cache: false,
+                data: { id: $(this).closest('tr').find('.receiptId').val() },
+                success: function (result) {
+                    const itemData = [];
+
+                    var headerRow = [];
+
+                    headerRow.push({ text: 'Наименование', style: 'tableHeader' });
+                    headerRow.push({ text: 'Цена', style: 'tableHeader' });
+                    headerRow.push({ text: 'Кол-во', style: 'tableHeader' });
+                    headerRow.push({ text: 'Ед. Изм.', style: 'tableHeader' });
+                    headerRow.push({ text: 'Сумма', style: 'tableHeader' });
+
+                    itemData.push(headerRow);
+
+                    var dataRow = [];
+                    var itemCount = 0;
+                    result.items.forEach(function (item) {
+                        dataRow = [];
+
+                        itemCount++;
+                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+                        dataRow.push({ text: item.segCount, alignment: 'center' });
+                        dataRow.push({ text: item.amountLabelStr, alignment: 'center' });                        
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+
+                        itemData.push(dataRow);
+                    });
+
+                    result.luggageItems.forEach(function(item) {
+                        dataRow = [];
+    
+                        itemCount++;
+                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+                        dataRow.push({ text: item.segCount, alignment: 'center' });
+                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+    
+                        itemData.push(dataRow);
+                    });
+
+                    if(result.items.length == 0 && result.luggageItems.length == 0) {
+                        dataRow = [];
+    
+                        itemCount++;
+                        dataRow.push({ text: 'Авиабилеты', style: 'smallText' });
+                        dataRow.push({ text: result.itemTotalStr, alignment: 'center' });
+                        dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                        dataRow.push({ text: 'полетный\nсегмент', alignment: 'center' });
+                        dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
+    
+                        itemData.push(dataRow);
+                    }
+
+                    dataRow = [];
+
+                    dataRow.push({ text: 'Итого: ', colSpan: 4, alignment: 'right' });
+                    dataRow.push({});
+                    dataRow.push({});
+                    dataRow.push({});
+                    dataRow.push({ text: result.itemTotalStr, alignment: 'right' });
+
+                    itemData.push(dataRow);
+
+                    const feeData = [];
+
+                    headerRow = [];
+
+                    headerRow.push({ text: '№', style: 'tableHeader' });
+                    headerRow.push({ text: 'Наименование', style: 'tableHeader' });
+                    headerRow.push({ text: 'Кол-во', style: 'tableHeader' });
+                    headerRow.push({ text: 'Ед.', style: 'tableHeader' });
+                    headerRow.push({ text: 'Цена', style: 'tableHeader' });
+                    headerRow.push({ text: 'Сумма', style: 'tableHeader' });
+
+                    feeData.push(headerRow);
+
+                    itemCount = 0;
+                    result.taxes.forEach(function(item) {
+                        dataRow = [];
+    
+                        itemCount++;
+                        dataRow.push({ text: (itemCount).toString(), alignment: 'center' });
+                        dataRow.push({ text: item.ticketLabel, style: 'smallText' });
+                        dataRow.push({ text: item.segCount, alignment: 'center' });
+                        dataRow.push({ text: item.amountLabelStr, alignment: 'center' });
+                        dataRow.push({ text: item.feeStr, alignment: 'right' });
+                        dataRow.push({ text: item.amountStr, alignment: 'right' });
+    
+                        feeData.push(dataRow);
+                    });
+
+                    if(result.taxes.length == 0) {
+                        dataRow = [];
+
+                        dataRow.push({ text: '1', alignment: 'center' });
+                        dataRow.push({ text: 'Сервисный сбор за оформление билета', style: 'smallText' });
+                        dataRow.push({ text: result.segCountTotal, alignment: 'center' });
+                        dataRow.push({ text: 'шт.', alignment: 'center' });
+                        dataRow.push({ text: result.feeRateStr, alignment: 'right' });
+                        dataRow.push({ text: result.feeTotalStr, alignment: 'right' });
+
+                        feeData.push(dataRow);
+                    }
+
+                    const docDefinition = {
+                        info: {
+                            title: 'test',
+                        },
+                        content: [
+                            {
+                                text: result.orgName,
+                                style: 'mediumText',
+                                bold: true
+                            },
+                            {
+                                text: `Адрес: ${result.orgAddress}`,
+                                style: 'mediumText',
+                                margin: [0, 10, 0, 0]
+                            },
+                            {
+                                text: `АКТ № ${result.receiptNumber}-П от ${result.issuedDateTime}`,
+                                style: 'mediumText',
+                                bold: true,
+                                alignment: 'center',
+                                margin: [0, 25, 0, 0]
+                            },
+                            {
+                                text: `передачи документов`,
+                                style: 'mediumText',
+                                bold: true,
+                                alignment: 'center',
+                                margin: [0, 10, 0, 0]
+                            },
+                            {
+                                text: `На основании договора №${result.counterpartyDocument} от ${result.counterpartyDocumentDate}`,
+                                style: 'mediumText',
+                                margin: [0, 25, 0, 0]
+                            },
+                            {
+                                text: `${result.orgName} передал, а ${result.payerName} принял следующие документы:`,
+                                style: 'mediumText',
+                                margin: [0, 10, 0, 0]
+                            },
+                            {
+                                table: {
+                                    headerRows: 1,
+                                    widths: [220, 65, 45, 'auto', '*'],
+                                    body: itemData
+                                },
+                                style: 'mediumText',
+                                margin: [0, 15, 0, 40]
+                            },
+                            {
+                                stack: [
+                                    {
+                                        text: `Итого передано документов на сумму: ${rubles(result.itemTotal)}. Без НДС`,
+                                        style: 'mediumText'
+                                    },
+                                    {                                        
+                                        table: {
+                                            widths: ['*', '*'],
+                                            heights: [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
+            
+                                            body: [
+                                                [`Передал: ${result.orgName}`,`Принял: ${result.payerName}`],
+                                                [`Адрес: ${result.orgAddress}`,`Адрес: ${result.payerAddress}`],
+                                                [`Расчетный счет: ${result.orgFinancialAccount}`,`Расчетный счет: ${result.payerFinancialAccount}`],
+                                                [`Кор. счет: ${result.orgCorrAccount}`,`Кор. счет: ${result.payerCorrAccount}`],
+                                                [`Банк: ${result.orgBankName}`,`Банк: ${result.payerBankName}`],
+                                                [`ИНН: ${result.orgITN}`,`ИНН: ${result.payerITN}`],
+                                                [`КПП: ${result.orgKPP}`,`КПП: ${result.payerKPP}`],
+                                                [`БИК: ${result.orgBIK}`,`БИК: ${result.payerBIK}`],
+                                                [{},{}],
+                                                [`Сдал             ${result.orgHeadName}`,`Принял ______________________________________`],
+                                                [
+                                                    {
+                                                        text: `М.П.`, alignment: 'center'
+                                                    },
+                                                    {
+                                                        text: `М.П.`, alignment: 'center'
+                                                    }
+                                                ]
+                                            ]
+                                        },
+                                        layout: 'noBorders',
+                                        style: 'mediumText',
+                                        margin: [0, 10, 0, 0]
+                                    }
+                                ],
+                                id: 'NoBreak'
+                            },
+                            {
+                                text: `АКТ № ${result.receiptNumber} от ${result.issuedDateTime}`,
+                                style: 'bigText',
+                                pageBreak: 'before',
+                                bold: true
+                            },
+                            {
+                                text: `На основании договора №${result.counterpartyDocument} от ${result.counterpartyDocumentDate}`,
+                                style: 'mediumText',
+                                margin: [0, 25, 0, 0]
+                            },
+                            {
+                                text: `Исполнитель: ${result.orgName}`,
+                                style: 'mediumText',
+                                margin: [0, 25, 0, 0]
+                            },
+                            {
+                                text: `Заказчик: ${result.payerName}`,
+                                style: 'mediumText',
+                                margin: [0, 25, 0, 0]
+                            },
+                            {
+                                table: {
+                                    headerRows: 1,
+                                    widths: [20, 220, 45, 'auto', 65, '*'],
+                                    body: feeData
+                                },
+                                style: 'mediumText',
+                                margin: [0, 35, 0, 0]
+                            },
+                            {
+                                text: `Итого: ${result.feeTotalStr}`,
+                                style: 'mediumText',
+                                alignment: 'right',
+                                bold: true,
+                                margin: [0, 35, 0, 0]
+                            },
+                            {
+                                text: `Без налога (НДС): -`,
+                                style: 'mediumText',
+                                alignment: 'right',
+                                bold: true,
+                                margin: [0, 0, 0, 40]
+                            },
+                            {
+                                stack: [
+                                    {
+                                        text: `Всего оказано услуг ${result.segCountTotal}, на сумму ${result.feeTotalStr} руб.`,
+                                        style: 'mediumText'
+                                    },
+                                    {
+                                        text: `${rubles(result.feeTotal)}`,
+                                        style: 'mediumText',
+                                        bold: true
+                                    },
+                                    {
+                                        text: `Вышеперечисленные услуги выполнены полностью и в срок. Заказчик претензий по объему, качеству и срокам оказания услуг не имеет.`,
+                                        style: 'mediumText',
+                                        margin: [0, 25, 0, 0]
+                                    },
+                                    {                                        
+                                        table: {
+                                            widths: ['*', '*'],
+                                            heights: [8, 8, 8, 8, 8, 8, 8, 8, 8, 24, 8, 8],
+            
+                                            body: [
+                                                [
+                                                    {text: `ИСПОЛНИТЕЛЬ`, bold: true},
+                                                    {text: `ЗАКАЗЧИК`, bold: true}
+                                                ],
+                                                [`Передал: ${result.orgName}`,`Принял: ${result.payerName}`],
+                                                [`Адрес: ${result.orgAddress}`,`Адрес: ${result.payerAddress}`],
+                                                [`Расчетный счет: ${result.orgFinancialAccount}`,`Расчетный счет: ${result.payerFinancialAccount}`],
+                                                [`Кор. счет: ${result.orgCorrAccount}`,`Кор. счет: ${result.payerCorrAccount}`],
+                                                [`Банк: ${result.orgBankName}`,`Банк: ${result.payerBankName}`],
+                                                [`ИНН: ${result.orgITN}`,`ИНН: ${result.payerITN}`],
+                                                [`КПП: ${result.orgKPP}`,`КПП: ${result.payerKPP}`],
+                                                [`БИК: ${result.orgBIK}`,`БИК: ${result.payerBIK}`],
+                                                [{},{}],
+                                                [
+                                                    {text: `${result.orgHeadTitle} ${result.orgName}`},
+                                                    {text: `${result.payerName}`}
+                                                ],
+                                                [
+                                                    {text: `${result.orgHeadName}`},
+                                                    {text: ``}
+                                                ]
+                                            ]
+                                        },
+                                        layout: 'noBorders',
+                                        style: 'mediumText',
+                                        margin: [0, 25, 0, 0]
+                                    }
+                                ],
+                                id: 'NoBreak'
+                            }                       
+                        ],
+
+                        pageBreakBefore: function(currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
+                            if (currentNode.id === 'NoBreak' && currentNode.pageNumbers.length != 1) {
+                              return true;
+                            }
+                            return false;
+                        },                        
+
+                        styles: {
+                            bigText: {
+                                fontSize: 12,
+                            },
+                            mediumText: {
+                                fontSize: 10,
+                            },
+                            smallText: {
+                                fontSize: 8
+                            },
+                            tableHeader: {
+                                bold: true,
+                                fontSize: 10,
+                                alignment: 'center'
+                            }
+                        }
+                    };
+
+                    pdfMake.createPdf(docDefinition).open();
+                },
+                error: function (error) {
+                    console.log(error.message);
+                }
+            });
+        });
+
+        $(document).on('click',
         ".createReport2PDF",
         function (e) {
             e.preventDefault();
