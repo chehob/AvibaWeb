@@ -569,8 +569,8 @@ namespace AvibaWeb.Controllers
 
             var today = DateTime.Today;
             var currentMonth = new DateTime(today.Year, today.Month, 1);
-            var queryToDate = toDate ?? currentMonth.AddDays(-1);
-            var queryFromDate = fromDate ?? currentMonth.AddMonths(-1);
+            var queryToDate = toDate ?? today;
+            var queryFromDate = fromDate ?? currentMonth;
 
             var customIncomeList = (from cif in _db.VCustomIncomeInfo
                     where cif.OperationDateTime >= queryFromDate && cif.OperationDateTime < queryToDate.AddDays(1)

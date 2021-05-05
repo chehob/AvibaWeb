@@ -676,8 +676,8 @@ namespace AvibaWeb.Controllers
                     PaymentTemplateLabelStr = "Образец заполнения назначения платежа:",
                     PaymentTemplateStr = $"Оплата по счету {cr.PayeeAccount.Organization.CorpReceiptPrefix}-{cr.ReceiptNumber.ToString()} от {operation.OperationDateTime.ToShortDateString()} за билеты и сбор за оформление билетов. Без НДС",
                     VirtualSegCount = cr.VirtualSegCount,
-                    CounterpartyDocument = cd.Document,
-                    CounterpartyDocumentDate = cd.Date.ToShortDateString()
+                    CounterpartyDocument = cd == null ? "" : cd.Document,
+                    CounterpartyDocumentDate = cd == null ? "" : cd.Date.ToShortDateString()
                 }).FirstOrDefault();
 
             //model.Taxes.AddRange(

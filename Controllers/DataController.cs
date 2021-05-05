@@ -1471,6 +1471,14 @@ namespace AvibaWeb.Controllers
                 }
             }
 
+            var corporator = _db.Counterparties.Include(c => c.CorporatorAccount).FirstOrDefault(c => c.ITN == model.PayerId);
+
+            if (corporator != null)
+            {
+                corporator.CorporatorAccount.Balance += model.Amount;
+                corporator.CorporatorAccount.LastPaymentDate = DateTime.Now;
+            }
+
             payment.IsProcessed = true;
 
             await _db.SaveChangesAsync();

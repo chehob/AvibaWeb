@@ -45,5 +45,7 @@ namespace AvibaWeb.ViewModels.CorpReceiptViewModels
     {
         public int PaymentId { get; set; }
         public List<MultiPaymentReceipt> Receipts { get; set; }
+        public string PayerId { get; set; }
+        public decimal Amount { get; set; }
     }
 }
