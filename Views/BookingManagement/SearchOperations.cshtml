@@ -1,4 +1,11 @@
-﻿<div>
+﻿<br />
+<div>
+    <select id="searchSelect">
+        <option value="1">Номер билета</option>
+        <option value="2">ФИО</option>
+        <option value="3">PNR</option>
+        <option value="4">Паспорт</option>
+    </select>
     <input type="text" id="keyString" autocomplete="off" />
     <button id="searchButton">Найти</button>
 </div>
@@ -18,7 +25,8 @@
             type: "POST",
             cache: false,
             data: {
-                key: $('#keyString').val()
+                key: $('#keyString').val(),
+                type: $('#searchSelect').val()
             },
             dataType: "json",
             success: function (result) {
