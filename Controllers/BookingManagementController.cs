@@ -551,7 +551,7 @@ namespace AvibaWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SearchOperations(string key)
+        public async Task<IActionResult> SearchOperations(string key, int type)
         {
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
@@ -565,10 +565,10 @@ namespace AvibaWeb.Controllers
             var model = new OperationsViewModel
             {
                 Items = (from info in _db.VBookingManagementOperations
-                         where info.TicketID.ToLower().Contains(lowerKey) ||
-                               info.FullName.ToLower().Contains(lowerKey) ||
-                               info.PNRID.ToLower().Contains(lowerKey) ||
-                               info.Passport.ToLower().Contains(lowerKey)
+                         where (type == 1 && info.TicketID.ToLower().Contains(lowerKey)) ||
+                               (type == 2 && info.FullName.ToLower().Contains(lowerKey)) ||
+                               (type == 3 && info.PNRID.ToLower().Contains(lowerKey)) ||
+                               (type == 4 && info.Passport.ToLower().Contains(lowerKey))
                          orderby info.ExecutionDateTime
                          select new OperationsViewItem
                          {

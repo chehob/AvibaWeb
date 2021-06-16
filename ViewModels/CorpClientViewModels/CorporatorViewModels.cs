@@ -34,6 +34,8 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
         public List<string> Counterparties { get; set; }
         public List<string> Organizations { get; set; }
         public DocumentEditData Document { get; set; }
+
+        public List<CorporatorDocumentFeeItemData> FeeItems { get; set; }
     }
 
     public class CreateDocumentPostViewModel
@@ -43,6 +45,8 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
         public string ITN { get; set; }
         public string Document { get; set; }
         public string IssuedDateTime { get; set; }
+
+        public List<CorporatorDocumentFeeItemData> FeeItems { get; set; }
     }
 
     public class EditDocumentTaxesViewModel
@@ -85,5 +89,35 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
     {
         public string fromDate { get; set; }
         public string toDate { get; set; }
+    }
+
+    public class CorporatorDocumentPDFViewModel
+    {
+        public string DocNum { get; set; }
+        public string DocDate { get; set; }
+        public string CorporatorName { get; set; }
+        public string ManagementPosition { get; set; }
+        public string ManagementName { get; set; }
+        public string Email { get; set; }
+        public string Address { get; set; }
+        public string ITN { get; set; }
+        public string KPP { get; set; }
+        public string OGRN { get; set; }
+        public string CorporatorAccountDescription { get; set; }
+        public string CorporatorAccountAddress { get; set; }
+        public string CorrespondentAccount { get; set; }
+        public string BIK { get; set; }
+        public string Phone { get; set; }
+        public string ManagementPositionGenitive { get; set; }
+        public string ManagementNameGenitive { get; set; }
+
+        public List<CorporatorDocumentFeeItemData> FeeItems { get; set; }
+    }
+
+    public class CorporatorDocumentFeeItemData
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string FeeStr { get; set; }
     }
 }

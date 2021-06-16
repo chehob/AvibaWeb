@@ -12,9 +12,9 @@
             <input id="corpITN" type="hidden" value="@Model.ITN" />
             <input id="editDocumentId" type="hidden" value="@Model.Document.DocumentId" />
             <div class="row">
-                
+
                 <div class="col-md-10">
-                  <label for="selectPayee">Организация:</label>  
+                    <label for="selectPayee">Организация:</label>
                     <select data-placeholder="Выбрать организацию" id="selectPayee" data-rel="chosen">
                         <option value=""></option>
                         <optgroup label="Организации">
@@ -29,7 +29,7 @@
             </div>
             <br>
             <div class="row">
-                
+
                 <div class="col-md-10">
                     <label for="doc">Номер договора:</label>
                     <input type="text" id="doc" value="@Model.Document.Doc" />
@@ -39,10 +39,42 @@
             </div>
             <br>
             <div class="row">
-                
+                <div class="col-md-12">
+                    <button class="btn btn-success addFeeItem"><i class="glyphicon glyphicon-plus"></i></button>
+                    <table class="table table-striped table-bordered bootstrap-datatable datatable" id="feeItemsTable">
+                        <thead>
+                            <tr>
+                                <th>Наименование</th>
+                                <th>Сумма</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.FeeItems)
+                            {
+                                <tr>
+                                    <td>
+                                        <input hidden class="itemId" value="@item.Id" />
+                                        <input class="itemName" value="@item.Name" />
+                                    </td>
+                                    <td>
+                                        <input class="itemFeeStr" value="@item.FeeStr" />
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm removeFeeItem"><i class="glyphicon glyphicon-remove"></i></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+
                 <div class="col-md-10">
-                    
-                    
+
+
                 </div>
             </div>
             @Html.ValidationSummary("", new { @class = "text-danger" })
@@ -58,6 +90,13 @@
     </div>
 </div>
 
+<style>
+    #feeItemsTable input
+    {
+        width: 100%;
+    }
+</style>
+
 <script>
     $(function () {
         $('[data-rel="chosen"],[rel="chosen"]').chosen({ width: "100%", search_contains: true });
@@ -68,15 +107,57 @@
         if (editValue) {
             $('#selectPayee').val(editValue).trigger('chosen:updated');
         }
+
+        $('#feeItemsTable').dataTable({
+            "sPaginationType": "full_numbers",
+            "bPaginate": false,
+            "bFilter": false,
+            "bSort": false,
+            "bInfo": false,
+            "oLanguage": {
+                "sSearch": "Поиск:",
+                "sLengthMenu": "Показать _MENU_ записей",
+                "sInfo": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                "sInfoEmpty": "Записи с 0 до 0 из 0 записей",
+                "sInfoFiltered": "(отфильтровано из _MAX_ записей)",
+                "oPaginate": {
+                    "sFirst": 'Первая',
+                    "sPrevious": 'Предыдущая',
+                    "sNext": 'Следующая',
+                    "sLast": 'Последняя'
+                },
+                "oaria": {
+                    "ipaginate": {
+                        "nfirst": 'Начало',
+                        "nprevious": 'Previous',
+                        "nnext": 'Next',
+                        "nlast": 'Last'
+                    }
+                }
+            }
+        });
     });
 
     $("#createDocumentBtn").click(function (e) {
+        var feeItems = new Array();
+        $("#feeItemsTable tbody tr").each(function () {
+            const firstInput = $(this).find("input");
+            if (firstInput[0] == null) return false;
+            const item = {
+                Id: firstInput[0].value,
+                Name: firstInput[1].value,
+                FeeStr: firstInput[2].value,
+            };
+            feeItems.push(item);
+        });   
+
         const sendJsonData = {
             DocumentId: $('#editDocumentId').val(),
             ITN: $("#corpITN").val(),
             OrgName: $("#selectPayee").next().find("a.chosen-single span").first().html(),
             Document: $("#doc").val(),
-            IssuedDateTime: moment($('#date').val(), "DD.MM.YYYY").toISOString(true)
+            IssuedDateTime: moment($('#date').val(), "DD.MM.YYYY").toISOString(true),
+            FeeItems: feeItems
         };
 
         e.preventDefault();

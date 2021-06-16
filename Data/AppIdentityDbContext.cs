@@ -78,6 +78,7 @@ namespace AvibaWeb.Models
         public DbSet<CorporatorFeeRate> CorporatorFeeRates { get; set; }
 
         public DbSet<CorporatorDocument> CorporatorDocuments { get; set; }
+        public DbSet<CorporatorDocumentFeeItem> CorporatorDocumentFeeItems { get; set; }
 
         public DbSet<CorporatorAccount> CorporatorAccounts { get; set; }
 

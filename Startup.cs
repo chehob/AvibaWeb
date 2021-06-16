@@ -26,7 +26,7 @@ namespace AvibaWeb
         {
             // Add EF services to the services container.
             services.AddEntityFrameworkSqlServer().AddDbContext<AppIdentityDbContext>(options =>
-                options.UseSqlServer(Configuration["Data:CollectionDB:ConnectionString"]));
+                options.UseSqlServer(Configuration["Data:CollectionDB:ConnectionString"], sqlServerOptions => sqlServerOptions.CommandTimeout(120)));
 
             services.AddIdentity<AppUser, AppRole>(options => {
                     options.Password.RequireDigit = true;

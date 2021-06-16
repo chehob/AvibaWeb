@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Cyriller;
+using Cyriller.Model;
 
 namespace AvibaWeb.Controllers
 {
@@ -733,6 +735,14 @@ namespace AvibaWeb.Controllers
                     Date = doc.Date.ToString("d"),
                     Doc = doc.Document
                 };
+                model.FeeItems = (from fi in _db.CorporatorDocumentFeeItems
+                                  where fi.CorporatorDocumentId == id
+                                  select new CorporatorDocumentFeeItemData
+                                  {
+                                      Id = fi.CorporatorDocumentFeeItemId,
+                                      Name = fi.Name,
+                                      FeeStr = fi.FeeStr
+                                  }).ToList();
             }
             else
             {
@@ -742,6 +752,7 @@ namespace AvibaWeb.Controllers
                 {
                     CorporatorName = counterparty.Name
                 };
+                model.FeeItems = new List<CorporatorDocumentFeeItemData>();
             }
 
             return Json(new { message = await _viewRenderService.RenderToStringAsync("CorpClient/EditCorporatorDocument", model) });
@@ -777,6 +788,29 @@ namespace AvibaWeb.Controllers
                 };
 
                 _db.CorporatorDocuments.Add(document);
+            }
+
+            if (model.DocumentId != null && model.DocumentId != 0)
+            {
+                var oldDocumentFeeItemIds = _db.CorporatorDocumentFeeItems
+                    .Where(fi => fi.CorporatorDocumentId == model.DocumentId)
+                    .Select(fi => fi.CorporatorDocumentFeeItemId)
+                    .ToList();
+
+                var itemsToDelete = oldDocumentFeeItemIds.Except(model.FeeItems.Select(i => i.Id));
+
+                var range = _db.CorporatorDocumentFeeItems.Join(itemsToDelete, fi => fi.CorporatorDocumentFeeItemId, id => id, (fi, id) => fi).ToList();
+                _db.CorporatorDocumentFeeItems.RemoveRange(range);
+            }
+
+            foreach (var item in model.FeeItems.Where(fi => fi.Id == 0))
+            {
+                _db.CorporatorDocumentFeeItems.Add(new CorporatorDocumentFeeItem
+                {
+                    CorporatorDocument = document,
+                    Name = item.Name,
+                    FeeStr = item.FeeStr
+                });                
             }
 
             await _db.SaveChangesAsync();
@@ -2001,6 +2035,53 @@ namespace AvibaWeb.Controllers
                         }
                     )).ToList()
             };
+
+            return Json(model);
+        }
+
+        [HttpPost]
+        public IActionResult CorporatorDocumentPDFData(int id)
+        {
+            CyrNounCollection cyrNounCollection = new CyrNounCollection();
+            CyrAdjectiveCollection cyrAdjectiveCollection = new CyrAdjectiveCollection();
+            CyrPhrase cyrPhrase = new CyrPhrase(cyrNounCollection, cyrAdjectiveCollection);
+            CyrName cyrName = new CyrName();
+
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var model = (from cd in _db.CorporatorDocuments
+                         .Include(c => c.Corporator).ThenInclude(c => c.CorporatorAccount).Where(c => c.Corporator.CorporatorAccount.IsActive)
+                         where cd.CorporatorDocumentId == id
+                         select new CorporatorDocumentPDFViewModel
+                         {
+                             DocNum = cd.Document,
+                             DocDate = cd.Date.ToString("dd.MM.yyyy"),
+                             CorporatorName = cd.Corporator.Name,
+                             ManagementPosition = cd.Corporator.ManagementPosition,
+                             ManagementName = cd.Corporator.ManagementName,
+                             Email = cd.Corporator.Email,
+                             Address = cd.Corporator.Address,
+                             ITN = cd.Corporator.ITN,
+                             KPP = cd.Corporator.KPP,
+                             OGRN = cd.Corporator.OGRN,
+                             CorporatorAccountDescription = cd.Corporator.CorporatorAccount.Description,
+                             CorporatorAccountAddress = cd.Corporator.CorporatorAccount.OffBankName,
+                             CorrespondentAccount = cd.Corporator.CorporatorAccount.CorrespondentAccount,
+                             BIK = cd.Corporator.CorporatorAccount.BIK,
+                             Phone = cd.Corporator.Phone,
+                             ManagementPositionGenitive = cyrPhrase.Decline(cd.Corporator.ManagementPosition, GetConditionsEnum.Similar).Genitive,
+                         }).FirstOrDefault();
+
+            model.ManagementNameGenitive = cyrName.Decline(model.ManagementName).Genitive;
+
+            model.FeeItems = (from fi in _db.CorporatorDocumentFeeItems
+                              where fi.CorporatorDocumentId == id
+                              select new CorporatorDocumentFeeItemData
+                              {
+                                  Name = fi.Name,
+                                  FeeStr = fi.FeeStr
+                              }).ToList();
 
             return Json(model);
         }
