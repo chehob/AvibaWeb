@@ -127,6 +127,10 @@ namespace AvibaWeb.Models
         public DbSet<VBookingManagementLuggage> VBookingManagementLuggage { get; set; }
         public DbSet<VBookingManagementOperation> VBookingManagementOperations { get; set; }
 
+        public DbSet<VBookingManagementAtolLuggage> VBookingManagementAtolLuggage { get; set; }
+        public DbSet<VBookingManagementAtolTickets> VBookingManagementAtolTickets { get; set; }
+        public DbSet<VBookingManagementAtolKRS> VBookingManagementAtolKRS { get; set; }
+
         public DbSet<PKReceiptRule> PKReceiptRules { get; set; }
 
         public DbSet<VBookingManagementPaycheck> VBookingManagementPaycheck { get; set; }
@@ -141,6 +145,8 @@ namespace AvibaWeb.Models
         public DbSet<CorporatorReceiptTemplate> CorporatorReceiptTemplates { get; set; }
 
         public DbSet<VLogData> VLogData { get; set; }
+
+        public DbSet<AtolPrintSettings> AtolPrintSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

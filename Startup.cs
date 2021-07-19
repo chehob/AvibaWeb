@@ -56,6 +56,8 @@ namespace AvibaWeb
             services.AddSingleton(Configuration);
 
             services.AddScoped<IViewRenderService, ViewRenderService>();
+
+            services.AddSingleton<ICyrillerService, CyrillerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

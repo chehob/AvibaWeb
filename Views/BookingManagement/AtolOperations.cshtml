@@ -1,0 +1,108 @@
+﻿@using AvibaWeb.ViewModels.BookingManagement
+@model AtolOperationsViewModel
+
+<style>
+    .KRSTable .labelCol {
+        width: auto;
+    }
+
+    .KRSTable .dataCol {
+        width: 200px;
+    }
+</style>
+
+<div class="box col-md-9">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="" style="overflow: hidden;">
+            <h2>Багаж</h2>
+        </div>
+        <div class="box-content">
+            <table class="table KRSTable">
+                <thead>
+                    <tr>
+                        <th class="dataCol">ККТ</th>
+                        <th class="dataCol">Сумма</th>
+                        <th class="labelCol">Сборы</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.LuggageItems)
+                    {
+                    <tr>
+                        <td class="dataCol">@item.AtolServerName</td>
+                        <td class="dataCol">@item.AmountStr</td>
+                        <td class="labelCol">@item.FeeAmountStr</td>
+                    </tr>
+                    }                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="box col-md-9">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="" style="overflow: hidden;">
+            <h2>Билеты</h2>
+        </div>
+        <div class="box-content">
+            <table class="table KRSTable">
+                <thead>
+                    <tr>
+                        <th class="dataCol">ККТ</th>
+                        <th class="dataCol">Сумма</th>
+                        <th class="dataCol">Сборы</th>
+                        <th class="labelCol">Тип оплаты</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.TicketItems)
+                    {
+                    <tr>
+                        <td class="dataCol">@item.AtolServerName</td>
+                        <td class="dataCol">@item.AmountStr</td>
+                        <td class="dataCol">@item.FeeAmountStr</td>
+                        <td class="labelCol">@item.PaymentType</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="box col-md-9">
+    <div class="box-inner">
+        <div class="box-header well" data-original-title="" style="overflow: hidden;">
+            <h2>Итог</h2>
+        </div>
+        <div class="box-content">
+            <table class="table KRSTable">
+                <thead>
+                    <tr>
+                        <th class="dataCol">ККТ</th>
+                        <th class="dataCol">Сумма</th>
+                        <th class="dataCol">Сборы</th>
+                        <th class="labelCol">Итого</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.TotalItems)
+                    {
+                        <tr>
+                            <td class="dataCol">@item.AtolServerName</td>
+                            <td class="dataCol">@item.AmountStr</td>
+                            <td class="dataCol">@item.FeeAmountStr</td>
+                            <td class="labelCol">@item.FullTotalStr</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function() {
+    });
+</script>

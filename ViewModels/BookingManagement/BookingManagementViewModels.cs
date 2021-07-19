@@ -137,10 +137,38 @@ namespace AvibaWeb.ViewModels.BookingManagement
         public string PaymentType { get; set; }
         public string BirthDate { get; set; }
         public string Passport { get; set; }
+        public string AtolServerName { get; set; }
     }
 
     public class OperationsViewModel
     {
         public List<OperationsViewItem> Items { get; set; }
+    }
+
+    public class AtolOperationsViewModel
+    {
+        public List<AtolServerViewItem> LuggageItems { get; set; }
+        public List<AtolServerViewItem> TicketItems { get; set; }
+        public List<AtolServerViewItem> TotalItems { get; set; }
+    }
+
+    public class AtolServerViewItem
+    {
+        public AtolServerViewItem()
+        {
+            nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+        }
+        private NumberFormatInfo nfi;
+
+        public string AtolServerName { get; set; }
+        public decimal DocCount { get; set; }
+        public string DocCountStr => DocCount.ToString("#,0", nfi);        
+        public decimal Amount { get; set; }
+        public string AmountStr => Amount.ToString("#,0.00", nfi);
+        public decimal FeeAmount { get; set; }
+        public string FeeAmountStr => FeeAmount.ToString("#,0", nfi);
+        public string PaymentType { get; set; }
+        public string FullTotalStr => (Amount + FeeAmount).ToString("#,0", nfi);
     }
 }

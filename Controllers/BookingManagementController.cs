@@ -537,7 +537,8 @@ namespace AvibaWeb.Controllers
                             OperationDateTime = info.ExecutionDateTime.ToString("g"),
                             BookDesk = info.BookDeskID,
                             BookDateTime = info.BookDateTime == null ? "" : info.BookDateTime.Value.ToString("g"),
-                            PaymentType = info.PaymentType
+                            PaymentType = info.PaymentType,
+                            AtolServerName = info.AtolServerName
                         }).ToList()
             };
 
@@ -693,6 +694,43 @@ namespace AvibaWeb.Controllers
             return this.Json(records);
         }
 
+        public JsonResult GetAtolFilter(string query)
+        {
+            var atolDesks = _db.AtolPrintSettings.ToList();
+
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                atolDesks = atolDesks.Where(q => q.AtolServerName.Contains(query)).ToList();
+            }
+
+            var records = new List<DeskFilterItem> {
+                new DeskFilterItem
+                {
+                    id = "0",
+                    text = "Все",
+                    icon = "false",
+                    state = new DeskFilterItemState
+                    {
+                        opened = true,
+                        selected = true
+                    },
+                    children = atolDesks.OrderBy(s => s.AtolServerName)
+                        .Select(s => new DeskFilterItem
+                        {
+                            id = s.AtolPrintSettingsId.ToString(),
+                            text = s.AtolServerName,
+                            icon = "false",
+                            state = new DeskFilterItemState
+                            {
+                                selected = true
+                            }
+                        }).ToList()
+                }
+            };
+
+            return this.Json(records);
+        }
+
         public JsonResult SearchCity(string query)
         {
             SelectResult result = new SelectResult();
@@ -731,6 +769,134 @@ namespace AvibaWeb.Controllers
             }
 
             return this.Json(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AtolOperations(DateTime? fromDate, DateTime? toDate)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var queryToDate = toDate ?? DateTime.Now.Date;
+            var queryFromDate = fromDate ?? queryToDate;
+            var railTicketTypes = new int[] { 3, 5 };
+
+            var model = new AtolOperationsViewModel
+            {
+                LuggageItems = (
+                         from aps in _db.AtolPrintSettings
+                         from info in _db.VBookingManagementAtolLuggage
+                            .Where(info => aps.AtolPrintSettingsId == info.AtolServerId &&
+                                   info.OperationDateTime >= queryFromDate && info.OperationDateTime < queryToDate.AddDays(1))
+                            .DefaultIfEmpty()
+                         select new
+                         {
+                             aps.AtolServerName,
+                             info.LuggageAmount,
+                             info.FeeAmount
+                         }).GroupBy(g => g.AtolServerName)
+                    .Select(g => new AtolServerViewItem
+                    {
+                        AtolServerName = g.Key,
+                        Amount = g.Sum(ig => ig.LuggageAmount),
+                        FeeAmount = g.Sum(ig => ig.FeeAmount)
+                    }).ToList(),
+                TicketItems = (
+                    from aps in _db.AtolPrintSettings
+                    from info in _db.VBookingManagementAtolTickets
+                        .Where(info => aps.AtolPrintSettingsId == info.AtolServerId &&
+                                   info.OperationDateTime >= queryFromDate && info.OperationDateTime < queryToDate.AddDays(1))
+                        .DefaultIfEmpty()
+                    select new
+                    {
+                        aps.AtolServerName,
+                        info.Amount,
+                        info.PaymentType
+                    }).GroupBy(g => new { g.AtolServerName, g.PaymentType })
+                    .Select(g => new AtolServerViewItem
+                    {
+                        AtolServerName = g.Key.AtolServerName,
+                        Amount = g.Sum(ig => ig.Amount),
+                        PaymentType = g.Key.PaymentType
+                    }).ToList()
+            };
+
+            model.TicketItems = (
+                from ti in model.TicketItems
+                from krs in
+                ((from aps in _db.AtolPrintSettings
+                  from krs in _db.VBookingManagementAtolKRS
+                          .Where(info => aps.AtolPrintSettingsId == info.AtolServerId &&
+                                     info.OperationDateTime >= queryFromDate && info.OperationDateTime < queryToDate.AddDays(1))
+                          .DefaultIfEmpty()
+                  select new
+                  {
+                      aps.AtolServerName,
+                      krs.Amount
+                  }).GroupBy(g => g.AtolServerName)
+                    .Select(g => new AtolServerViewItem
+                    {
+                        AtolServerName = g.Key,
+                        Amount = g.Sum(ig => ig.Amount),
+                        PaymentType = "НА"
+                    })).Where(krs => krs.AtolServerName == ti.AtolServerName && krs.PaymentType == ti.PaymentType).DefaultIfEmpty(new AtolServerViewItem
+                    {
+                        AtolServerName = ti.AtolServerName,
+                        Amount = 0,
+                        PaymentType = ti.PaymentType
+                    })
+                select new AtolServerViewItem
+                {
+                    AtolServerName = ti.AtolServerName,
+                    Amount = ti.Amount,
+                    FeeAmount = krs.Amount,
+                    PaymentType = ti.PaymentType
+                }).ToList();
+
+            model.TotalItems = (
+                    from li in model.LuggageItems
+                    from ti in model.TicketItems.GroupBy(t => t.AtolServerName).Select(g => new AtolServerViewItem
+                    {
+                        AtolServerName = g.Key,
+                        Amount = g.Sum(ig => ig.Amount),
+                        FeeAmount = g.Sum(ig => ig.FeeAmount)
+                    }).Where(ti => ti.AtolServerName == li.AtolServerName)
+                    select new
+                    {
+                        ti.AtolServerName,
+                        TicketAmount = ti.Amount,
+                        LuggageAmount = li.Amount,
+                        TicketFeeAmount = ti.FeeAmount,
+                        LuggageFeeAmount = li.FeeAmount
+                    }).Select(g => new AtolServerViewItem
+                    {
+                        AtolServerName = g.AtolServerName,
+                        Amount = g.LuggageAmount + g.TicketAmount,
+                        FeeAmount = g.LuggageFeeAmount + g.TicketFeeAmount
+                    }).ToList();
+
+            model.LuggageItems.Add(new AtolServerViewItem
+            {
+                AtolServerName = "Итого",
+                Amount = model.LuggageItems.Sum(i => i.Amount),
+                FeeAmount = model.LuggageItems.Sum(i => i.FeeAmount)
+            });
+
+            model.TicketItems.Add(new AtolServerViewItem
+            {
+                AtolServerName = "Итого",
+                Amount = model.TicketItems.Sum(i => i.Amount),
+                FeeAmount = model.TicketItems.Sum(i => i.FeeAmount)
+            });
+
+            model.TotalItems.Add(new AtolServerViewItem
+            {
+                AtolServerName = "Итого",
+                Amount = model.TotalItems.Sum(i => i.Amount),
+                FeeAmount = model.TotalItems.Sum(i => i.FeeAmount)
+            });
+
+            return Json(new { message = await _viewRenderService.RenderToStringAsync("BookingManagement/AtolOperations", model) });
         }
     }
 }

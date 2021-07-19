@@ -4,14 +4,16 @@ using AvibaWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AvibaWeb.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210628191555_MAtolPrintSettings_PercentageUpdate")]
+    partial class MAtolPrintSettings_PercentageUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,13 +195,9 @@ namespace AvibaWeb.Migrations
 
                     b.Property<string>("AtolServerName");
 
-                    b.Property<string>("CashierName");
+                    b.Property<int>("PrintMaxPercentage");
 
-                    b.Property<string>("DeskBinding");
-
-                    b.Property<bool>("IsPermanent");
-
-                    b.Property<int>("PrintPercentage");
+                    b.Property<int>("PrintMinPercentage");
 
                     b.HasKey("AtolPrintSettingsId");
 
@@ -1598,61 +1596,10 @@ namespace AvibaWeb.Migrations
 
                     b.Property<string>("TicketID");
 
-                    b.Property<string>("AtolServerName");
-
                     b.HasKey("Id");
 
                     b.ToTable("VBookingManagementOperations");
                 });
-
-            modelBuilder.Entity("AvibaWeb.DomainModels.VBookingManagementAtolLuggage", b =>
-            {
-                b.Property<int>("AtolServerId");
-
-                b.Property<string>("AtolServerName");
-
-                b.Property<decimal>("LuggageAmount");
-
-                b.Property<decimal>("FeeAmount");
-
-                b.Property<DateTime?>("OperationDateTime");
-
-                b.HasKey("AtolServerId");
-
-                b.ToTable("VBookingManagementAtolLuggage");
-            });
-
-            modelBuilder.Entity("AvibaWeb.DomainModels.VBookingManagementAtolTickets", b =>
-            {
-                b.Property<int>("AtolServerId");
-
-                b.Property<string>("AtolServerName");
-
-                b.Property<decimal>("Amount");
-
-                b.Property<string>("PaymentType");
-
-                b.Property<DateTime?>("OperationDateTime");
-
-                b.HasKey("AtolServerId");
-
-                b.ToTable("VBookingManagementAtolTickets");
-            });
-
-            modelBuilder.Entity("AvibaWeb.DomainModels.VBookingManagementAtolKRS", b =>
-            {
-                b.Property<int>("AtolServerId");
-
-                b.Property<string>("AtolServerName");
-
-                b.Property<decimal>("Amount");
-
-                b.Property<DateTime?>("OperationDateTime");
-
-                b.HasKey("AtolServerId");
-
-                b.ToTable("VBookingManagementAtolKRS");
-            });
 
             modelBuilder.Entity("AvibaWeb.DomainModels.VBookingManagementPaycheck", b =>
                 {

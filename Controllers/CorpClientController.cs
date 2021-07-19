@@ -29,14 +29,17 @@ namespace AvibaWeb.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IViewRenderService _viewRenderService;
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly ICyrillerService _cyrillerService;
 
         public CorpClientController(AppIdentityDbContext db, UserManager<AppUser> usrMgr,
-            IViewRenderService viewRenderService, IHostingEnvironment hostingEnvironment)
+            IViewRenderService viewRenderService, IHostingEnvironment hostingEnvironment,
+            ICyrillerService cyrillerService)
         {
             _db = db;
             _userManager = usrMgr;
             _viewRenderService = viewRenderService;
             _hostingEnvironment = hostingEnvironment;
+            _cyrillerService = cyrillerService;
         }
 
         public IActionResult Index()
@@ -2042,11 +2045,6 @@ namespace AvibaWeb.Controllers
         [HttpPost]
         public IActionResult CorporatorDocumentPDFData(int id)
         {
-            CyrNounCollection cyrNounCollection = new CyrNounCollection();
-            CyrAdjectiveCollection cyrAdjectiveCollection = new CyrAdjectiveCollection();
-            CyrPhrase cyrPhrase = new CyrPhrase(cyrNounCollection, cyrAdjectiveCollection);
-            CyrName cyrName = new CyrName();
-
             var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             nfi.NumberGroupSeparator = " ";
 
@@ -2070,10 +2068,10 @@ namespace AvibaWeb.Controllers
                              CorrespondentAccount = cd.Corporator.CorporatorAccount.CorrespondentAccount,
                              BIK = cd.Corporator.CorporatorAccount.BIK,
                              Phone = cd.Corporator.Phone,
-                             ManagementPositionGenitive = cyrPhrase.Decline(cd.Corporator.ManagementPosition, GetConditionsEnum.Similar).Genitive,
+                             ManagementPositionGenitive = _cyrillerService.DeclinePhrase(cd.Corporator.ManagementPosition).Genitive,
                          }).FirstOrDefault();
 
-            model.ManagementNameGenitive = cyrName.Decline(model.ManagementName).Genitive;
+            model.ManagementNameGenitive = _cyrillerService.DeclineName(model.ManagementName).Genitive;
 
             model.FeeItems = (from fi in _db.CorporatorDocumentFeeItems
                               where fi.CorporatorDocumentId == id
@@ -2082,6 +2080,8 @@ namespace AvibaWeb.Controllers
                                   Name = fi.Name,
                                   FeeStr = fi.FeeStr
                               }).ToList();
+
+            
 
             return Json(model);
         }

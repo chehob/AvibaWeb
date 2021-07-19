@@ -45,5 +45,7 @@ namespace AvibaWeb.DomainModels
         public string Destination { get; set; }
         public string DestinationEn { get; set; }
         public string Session { get; set; }
+
+        public string AtolServerName { get; set; }
     }
 }
