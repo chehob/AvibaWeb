@@ -1666,6 +1666,41 @@ namespace AvibaWeb.Controllers
         }
         #endregion
 
+        #region AtolSettings
+        [HttpGet]
+        public IActionResult AtolSettings()
+        {
+            var model = new AtolSettingsViewModel
+            {
+                SettingsItems = (from ps in _db.AtolPrintSettings
+                         select new AtolSettingsItemData
+                         {
+                             Id = ps.AtolPrintSettingsId,
+                             Name = ps.AtolServerName,
+                             TicketPercent = ps.PrintPercentage == -1 ? 0 : ps.PrintPercentage,
+                             LuggagePercent = ps.PrintLuggagePercentage == -1 ? 0 : ps.PrintLuggagePercentage,
+                         }).ToList()
+            };
+
+            return PartialView(model);
+        }
+
+        [HttpPost]
+        public IActionResult SaveAtolSettings([FromBody]AtolSettingsViewModel model)
+        {
+            foreach(var item in model.SettingsItems)
+            {
+                var settingsItem = _db.AtolPrintSettings.FirstOrDefault(ps => ps.AtolPrintSettingsId == item.Id);
+                settingsItem.PrintPercentage = item.TicketPercent == 0 ? -1 : item.TicketPercent;
+                settingsItem.PrintLuggagePercentage = item.LuggagePercent == 0 ? -1 : item.LuggagePercent;
+            }
+
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "" });
+        }
+        #endregion
+
         #region Log
 
         [HttpGet]

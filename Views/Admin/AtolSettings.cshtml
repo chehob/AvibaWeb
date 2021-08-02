@@ -1,0 +1,103 @@
+﻿@using AvibaWeb.ViewModels.AdminViewModels
+@model AtolSettingsViewModel
+
+<div class="box col-md-10">
+    <div class="box-inner" style="">
+        <div class="box-header well" data-original-title="">
+            <h2><i class="glyphicon glyphicon-user"></i> Настройка ККТ</h2>
+        </div>
+        <div class="box-content">
+            <table class="table table-striped table-bordered bootstrap-datatable datatable responsive" id="atolSettingsTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>% билетов</th>
+                        <th>% багажа</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.SettingsItems.Any())
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center">Нет правил</td>
+                            <td style="display: none;"></td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.SettingsItems)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>
+                                    <input hidden class="itemId" value="@item.Id" />
+                                    <input class="itemTicketPercent" value="@item.TicketPercent" />
+                                </td>
+                                <td>
+                                    <input class="itemLuggagePercent" value="@item.LuggagePercent" />
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+            <br />
+            <div>
+                <button class="btn btn-success" id="saveAtolSettingsBtn">Сохранить</button>
+            </div>
+            <br />
+            <div id="resultMsg" class="alert alert-success" style="display: none;">
+                <strong>Настройка сохранена</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function()
+    {
+        $('#atolSettingsTable').DataTable({
+            paging: false,
+            ordering: false,
+            searching: false,
+            info: false
+        });
+    });
+
+    $("#saveAtolSettingsBtn").click(function (e) {
+        $("#resultMsg").hide();
+
+        var settingsItems = new Array();
+        $("#atolSettingsTable tbody tr").each(function () {
+            const firstInput = $(this).find("input");
+            if (firstInput[0] == null) return false;
+            const item = {
+                Id: firstInput[0].value,
+                TicketPercent: firstInput[1].value,
+                LuggagePercent: firstInput[2].value
+            };
+            settingsItems.push(item);
+        });
+
+        const sendJsonData = {
+            SettingsItems: settingsItems
+        };
+
+        var rule = $('#addRuleRate').val();
+        e.preventDefault();
+        $.ajax({
+            url: "/Admin/SaveAtolSettings",
+            type: "POST",
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(sendJsonData),
+            success: function (result) {
+                $("#resultMsg").show();
+            },
+            error: function (error) {
+                console.log(error.message);
+            }
+        });
+    });
+</script>

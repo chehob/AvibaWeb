@@ -28,15 +28,26 @@ class="caret"></span></button>
 <div class="btn-group">
 <button class="btn dropdown-toggle btn-primary" data-toggle="dropdown" href="#">Финансы <span class="caret"></span></button>
 <ul class="dropdown-menu">
-<li><a asp-action="ExpenditureObjects" asp-controller="Admin"
-       data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-       class=""><i class="glyphicon glyphicon-list-alt"> </i> Статьи расхода</a></li>
-    <li><a asp-action="ExpenditureTypes" asp-controller="Admin"
+    <li>
+        <a asp-action="ExpenditureObjects" asp-controller="Admin"
            data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-           class=""><i class="glyphicon glyphicon-list-alt"> </i> Типы операций</a></li>
-    <li><a asp-action="PKReceiptRules" asp-controller="Admin"
+           class=""><i class="glyphicon glyphicon-list-alt"> </i>Статьи расхода</a>
+    </li>
+    <li>
+        <a asp-action="ExpenditureTypes" asp-controller="Admin"
            data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
-           class=""><i class="glyphicon glyphicon-list-alt"> </i> Сборы ПК</a></li>
+           class=""><i class="glyphicon glyphicon-list-alt"> </i>Типы операций</a>
+    </li>
+    <li>
+        <a asp-action="PKReceiptRules" asp-controller="Admin"
+           data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+           class=""><i class="glyphicon glyphicon-list-alt"> </i>Сборы ПК</a>
+    </li>
+    <li>
+        <a asp-action="AtolSettings" asp-controller="Admin"
+           data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results"
+           class=""><i class="glyphicon glyphicon-list-alt"> </i>Настройка ККТ</a>
+    </li>
 </ul>
 </div>
 <div class="btn-group">

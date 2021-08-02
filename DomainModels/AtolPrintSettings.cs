@@ -15,6 +15,8 @@ namespace AvibaWeb.DomainModels
 
         public int PrintPercentage { get; set; }
 
+        public int PrintLuggagePercentage { get; set; }
+
         public string AtolServerAddress { get; set; }
 
         public string CashierName { get; set; }
