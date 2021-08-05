@@ -6,8 +6,25 @@
         width: auto;
     }
 
+    .KRSTable .ticketServerCol {
+        width: 120px;
+    }
+
+    .KRSTable .payCol {
+        width: 80px;
+    }
+
+    .KRSTable .countCol {
+        width: 80px;
+    }
+
     .KRSTable .dataCol {
-        width: 200px;
+        width: 150px;
+    }
+
+    .KRSTable .amountCol {
+        min-width: 100px;
+        width: 150px;
     }
 </style>
 
@@ -20,20 +37,20 @@
             <table class="table KRSTable">
                 <thead>
                     <tr>
-                        <th class="dataCol">ККТ</th>
-                        <th class="dataCol">Чеки</th>
-                        <th class="dataCol">Сумма</th>
-                        <th class="labelCol">Сборы</th>
+                        <th class="ticketServerCol">ККТ</th>
+                        <th class="amountCol">Сумма</th>
+                        <th class="amountCol">Сборы</th>
+                        <th class="labelCol">Чеки</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model.LuggageItems)
                     {
                     <tr>
-                        <td class="dataCol">@item.AtolServerName</td>
-                        <td class="dataCol">@item.DocCountStr</td>
-                        <td class="dataCol">@item.AmountStr</td>
-                        <td class="labelCol">@item.FeeAmountStr</td>
+                        <td class="ticketServerCol">@item.AtolServerName</td>
+                        <td class="amountCol">@item.AmountStr</td>
+                        <td class="amountCol">@item.FeeAmountStr</td>
+                        <td class="labelCol">@item.DocCountStr</td>
                     </tr>
                     }                    
                 </tbody>
@@ -51,24 +68,24 @@
             <table class="table KRSTable">
                 <thead>
                     <tr>
-                        <th class="dataCol">ККТ</th>
-                        <th class="dataCol">Чеки</th>
-                        <th class="dataCol">Сегменты</th>
-                        <th class="dataCol">Сумма</th>
-                        <th class="dataCol">Сборы</th>
-                        <th class="labelCol">Тип оплаты</th>
+                        <th class="ticketServerCol">ККТ</th>
+                        <th class="amountCol">Сумма</th>
+                        <th class="amountCol">Сборы</th>
+                        <th class="payCol">Тип оплаты</th>
+                        <th class="countCol">Чеки</th>
+                        <th class="labelCol">Сегменты</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model.TicketItems)
                     {
                     <tr>
-                        <td class="dataCol">@item.AtolServerName</td>
-                        <td class="dataCol">@item.DocCountStr</td>
-                        <td class="dataCol">@item.SegCountStr</td>
-                        <td class="dataCol">@item.AmountStr</td>
-                        <td class="dataCol">@item.FeeAmountStr</td>
-                        <td class="labelCol">@item.PaymentType</td>
+                        <td class="ticketServerCol">@item.AtolServerName</td>
+                        <td class="amountCol">@item.AmountStr</td>
+                        <td class="amountCol">@item.FeeAmountStr</td>
+                        <td class="payCol">@item.PaymentType</td>
+                        <td class="countCol">@item.DocCountStr</td>
+                        <td class="labelCol">@item.SegCountStr</td>
                     </tr>
                     }
                 </tbody>
@@ -86,22 +103,22 @@
             <table class="table KRSTable">
                 <thead>
                     <tr>
-                        <th class="dataCol">ККТ</th>
-                        <th class="dataCol">Чеки</th>
-                        <th class="dataCol">Сумма</th>
-                        <th class="dataCol">Сборы</th>
-                        <th class="labelCol">Итого</th>
+                        <th class="ticketServerCol">ККТ</th>
+                        <th class="amountCol">Сумма</th>
+                        <th class="amountCol">Сборы</th>
+                        <th class="amountCol">Итого</th>
+                        <th class="labelCol">Чеки</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model.TotalItems)
                     {
                     <tr>
-                        <td class="dataCol">@item.AtolServerName</td>
-                        <td class="dataCol">@item.DocCountStr</td>
-                        <td class="dataCol">@item.AmountStr</td>
-                        <td class="dataCol">@item.FeeAmountStr</td>
-                        <td class="labelCol">@item.FullTotalStr</td>
+                        <td class="ticketServerCol">@item.AtolServerName</td>
+                        <td class="amountCol">@item.AmountStr</td>
+                        <td class="amountCol">@item.FeeAmountStr</td>
+                        <td class="amountCol">@item.FullTotalStr</td>
+                        <td class="labelCol">@item.DocCountStr</td>
                     </tr>
                     }
                 </tbody>
