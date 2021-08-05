@@ -163,7 +163,9 @@ namespace AvibaWeb.ViewModels.BookingManagement
 
         public string AtolServerName { get; set; }
         public decimal DocCount { get; set; }
-        public string DocCountStr => DocCount.ToString("#,0", nfi);        
+        public string DocCountStr => DocCount.ToString("#,0", nfi);     
+        public decimal SegCount { get; set; }
+        public string SegCountStr => SegCount.ToString("#,0", nfi);
         public decimal Amount { get; set; }
         public string AmountStr => Amount.ToString("#,0.00", nfi);
         public decimal FeeAmount { get; set; }

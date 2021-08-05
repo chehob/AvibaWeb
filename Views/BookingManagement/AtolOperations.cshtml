@@ -21,6 +21,7 @@
                 <thead>
                     <tr>
                         <th class="dataCol">ККТ</th>
+                        <th class="dataCol">Чеки</th>
                         <th class="dataCol">Сумма</th>
                         <th class="labelCol">Сборы</th>
                     </tr>
@@ -30,6 +31,7 @@
                     {
                     <tr>
                         <td class="dataCol">@item.AtolServerName</td>
+                        <td class="dataCol">@item.DocCountStr</td>
                         <td class="dataCol">@item.AmountStr</td>
                         <td class="labelCol">@item.FeeAmountStr</td>
                     </tr>
@@ -50,6 +52,8 @@
                 <thead>
                     <tr>
                         <th class="dataCol">ККТ</th>
+                        <th class="dataCol">Чеки</th>
+                        <th class="dataCol">Сегменты</th>
                         <th class="dataCol">Сумма</th>
                         <th class="dataCol">Сборы</th>
                         <th class="labelCol">Тип оплаты</th>
@@ -60,6 +64,8 @@
                     {
                     <tr>
                         <td class="dataCol">@item.AtolServerName</td>
+                        <td class="dataCol">@item.DocCountStr</td>
+                        <td class="dataCol">@item.SegCountStr</td>
                         <td class="dataCol">@item.AmountStr</td>
                         <td class="dataCol">@item.FeeAmountStr</td>
                         <td class="labelCol">@item.PaymentType</td>
@@ -81,6 +87,7 @@
                 <thead>
                     <tr>
                         <th class="dataCol">ККТ</th>
+                        <th class="dataCol">Чеки</th>
                         <th class="dataCol">Сумма</th>
                         <th class="dataCol">Сборы</th>
                         <th class="labelCol">Итого</th>
@@ -89,12 +96,13 @@
                 <tbody>
                     @foreach (var item in Model.TotalItems)
                     {
-                        <tr>
-                            <td class="dataCol">@item.AtolServerName</td>
-                            <td class="dataCol">@item.AmountStr</td>
-                            <td class="dataCol">@item.FeeAmountStr</td>
-                            <td class="labelCol">@item.FullTotalStr</td>
-                        </tr>
+                    <tr>
+                        <td class="dataCol">@item.AtolServerName</td>
+                        <td class="dataCol">@item.DocCountStr</td>
+                        <td class="dataCol">@item.AmountStr</td>
+                        <td class="dataCol">@item.FeeAmountStr</td>
+                        <td class="labelCol">@item.FullTotalStr</td>
+                    </tr>
                     }
                 </tbody>
             </table>

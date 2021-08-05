@@ -1519,17 +1519,18 @@ namespace AvibaWeb.Migrations
 
             modelBuilder.Entity("AvibaWeb.DomainModels.VBookingManagementAtolKRS", b =>
                 {
-                    b.Property<int>("AtolServerId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<decimal>("Amount");
+                    b.Property<int>("AtolServerId");
+
+                    b.Property<decimal?>("Amount");
 
                     b.Property<string>("AtolServerName");
 
                     b.Property<DateTime>("OperationDateTime");
 
-                    b.HasKey("AtolServerId");
+                    b.HasKey("Id");
 
                     b.ToTable("VBookingManagementAtolKRS");
                 });
@@ -1544,7 +1545,7 @@ namespace AvibaWeb.Migrations
 
                     b.Property<decimal>("FeeAmount");
 
-                    b.Property<decimal>("LuggageAmount");
+                    b.Property<decimal?>("LuggageAmount");
 
                     b.Property<DateTime>("OperationDateTime");
 
@@ -1559,7 +1560,7 @@ namespace AvibaWeb.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("Amount");
+                    b.Property<decimal?>("Amount");
 
                     b.Property<string>("AtolServerName");
 

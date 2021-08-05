@@ -13,7 +13,7 @@ namespace AvibaWeb.DomainModels
 
         public string AtolServerName { get; set; }
 
-        public decimal Amount { get; set; }
+        public decimal? Amount { get; set; }
 
         public string PaymentType { get; set; }
 

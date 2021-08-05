@@ -794,11 +794,17 @@ namespace AvibaWeb.Controllers
                              aps.AtolServerName,
                              info.LuggageAmount,
                              info.FeeAmount
-                         }).GroupBy(g => g.AtolServerName)
+                         }).GroupBy(g => g.AtolServerName, g => new
+                         {
+                             g.LuggageAmount,
+                             g.FeeAmount,
+                             DocCount = g.LuggageAmount == null ? 0 : 1
+                         })
                     .Select(g => new AtolServerViewItem
                     {
                         AtolServerName = g.Key,
-                        Amount = g.Sum(ig => ig.LuggageAmount),
+                        DocCount = g.Sum(ig => ig.DocCount),
+                        Amount = g.Sum(ig => ig.LuggageAmount.Value),
                         FeeAmount = g.Sum(ig => ig.FeeAmount)
                     }).ToList(),
                 TicketItems = (
@@ -812,11 +818,16 @@ namespace AvibaWeb.Controllers
                         aps.AtolServerName,
                         info.Amount,
                         info.PaymentType
-                    }).GroupBy(g => new { g.AtolServerName, g.PaymentType })
+                    }).GroupBy(g => new { g.AtolServerName, g.PaymentType }, g => new
+                    {
+                        g.Amount,
+                        DocCount = g.Amount == null ? 0 : 1
+                    })
                     .Select(g => new AtolServerViewItem
                     {
                         AtolServerName = g.Key.AtolServerName,
-                        Amount = g.Sum(ig => ig.Amount),
+                        DocCount = g.Sum(ig => ig.DocCount),
+                        Amount = g.Sum(ig => ig.Amount.Value),
                         PaymentType = g.Key.PaymentType
                     }).ToList()
             };
@@ -842,12 +853,14 @@ namespace AvibaWeb.Controllers
                     })).Where(krs => krs.AtolServerName == ti.AtolServerName && krs.PaymentType == ti.PaymentType).DefaultIfEmpty(new AtolServerViewItem
                     {
                         AtolServerName = ti.AtolServerName,
+                        DocCount = ti.DocCount,
                         Amount = 0,
                         PaymentType = ti.PaymentType
                     })
                 select new AtolServerViewItem
                 {
                     AtolServerName = ti.AtolServerName,
+                    DocCount = ti.DocCount,
                     Amount = ti.Amount,
                     FeeAmount = krs.Amount,
                     PaymentType = ti.PaymentType
@@ -858,12 +871,15 @@ namespace AvibaWeb.Controllers
                     from ti in model.TicketItems.GroupBy(t => t.AtolServerName).Select(g => new AtolServerViewItem
                     {
                         AtolServerName = g.Key,
+                        DocCount = g.Sum(ig => ig.DocCount),
                         Amount = g.Sum(ig => ig.Amount),
                         FeeAmount = g.Sum(ig => ig.FeeAmount)
                     }).Where(ti => ti.AtolServerName == li.AtolServerName)
                     select new
                     {
                         ti.AtolServerName,
+                        LuggageDocCount = li.DocCount,
+                        TicketDocCount = ti.DocCount,
                         TicketAmount = ti.Amount,
                         LuggageAmount = li.Amount,
                         TicketFeeAmount = ti.FeeAmount,
@@ -871,6 +887,7 @@ namespace AvibaWeb.Controllers
                     }).Select(g => new AtolServerViewItem
                     {
                         AtolServerName = g.AtolServerName,
+                        DocCount = g.LuggageDocCount + g.TicketDocCount,
                         Amount = g.LuggageAmount + g.TicketAmount,
                         FeeAmount = g.LuggageFeeAmount + g.TicketFeeAmount
                     }).ToList();
@@ -878,6 +895,7 @@ namespace AvibaWeb.Controllers
             model.LuggageItems.Add(new AtolServerViewItem
             {
                 AtolServerName = "Итого",
+                DocCount = model.LuggageItems.Sum(i => i.DocCount),
                 Amount = model.LuggageItems.Sum(i => i.Amount),
                 FeeAmount = model.LuggageItems.Sum(i => i.FeeAmount)
             });
@@ -885,6 +903,7 @@ namespace AvibaWeb.Controllers
             model.TicketItems.Add(new AtolServerViewItem
             {
                 AtolServerName = "Итого",
+                DocCount = model.TicketItems.Sum(i => i.DocCount),
                 Amount = model.TicketItems.Sum(i => i.Amount),
                 FeeAmount = model.TicketItems.Sum(i => i.FeeAmount)
             });
@@ -892,6 +911,7 @@ namespace AvibaWeb.Controllers
             model.TotalItems.Add(new AtolServerViewItem
             {
                 AtolServerName = "Итого",
+                DocCount = model.TotalItems.Sum(i => i.DocCount),
                 Amount = model.TotalItems.Sum(i => i.Amount),
                 FeeAmount = model.TotalItems.Sum(i => i.FeeAmount)
             });

@@ -9,11 +9,13 @@ namespace AvibaWeb.DomainModels
     public class VBookingManagementAtolLuggage
     {
         [Key]
+        public Guid Id { get; set; }
+
         public int AtolServerId { get; set; }
 
         public string AtolServerName { get; set; }
 
-        public decimal LuggageAmount { get; set; }
+        public decimal? LuggageAmount { get; set; }
 
         public decimal FeeAmount { get; set; }
 

@@ -976,7 +976,7 @@ namespace AvibaWeb.Controllers
                     }
 
                     var ITNUser = userList.FirstOrDefault(u =>
-                        u.UserITN == dataRecord.PayeeITN || dataRecord.PayeeName.Contains(u.Name));
+                        (dataRecord.PayeeITN != "0" && u.UserITN == dataRecord.PayeeITN ) || dataRecord.PayeeName.Contains(u.Name));
                     if (ITNUser != null)
                     {
                         counterpartyGroup.IsKnownCounterparty = true;
