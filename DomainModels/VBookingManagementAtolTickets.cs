@@ -17,6 +17,10 @@ namespace AvibaWeb.DomainModels
 
         public string PaymentType { get; set; }
 
+        public int DocCount { get; set; }
+
+        public int SegCount { get; set; } = 0;
+
         public DateTime OperationDateTime { get; set; }
     }
 }

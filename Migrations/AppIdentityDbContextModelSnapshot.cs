@@ -1568,6 +1568,10 @@ namespace AvibaWeb.Migrations
 
                     b.Property<string>("PaymentType");
 
+                    b.Property<int>("DocCount");
+
+                    b.Property<int>("SegCount").HasDefaultValue(0);
+
                     b.HasKey("AtolServerId");
 
                     b.ToTable("VBookingManagementAtolTickets");
