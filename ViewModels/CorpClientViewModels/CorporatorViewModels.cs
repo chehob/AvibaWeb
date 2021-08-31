@@ -110,6 +110,20 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
         public string Phone { get; set; }
         public string ManagementPositionGenitive { get; set; }
         public string ManagementNameGenitive { get; set; }
+        public string OrganizationName { get; set; }
+        public string OrgManagementPosition { get; set; }
+        public string OrgManagementName { get; set; }
+        public string OrgAddress { get; set; }
+        public string OrgITN { get; set; }
+        public string OrgKPP { get; set; }
+        public string OrgOGRN { get; set; }
+        public string OrgAccountDescription { get; set; }
+        public string OrgAccountAddress { get; set; }
+        public string OrgCorrespondentAccount { get; set; }
+        public string OrgBIK { get; set; }
+        public string OrgPhone { get; set; }
+        public string OrgManagementPositionGenitive { get; set; }
+        public string OrgManagementNameGenitive { get; set; }
 
         public List<CorporatorDocumentFeeItemData> FeeItems { get; set; }
     }

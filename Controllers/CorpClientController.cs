@@ -746,6 +746,44 @@ namespace AvibaWeb.Controllers
                                       Name = fi.Name,
                                       FeeStr = fi.FeeStr
                                   }).ToList();
+                if(model.FeeItems.Count() <= 0)
+                {
+                    model.FeeItems.Add(new CorporatorDocumentFeeItemData
+                    {
+                        Name = "Оформление договора авиаперевозки (1 сегмент)",
+                        FeeStr = "600"
+                    });
+                    model.FeeItems.Add(new CorporatorDocumentFeeItemData
+                    {
+                        Name = "Оформление отказа от авиаперевозки (1 сегмент)",
+                        FeeStr = "600"
+                    });
+                    model.FeeItems.Add(new CorporatorDocumentFeeItemData
+                    {
+                        Name = "Оформление договора авиаперевозки в международной системе бронирования",
+                        FeeStr = "600"
+                    });
+                    model.FeeItems.Add(new CorporatorDocumentFeeItemData
+                    {
+                        Name = "Оформление изменения даты в договоре авиаперевозки (1 сегмент)",
+                        FeeStr = "600"
+                    });
+                    model.FeeItems.Add(new CorporatorDocumentFeeItemData
+                    {
+                        Name = "Предварительное бронирование авиабилетов",
+                        FeeStr = "бесплатно"
+                    });
+                    model.FeeItems.Add(new CorporatorDocumentFeeItemData
+                    {
+                        Name = "Оформление договора железнодорожной перевозки",
+                        FeeStr = "600"
+                    });
+                    model.FeeItems.Add(new CorporatorDocumentFeeItemData
+                    {
+                        Name = "Оформление отказа от железнодорожной перевозки",
+                        FeeStr = "600"
+                    });
+                }
             }
             else
             {
@@ -2050,6 +2088,8 @@ namespace AvibaWeb.Controllers
 
             var model = (from cd in _db.CorporatorDocuments
                          .Include(c => c.Corporator).ThenInclude(c => c.CorporatorAccount).Where(c => c.Corporator.CorporatorAccount.IsActive)
+                         .Include(c => c.Organization).ThenInclude(c => c.Counterparty)
+                         let fa = _db.FinancialAccounts.Where(fa => cd.Organization.OrganizationId == fa.OrganizationId && fa.IsActive).FirstOrDefault()
                          where cd.CorporatorDocumentId == id
                          select new CorporatorDocumentPDFViewModel
                          {
@@ -2069,9 +2109,23 @@ namespace AvibaWeb.Controllers
                              BIK = cd.Corporator.CorporatorAccount.BIK,
                              Phone = cd.Corporator.Phone,
                              ManagementPositionGenitive = _cyrillerService.DeclinePhrase(cd.Corporator.ManagementPosition).Genitive,
+                             OrganizationName = cd.Organization.Description,                             
+                             OrgManagementPosition = cd.Organization.HeadTitle,
+                             OrgManagementName = cd.Organization.HeadName,
+                             OrgAddress = cd.Organization.Counterparty.Address,
+                             OrgITN = cd.Organization.Counterparty.ITN,
+                             OrgKPP = cd.Organization.Counterparty.KPP,
+                             OrgOGRN = cd.Organization.Counterparty.OGRN,
+                             OrgAccountDescription = fa.Description,
+                             OrgAccountAddress = fa.OffBankName,
+                             OrgCorrespondentAccount = fa.CorrespondentAccount,
+                             OrgBIK = fa.BIK,
+                             OrgPhone = cd.Organization.Counterparty.Phone,
+                             OrgManagementPositionGenitive = _cyrillerService.DeclinePhrase(cd.Organization.HeadTitle).Genitive,
                          }).FirstOrDefault();
 
             model.ManagementNameGenitive = _cyrillerService.DeclineName(model.ManagementName).Genitive;
+            model.OrgManagementNameGenitive = _cyrillerService.DeclineName(model.OrgManagementName).Genitive;
 
             model.FeeItems = (from fi in _db.CorporatorDocumentFeeItems
                               where fi.CorporatorDocumentId == id
