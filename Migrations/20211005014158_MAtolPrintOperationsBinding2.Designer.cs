@@ -4,14 +4,16 @@ using AvibaWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AvibaWeb.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211005014158_MAtolPrintOperationsBinding2")]
+    partial class MAtolPrintOperationsBinding2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1084,10 +1086,6 @@ namespace AvibaWeb.Migrations
                     b.Property<string>("CounterpartyId");
 
                     b.Property<string>("Description");
-
-                    b.Property<DateTime>("HeadDOB");
-
-                    b.Property<string>("HeadITN");
 
                     b.Property<string>("HeadName");
 

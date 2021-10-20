@@ -844,14 +844,23 @@ namespace AvibaWeb.Controllers
                 _db.CorporatorDocumentFeeItems.RemoveRange(range);
             }
 
-            foreach (var item in model.FeeItems.Where(fi => fi.Id == 0))
+            foreach (var item in model.FeeItems)
             {
-                _db.CorporatorDocumentFeeItems.Add(new CorporatorDocumentFeeItem
+                if (item.Id == 0)
                 {
-                    CorporatorDocument = document,
-                    Name = item.Name,
-                    FeeStr = item.FeeStr
-                });                
+                    _db.CorporatorDocumentFeeItems.Add(new CorporatorDocumentFeeItem
+                    {
+                        CorporatorDocument = document,
+                        Name = item.Name,
+                        FeeStr = item.FeeStr
+                    });
+                }
+                else
+                {
+                    var feeItem = _db.CorporatorDocumentFeeItems.FirstOrDefault(fi => fi.CorporatorDocumentFeeItemId == item.Id);
+                    feeItem.Name = item.Name;
+                    feeItem.FeeStr = item.FeeStr;
+                }
             }
 
             await _db.SaveChangesAsync();

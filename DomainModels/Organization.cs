@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -43,6 +44,9 @@ namespace AvibaWeb.DomainModels
         public int? _1CUploadDataId { get; set; }
         [ForeignKey("_1CUploadDataId")]
         public virtual _1CUploadData _1CUploadBinding { get; set; }
+
+        public string HeadITN { get; set; }
+        public DateTime HeadDOB { get; set; }
 
         public virtual ICollection<CorporatorReceiptTemplate> DocTemplates { get; set; }
     }

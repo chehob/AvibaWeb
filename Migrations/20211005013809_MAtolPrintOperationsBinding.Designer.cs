@@ -4,14 +4,16 @@ using AvibaWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AvibaWeb.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211005013809_MAtolPrintOperationsBinding")]
+    partial class MAtolPrintOperationsBinding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -181,23 +183,6 @@ namespace AvibaWeb.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("AvibaWeb.DomainModels.AtolPrintOperationsBinding", b =>
-                {
-                    b.Property<int>("AtolPrintOperationsBindingId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("PrintOperationId");
-
-                    b.Property<int>("TypeId");
-
-                    b.Property<int>("_1CStatus");
-
-                    b.HasKey("AtolPrintOperationsBindingId");
-
-                    b.ToTable("AtolPrintOperationsBindings");
                 });
 
             modelBuilder.Entity("AvibaWeb.DomainModels.AtolPrintSettings", b =>
@@ -1084,10 +1069,6 @@ namespace AvibaWeb.Migrations
                     b.Property<string>("CounterpartyId");
 
                     b.Property<string>("Description");
-
-                    b.Property<DateTime>("HeadDOB");
-
-                    b.Property<string>("HeadITN");
 
                     b.Property<string>("HeadName");
 

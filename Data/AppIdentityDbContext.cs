@@ -148,6 +148,8 @@ namespace AvibaWeb.Models
 
         public DbSet<AtolPrintSettings> AtolPrintSettings { get; set; }
 
+        public DbSet<AtolPrintOperationsBinding> AtolPrintOperationsBindings { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
