@@ -1147,6 +1147,20 @@ namespace AvibaWeb.Controllers
             nfi.NumberGroupSeparator = " ";
             nfi.NumberDecimalSeparator = ",";
 
+            var ate = (from cr in _db.CorporatorReceipts
+                    .Include(c => c.PayeeAccount.Organization).ThenInclude(o => o.Counterparty)
+                              let cro = _db.CorporatorReceiptOperations.Where(cro =>
+                                      cro.OperationDateTime < DateTime.Parse(requestData.fromDate) &&
+                                      cro.OperationDateTime >= new DateTime(2020, 1, 1) &&
+                                      cr.CorporatorReceiptId == cro.CorporatorReceiptId)
+                                  .OrderByDescending(o => o.OperationDateTime)
+                                  .FirstOrDefault()
+                              where cr.PayeeAccount.Organization.OrganizationId == int.Parse(requestData.payeeId, CultureInfo.InvariantCulture) &&
+                                    cr.Corporator.ITN == requestData.payerId &&
+                                    cr.TypeId == CorporatorReceipt.CRType.CorpClient &&
+                                    cro != null
+                              select cr.Amount.Value);
+
             var oldBalance = (from cr in _db.CorporatorReceipts
                     .Include(c => c.PayeeAccount.Organization).ThenInclude(o => o.Counterparty)
                 let cro = _db.CorporatorReceiptOperations.Where(cro =>
