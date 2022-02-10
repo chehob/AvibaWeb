@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
 using System.Globalization;
+using AvibaWeb.Infrastructure;
 
 namespace AvibaWeb.Controllers
 {
@@ -19,130 +20,186 @@ namespace AvibaWeb.Controllers
     {
         private readonly AppIdentityDbContext _db;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IViewRenderService _viewRenderService;
         private const int PageSize = 10;
 
         public CollectionController(AppIdentityDbContext db,
-            UserManager<AppUser> usrMgr)
+            UserManager<AppUser> usrMgr, IViewRenderService viewRenderService)
         {
             _db = db;
             _userManager = usrMgr;
+            _viewRenderService = viewRenderService;
         }
 
         public ActionResult Index()
         {
             var userId = _userManager.GetUserId(User);
 
-            var collectionList = (from collection in _db.Collections
-                    .Include(c => c.Provider).Include(c => c.DeskIssued).Include(c => c.Collector)
-                join operation in _db.CollectionOperations on collection.CollectionId equals operation.CollectionId into operations
-                from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
-                where collection.CollectorId == userId && operation.OperationTypeId == CollectionOperationType.COType.New
-                orderby operation.OperationDateTime descending
-                select new { collection, operation }).ToList();
-
             var model = new CollectionInfoModel
                 {
-                    IncomingCollections = collectionList.Count
                 };
 
             return PartialView(model);
         }
 
         [HttpGet]
-        public ActionResult IncomingCollections(int? page)
+        public ActionResult IncomingCollections()
         {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
             var userId = _userManager.GetUserId(User);
 
-            var collectionList = (from collection in _db.Collections
-                    .Include(c => c.Provider).Include(c => c.DeskIssued).Include(c => c.Collector)
-                join operation in _db.CollectionOperations on collection.CollectionId equals operation.CollectionId into operations
-                from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
+            var collectionList = (from collection in _db.Collections.Include(c => c.Provider).Include(c => c.DeskIssued).Include(c => c.Collector)
+                from operation in _db.CollectionOperations.Where(co => co.CollectionId == collection.CollectionId)
+                    .OrderByDescending(o => o.OperationDateTime).Take(1).DefaultIfEmpty()
                 where collection.CollectorId == userId && operation.OperationTypeId == CollectionOperationType.COType.New
                 orderby operation.OperationDateTime descending
-                select new { collection, operation }).ToList();
-
-            var model = (from q in collectionList
-                         select new CollectionListViewModel
+                select new
                 {
-                    CollectionId = q.collection.CollectionId,
-                    CollectionOperationId = q.operation.CollectionOperationId,
-                    Amount = q.collection.Amount,
-                    ProviderName = q.collection.Provider != null ? q.collection.Provider.Name : "",
-                    DeskId = q.collection.DeskIssued != null ? q.collection.DeskIssued.DeskId : "",
-                    DeskName = q.collection.DeskIssued != null ? q.collection.DeskIssued.Description : "",
-                    CollectorName = q.collection.Collector.Name,
-                    IssuedDateTime = q.operation.OperationDateTime,
-                    PaymentType = q.collection.PaymentType,
-                    Comment = q.collection.Comment
+                    collection,
+                    operation
                 }).ToList();
 
-            var pageNumber = (page ?? 1);
-            return PartialView(model.ToPagedList(pageNumber, PageSize));
+            var model = new CollectionDatatableViewModel
+            {
+                Items = (from q in collectionList
+                         select new CollectionListItem
+                         {
+                             CollectionId = q.collection.CollectionId,
+                             CollectionOperationId = q.operation.CollectionOperationId,
+                             Amount = q.collection.Amount.ToString("#,0.00", nfi),
+                             ProviderName = q.collection.Provider != null ? q.collection.Provider.Name : "",
+                             DeskId = q.collection.DeskIssued != null ? q.collection.DeskIssued.DeskId : "",
+                             DeskName = q.collection.DeskIssued != null ? q.collection.DeskIssued.Description : "",
+                             CollectorName = q.collection.Collector.Name,
+                             IssuedDateTime = q.operation.OperationDateTime.ToString("g"),
+                             PaymentType = q.collection.PaymentType,
+                             Comment = q.collection.Comment
+                         }).ToList()
+            };
+
+            return PartialView(model);
         }
 
         [HttpGet]
-        public ActionResult AcceptedCollections(int? page)
+        public ActionResult AcceptedCollections(DateTime? fromDate, DateTime? toDate)
         {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var queryToDate = toDate ?? DateTime.Now.Date;
+            var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
+
             var userId = _userManager.GetUserId(User);
 
             var collectionList = (from collection in _db.Collections
                     .Include(c => c.Provider).Include(c => c.DeskIssued).Include(c => c.Collector)
-                join operation in _db.CollectionOperations on collection.CollectionId equals operation.CollectionId into operations
-                from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
-                where collection.CollectorId == userId && operation.OperationTypeId == CollectionOperationType.COType.Accepted
-                orderby operation.OperationDateTime descending
-                select new { collection, operation }).ToList();
+                                  from operation in _db.CollectionOperations.Where(co => co.CollectionId == collection.CollectionId)
+                                    .OrderByDescending(o => o.OperationDateTime).Take(1).DefaultIfEmpty()                                    
+                                  where collection.CollectorId == userId && 
+                                    operation.OperationDateTime >= queryFromDate &&
+                                    operation.OperationDateTime < queryToDate.AddDays(1) &&
+                                    operation.OperationTypeId == CollectionOperationType.COType.Accepted
+                                  orderby operation.OperationDateTime descending
+                                  select new { collection, operation }).ToList();
 
-            var model = (from q in collectionList
-                         select new CollectionListViewModel()
-                {
-                    CollectionId = q.collection.CollectionId,
-                    Amount = q.collection.Amount,
-                    ProviderName = q.collection.Provider != null ? q.collection.Provider.Name : "",
-                    DeskId = q.collection.DeskIssued != null ? q.collection.DeskIssued.DeskId : "",
-                    DeskName = q.collection.DeskIssued != null ? q.collection.DeskIssued.Description : "",
-                    CollectorName = q.collection.Collector.Name,
-                    IssuedDateTime = q.operation.OperationDateTime,
-                    PaymentType = q.collection.PaymentType,
-                    Comment = q.collection.Comment
-                         }).ToList();
+            var model = new CollectionDatatableViewModel
+            {
+                FromDate = queryFromDate.ToString("d"),
+                ToDate = queryToDate.ToString("d"),
+                Items = (from q in collectionList
+                         select new CollectionListItem
+                         {
+                             CollectionId = q.collection.CollectionId,
+                             Amount = q.collection.Amount.ToString("#,0.00", nfi),
+                             ProviderName = q.collection.Provider != null ? q.collection.Provider.Name : "",
+                             DeskId = q.collection.DeskIssued != null ? q.collection.DeskIssued.DeskId : "",
+                             DeskName = q.collection.DeskIssued != null ? q.collection.DeskIssued.Description : "",
+                             CollectorName = q.collection.Collector.Name,
+                             IssuedDateTime = q.operation.OperationDateTime.ToString("g"),
+                             PaymentType = q.collection.PaymentType,
+                             Comment = q.collection.Comment
+                         }).ToList()
+            };
 
-            var pageNumber = (page ?? 1);
-            return PartialView(model.ToPagedList(pageNumber, PageSize));
+            return PartialView(model);
         }
 
+        //[HttpGet]
+        //public ActionResult AcceptedCollections(int? page)
+        //{
+        //    var userId = _userManager.GetUserId(User);
+
+        //    var collectionList = (from collection in _db.Collections
+        //            .Include(c => c.Provider).Include(c => c.DeskIssued).Include(c => c.Collector)
+        //        join operation in _db.CollectionOperations on collection.CollectionId equals operation.CollectionId into operations
+        //        from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
+        //        where collection.CollectorId == userId && operation.OperationTypeId == CollectionOperationType.COType.Accepted
+        //        orderby operation.OperationDateTime descending
+        //        select new { collection, operation }).ToList();
+
+        //    var model = (from q in collectionList
+        //                 select new CollectionListViewModel()
+        //        {
+        //            CollectionId = q.collection.CollectionId,
+        //            Amount = q.collection.Amount,
+        //            ProviderName = q.collection.Provider != null ? q.collection.Provider.Name : "",
+        //            DeskId = q.collection.DeskIssued != null ? q.collection.DeskIssued.DeskId : "",
+        //            DeskName = q.collection.DeskIssued != null ? q.collection.DeskIssued.Description : "",
+        //            CollectorName = q.collection.Collector.Name,
+        //            IssuedDateTime = q.operation.OperationDateTime,
+        //            PaymentType = q.collection.PaymentType,
+        //            Comment = q.collection.Comment
+        //                 }).ToList();
+
+        //    var pageNumber = (page ?? 1);
+        //    return PartialView(model.ToPagedList(pageNumber, PageSize));
+        //}
+
         [HttpGet]
-        public ActionResult IssuedCollections(int? page, bool isAdmin)
+        public ActionResult IssuedCollections(bool isAdmin, DateTime? fromDate, DateTime? toDate)
         {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var queryToDate = toDate ?? DateTime.Now.Date;
+            var queryFromDate = fromDate ?? queryToDate.AddDays(-30);
+
             var userId = _userManager.GetUserId(User);
             //var isUserAdmin = User.IsInRole("Administrators");
 
-            var collectionList = (from collection in _db.Collections
-                    .Include(c => c.Provider).Include(c => c.DeskIssued).Include(c => c.Collector)
-                join operation in _db.CollectionOperations on collection.CollectionId equals operation.CollectionId into
-                    operations
-                from operation in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
-                where isAdmin || collection.ProviderId == userId
+            var collectionList = (from collection in _db.Collections.Include(c => c.Provider).Include(c => c.DeskIssued).Include(c => c.Collector)
+                from operation in _db.CollectionOperations.Where(co => co.CollectionId == collection.CollectionId)
+                    .OrderByDescending(o => o.OperationDateTime).Take(1).DefaultIfEmpty()
+                where ( isAdmin || collection.ProviderId == userId ) &&
+                    operation.OperationDateTime >= queryFromDate &&
+                    operation.OperationDateTime < queryToDate.AddDays(1)
                 orderby operation.OperationDateTime descending
                 select new {collection, operation}).ToList();
 
-            var model = (from q in collectionList
-                         select new CollectionListViewModel
-                {
-                    CollectionId = q.collection.CollectionId,
-                    Amount = q.collection.Amount,
-                    ProviderName = q.collection.Provider != null ? q.collection.Provider.Name : "",
-                    DeskId = q.collection.DeskIssued != null ? q.collection.DeskIssued.DeskId : "",
-                    DeskName = q.collection.DeskIssued != null ? q.collection.DeskIssued.Description : "",
-                    CollectorName = q.collection.Collector.Name,
-                    Status = q.operation.OperationTypeId,
-                    IssuedDateTime = q.operation.OperationDateTime,
-                    PaymentType = q.collection.PaymentType,
-                    Comment = q.collection.Comment
-                         }).ToList();
+            var model = new CollectionDatatableViewModel
+            {
+                IsAdmin = isAdmin,
+                FromDate = queryFromDate.ToString("d"),
+                ToDate = queryToDate.ToString("d"),
+                Items = (from q in collectionList
+                         select new CollectionListItem
+                         {
+                             CollectionId = q.collection.CollectionId,
+                             Amount = q.collection.Amount.ToString("#,0.00", nfi),
+                             ProviderName = q.collection.Provider != null ? q.collection.Provider.Name : "",
+                             DeskId = q.collection.DeskIssued != null ? q.collection.DeskIssued.DeskId : "",
+                             DeskName = q.collection.DeskIssued != null ? q.collection.DeskIssued.Description : "",
+                             CollectorName = q.collection.Collector.Name,
+                             Status = q.operation.OperationTypeId,
+                             IssuedDateTime = q.operation.OperationDateTime.ToString("g"),
+                             PaymentType = q.collection.PaymentType,
+                             Comment = q.collection.Comment
+                         }).ToList()
+            };
 
-            var pageNumber = (page ?? 1);
-            return PartialView(model.ToPagedList(pageNumber, PageSize));
+            return PartialView(model);
         }
 
         [HttpPost]
@@ -271,13 +328,19 @@ namespace AvibaWeb.Controllers
                     join co in _db.CollectionOperations on c.CollectionId equals co.CollectionId into operations
                     from co in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
                     where c.CollectorId == userId && co.OperationTypeId == CollectionOperationType.COType.New
-                    select c.Amount).DefaultIfEmpty().Sum();
+                    select new
+                    {
+                        c.Amount
+                    }).DefaultIfEmpty().Sum(c => c.Amount);
             model.IssuedNotAccepted =
                 (from c in _db.Collections
                     join co in _db.CollectionOperations on c.CollectionId equals co.CollectionId into operations
                     from co in operations.OrderByDescending(o => o.OperationDateTime).Take(1)
                     where c.ProviderId == userId && co.OperationTypeId == CollectionOperationType.COType.New
-                    select c.Amount).DefaultIfEmpty().Sum();
+                    select new
+                    {
+                        c.Amount
+                    }).DefaultIfEmpty().Sum(c => c.Amount);
             return PartialView(model);
         }
 

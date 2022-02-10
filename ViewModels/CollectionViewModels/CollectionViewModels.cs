@@ -8,6 +8,30 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AvibaWeb.ViewModels.CollectionViewModels
 {
+    public class CollectionListItem
+    {
+        public int CollectionId { get; set; }
+        public int CollectionOperationId { get; set; }
+        public string Amount { get; set; }
+        public string ProviderName { get; set; }
+        public string DeskId { get; set; }
+        public string DeskName { get; set; }
+        public string CollectorName { get; set; }
+        public CollectionOperationType.COType Status { get; set; }
+        public string IssuedDateTime { get; set; }
+        public string AcceptedDateTime { get; set; }
+        public PaymentTypes PaymentType { get; set; }
+        public string Comment { get; set; }
+    }
+
+    public class CollectionDatatableViewModel
+    {
+        public bool IsAdmin { get; set; }
+        public string FromDate { get; set; }
+        public string ToDate { get; set; }
+        public List<CollectionListItem> Items { get; set; }
+    }
+
     public class CollectionListViewModel
     {
         public int CollectionId { get; set; }

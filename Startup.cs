@@ -50,7 +50,7 @@ namespace AvibaWeb
             services.AddMvc();
 
             services.AddSignalR();
-            services.AddSingleton<IDatabaseSubscription, CollectionOperationDatabaseSubscription>();
+            //services.AddSingleton<IDatabaseSubscription, CollectionOperationDatabaseSubscription>();
 
             services.AddHttpClient();
             services.AddSingleton(Configuration);

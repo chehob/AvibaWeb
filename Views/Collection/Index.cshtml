@@ -4,36 +4,6 @@
 <div class="box col-md-10">
     <div class="row" id="dvUserBalance" data-url='@(Url.Action("Balance", "Collection", null))'>
     </div>
-<!--
-    <div>
-        <p class="btn-group">
-            <a asp-action="IncomingCollections" asp-controller="Collection"
-               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
-               class="btn btn-primary">Входящие
-		            @if (Model.IncomingCollections > 0)
-                    {
-                        <span style="margin-top: 4px; margin-right: 6px;" class="notification yellow">@Model.IncomingCollections</span>
-                    }
-                    else
-                    {
-                        // если надо чтото сделать при нуле
-                    }
-		    </a>
-            <a asp-action="AcceptedCollections" asp-controller="Collection"
-               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
-               class="btn btn-primary">Принятые</a>
-            <a asp-action="IssuedCollections" asp-controller="Collection"
-               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
-               class="btn btn-primary">Выданные</a>
-               <span class="label-default btn">Все операции</a>
-        </p>
-        <p class="btn-group">
-            <a asp-action="CreateCollection" asp-controller="Collection"
-               data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#results" data-ajax-success="updateBalance"
-               class="btn btn-success">Создать транзакцию</a>
-        </p>
-    </div>   
--->
     <div id="results"></div>
 </div> 
 
