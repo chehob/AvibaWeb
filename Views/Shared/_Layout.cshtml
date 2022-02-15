@@ -296,11 +296,11 @@
             }
         };
 
-        @*getIncomingCollectionAlert();
+        getIncomingCollectionAlert();
         @if (User.IsInRole("Administrators") || User.IsInRole("Офис") || User.IsInRole("Инкассаторы"))
         {
             @:setInterval(getIncomingCollectionAlert, 10000);
-        }*@
+        }
 
     });
 
