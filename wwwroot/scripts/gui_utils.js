@@ -4302,7 +4302,8 @@ $(document).on('click',
                                 },
                                 layout: 'noBorders',                                     
                                 style: 'mediumText',
-                                margin: [0, 10, 0, 0]
+                                margin: [0, 10, 0, 0],
+                                id: 'NoBreak'
                             },
                             {
                                 table: {
@@ -4348,9 +4349,8 @@ $(document).on('click',
                                     ]
                                 },
                                 layout: 'noBorders',                                     
-                                style: 'mediumText',
-                                margin: [0, 120, 0, 0],
-                                id: 'NoBreak'
+                                style: 'mediumText',                                
+                                pageBreak: 'before'
                             },
                             {
                                 stack: [
@@ -4359,8 +4359,8 @@ $(document).on('click',
                                     { text: `№ ${result.docNum} от ${result.docDate}` }
                                 ],
                                 style: 'mediumText',
-                                alignment: 'right',
-                                pageBreak: 'before',
+                                alignment: 'right',                                
+                                margin: [0, 120, 0, 0]
                             },
                             {
                                 stack: [
