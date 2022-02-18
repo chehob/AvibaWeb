@@ -124,6 +124,12 @@ namespace AvibaWeb.ViewModels.CorpClientViewModels
         public string OrgPhone { get; set; }
         public string OrgManagementPositionGenitive { get; set; }
         public string OrgManagementNameGenitive { get; set; }
+        public bool IsProxy { get; set; }
+        public string ProxyPosition { get; set; }
+        public string ProxyName { get; set; }
+        public string ProxyPositionGenitive { get; set; }
+        public string ProxyNameGenitive { get; set; }
+        public string ProxyDocument { get; set; }
 
         public List<CorporatorDocumentFeeItemData> FeeItems { get; set; }
     }

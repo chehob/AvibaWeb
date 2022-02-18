@@ -680,6 +680,10 @@ namespace AvibaWeb.Controllers
                 counterparty.ManagementName = model.Item.ManagementName;
                 counterparty.ManagementPosition = model.Item.ManagementPosition;
                 counterparty.TypeId = model.Item.TypeId;
+                counterparty.IsProxy = model.Item.IsProxy;
+                counterparty.ProxyName = model.Item.ProxyName;
+                counterparty.ProxyPosition = model.Item.ProxyPosition;
+                counterparty.ProxyDocument = model.Item.ProxyDocument;
 
                 await _db.SaveChangesAsync();
 
@@ -2145,10 +2149,16 @@ namespace AvibaWeb.Controllers
                              OrgBIK = fa.BIK,
                              OrgPhone = cd.Organization.Counterparty.Phone,
                              OrgManagementPositionGenitive = _cyrillerService.DeclinePhrase(cd.Organization.HeadTitle).Genitive,
+                             IsProxy = cd.Corporator.IsProxy,
+                             ProxyPosition = cd.Corporator.ProxyPosition,
+                             ProxyName = cd.Corporator.ProxyName,
+                             ProxyDocument = cd.Corporator.ProxyDocument,
+                             ProxyPositionGenitive = _cyrillerService.DeclinePhrase(cd.Corporator.ProxyPosition).Genitive,
                          }).FirstOrDefault();
 
             model.ManagementNameGenitive = _cyrillerService.DeclineName(model.ManagementName).Genitive;
             model.OrgManagementNameGenitive = _cyrillerService.DeclineName(model.OrgManagementName).Genitive;
+            model.ProxyNameGenitive = _cyrillerService.DeclineName(model.ProxyName).Genitive;
 
             model.FeeItems = (from fi in _db.CorporatorDocumentFeeItems
                               where fi.CorporatorDocumentId == id

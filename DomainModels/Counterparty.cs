@@ -59,6 +59,18 @@ namespace AvibaWeb.DomainModels
         [Display(Name = "Должность представителя")]
         public string ManagementPosition { get; set; }
 
+        [Display(Name = "Доверенность")]
+        public bool IsProxy { get; set; }
+
+        [Display(Name = "Имя доверенного лица")]
+        public string ProxyName { get; set; }
+
+        [Display(Name = "Должность доверенного лица")]
+        public string ProxyPosition { get; set; }
+
+        [Display(Name = "Документ")]
+        public string ProxyDocument { get; set; }
+
         public CEntityType EntityType { get; set; } = CEntityType.Entity;
 
         public CR1CStatus _1CStatus { get; set; }

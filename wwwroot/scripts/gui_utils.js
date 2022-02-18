@@ -4007,7 +4007,9 @@ $(document).on('click',
                                 margin: [0, 25, 0, 0]
                             },
                             {
-                                text: `${result.organizationName} - аккредитованное в Транспортной Клиринговой Палате РФ и в Международной Ассоциации Воздушного Транспорта агентство, в лице ${result.orgManagementPositionGenitive} ${result.orgManagementNameGenitive}, действующего на основании Устава, именуемое в дальнейшем «Исполнитель», с одной стороны и ${result.corporatorName}, в лице ${result.managementPositionGenitive} ${result.managementNameGenitive}, действующего на основании Устава, именуемое в дальнейшем «Заказчик», с другой стороны, вместе именуемые «Стороны», заключили настоящий Договор о нижеследующем:`,
+                                text: result.isProxy ? 
+                                    `${result.organizationName} - аккредитованное в Транспортной Клиринговой Палате РФ и в Международной Ассоциации Воздушного Транспорта агентство, в лице ${result.orgManagementPositionGenitive} ${result.orgManagementNameGenitive}, действующего на основании Устава, именуемое в дальнейшем «Исполнитель», с одной стороны и ${result.corporatorName}, в лице ${result.proxyPositionGenitive} ${result.proxyNameGenitive}, действующего на основании доверенности ${result.proxyDocument}, именуемое в дальнейшем «Заказчик», с другой стороны, вместе именуемые «Стороны», заключили настоящий Договор о нижеследующем:` :
+                                    `${result.organizationName} - аккредитованное в Транспортной Клиринговой Палате РФ и в Международной Ассоциации Воздушного Транспорта агентство, в лице ${result.orgManagementPositionGenitive} ${result.orgManagementNameGenitive}, действующего на основании Устава, именуемое в дальнейшем «Исполнитель», с одной стороны и ${result.corporatorName}, в лице ${result.managementPositionGenitive} ${result.managementNameGenitive}, действующего на основании Устава, именуемое в дальнейшем «Заказчик», с другой стороны, вместе именуемые «Стороны», заключили настоящий Договор о нижеследующем:`,
                                 style: 'mediumText',
                                 alignment: 'justify',
                                 margin: [0, 10, 0, 0]
@@ -4284,7 +4286,7 @@ $(document).on('click',
                                             },
                                             {
                                                 stack: [
-                                                    { text: result.managementPosition, },
+                                                    { text: result.isProxy ? result.proxyPosition : result.managementPosition, },
                                                     { text: result.corporatorName },
                                                     { text: ' ' },
                                                     { text: ' ' },
@@ -4292,7 +4294,10 @@ $(document).on('click',
                                                     { text: ' ' },
                                                     { text: ' ' },
                                                     { text: ' ' },
-                                                    { text: `__________________________/ ${result.managementName} /`},
+                                                    { text: result.isProxy ? 
+                                                        `__________________________/ ${result.proxyName} /` :
+                                                        `__________________________/ ${result.managementName} /`
+                                                    },
                                                     { text: ' ' },
                                                     { text: 'М.П.' },
                                                 ]
@@ -4332,7 +4337,7 @@ $(document).on('click',
                                             {
                                                 stack: [
                                                     { text: 'Утверждаю:', },
-                                                    { text: result.managementPosition, },
+                                                    { text: result.isProxy ? result.proxyPosition : result.managementPosition, },
                                                     { text: result.corporatorName },
                                                     { text: ' ' },
                                                     { text: ' ' },
@@ -4340,7 +4345,10 @@ $(document).on('click',
                                                     { text: ' ' },
                                                     { text: ' ' },
                                                     { text: ' ' },
-                                                    { text: `__________________________/ ${result.managementName} /`},
+                                                    { text: result.isProxy ? 
+                                                        `__________________________/ ${result.proxyName} /` :
+                                                        `__________________________/ ${result.managementName} /`
+                                                    },
                                                     { text: ' ' },
                                                     { text: 'М.П.' },
                                                 ]
@@ -4485,7 +4493,9 @@ $(document).on('click',
                                 pageBreak: 'before',
                             },
                             {
-                                text: `${result.organizationName}, являющееся юридическим лицом по законодательству Российской Федерации, в лице ${result.orgManagementPositionGenitive} ${result.orgManagementNameGenitive}, действующего на основании Устава, именуемое в дальнейшем «Исполнитель», с одной стороны и ${result.corporatorName}, в лице ${result.managementPositionGenitive} ${result.managementNameGenitive}, действующего на основании Устава, именуемое в дальнейшем «Заказчик», с другой стороны, принимая во внимание, что в стоимость выставляемых Исполнителем счетов входит стоимость Услуг и стоимость билета, которая соответствует тарифам Перевозчика на день предоставления Заявки Заказчиком, утвердили следующие тарифы на Услуги:`,
+                                text: result.isProxy ? 
+                                    `${result.organizationName}, являющееся юридическим лицом по законодательству Российской Федерации, в лице ${result.orgManagementPositionGenitive} ${result.orgManagementNameGenitive}, действующего на основании Устава, именуемое в дальнейшем «Исполнитель», с одной стороны и ${result.corporatorName}, в лице ${result.proxyPositionGenitive} ${result.proxyNameGenitive}, действующего на основании доверенности ${result.proxyDocument}, именуемое в дальнейшем «Заказчик», с другой стороны, принимая во внимание, что в стоимость выставляемых Исполнителем счетов входит стоимость Услуг и стоимость билета, которая соответствует тарифам Перевозчика на день предоставления Заявки Заказчиком, утвердили следующие тарифы на Услуги:` :
+                                    `${result.organizationName}, являющееся юридическим лицом по законодательству Российской Федерации, в лице ${result.orgManagementPositionGenitive} ${result.orgManagementNameGenitive}, действующего на основании Устава, именуемое в дальнейшем «Исполнитель», с одной стороны и ${result.corporatorName}, в лице ${result.managementPositionGenitive} ${result.managementNameGenitive}, действующего на основании Устава, именуемое в дальнейшем «Заказчик», с другой стороны, принимая во внимание, что в стоимость выставляемых Исполнителем счетов входит стоимость Услуг и стоимость билета, которая соответствует тарифам Перевозчика на день предоставления Заявки Заказчиком, утвердили следующие тарифы на Услуги:`,
                                 style: 'mediumText',
                                 alignment: 'justify',
                                 margin: [0, 40, 0, 0]
@@ -4532,7 +4542,7 @@ $(document).on('click',
                                                 stack: [
                                                     { text: 'ЗАКАЗЧИК:', },
                                                     { text: ' ' },
-                                                    { text: result.managementPosition, },
+                                                    { text: result.isProxy ? result.proxyPosition : result.managementPosition, },
                                                     { text: result.corporatorName },
                                                     { text: ' ' },
                                                     { text: ' ' },
@@ -4540,7 +4550,10 @@ $(document).on('click',
                                                     { text: ' ' },
                                                     { text: ' ' },
                                                     { text: ' ' },
-                                                    { text: `__________________________/ ${result.managementName} /`},
+                                                    { text: result.isProxy ? 
+                                                        `__________________________/ ${result.proxyName} /` :
+                                                        `__________________________/ ${result.managementName} /`
+                                                    },
                                                     { text: ' ' },
                                                     { text: 'М.П.' },
                                                 ]

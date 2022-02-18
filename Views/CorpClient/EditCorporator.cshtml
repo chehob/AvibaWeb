@@ -65,6 +65,30 @@
                     </div>
                 </div>
                 <div class="row">
+                    @Html.LabelFor(m => m.Item.IsProxy, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-1">
+                        @Html.CheckBoxFor(m => m.Item.IsProxy, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.Item.ProxyName, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Item.ProxyName, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.Item.ProxyPosition, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Item.ProxyPosition, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.Item.ProxyPosition, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Item.ProxyDocument, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row">
                     @Html.LabelFor(m => m.Item.Type.Description, new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
                         <select asp-for="Item.TypeId" asp-items="@Model.Types" class="form-control"></select>
