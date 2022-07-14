@@ -351,7 +351,7 @@ namespace AvibaWeb.Controllers
                                           },
                                           CounterpartyGroups =
                                               (from r in g.SelectMany(r => r.CashlessRecords)
-                                               group r by r.PayeeITN == "0000000000" || r.PayeeITN == "000000000000" ? r.PayeeName : r.PayeeITN
+                                               group r by r.PayeeITN == "0" || r.PayeeITN == "0000000000" || r.PayeeITN == "000000000000" || r.PayeeITN == "" ? r.PayeeName : r.PayeeITN
                                                   into cg
                                                select new CashlessImportCounterpartyGroup
                                                {
@@ -509,7 +509,7 @@ namespace AvibaWeb.Controllers
                 if (counterpartyGroup.IsUserITN)
                 {
                     var user = _db.Users.FirstOrDefault(u =>
-                        u.UserITN == counterpartyGroup.ITN || u.Name == counterpartyGroup.Name);
+                        counterpartyGroup.Name.ToLower().Contains(u.Name.ToLower()) || (counterpartyGroup.ITN != "0" &&  u.UserITN == counterpartyGroup.ITN));
                     if (user == null) continue;
                     userId = user.Id;
                 }
@@ -1022,7 +1022,7 @@ namespace AvibaWeb.Controllers
                         {
                             UserName = $"{userNameStrings[1][0]}.{userNameStrings[0]}".ToLower(),
                             Name = party.Name,
-                            UserITN = party.ITN == "0000000000" ? null : party.ITN
+                            UserITN = party.ITN == "0000000000" || party.ITN == "" ? null : party.ITN
                         };
                         user.NormalizedUserName = user.UserName.ToUpper();
 

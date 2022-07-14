@@ -1,0 +1,37 @@
+﻿<div class="col-md-10">
+    <div class="box col-md-5 col-sm-12 b9">
+        <div class="box-inner" id="operationsBlock">
+            <div class="box-header well" data-original-title="" style="overflow: hidden;">
+                <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Операции</h2>
+                <div class="box-icon"><h2 class="blue" id="doc_time"></h2><img class="hidden" id="fLoad" src="img/ajax-loaders/ajax-loader-1.gif" title="img/ajax-loaders/ajax-loader-1.gif"></div>
+            </div>
+            <div class="box-content" id="operationsBlockContent">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function get_fb() {
+        $.ajax({
+            url: "/KRSClient/Operations",
+            type: "GET",
+            cache: false,
+            beforeSend: function (jqXHR, settings) {
+                const block = document.getElementById("fLoad");
+                block.classList.remove("hidden");
+            },
+            success: function (result) {
+                $("#operationsBlockContent").html(result);
+                setTimeout(function () { get_fb(); }, 10000);
+                const block = document.getElementById("fLoad");
+                block.classList.add("hidden");
+            },
+            error: function (error) {
+                const block = document.getElementById("fLoad");
+                block.classList.add("hidden");
+                console.log(error);
+            }
+        });
+    });
+</script>

@@ -2136,7 +2136,7 @@ namespace AvibaWeb.Controllers
                              BIK = cd.Corporator.CorporatorAccount.BIK,
                              Phone = cd.Corporator.Phone,
                              ManagementPositionGenitive = _cyrillerService.DeclinePhrase(cd.Corporator.ManagementPosition).Genitive,
-                             OrganizationName = cd.Organization.Description,                             
+                             OrganizationName = cd.Organization.Description,
                              OrgManagementPosition = cd.Organization.HeadTitle,
                              OrgManagementName = cd.Organization.HeadName,
                              OrgAddress = cd.Organization.Counterparty.Address,
@@ -2158,7 +2158,10 @@ namespace AvibaWeb.Controllers
 
             model.ManagementNameGenitive = _cyrillerService.DeclineName(model.ManagementName).Genitive;
             model.OrgManagementNameGenitive = _cyrillerService.DeclineName(model.OrgManagementName).Genitive;
-            model.ProxyNameGenitive = _cyrillerService.DeclineName(model.ProxyName).Genitive;
+            if (model.ProxyName != null)
+            {
+                model.ProxyNameGenitive = _cyrillerService.DeclineName(model.ProxyName).Genitive;
+            }
 
             model.FeeItems = (from fi in _db.CorporatorDocumentFeeItems
                               where fi.CorporatorDocumentId == id

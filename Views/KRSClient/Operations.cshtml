@@ -1,0 +1,61 @@
+﻿@using AvibaWeb.ViewModels.KRSClientViewModels
+@model OperationsViewModel
+
+<button style="background-color: lightskyblue" class="printNoticeBtn"><i class="glyphicon glyphicon-list-alt"></i>Тест</button>
+
+<script>
+    $(document).on('click',
+        ".printNoticeBtn",
+        function (e) {
+            const sendJsonData = [{
+                type: 'nonFiscal',
+                items: [
+                    {
+                        type: 'text',
+                        text: '***********************',
+                        alignment: 'center'
+                    },
+                    {
+                        type: 'text',
+                        text: 'КВИТАНЦИЯ РАЗНЫХ СБОРОВ',
+                        alignment: 'center'
+                    },
+                    {
+                        type: 'text',
+                        text: '',
+                        alignment: 'center'
+                    },
+                    {
+                        type: 'text',
+                        text: 'ИП Грибенник Анастасия Витальевна',
+                        alignment: 'center'
+                    },
+                    {
+                        type: 'text',
+                        text: 'г. Белгород, пр-т Богдана Хмельницкого, д.166',
+                        alignment: 'center'
+                    },
+                    {
+                        type: 'text',
+                        text: '***********************',
+                        alignment: 'center'
+                    }]
+            }];
+
+            $.ajax({
+                url: "http://192.168.0.11:16732/api/v2/requests",
+                //url: "http://192.168.9.50:16732/api/v2/requests",
+                type: "POST",
+                cache: false,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(sendJsonData),
+                beforeSend: function (jqXHR, settings) {
+                },
+                success: function (result) {
+                },
+                error: function (error) {
+                }
+            });
+        });
+</script>
