@@ -68,7 +68,7 @@ namespace AvibaWeb.Controllers
                                    TicketNumber = v.TicketNumber,
                                    PassengerName = v.PassengerName,
                                    Phone = v.Phone,
-                                   OperationDateTime = v.OperationDateTime.ToString("dd.MM.yyyy hh:mm")
+                                   OperationDateTime = v.OperationDateTime.ToString("g")
                                }).FirstOrDefaultAsync();
 
             return Json(model);
