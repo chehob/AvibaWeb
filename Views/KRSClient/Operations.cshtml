@@ -201,12 +201,12 @@
 
                     $.ajax({
                         url: "http://192.168.9.50:16732/api/v2/requests",
-                        type: "post",
+                        type: "POST",
                         cache: false,
-                        datatype: "json",
-                        contenttype: "application/json; charset=utf-8",
-                        data: JSON.stringify(sendjsondata),
-                        beforesend: function (jqxhr, settings) {
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(sendJsonData),
+                        beforeSend: function (jqXHR, settings) {
                         },
                         success: function (result) {
                         },
