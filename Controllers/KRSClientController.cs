@@ -64,6 +64,7 @@ namespace AvibaWeb.Controllers
                                where v.OperationId == operationId
                                select new TicketNotificationViewModel
                                {
+                                   Uuid = v.Id.ToString(),
                                    TicketNumber = v.TicketNumber,
                                    PassengerName = v.PassengerName,
                                    Phone = v.Phone,
