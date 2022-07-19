@@ -1900,6 +1900,52 @@ namespace AvibaWeb.Migrations
                     b.ToTable("VKRSCancelRequests");
                 });
 
+            modelBuilder.Entity("AvibaWeb.DomainModels.VKRSTickets", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
+
+                b.Property<int>("OperationId");
+
+                b.Property<string>("TicketNumber");
+
+                b.Property<string>("PassengerName");
+
+                b.Property<string>("SegCount");
+
+                b.Property<decimal>("Payment");
+
+                b.Property<decimal>("KRSAmount");
+
+                b.Property<int>("OperationTypeId");
+
+                b.Property<DateTime>("OperationDateTime");
+
+                b.HasKey("Id");
+
+                b.ToTable("VKRSTickets");
+            });
+
+            modelBuilder.Entity("AvibaWeb.DomainModels.VKRSTicketNotificationData", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
+
+                b.Property<int>("OperationId");
+
+                b.Property<DateTime>("OperationDateTime");
+
+                b.Property<string>("TicketNumber");
+
+                b.Property<string>("PassengerName");
+
+                b.Property<string>("Phone");
+
+                b.HasKey("Id");
+
+                b.ToTable("VKRSTicketNotificationData");
+            });
+
             modelBuilder.Entity("AvibaWeb.DomainModels.VLogData", b =>
                 {
                     b.Property<Guid>("Id")

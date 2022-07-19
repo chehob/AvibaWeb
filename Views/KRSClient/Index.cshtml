@@ -1,5 +1,5 @@
 ﻿<div class="col-md-10">
-    <div class="box col-md-5 col-sm-12 b9">
+    <div class="box col-md-7 col-sm-12 b9">
         <div class="box-inner" id="operationsBlock">
             <div class="box-header well" data-original-title="" style="overflow: hidden;">
                 <h2><i class="glyphicon glyphicon-tags"></i>&nbsp;&nbsp;Операции</h2>
@@ -13,6 +13,8 @@
 
 <script>
     $(function get_fb() {
+        clearTimeout(KRSTicketRefreshInterval);
+
         $.ajax({
             url: "/KRSClient/Operations",
             type: "GET",
@@ -23,7 +25,7 @@
             },
             success: function (result) {
                 $("#operationsBlockContent").html(result);
-                setTimeout(function () { get_fb(); }, 10000);
+                KRSTicketRefreshInterval = setTimeout(function () { get_fb(); }, 10000);
                 const block = document.getElementById("fLoad");
                 block.classList.add("hidden");
             },

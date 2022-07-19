@@ -150,6 +150,9 @@ namespace AvibaWeb.Models
 
         public DbSet<AtolPrintOperationsBinding> AtolPrintOperationsBindings { get; set; }
 
+        public DbSet<VKRSTickets> VKRSTickets { get; set; }
+        public DbSet<VKRSTicketNotificationData> VKRSTicketNotificationData { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

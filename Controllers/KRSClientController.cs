@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System;
 
 namespace AvibaWeb.Controllers
 {
@@ -33,9 +35,42 @@ namespace AvibaWeb.Controllers
 
             var model = new OperationsViewModel
             {
+                Items = await (from v in _db.VKRSTickets
+                               where v.OperationDateTime >= DateTime.Today
+                               orderby v.OperationId descending
+                         select new OperationsViewItem
+                         {
+                             OperationId = v.OperationId,
+                             TicketNumber = v.TicketNumber,
+                             PassengerName = v.PassengerName,
+                             SegCount = v.SegCount,
+                             Payment = v.Payment.ToString("#,0.00", nfi),
+                             KRSAmount = v.KRSAmount.ToString("#,0.00", nfi),
+                             Total = (v.Payment + v.KRSAmount).ToString("#,0.00", nfi),
+                             OperationTypeId = v.OperationTypeId
+                         }).ToListAsync()
             };
 
             return PartialView(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetNotificationData(int operationId)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+
+            var model = await (from v in _db.VKRSTicketNotificationData
+                               where v.OperationId == operationId
+                               select new TicketNotificationViewModel
+                               {
+                                   TicketNumber = v.TicketNumber,
+                                   PassengerName = v.PassengerName,
+                                   Phone = v.Phone,
+                                   OperationDateTime = v.OperationDateTime.ToString("dd.MM.yyyy hh:mm")
+                               }).FirstOrDefaultAsync();
+
+            return Json(model);
         }
     }
 }

@@ -285,6 +285,8 @@
 </html>
 
 <script>
+    var KRSTicketRefreshInterval = null;
+
     $(function () {
         $.fn.datepicker.defaults.language = 'ru';
         $.fn.datepicker.defaults.autoclose = true;
@@ -309,7 +311,6 @@
         {
             @:setInterval(getIncomingCollectionAlert, 10000);
         }
-
     });
 
     function getIncomingCollectionAlert() {
